@@ -40,7 +40,6 @@
     NSNumber* longitude = [[NSNumber alloc] initWithDouble:coord.longitude];
     [[PFUser currentUser] setObject:latitude forKey:@"loclat"];
     [[PFUser currentUser] setObject:longitude forKey:@"loclon"];
-    [[PFUser currentUser] save];
     
     [locationManager stopUpdatingLocation];
 }
@@ -69,7 +68,7 @@
     [[PFUser currentUser] setObject:boolDiscovery forKey:@"profileDiscoverable"];
     [[PFUser currentUser] setObject:labelRoles.text forKey:@"profileRole"];
     [[PFUser currentUser] setObject:areaEdit.text forKey:@"profileArea"];
-    [[PFUser currentUser] save];
+    [[PFUser currentUser] saveInBackground];
     
     [self.navigationController setNavigationBarHidden:false animated:true];
     //[self.navigationController popViewControllerAnimated:true];

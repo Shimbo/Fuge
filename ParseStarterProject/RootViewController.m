@@ -4,6 +4,7 @@
 
 #import "CoreLocation/CLLocationManager.h"
 #import <CoreLocation/CoreLocation.h>
+#import "UIKit/UIActivityIndicatorView.h"
 
 #import "RootViewController.h"
 #import "ProfileViewController.h"
@@ -23,12 +24,14 @@
 @synthesize buttonFilter;
 @synthesize buttonProfile;
 @synthesize initialized;
+@synthesize activityIndicator;
 
 - (id)initWithStyle:(UITableViewStyle)style {
 	if (self = [super initWithStyle:style]) {
 		self.title = NSLocalizedString(@"Connections", @"Connections");
 		self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
 		self.tableView.rowHeight = ROW_HEIGHT;
+        activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         initialized = false;
 	}
 	return self;
@@ -149,7 +152,7 @@
     [region addPerson:person];
 }
 
-- (void) reloadData {
+- (void) actualReload {
     
     // Clean for sure old data
     [Region clean];
@@ -173,137 +176,154 @@
         else {
             NSLog(@"Uh oh. An error occurred: %@", error);
         }
-    
-    // FB friendlist
-    PF_FBRequest *request2 = [PF_FBRequest requestForMyFriends];
-    [request2 startWithCompletionHandler:^(PF_FBRequestConnection *connection,
-                                           id result, NSError *error) {
-        if (!error) {
-            // result will contain an array with your user's friends in the "data" key
-            NSArray *friendObjects = [result objectForKey:@"data"];
-            NSMutableArray *friendIds = [NSMutableArray arrayWithCapacity:friendObjects.count];
-            
-            // Create a list of friends' Facebook IDs
-            for (NSDictionary *friendObject in friendObjects) {
-                [friendIds addObject:[friendObject objectForKey:@"id"]];
-            }
-            
-            // Saving user friends
-            [[PFUser currentUser] addUniqueObjectsFromArray:friendIds
-                                                     forKey:@"fbFriends"];
-            
-            // Construct a PFUser query that will find friends whose facebook ids
-            // are contained in the current user's friend list.
-            PFQuery *friendQuery = [PFUser query];
-            [friendQuery whereKey:@"fbId" containedIn:friendIds];
-            
-            // List initialization
-            NSMutableArray *regions = [NSMutableArray array];
-            
-            // findObjects will return a list of PFUsers that are friends
-            // with the current user
-            [friendQuery findObjectsInBackgroundWithBlock:^(NSArray *friendUsers, NSError* error) {
-            
-                for (NSDictionary *friendUser in friendUsers)
-                {
-                    // Collecting second circle data
-                    NSMutableArray *friendFriendIds = [friendUser objectForKey:@"fbFriends"];
-                    [[PFUser currentUser] addUniqueObjectsFromArray:friendFriendIds forKey:@"fbFriends2O"];
-                    
-                    // Adding first circle friends
-                    [self addPerson:friendUser userCircle:@"First circle" regionsList:regions];
+        
+        // FB friendlist
+        PF_FBRequest *request2 = [PF_FBRequest requestForMyFriends];
+        [request2 startWithCompletionHandler:^(PF_FBRequestConnection *connection,
+                                               id result, NSError *error) {
+            if (!error) {
+                // result will contain an array with your user's friends in the "data" key
+                NSArray *friendObjects = [result objectForKey:@"data"];
+                NSMutableArray *friendIds = [NSMutableArray arrayWithCapacity:friendObjects.count];
+                
+                // Create a list of friends' Facebook IDs
+                for (NSDictionary *friendObject in friendObjects) {
+                    [friendIds addObject:[friendObject objectForKey:@"id"]];
                 }
                 
-                [[PFUser currentUser] save];
-                                
-                // Second circle friends
-                NSMutableArray *friend2OIds = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
-                PFQuery *friend2OQuery = [PFUser query];
-                [friend2OQuery whereKey:@"fbId" containedIn:friend2OIds];
-                [friend2OQuery findObjectsInBackgroundWithBlock:^(NSArray *friend2OUsers, NSError* error){
-
-                    for (NSDictionary *friend2OUser in friend2OUsers)
-                        [self addPerson:friend2OUser userCircle:@"Second circle" regionsList:regions];
+                // Saving user friends
+                [[PFUser currentUser] addUniqueObjectsFromArray:friendIds
+                                                         forKey:@"fbFriends"];
+                
+                // Construct a PFUser query that will find friends whose facebook ids
+                // are contained in the current user's friend list.
+                PFQuery *friendQuery = [PFUser query];
+                [friendQuery whereKey:@"fbId" containedIn:friendIds];
+                
+                // List initialization
+                NSMutableArray *regions = [NSMutableArray array];
+                
+                // findObjects will return a list of PFUsers that are friends
+                // with the current user
+                [friendQuery findObjectsInBackgroundWithBlock:^(NSArray *friendUsers, NSError* error) {
                     
-                    // Everybody else
-                    PFQuery *friendAnyQuery = [PFUser query];
-                    [friendAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *friendAnyUsers, NSError* error){
-                        
-                    for (NSDictionary *friendAnyUser in friendAnyUsers)
-                        [self addPerson:friendAnyUser userCircle:@"Random connections" regionsList:regions];
-                    
-                    // Invite friends
-                    NSInteger count = 0;
-                    for (NSString *strId in friendIds)
+                    for (NSDictionary *friendUser in friendUsers)
                     {
-                        Boolean bFound = false;
-                        for (NSDictionary *friendUser in friendUsers)
-                        {
-                            NSString *strId2 = [friendUser objectForKey:@"fbId"];
-                            if ( [strId compare:strId2 ] == NSOrderedSame )
-                                bFound = true;
-                        }
-                        if ( bFound )
-                            continue;
+                        // Collecting second circle data
+                        NSMutableArray *friendFriendIds = [friendUser objectForKey:@"fbFriends"];
+                        [[PFUser currentUser] addUniqueObjectsFromArray:friendFriendIds forKey:@"fbFriends2O"];
                         
-                        Region *region = [Region regionNamed:@"Invite friends"];
-                        if ( ! region )
-                        {
-                            region = [Region newRegionWithName:@"Invite friends"];
-                            [regions addObject:region];
-                        }
-                        
-                        NSString* strTemp = [[NSString alloc] initWithFormat:@"Expand your network!"];
-                        [region addPersonWithComponents:@[strTemp, strId, @"", @"", @"", @"", @""]];
-                        
-                        count++;
-                        if ( count >= 1 )
-                            break;
+                        // Adding first circle friends
+                        [self addPerson:friendUser userCircle:@"First circle" regionsList:regions];
                     }
                     
+                    [[PFUser currentUser] save];
                     
-                    // Sorting stuff
-                    //                     NSDate *date = [NSDate date];
-                    // Now sort the time zones by name
-                    //                     for (Region *region in regions) {
-                    //                         [region sortZones];
-                    //                         [region setDate:date];
-                    //                     }
-                    // Sort the regions
-                    //                     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
-                    //                     NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
-                    //                     [regions sortUsingDescriptors:sortDescriptors];
-                    
-                    
-                    // Setup
-                    displayList = (NSArray *) regions;
-                    [[self tableView] reloadData];
-                    
-                    NSArray *visibleCells = self.tableView.visibleCells;
-                    for (PersonCell *cell in visibleCells) {
-                        [cell redisplay];
-                    }
-                    
-                        initialized = false;
-                    
+                    // Second circle friends
+                    NSMutableArray *friend2OIds = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
+                    PFQuery *friend2OQuery = [PFUser query];
+                    [friend2OQuery whereKey:@"fbId" containedIn:friend2OIds];
+                    [friend2OQuery findObjectsInBackgroundWithBlock:^(NSArray *friend2OUsers, NSError* error){
+                        
+                        for (NSDictionary *friend2OUser in friend2OUsers)
+                            [self addPerson:friend2OUser userCircle:@"Second circle" regionsList:regions];
+                        
+                        // Everybody else
+                        PFQuery *friendAnyQuery = [PFUser query];
+                        [friendAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *friendAnyUsers, NSError* error){
+                            
+                            for (NSDictionary *friendAnyUser in friendAnyUsers)
+                                [self addPerson:friendAnyUser userCircle:@"Random connections" regionsList:regions];
+                            
+                            // Invite friends
+                            NSInteger count = 0;
+                            for (NSString *strId in friendIds)
+                            {
+                                Boolean bFound = false;
+                                for (NSDictionary *friendUser in friendUsers)
+                                {
+                                    NSString *strId2 = [friendUser objectForKey:@"fbId"];
+                                    if ( [strId compare:strId2 ] == NSOrderedSame )
+                                        bFound = true;
+                                }
+                                if ( bFound )
+                                    continue;
+                                
+                                Region *region = [Region regionNamed:@"Invite friends"];
+                                if ( ! region )
+                                {
+                                    region = [Region newRegionWithName:@"Invite friends"];
+                                    [regions addObject:region];
+                                }
+                                
+                                NSString* strTemp = [[NSString alloc] initWithFormat:@"Expand your network!"];
+                                [region addPersonWithComponents:@[strTemp, strId, @"", @"", @"", @"", @""]];
+                                
+                                count++;
+                                if ( count >= 1 )
+                                    break;
+                            }
+                            
+                            
+                            // Sorting stuff
+                            //                     NSDate *date = [NSDate date];
+                            // Now sort the time zones by name
+                            //                     for (Region *region in regions) {
+                            //                         [region sortZones];
+                            //                         [region setDate:date];
+                            //                     }
+                            // Sort the regions
+                            //                     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
+                            //                     NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
+                            //                     [regions sortUsingDescriptors:sortDescriptors];
+                            
+                            
+                            // Setup
+                            displayList = (NSArray *) regions;
+                            [[self tableView] reloadData];
+                            
+                            NSArray *visibleCells = self.tableView.visibleCells;
+                            for (PersonCell *cell in visibleCells) {
+                                [cell redisplay];
+                            }
+                            
+                            initialized = true;
+                            
+                            
+                            [activityIndicator stopAnimating];
+                            [activityIndicator removeFromSuperview];
+                            
+                        }];
                     }];
                 }];
-             }];
-        }
-        else {
-            NSLog(@"Uh oh. An error occurred: %@", error);
-        }
+            }
+            else {
+                NSLog(@"Uh oh. An error occurred: %@", error);
+            }
+        }];
     }];
-    }];
+
+}
+
+- (void) reloadData {
+    CGPoint ptCenter = CGPointMake(self.navigationController.view.frame.size.width/2, self.navigationController.view.frame.size.height/2);
+    activityIndicator.center = ptCenter;
+    [self.navigationController.view addSubview:activityIndicator];
+    [activityIndicator startAnimating];
+
+    [self performSelectorOnMainThread:@selector(actualReload) withObject:nil waitUntilDone:NO];
 }
 
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
-    // Loading data
+    // Loading data with indicator
     if ( ! initialized )
+    {
         [self reloadData];
+        //[self performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+    }
 }
 
 - (void) viewDidLoad {
