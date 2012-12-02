@@ -7,6 +7,7 @@
 
 #import "RootViewController.h"
 #import "ProfileViewController.h"
+#import "FilterViewController.h"
 #import "UserProfileController.h"
 #import "PersonCell.h"
 #import "Person.h"
@@ -43,10 +44,35 @@
 }
 
 - (void)filterClicked{
-    
+    FilterViewController *filterViewController = [[FilterViewController alloc] initWithNibName:@"FilterView" bundle:nil];
+    [self.navigationController pushViewController:filterViewController animated:YES];
+    //[self.navigationController setNavigationBarHidden:true animated:true];
 }
 
 - (void)addPerson:(NSDictionary*)user userCircle:(NSString*)circle regionsList:(NSMutableArray*)regions {
+    
+    // Filters  
+    if ( [[PFUser currentUser] objectForKey:@"filter1stCircle"] )
+        if ( [[[PFUser currentUser] objectForKey:@"filter1stCircle"] boolValue] == false )
+            if ( [circle compare:@"First circle"] == NSOrderedSame )
+                return;
+    if ( [[PFUser currentUser] objectForKey:@"filterEverybody"] )
+        if ( [[[PFUser currentUser] objectForKey:@"filterEverybody"] boolValue] == false )
+            if ( [circle compare:@"Random connections"] == NSOrderedSame )
+                return;
+    NSString* strProfileGender = [user objectForKey:@"fbGender"];
+    NSNumber* numberFilterGender = [[PFUser currentUser] objectForKey:@"filterGender"];
+    if ( strProfileGender && numberFilterGender )
+        if ( numberFilterGender != 0 )
+            if ( ( [strProfileGender compare:@"male"] == NSOrderedSame && numberFilterGender.intValue == 1 ) || ( [strProfileGender compare:@"female"] == NSOrderedSame && numberFilterGender.intValue == 2 ) )
+                return;
+    NSString* strProfileRole = [user objectForKey:@"profileRole"];
+    NSString* strFilterRole = [[PFUser currentUser] objectForKey:@"filterRole"];
+    if ( strFilterRole && strProfileRole )
+        if ( [strProfileRole compare:strFilterRole] != NSOrderedSame )
+            if ( [strFilterRole compare:@"Any"] != NSOrderedSame )
+                return;
+    // For distance check see one page below
     
     // Discovery disabled
     if ( [user objectForKey:@"profileDiscoverable"] )
@@ -78,13 +104,6 @@
     // Creation of user
     NSString* strName = [user objectForKey:@"fbName"];
     
-    Region *region = [Region regionNamed:circle];
-    if ( ! region )
-    {
-        region = [Region newRegionWithName:circle];
-        [regions addObject:region];
-    }
-    
     // Distance calculation
     NSString* strDistance = @"? km";
     if ( [[PFUser currentUser] objectForKey:@"loclat"] && [user objectForKey:@"loclat"] )
@@ -92,6 +111,13 @@
         CLLocation* locationUser = [[CLLocation alloc] initWithLatitude:[[[PFUser currentUser] objectForKey:@"loclat"] doubleValue] longitude:[[[PFUser currentUser] objectForKey:@"loclon"] doubleValue]];
         CLLocation* locationFriend = [[CLLocation alloc] initWithLatitude:[[user objectForKey:@"loclat"] doubleValue] longitude:[[user objectForKey:@"loclon"] doubleValue]];
         CLLocationDistance distance = [locationUser distanceFromLocation:locationFriend];
+        
+        // Distance check
+        NSNumber* numberFilterDistance = [[PFUser currentUser] objectForKey:@"filterDistance"];
+        if ( numberFilterDistance )
+            if ( ( numberFilterDistance.intValue == 1 && distance > 100000 ) || ( numberFilterDistance.intValue == 2 && distance > 10000 ) )
+                return;
+        
         strDistance = [[NSString alloc] initWithFormat:@"%.0f km", distance/1000.0f];
     }
     
@@ -113,6 +139,13 @@
                       [user objectForKey:@"fbGender"],
                       strDistance, [user objectForKey:@"profileRole"],
                       [user objectForKey:@"profileArea"]]];
+    
+    Region *region = [Region regionNamed:circle];
+    if ( ! region )
+    {
+        region = [Region newRegionWithName:circle];
+        [regions addObject:region];
+    }
     [region addPerson:person];
 }
 
@@ -251,8 +284,8 @@
                         [cell redisplay];
                     }
                     
-                    initialized = true;
-                        
+                        initialized = false;
+                    
                     }];
                 }];
              }];
@@ -282,17 +315,13 @@
     buttonFilter = [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)];
     
     [self.navigationItem setLeftBarButtonItem:buttonProfile];
-    
-    // TODO: to be done later
-    //[self.navigationItem setRightBarButtonItem:buttonFilter];
+    [self.navigationItem setRightBarButtonItem:buttonFilter];
     
     [super viewDidLoad];
 }
 
 
 - (void)viewWillDisappear:(BOOL)animated {
-//	self.minuteTimer = nil;
-//	self.regionsTimer = nil;
 }
 
 
