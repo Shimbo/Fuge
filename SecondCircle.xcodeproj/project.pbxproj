@@ -37,6 +37,8 @@
 		4C08DDDC163C88640093C851 /* PersonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD8163C88640093C851 /* PersonCell.m */; };
 		4C08DDDD163C88640093C851 /* PersonView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDDA163C88640093C851 /* PersonView.m */; };
 		4C08DDDF163C89A80093C851 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C08DDDE163C89A80093C851 /* MainWindow.xib */; };
+		4CFE78C8166BBA7900E1BF72 /* FilterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CFE78C6166BBA7900E1BF72 /* FilterViewController.m */; };
+		4CFE78C9166BBA7900E1BF72 /* FilterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CFE78C7166BBA7900E1BF72 /* FilterView.xib */; };
 		6332375415E438E900AE2736 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6332375315E438E900AE2736 /* libsqlite3.dylib */; };
 		6372FF531613CC3C002132AF /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6372FF521613CC3C002132AF /* Accounts.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		6372FF561613CC42002132AF /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6372FF551613CC42002132AF /* Social.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -91,6 +93,9 @@
 		4C08DDD9163C88640093C851 /* PersonView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersonView.h; sourceTree = "<group>"; };
 		4C08DDDA163C88640093C851 /* PersonView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersonView.m; sourceTree = "<group>"; };
 		4C08DDDE163C89A80093C851 /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
+		4CFE78C5166BBA7900E1BF72 /* FilterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterViewController.h; sourceTree = "<group>"; };
+		4CFE78C6166BBA7900E1BF72 /* FilterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FilterViewController.m; sourceTree = "<group>"; };
+		4CFE78C7166BBA7900E1BF72 /* FilterView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FilterView.xib; sourceTree = "<group>"; };
 		6332375315E438E900AE2736 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		6372FF521613CC3C002132AF /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		6372FF551613CC42002132AF /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
@@ -198,6 +203,7 @@
 				4C057325166AEF4800EF6FAD /* ProfileView.xib */,
 				4C08DDDE163C89A80093C851 /* MainWindow.xib */,
 				4C05733A166B73D900EF6FAD /* UserProfile.xib */,
+				4CFE78C7166BBA7900E1BF72 /* FilterView.xib */,
 				4C057321166AE74D00EF6FAD /* FacebookLogin.png */,
 				4C057323166AEE0A00EF6FAD /* Background.jpg */,
 			);
@@ -223,6 +229,8 @@
 				4C057328166AEF9B00EF6FAD /* ProfileViewController.m */,
 				4C057338166B73D900EF6FAD /* UserProfileController.h */,
 				4C057339166B73D900EF6FAD /* UserProfileController.m */,
+				4CFE78C5166BBA7900E1BF72 /* FilterViewController.h */,
+				4CFE78C6166BBA7900E1BF72 /* FilterViewController.m */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -289,6 +297,7 @@
 				4C057324166AEE0A00EF6FAD /* Background.jpg in Resources */,
 				4C057326166AEF4800EF6FAD /* ProfileView.xib in Resources */,
 				4C05733C166B73D900EF6FAD /* UserProfile.xib in Resources */,
+				4CFE78C9166BBA7900E1BF72 /* FilterView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -309,6 +318,7 @@
 				4C057320166ACED200EF6FAD /* LoginViewController.m in Sources */,
 				4C05732A166AEF9B00EF6FAD /* ProfileViewController.m in Sources */,
 				4C05733B166B73D900EF6FAD /* UserProfileController.m in Sources */,
+				4CFE78C8166BBA7900E1BF72 /* FilterViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
