@@ -1,0 +1,87 @@
+
+#import "Person.h"
+#import "ParseStarterProjectAppDelegate.h"
+#import "PersonView.h"
+
+@implementation Person
+
+@synthesize strId;
+@synthesize strName;
+@synthesize strAge;
+@synthesize strGender;
+@synthesize strDistance;
+@synthesize strRole;
+@synthesize strArea;
+
+@synthesize image;
+@synthesize imageData;
+@synthesize urlConnection;
+@synthesize pictureURL;
+@synthesize urlRequest;
+
+@synthesize pParent;
+
++ (void)initialize {
+	if (self == [Person class]) {
+	}
+}
+
+- (void)addParent:(PersonView*)parent
+{
+    pParent = parent;
+}
+
+- (id)init:(NSArray*) nameComponents {
+	
+	if (self = [super init]) {
+        strName = [[nameComponents objectAtIndex:0] copy];
+        strId = [[nameComponents objectAtIndex:1] copy];
+        strAge = [[nameComponents objectAtIndex:2] copy];
+        strGender = [[nameComponents objectAtIndex:3] copy];
+        strDistance = [[nameComponents objectAtIndex:4] copy];
+        strRole = [[nameComponents objectAtIndex:5] copy];
+        strArea = [[nameComponents objectAtIndex:6] copy];
+        image = nil;
+        imageData = nil;
+        urlConnection = nil;
+	}
+	return self;
+}
+
+- (UIImage *)getImage {
+    if (image == nil && imageData == nil && urlConnection == nil )
+    {
+        // Download the user's facebook profile picture
+        imageData = [[NSMutableData alloc] init]; // the data will be loaded in here
+        
+        // URL should point to https://graph.facebook.com/{facebookId}/picture?type=large&return_ssl_resources=1
+        pictureURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&return_ssl_resources=1", strId]];
+        
+        urlRequest = [NSMutableURLRequest requestWithURL:pictureURL
+                                             cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.0f];
+        
+        // Run network request asynchronously
+        urlConnection = [[NSURLConnection alloc] initWithRequest:urlRequest delegate:self];
+    }
+
+    // Return profile image
+	return image;
+}
+
+// Called every time a chunk of the data is received
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    [imageData appendData:data]; // Build the image
+}
+
+// Called when the entire image is finished downloading
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+    // Set the image in the header imageView
+    image = [UIImage imageWithData:imageData];
+    [pParent setNeedsDisplay];
+}
+
+- (void)dealloc {
+}
+
+
+@end
