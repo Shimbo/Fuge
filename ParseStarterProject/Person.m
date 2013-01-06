@@ -12,6 +12,7 @@
 @synthesize strDistance;
 @synthesize strRole;
 @synthesize strArea;
+@synthesize strCircle;
 
 @synthesize image;
 @synthesize imageData;
@@ -41,6 +42,7 @@
         strDistance = [[nameComponents objectAtIndex:4] copy];
         strRole = [[nameComponents objectAtIndex:5] copy];
         strArea = [[nameComponents objectAtIndex:6] copy];
+        strCircle = [[nameComponents objectAtIndex:7] copy];
         image = nil;
         imageData = nil;
         urlConnection = nil;
@@ -83,5 +85,14 @@
 - (void)dealloc {
 }
 
+- (void) setLocation:(CLLocationCoordinate2D) loc
+{
+    location = loc;
+}
+
+- (CLLocationCoordinate2D) getLocation
+{
+    return location;
+}
 
 @end

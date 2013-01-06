@@ -7,23 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CoreLocation/CLLocationManager.h"
-#import <CoreLocation/CoreLocation.h>
 
-@interface ProfileViewController : UIViewController <CLLocationManagerDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UIActionSheetDelegate, UITextFieldDelegate> {
-
-    CLLocationManager*  locationManager;
+@interface ProfileViewController : UIViewController <UIPickerViewDelegate, UIPickerViewDataSource, UIActionSheetDelegate, UITextFieldDelegate> {
     
     IBOutlet UILabel*   labelRoles;
     NSMutableArray*     arrayRoles;
     UIActionSheet*      actionSheet;
     NSInteger           selection;
     
+    IBOutlet UIButton *buttonRoles;
     IBOutlet UITextField *areaEdit;
     IBOutlet UISwitch *discoverySwitch;
 }
-
-@property (nonatomic, retain) CLLocationManager* locationManager;
 
 - (IBAction) showSearchWhereOptions;
 

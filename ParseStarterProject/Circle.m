@@ -1,43 +1,42 @@
 
 
-#import "Region.h"
+#import "Circle.h"
 #import "Person.h"
 
 
-static NSMutableDictionary *regions;
+static NSMutableDictionary *circles;
 
-@implementation Region
+@implementation Circle
 
 @synthesize name;
 @synthesize  persons;
-@synthesize  calendar;
 
 /*
  Class methods to manage global regions.
  */
 + (void)initialize {
-	regions = [[NSMutableDictionary alloc] init];	
+	circles = [[NSMutableDictionary alloc] init];
 }
 
 
-+ (Region *)regionNamed:(NSString *)name {
-	return [regions objectForKey:name];
++ (Circle *)circleNamed:(NSString *)name {
+	return [circles objectForKey:name];
 }
 
 + (void)clean
 {
-    [regions removeAllObjects];
+    [circles removeAllObjects];
 }
 
-+ (Region *)newRegionWithName:(NSString *)regionName {
++ (Circle *)newCircleWithName:(NSString *)circleName {
     // Create a new region with a given name; add it to the regions dictionary.
-	Region *newRegion = [[Region alloc] init];
-	newRegion.name = regionName;
+	Circle *newCircle = [[Circle alloc] init];
+	newCircle.name = circleName;
 	NSMutableArray *array = [[NSMutableArray alloc] init];
-	newRegion.persons = array;
+	newCircle.persons = array;
 	//[array release];
-	[regions setObject:newRegion forKey:regionName];
-	return newRegion;
+	[circles setObject:newCircle forKey:circleName];
+	return newCircle;
 }
 
 - (void)addPerson:(Person *)person {

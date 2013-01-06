@@ -4,9 +4,11 @@
 
 #import "LoginViewController.h"
 #import "RootViewController.h"
-#import "Region.h"
+#import "Circle.h"
 
-NSTimeZone *App_defaultTimeZone;
+#import "GlobalData.h"
+
+#import "TestFlightSDK/TestFlight.h"
 
 
 @implementation ParseStarterProjectAppDelegate
@@ -14,13 +16,23 @@ NSTimeZone *App_defaultTimeZone;
 @synthesize window;
 @synthesize navigationController;
 
-@synthesize listPersons;
-@synthesize listCircles;
-@synthesize listGeo;
+@synthesize rootViewController;
+
+@synthesize locationManager;
 
 #pragma mark - UIApplicationDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+   
+    NSLog(@"%@", launchOptions);
+
+#ifndef RELEASE
+    [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
+#endif
+    [TestFlight takeOff:@"f8d7037b262277589cd287681817220a_MTUyNzAwMjAxMi0xMS0wNyAyMToxMDo0Ni43OTY5OTc"];
+    
+    [TestFlight passCheckpoint:@"Initialization started"];
+    
     [Parse setApplicationId:@"VMhSG8IQ9xibufk8lAPpclIwdXVfYD44OpKmsHdn"
                   clientKey:@"u2kJ1jWBjN9qY3ARlJuEyNkvUA9EjOMv1R4w5sDX"];
     
@@ -39,23 +51,28 @@ NSTimeZone *App_defaultTimeZone;
      
 //    self.window.rootViewController = self.viewController;
 //    [self.window makeKeyAndVisible];
-    App_defaultTimeZone = [NSTimeZone defaultTimeZone];
 	
 	// Create the navigation and view controllers
 //	RootViewController *rootViewController = [[RootViewController alloc] initWithStyle:UITableViewStylePlain];
     
-    RootViewController *rootViewController = [[RootViewController alloc] initWithStyle:UITableViewStylePlain];
+    rootViewController = [[RootViewController alloc] initWithStyle:UITableViewStylePlain];
     UINavigationController *aNavigationController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
     self.navigationController = aNavigationController;
     
     if (! PFFacebookUtils.session.isOpen) {
         LoginViewController *loginViewController = [[LoginViewController alloc] initWithNibName:@"LoginView" bundle:nil];
-        [loginViewController setPersonList:listPersons];
         [aNavigationController pushViewController:loginViewController animated:YES];
         [aNavigationController setNavigationBarHidden:true animated:false];
     }
     else
         [[PFUser currentUser] refresh];
+    
+    // Location data
+    locationManager = [[CLLocationManager alloc] init];
+    locationManager.delegate = self;
+    locationManager.desiredAccuracy = [[NSNumber numberWithDouble:kCLLocationAccuracyHundredMeters] doubleValue];
+    locationManager.distanceFilter = [[NSNumber numberWithDouble:100.0] doubleValue];
+    [locationManager startUpdatingLocation];
     
     // Retrieving initial data
     
@@ -73,6 +90,9 @@ NSTimeZone *App_defaultTimeZone;
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|
                                                     UIRemoteNotificationTypeAlert|
                                                     UIRemoteNotificationTypeSound];
+    
+    [TestFlight passCheckpoint:@"Initialization ended"];
+    
     return YES;
 }
 
@@ -82,12 +102,8 @@ NSTimeZone *App_defaultTimeZone;
 #pragma mark -
 #pragma mark Setting up the display list
 
-- (NSArray *)displayList {
-	/*
-	 Return an array of Region objects.
-	 Each object represents a geographical region.  Each region contains time zones.
-	 Much of the information required to display a time zone is expensive to compute, so rather than using NSTimeZone objects directly use wrapper objects that calculate the required derived values on demand and cache the results.
-	 */
+/*- (NSArray *)displayList {
+
 	NSArray *knownTimeZoneNames = [NSTimeZone knownTimeZoneNames];
 	
 	NSMutableArray *regions = [NSMutableArray array];
@@ -96,17 +112,16 @@ NSTimeZone *App_defaultTimeZone;
     {
 		
 		NSArray *components = [timeZoneName componentsSeparatedByString:@"/"];
-		NSString *regionName = [components objectAtIndex:0];
+		NSString *circleName = [components objectAtIndex:0];
 		
-		Region *region = [Region regionNamed:regionName];
-		if (region == nil) {
-			region = [Region newRegionWithName:regionName];
-			region.calendar = [self calendar];
-			[regions addObject:region];
+		Circle* circle = [Circle circleNamed:circleName];
+		if (circle == nil) {
+			circle = [Circle newCircleWithName:regionName];
+			[circles addObject:circle];
 //			[region release];
 		}
 		
-		[region addPersonWithComponents:components];
+		[circle addPersonWithComponents:components];
 //		[timeZone release];
 	}
 	
@@ -123,15 +138,7 @@ NSTimeZone *App_defaultTimeZone;
 //	[sortDescriptor release];
 	
 	return regions;
-}
-
-
-- (NSCalendar *)calendar {
-	if (calendar == nil) {
-		calendar= [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-	}
-	return calendar;
-}
+}*/
 
 
 #pragma mark -
@@ -147,7 +154,6 @@ NSTimeZone *App_defaultTimeZone;
 
 
 
-
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
     return [PFFacebookUtils handleOpenURL:url];
 }
@@ -159,7 +165,6 @@ NSTimeZone *App_defaultTimeZone;
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)newDeviceToken {
     [PFPush storeDeviceToken:newDeviceToken];
-    [PFPush subscribeToChannelInBackground:@"" target:self selector:@selector(subscribeFinished:error:)];
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
@@ -173,6 +178,8 @@ NSTimeZone *App_defaultTimeZone;
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [PFPush handlePush:userInfo];
+    NSLog(@"%@", userInfo);
+    [rootViewController reloadData];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
@@ -183,10 +190,6 @@ NSTimeZone *App_defaultTimeZone;
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
-    /*
-     Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
-     If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-     */
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
@@ -196,10 +199,8 @@ NSTimeZone *App_defaultTimeZone;
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-    /*
-     Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-     */
 }
+
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     /*
@@ -212,13 +213,37 @@ NSTimeZone *App_defaultTimeZone;
 
 #pragma mark - ()
 
-- (void)subscribeFinished:(NSNumber *)result error:(NSError *)error {
-    if ([result boolValue]) {
-        NSLog(@"ParseStarterProject successfully subscribed to push notifications on the broadcast channel.");
-    } else {
-        NSLog(@"ParseStarterProject failed to subscribe to push notifications on the broadcast channel.");
+
+
+
+
+
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
+    
+    if (newLocation.horizontalAccuracy < 0) return;
+    
+    NSTimeInterval locationAge = -[newLocation.timestamp timeIntervalSinceNow];
+    if (locationAge > 5.0)
+    {
+        
     }
+    
+    CLLocationCoordinate2D coord = newLocation.coordinate;
+    
+    //NSNumber* latitude = [[NSNumber alloc] initWithDouble:coord.latitude];
+    //NSNumber* longitude = [[NSNumber alloc] initWithDouble:coord.longitude];
+    PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:coord.latitude
+                                                  longitude:coord.longitude];
+    [[PFUser currentUser] setObject:geoPoint forKey:@"location"];
+    //[[PFUser currentUser] setObject:latitude forKey:@"loclat"];
+    //[[PFUser currentUser] setObject:longitude forKey:@"loclon"];
+    
+    [locationManager stopUpdatingLocation];
 }
+
+
+
 
 
 @end

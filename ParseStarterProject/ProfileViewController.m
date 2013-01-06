@@ -11,9 +11,9 @@
 #import "ProfileViewController.h"
 #include "RootViewController.h"
 
-@implementation ProfileViewController
+#import "TestFlightSDK/TestFlight.h"
 
-@synthesize locationManager;
+@implementation ProfileViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -24,36 +24,14 @@
     return self;
 }
 
-- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
-    
-    if (newLocation.horizontalAccuracy < 0) return;
-    
-    NSTimeInterval locationAge = -[newLocation.timestamp timeIntervalSinceNow];
-    if (locationAge > 5.0)
-    {
-        
-    }
-    
-    CLLocationCoordinate2D coord = newLocation.coordinate;
-    
-    NSNumber* latitude = [[NSNumber alloc] initWithDouble:coord.latitude];
-    NSNumber* longitude = [[NSNumber alloc] initWithDouble:coord.longitude];
-    [[PFUser currentUser] setObject:latitude forKey:@"loclat"];
-    [[PFUser currentUser] setObject:longitude forKey:@"loclon"];
-    
-    [locationManager stopUpdatingLocation];
-}
-
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     // Do any additional setup after loading the view from its nib.
     
-    locationManager = [[CLLocationManager alloc] init];
-    locationManager.delegate = self;
-    locationManager.desiredAccuracy = [[NSNumber numberWithDouble:kCLLocationAccuracyHundredMeters] doubleValue];
-    locationManager.distanceFilter = [[NSNumber numberWithDouble:100.0] doubleValue];
-    [locationManager startUpdatingLocation];
+    self.title = NSLocalizedString(@"Profile", @"Profile");
+    
+    [TestFlight passCheckpoint:@"Profile"];
 }
 
 - (void)didReceiveMemoryWarning
@@ -68,11 +46,11 @@
     [[PFUser currentUser] setObject:boolDiscovery forKey:@"profileDiscoverable"];
     [[PFUser currentUser] setObject:labelRoles.text forKey:@"profileRole"];
     [[PFUser currentUser] setObject:areaEdit.text forKey:@"profileArea"];
-    [[PFUser currentUser] saveInBackground];
+    //[[PFUser currentUser] save];
     
     [self.navigationController setNavigationBarHidden:false animated:true];
     //[self.navigationController popViewControllerAnimated:true];
-    [self.navigationController popToRootViewControllerAnimated:true];
+    [self.navigationController popViewControllerAnimated:true];
 }
 
 
@@ -232,6 +210,7 @@
     areaEdit = nil;
     labelRoles = nil;
     discoverySwitch = nil;
+    buttonRoles = nil;
     [super viewDidUnload];
 }
 @end

@@ -1,9 +1,9 @@
 
 @interface LoginViewController : UIViewController {
 
-    NSMutableArray *listPersons;
+    UIActivityIndicatorView* activityIndicator;
 }
 
--(void) setPersonList:(NSMutableArray*)list;
+@property (nonatomic, retain) UIActivityIndicatorView *activityIndicator;
 
 @end

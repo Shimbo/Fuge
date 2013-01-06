@@ -11,6 +11,8 @@
 #import "FilterViewController.h"
 #import "RootViewController.h"
 
+#import "TestFlightSDK/TestFlight.h"
+
 @implementation FilterViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -24,6 +26,8 @@
 
 - (void)viewDidLoad
 {
+    self.title = NSLocalizedString(@"Filter", @"Filter");
+    
     arrayRoles = [[NSMutableArray alloc] init];
     [arrayRoles addObject:@"Any"];
     [arrayRoles addObject:@"CEO"];
@@ -65,6 +69,8 @@
     selection = 0;
     
     [super viewDidLoad];
+    
+    [TestFlight passCheckpoint:@"Filter"];
 }
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
@@ -166,13 +172,11 @@
     [[PFUser currentUser] setObject:labelRole.text forKey:@"filterRole"];
     //[[PFUser currentUser] save];
     
-    
-    UINavigationController* controller = self.navigationController;
     NSArray *viewControllers = self.navigationController.viewControllers;
     UIViewController *rootView = viewControllers[0];
     [(RootViewController*)rootView reloadData];
     
-    [self.navigationController popToRootViewControllerAnimated:TRUE];
+    [self.navigationController popViewControllerAnimated:TRUE];
 }
 
 - (void) dismissActionSheet {

@@ -1,33 +1,27 @@
-extern NSTimeZone *App_defaultTimeZone;
-
 @class RootViewController;
 
-@interface ParseStarterProjectAppDelegate : NSObject <UIApplicationDelegate> {
+#import "CoreLocation/CLLocationManager.h"
+#import <CoreLocation/CoreLocation.h>
+
+@interface ParseStarterProjectAppDelegate : NSObject <CLLocationManagerDelegate, UIApplicationDelegate> {
 
     UIWindow *window;
 	UINavigationController *navigationController;
-	
-	NSCalendar *calendar;
     
-    NSMutableArray *listPersons;
-    NSMutableArray *listCircles;
-    NSMutableArray *listGeo;
+    RootViewController *rootViewController;
+    
+    CLLocationManager*  locationManager;
 }
 
-// What left from old
 @property (nonatomic, strong) IBOutlet RootViewController *viewController;
 
 @property (nonatomic, strong) IBOutlet UIWindow *window;
 
 @property (nonatomic, retain) UINavigationController *navigationController;
 
-- (NSArray *)displayList;
-@property (nonatomic, retain, readonly) NSCalendar *calendar;
+@property (nonatomic, retain) CLLocationManager* locationManager;
 
-
-@property (nonatomic, strong) NSArray *listPersons;
-@property (nonatomic, strong) NSArray *listCircles;
-@property (nonatomic, strong) NSArray *listGeo;
-
+//- (NSArray *)displayList;
+@property (nonatomic, retain, readonly) RootViewController *rootViewController;
 
 @end

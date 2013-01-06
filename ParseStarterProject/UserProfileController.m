@@ -71,11 +71,11 @@ NSInteger sort(id message1, id message2, void *context)
 {
     personThis = person;
     
-    PFQuery *messageQuery1 = [PFQuery queryWithClassName:@"Messages"];
+    PFQuery *messageQuery1 = [PFQuery queryWithClassName:@"Message"];
     [messageQuery1 whereKey:@"userFrom" equalTo:[ [PFUser currentUser] objectForKey:@"fbId"] ];
     [messageQuery1 whereKey:@"userTo" equalTo:personThis.strId ];
     
-    PFQuery *messageQuery2 = [PFQuery queryWithClassName:@"Messages"];
+    PFQuery *messageQuery2 = [PFQuery queryWithClassName:@"Message"];
     [messageQuery2 whereKey:@"userFrom" equalTo:personThis.strId ];
     [messageQuery2 whereKey:@"userTo" equalTo:[ [PFUser currentUser] objectForKey:@"fbId"] ];
     
@@ -110,8 +110,6 @@ NSInteger sort(id message1, id message2, void *context)
         }];
     }];
     
-    
-    
     // Image
     // Download the user's facebook profile picture
     imageData = [[NSMutableData alloc] init]; // the data will be loaded in here
@@ -121,6 +119,16 @@ NSInteger sort(id message1, id message2, void *context)
     
     urlRequest = [NSMutableURLRequest requestWithURL:pictureURL
                                          cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.0f];
+    
+    // Distance and circle
+    NSString* strDistance = [[NSString alloc] initWithFormat:@"%@ away", person.strDistance];
+    [labelDistance setText:strDistance];
+    [labelCircle setText:person.strCircle];
+    
+    if ( [person.strCircle compare:@""] == NSOrderedSame )
+        addButton.hidden = NO;
+    else
+        addButton.hidden = YES;
     
     // Run network request asynchronously
     urlConnection = [[NSURLConnection alloc] initWithRequest:urlRequest delegate:self];
@@ -150,6 +158,10 @@ NSInteger sort(id message1, id message2, void *context)
     messageHistory = nil;
     messageNew = nil;
     profileImage = nil;
+    labelDistance = nil;
+    labelCircle = nil;
+    addButton = nil;
+    ignoreButton = nil;
     [super viewDidUnload];
 }
 
@@ -158,7 +170,7 @@ NSInteger sort(id message1, id message2, void *context)
 
 
 
-//static const CGFloat KEYBOARD_ANIMATION_DURATION = 0.3;
+static const CGFloat KEYBOARD_ANIMATION_DURATION = 0.3;
 static const CGFloat MINIMUM_SCROLL_FRACTION = 0.2;
 static const CGFloat MAXIMUM_SCROLL_FRACTION = 0.8;
 static const CGFloat PORTRAIT_KEYBOARD_HEIGHT = 216;
@@ -208,7 +220,7 @@ double animatedDistance;
     
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationBeginsFromCurrentState:YES];
-//    [UIView setAnimationDuration:KEYBOARD_ANIMATION_DURATION];
+    [UIView setAnimationDuration:KEYBOARD_ANIMATION_DURATION];
     
     [self.view setFrame:viewFrame];
     
@@ -232,7 +244,7 @@ double animatedDistance;
     
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationBeginsFromCurrentState:YES];
-//    [UIView setAnimationDuration:KEYBOARD_ANIMATION_DURATION];
+    [UIView setAnimationDuration:KEYBOARD_ANIMATION_DURATION];
     
     [self.view setFrame:viewFrame];
     
@@ -241,14 +253,18 @@ double animatedDistance;
     if ( messageNew.text == @"" )
         return;
     
-    PFObject* message = [[PFObject alloc] initWithClassName:@"Messages"];
+    PFObject* message = [[PFObject alloc] initWithClassName:@"Message"];
     NSString* stringFrom = (NSString *) [[PFUser currentUser] objectForKey:@"fbId"];
-    NSNumber* isRead = [NSNumber numberWithBool:FALSE];
     [message setObject:stringFrom forKey:@"userFrom"];
     [message setObject:personThis.strId forKey:@"userTo"];
     [message setObject:messageNew.text forKey:@"text"];
-    [message setObject:isRead forKey:@"isRead"];
+    [message setObject:[NSNumber numberWithBool:FALSE] forKey:@"isRead"];
     [message save];
+    
+    NSString* strFrom = [[PFUser currentUser] objectForKey:@"fbName"];
+    NSString* strPush =[[NSString alloc] initWithFormat:@"New message from %@!", strFrom];
+    NSString* strChannel =[[NSString alloc] initWithFormat:@"fb%@", personThis.strId];
+    [PFPush sendPushMessageToChannelInBackground:strChannel withMessage:strPush];
     
     NSMutableString* stringHistory = [[NSMutableString alloc] initWithFormat:@""];
     [stringHistory appendString:@"    You: "];
@@ -264,5 +280,30 @@ double animatedDistance;
     [messageNew setText:@""];
 }
 
+
+- (IBAction)addButtonDown:(id)sender {
+    UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"WIP" message:@"'Add to second sircle' method will be implemented later, thanks." delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
+    [errorAlert show];
+}
+
+- (IBAction)ignoreButtonDown:(id)sender {
+    UIAlertView* confirmationView = [[UIAlertView alloc] initWithTitle:@"Confirmation" message:@"Are you sure you want to block this user? You won't receive any notifications." delegate:self cancelButtonTitle:NSLocalizedString(@"No", @"") otherButtonTitles:NSLocalizedString(@"Yes", @""),nil];
+    
+	[confirmationView show];
+}
+
+- (IBAction)meetButtonDown:(id)sender {
+    UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"WIP" message:@"'Private invites are under construction and to be added really soon! Thanks." delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
+    [errorAlert show];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if ( buttonIndex == 0 )
+        return;
+    
+    UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"WIP" message:@"Ignore lists and all connected functionality will be added later, thanks." delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
+    [errorAlert show];
+}
 
 @end
