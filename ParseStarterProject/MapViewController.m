@@ -85,9 +85,12 @@
     // Date-time filter
     NSNumber* timestampNow = [[NSNumber alloc] initWithDouble:[[NSDate date] timeIntervalSince1970]];
     [meetupAnyQuery whereKey:@"meetupTimestamp" greaterThan:timestampNow];
+    //[meetupAnyQuery whereKey:@"privacy" notEqualTo:@"2"]; // Hide private events
+    // TODO: uncomment it and add another query for the events user is subscribed or invited to, as we need to disable geo-filter for it.
     
-    [meetupAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *meetups, NSError* error){
-        
+    // TODO: refactor this request, moving in a separate method meetup creation
+    [meetupAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *meetups, NSError* error)
+    {
         int n = 0;
         for (NSDictionary *meetupData in meetups)
         {
@@ -104,8 +107,25 @@
             CLLocationCoordinate2D coord = { loc.latitude, loc.longitude };
             meetup.location = coord;
             
-            // Privacy
-            // TODO: Check if user is in 2nd circle or invited to show event!
+            // Private meetups
+            if ( meetup.privacy == 2 )
+                if ( FALSE )    // TODO: is in invitation list
+                    continue;
+            
+            // 2ndO meetups (TODO: should be tested)
+            if ( meetup.privacy == 1 )
+            {
+                Boolean bSkip = false;
+                NSArray* friends = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
+                if ( [friends containsObject:meetup.strOwnerId ] )
+                    bSkip = true;
+                friends = [[PFUser currentUser] objectForKey:@"fbFriends"];
+                if ( [friends containsObject:meetup.strOwnerId ] )
+                    bSkip = true;
+                if ( bSkip )
+                    continue;
+            }
+            
             NSString* strPrivacy = nil;
             NSUInteger color;
             switch ( meetup.privacy )
@@ -182,13 +202,13 @@
     MKPinAnnotationView *pinView = nil;
     if (annotation != mapView.userLocation)
     {
-        static NSString *defaultPinID = @"com.invasivecode.pin";
+        static NSString *defaultPinID = @"secondcircle.pin";
         pinView = (MKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:defaultPinID];
         if ( pinView == nil ) pinView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:defaultPinID];
         
         if ( [annotation isMemberOfClass:[PersonAnnotation class]] )
         {
-            pinView.pinColor = ((PersonAnnotation*) annotation).color; //MKPinAnnotationColorGreen;
+            pinView.pinColor = ((PersonAnnotation*) annotation).color;
             //UIImage *image = ((PersonAnnotation*) annotation).person.image;
             //UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
             //[pinView addSubview:imageView];
@@ -196,7 +216,7 @@
         }
         if ( [annotation isMemberOfClass:[MeetupAnnotation class]] )
         {
-            pinView.pinColor = ((MeetupAnnotation*) annotation).color; //
+            pinView.pinColor = ((MeetupAnnotation*) annotation).color;
         }
         
         UIButton *btnView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];

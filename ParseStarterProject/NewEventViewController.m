@@ -7,6 +7,7 @@
 //
 
 #import "NewEventViewController.h"
+#import "VenueSelectViewController.h"
 #import <Parse/Parse.h>
 
 @interface NewEventViewController ()
@@ -77,17 +78,45 @@
     [meetup setObject:strMeetupId forKey:@"meetupId"];
     
     // TODO: actual location!
-    PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:37//coord.latitude
-                                                  longitude:48];//coord.longitude];
+    PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:36//coord.latitude
+                                                  longitude:-115];//coord.longitude];
     [meetup setObject:geoPoint forKey:@"location"];
     
     [meetup setObject:[NSNumber numberWithBool:FALSE] forKey:@"isRead"];
     [meetup save];
     
+    // Creating comment about meetup creation in db
+    PFObject* comment = [[PFObject alloc] initWithClassName:@"Comment"];
+    NSMutableString* strComment = [[NSMutableString alloc] initWithFormat:@""];
+    [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
+    [strComment appendString:@" created the meetup: "];
+    [strComment appendString:subject.text];
+    [comment setObject:stringFromId forKey:@"userId"];
+    [comment setObject:@"" forKey:@"userName"]; // As it's not a normal comment, it's ok
+    [comment setObject:strMeetupId forKey:@"meetupId"];
+    [comment setObject:strComment forKey:@"comment"];
+    [comment save];
+    
     // TODO: Send to everybody around (using public/2ndO filter, send checkbox and geo-query) push about the meetup
     
     [self.navigationController setNavigationBarHidden:false animated:true];
     [self.navigationController popViewControllerAnimated:TRUE];
+}
+
+- (IBAction)venueButtonDown:(id)sender {
+    VenueSelectViewController *venueViewController = [[VenueSelectViewController alloc] initWithNibName:@"VenueSelectView" bundle:nil];
+    [self.navigationController pushViewController:venueViewController animated:YES];
+
+}
+
+- (IBAction)notifySwitched:(id)sender {
+    if ( notifySwitch.isOn && privacy.selectedSegmentIndex == 2 )
+        [privacy setSelectedSegmentIndex:0];
+}
+
+- (IBAction)privacySwitched:(id)sender {
+    if ( privacy.selectedSegmentIndex == 2 )
+        [notifySwitch setOn:FALSE animated:TRUE];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField

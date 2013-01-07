@@ -52,8 +52,8 @@
     
     // Add comment to the text field
     NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
-    [stringComments appendString:@"    You joined the event!\n"];
     [stringComments appendString:comments.text];
+    [stringComments appendString:@"    You joined the event!\n"];
     [comments setText:stringComments];
     
     // TODO: push notification
@@ -64,14 +64,17 @@
     [super viewDidLoad];
     
     // Join button checks
-    PFQuery *meetupAnyQuery = [PFQuery queryWithClassName:@"Attendee"];
-    [meetupAnyQuery whereKey:@"userId" equalTo:[[PFUser currentUser] objectForKey:@"fbId"]];
-    [meetupAnyQuery whereKey:@"meetupId" equalTo:meetup.strId];
-    [meetupAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *attendees, NSError* error)
+    if ( [meetup.strOwnerId compare:[[PFUser currentUser] objectForKey:@"fbId"] ] != NSOrderedSame )
     {
-        if ( [attendees count] == 0 )
-            [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Join" style:UIBarButtonItemStylePlain target:self action:@selector(joinClicked)]];
-    }];
+        PFQuery *meetupAnyQuery = [PFQuery queryWithClassName:@"Attendee"];
+        [meetupAnyQuery whereKey:@"userId" equalTo:[[PFUser currentUser] objectForKey:@"fbId"]];
+        [meetupAnyQuery whereKey:@"meetupId" equalTo:meetup.strId];
+        [meetupAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *attendees, NSError* error)
+        {
+            if ( [attendees count] == 0 )
+                [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Join" style:UIBarButtonItemStylePlain target:self action:@selector(joinClicked)]];
+        }];
+    }
     
     // Loading comments
     PFQuery *commentsQuery = [PFQuery queryWithClassName:@"Comment"];
@@ -85,6 +88,7 @@
             NSString* strUserName = [comment objectForKey:@"userName"];
             if ( [strUserName compare:@""] != NSOrderedSame )   // System comment like join
             {
+                [stringComments appendString:@"    "];
                 [stringComments appendString:strUserName];
                 [stringComments appendString:@": "];
             }
@@ -222,6 +226,7 @@ double animatedDistance;
     
     // Adding comment to the list
     NSMutableString* stringComments = [[NSMutableString alloc] initWithString:comments.text];
+    [stringComments appendString:@"    "];
     [stringComments appendString:strUserName];
     [stringComments appendString:@": "];
     [stringComments appendString:newComment.text];

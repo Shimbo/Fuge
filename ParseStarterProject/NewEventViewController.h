@@ -18,5 +18,8 @@
 }
 - (IBAction)cancelButtonDown:(id)sender;
 - (IBAction)createButtonDown:(id)sender;
+- (IBAction)venueButtonDown:(id)sender;
+- (IBAction)notifySwitched:(id)sender;
+- (IBAction)privacySwitched:(id)sender;
 
 @end
