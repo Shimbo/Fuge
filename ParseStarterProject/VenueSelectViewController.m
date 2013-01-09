@@ -8,10 +8,6 @@
 
 #import "VenueSelectViewController.h"
 
-@interface VenueSelectViewController ()
-
-@end
-
 @implementation VenueSelectViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -27,6 +23,11 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [self.navigationController setNavigationBarHidden:true animated:true];
 }
 
 - (void)didReceiveMemoryWarning

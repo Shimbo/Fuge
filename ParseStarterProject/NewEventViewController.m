@@ -106,7 +106,7 @@
 - (IBAction)venueButtonDown:(id)sender {
     VenueSelectViewController *venueViewController = [[VenueSelectViewController alloc] initWithNibName:@"VenueSelectView" bundle:nil];
     [self.navigationController pushViewController:venueViewController animated:YES];
-
+    [self.navigationController setNavigationBarHidden:false animated:true];
 }
 
 - (IBAction)notifySwitched:(id)sender {
