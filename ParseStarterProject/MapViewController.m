@@ -217,6 +217,7 @@
         if ( [annotation isMemberOfClass:[MeetupAnnotation class]] )
         {
             pinView.pinColor = ((MeetupAnnotation*) annotation).color;
+            pinView.image = nil;
         }
         
         UIButton *btnView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];

@@ -50,7 +50,7 @@
     
     [self.navigationController setNavigationBarHidden:false animated:true];
     //[self.navigationController popViewControllerAnimated:true];
-    [self.navigationController popViewControllerAnimated:true];
+    [self.navigationController popToRootViewControllerAnimated:true];
 }
 
 
