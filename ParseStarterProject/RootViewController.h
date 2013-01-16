@@ -1,7 +1,6 @@
 
 @interface RootViewController : UITableViewController {
 	NSArray *displayList;
-    Boolean initialized;
     
     UIActivityIndicatorView* activityIndicator;
 }
@@ -12,7 +11,7 @@
 
 @property (nonatomic, retain) UIActivityIndicatorView *activityIndicator;
 
-@property Boolean initialized;
+@property BOOL initialized;
 
 @end
 

@@ -83,7 +83,7 @@
 
 	
 	// Configure and show the window
-	[window addSubview:[navigationController view]];
+	window.rootViewController = navigationController;
     [window makeKeyAndVisible];
 
     

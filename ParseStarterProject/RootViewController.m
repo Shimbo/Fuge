@@ -32,10 +32,8 @@
 - (id)initWithStyle:(UITableViewStyle)style {
 	if (self = [super initWithStyle:style]) {
 		//self.title = NSLocalizedString(@"Connections", @"Connections");
-		self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-		self.tableView.rowHeight = ROW_HEIGHT;
-        activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-        initialized = false;
+        self.initialized = NO;
+
 	}
 	return self;
 }
@@ -234,12 +232,12 @@
                 [friendQuery whereKey:@"fbId" containedIn:friendIds];
                 
                 // List initialization
-                NSMutableArray *circles = [NSMutableArray array];
+                
                 
                 // findObjects will return a list of PFUsers that are friends
                 // with the current user
                 [friendQuery findObjectsInBackgroundWithBlock:^(NSArray *friendUsers, NSError* error) {
-                    
+                    NSMutableArray *circles = [NSMutableArray array];
                     for (NSDictionary *friendUser in friendUsers)
                     {
                         // Collecting second circle data
@@ -342,22 +340,25 @@
                             
                             
                             // Setup
+                            self.initialized = YES;
                             displayList = (NSArray *) circles;
+                            self.tableView.alpha = 0;
                             [[self tableView] reloadData];
+                            [UIView animateWithDuration:0.3 animations:^{
+                                self.tableView.alpha = 1;
+                            }];
+//                            NSArray *visibleCells = self.tableView.visibleCells;
+//                            for (PersonCell *cell in visibleCells) {
+//                                [cell redisplay];
+//                            }
                             
-                            NSArray *visibleCells = self.tableView.visibleCells;
-                            for (PersonCell *cell in visibleCells) {
-                                [cell redisplay];
-                            }
-                            
-                            initialized = true;
+
                             
                             [TestFlight passCheckpoint:@"List loading ended"];
                             
                             
                             [activityIndicator stopAnimating];
-                            [activityIndicator removeFromSuperview];
-                            self.view.userInteractionEnabled = YES;
+                            self.navigationController.view.userInteractionEnabled = YES;
                             
                             [self.navigationController popViewControllerAnimated:TRUE];
                             
@@ -375,12 +376,8 @@
 }
 
 - (void) reloadData {
-    CGPoint ptCenter = CGPointMake(self.navigationController.view.frame.size.width/2, self.navigationController.view.frame.size.height/2);
-    activityIndicator.center = ptCenter;
-    [self.navigationController.view addSubview:activityIndicator];
     [activityIndicator startAnimating];
-    self.view.userInteractionEnabled = NO;
-
+    self.navigationController.view.userInteractionEnabled = NO;
     [self performSelectorOnMainThread:@selector(actualReload) withObject:nil waitUntilDone:NO];
 }
 
@@ -389,20 +386,22 @@
     [super viewDidAppear:animated];
     
     // Loading data with indicator
-    if ( ! initialized )
-    {
-        [TestFlight passCheckpoint:@"List loading started"];
-        
-        [self reloadData];
-        //[self performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-    }
-    else
-        [TestFlight passCheckpoint:@"List restored"];
+
 }
 
 - (void) viewDidLoad {
+    [super viewDidLoad];
     
-    // UI
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    self.tableView.rowHeight = ROW_HEIGHT;
+    activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    activityIndicator.hidesWhenStopped = YES;
+    NSLog(@"%f",self.view.frame.size.height);
+    activityIndicator.center = self.view.center;
+    activityIndicator.autoresizingMask = UIViewAutoresizingNone;
+    [self.view addSubview:activityIndicator];
+
+    
     [self.navigationItem setHidesBackButton:true animated:false];
     
     
@@ -422,8 +421,16 @@
     
 //    [self.navigationItem setLeftBarButtonItem:buttonProfile];
 //    [self.navigationItem setRightBarButtonItem:buttonFilter];
+    self.tableView.tableFooterView = [[UIView alloc]init];
+
+    if (!self.initialized) {
+        [TestFlight passCheckpoint:@"List loading started"];
+        [self reloadData];
+    }else{
+        [TestFlight passCheckpoint:@"List restored"];
+    }
+
     
-    [super viewDidLoad];
 }
 
 
@@ -463,7 +470,7 @@
 	
 	if (personCell == nil) {
 		personCell = [[PersonCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-		personCell.frame = CGRectMake(0.0, 0.0, 320.0, ROW_HEIGHT);
+//		personCell.frame = CGRectMake(0.0, 0.0, 320.0, ROW_HEIGHT);
 	}
 	
 	// Get the time zones for the region for the section
@@ -471,7 +478,7 @@
 	NSArray *persons = circle.persons;
 	
 	// Get the time zone wrapper for the row
-	[personCell setPerson:[persons objectAtIndex:indexPath.row]];
+	[personCell setPerson:persons[indexPath.row]];
 	return personCell;
 }
 

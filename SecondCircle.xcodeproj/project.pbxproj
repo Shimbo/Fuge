@@ -22,6 +22,10 @@
 		09ABC08513A1D52E009C3FCF /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 09ABC08313A1D52D009C3FCF /* MainWindow.xib */; };
 		09BEF34C13D51C3F001BBCDB /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09BEF34B13D51C3F001BBCDB /* Security.framework */; };
 		2FCDD6B014A573F500295AAC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FCDD6AF14A573F500295AAC /* QuartzCore.framework */; };
+		47534D8C16A6F8DC008CC823 /* FSApi.m in Sources */ = {isa = PBXBuildFile; fileRef = 47534D8716A6F8DC008CC823 /* FSApi.m */; };
+		47534D8D16A6F8DC008CC823 /* FSWebLogin.m in Sources */ = {isa = PBXBuildFile; fileRef = 47534D8916A6F8DC008CC823 /* FSWebLogin.m */; };
+		47534D8E16A6F8DC008CC823 /* FSRequester.m in Sources */ = {isa = PBXBuildFile; fileRef = 47534D8B16A6F8DC008CC823 /* FSRequester.m */; };
+		47534DC616A70B17008CC823 /* FSTargetCallback.m in Sources */ = {isa = PBXBuildFile; fileRef = 47534D9016A6F93D008CC823 /* FSTargetCallback.m */; };
 		4998650515BF305000803E05 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4998650415BF305000803E05 /* StoreKit.framework */; };
 		4C05731A166ACC7500EF6FAD /* LoginView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C057319166ACC7500EF6FAD /* LoginView.xib */; };
 		4C057320166ACED200EF6FAD /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C05731E166ACED200EF6FAD /* LoginViewController.m */; };
@@ -64,7 +68,7 @@
 		6372FF561613CC42002132AF /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6372FF551613CC42002132AF /* Social.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		6372FF581613CC47002132AF /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6372FF571613CC47002132AF /* AdSupport.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		743D7B6D157DA60100084B67 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 743D7B6C157DA60100084B67 /* CoreGraphics.framework */; };
-		97E18B1F1624CB5700B17A67 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97E18B1E1624CB5700B17A67 /* CoreLocation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		97E18B1F1624CB5700B17A67 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97E18B1E1624CB5700B17A67 /* CoreLocation.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		C4C51B571613CE0800959FDC /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = C4C51B541613CE0800959FDC /* Default.png */; };
 		C4C51B581613CE0800959FDC /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C4C51B551613CE0800959FDC /* Default-568h@2x.png */; };
 		C4C51B591613CE0800959FDC /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C4C51B561613CE0800959FDC /* Default@2x.png */; };
@@ -90,6 +94,14 @@
 		09ABC08413A1D52E009C3FCF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
 		09BEF34B13D51C3F001BBCDB /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		2FCDD6AF14A573F500295AAC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		47534D8616A6F8DC008CC823 /* FSApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSApi.h; sourceTree = "<group>"; };
+		47534D8716A6F8DC008CC823 /* FSApi.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSApi.m; sourceTree = "<group>"; };
+		47534D8816A6F8DC008CC823 /* FSWebLogin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSWebLogin.h; sourceTree = "<group>"; };
+		47534D8916A6F8DC008CC823 /* FSWebLogin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSWebLogin.m; sourceTree = "<group>"; };
+		47534D8A16A6F8DC008CC823 /* FSRequester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSRequester.h; sourceTree = "<group>"; };
+		47534D8B16A6F8DC008CC823 /* FSRequester.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSRequester.m; sourceTree = "<group>"; };
+		47534D8F16A6F93D008CC823 /* FSTargetCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FSTargetCallback.h; sourceTree = "<group>"; };
+		47534D9016A6F93D008CC823 /* FSTargetCallback.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FSTargetCallback.m; sourceTree = "<group>"; };
 		4998650415BF305000803E05 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		4C057319166ACC7500EF6FAD /* LoginView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginView.xib; sourceTree = "<group>"; };
 		4C05731E166ACED200EF6FAD /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
@@ -193,7 +205,7 @@
 		09ABC06213A1D52D009C3FCF = {
 			isa = PBXGroup;
 			children = (
-				4C188D241698C72B004CF42D /* MapKit.framework */,
+				47534DC916A7143F008CC823 /* libs */,
 				09ABC07713A1D52D009C3FCF /* ParseStarterProject */,
 				09ABC07013A1D52D009C3FCF /* Frameworks */,
 				09ABC06E13A1D52D009C3FCF /* Products */,
@@ -211,6 +223,7 @@
 		09ABC07013A1D52D009C3FCF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4C188D241698C72B004CF42D /* MapKit.framework */,
 				6372FF571613CC47002132AF /* AdSupport.framework */,
 				6372FF551613CC42002132AF /* Social.framework */,
 				6372FF521613CC3C002132AF /* Accounts.framework */,
@@ -236,7 +249,6 @@
 			isa = PBXGroup;
 			children = (
 				4C188D0D1698C1BB004CF42D /* ViewDeck */,
-				4C27C9691691862A00B2A905 /* TestFlightSDK */,
 				09ABC08013A1D52D009C3FCF /* ParseStarterProjectAppDelegate.h */,
 				09ABC08113A1D52D009C3FCF /* ParseStarterProjectAppDelegate.m */,
 				4C7E3FE4169A1F260065484F /* Data */,
@@ -271,6 +283,31 @@
 				4C057323166AEE0A00EF6FAD /* Background.jpg */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		47534D8516A6F8DC008CC823 /* Foursquare2 */ = {
+			isa = PBXGroup;
+			children = (
+				47534D8616A6F8DC008CC823 /* FSApi.h */,
+				47534D8716A6F8DC008CC823 /* FSApi.m */,
+				47534D8816A6F8DC008CC823 /* FSWebLogin.h */,
+				47534D8916A6F8DC008CC823 /* FSWebLogin.m */,
+				47534D8A16A6F8DC008CC823 /* FSRequester.h */,
+				47534D8B16A6F8DC008CC823 /* FSRequester.m */,
+				47534D8F16A6F93D008CC823 /* FSTargetCallback.h */,
+				47534D9016A6F93D008CC823 /* FSTargetCallback.m */,
+			);
+			name = Foursquare2;
+			path = libs/Foursquare2;
+			sourceTree = "<group>";
+		};
+		47534DC916A7143F008CC823 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				4C27C9691691862A00B2A905 /* TestFlightSDK */,
+				47534D8516A6F8DC008CC823 /* Foursquare2 */,
+			);
+			name = libs;
 			sourceTree = "<group>";
 		};
 		4C08DDCD163C88480093C851 /* UI */ = {
@@ -327,7 +364,8 @@
 				4C27C96C1691862A00B2A905 /* release_notes.md */,
 				4C27C96D1691862A00B2A905 /* TestFlight.h */,
 			);
-			path = TestFlightSDK;
+			name = TestFlightSDK;
+			path = ParseStarterProject/TestFlightSDK;
 			sourceTree = "<group>";
 		};
 		4C7E3FE4169A1F260065484F /* Data */ = {
@@ -449,6 +487,10 @@
 				4C7E3FDE169A09D20065484F /* Meetup.m in Sources */,
 				4C7E3FE2169A1BB40065484F /* MeetupViewController.m in Sources */,
 				4C7E3FEC169A456B0065484F /* VenueSelectViewController.m in Sources */,
+				47534D8C16A6F8DC008CC823 /* FSApi.m in Sources */,
+				47534D8D16A6F8DC008CC823 /* FSWebLogin.m in Sources */,
+				47534D8E16A6F8DC008CC823 /* FSRequester.m in Sources */,
+				47534DC616A70B17008CC823 /* FSTargetCallback.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -478,6 +520,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -496,6 +539,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -513,19 +557,21 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/libs\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ParseStarterProject/SecondCircle-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libs\"";
 				INFOPLIST_FILE = "ParseStarterProject/SecondCircle-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/ParseStarterProject/KeenClient\"",
@@ -533,8 +579,9 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = SecondCircle;
-				PROVISIONING_PROFILE = "C5307BBB-B766-41A8-9DC6-36F5F0FD5CAC";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C5307BBB-B766-41A8-9DC6-36F5F0FD5CAC";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -544,18 +591,20 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/libs\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ParseStarterProject/SecondCircle-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libs\"";
 				INFOPLIST_FILE = "ParseStarterProject/SecondCircle-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/ParseStarterProject/KeenClient\"",
@@ -563,9 +612,10 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = SecondCircle;
-				PROVISIONING_PROFILE = "C5307BBB-B766-41A8-9DC6-36F5F0FD5CAC";
+				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C5307BBB-B766-41A8-9DC6-36F5F0FD5CAC";
 				VALIDATE_PRODUCT = YES;
+				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
