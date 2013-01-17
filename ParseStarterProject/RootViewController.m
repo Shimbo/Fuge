@@ -384,7 +384,7 @@
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
+    activityIndicator.center = self.view.center;
     // Loading data with indicator
 
 }
@@ -397,8 +397,8 @@
     activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     activityIndicator.hidesWhenStopped = YES;
     NSLog(@"%f",self.view.frame.size.height);
-    activityIndicator.center = self.view.center;
-    activityIndicator.autoresizingMask = UIViewAutoresizingNone;
+    
+    activityIndicator.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleTopMargin;
     [self.view addSubview:activityIndicator];
 
     

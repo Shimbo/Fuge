@@ -9,6 +9,8 @@
 #import "NewEventViewController.h"
 #import "VenueSelectViewController.h"
 #import <Parse/Parse.h>
+#import "FSVenue.h"
+
 
 @interface NewEventViewController ()
 
@@ -39,6 +41,12 @@
     // Do any additional setup after loading the view from its nib.
 }
 
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    if (self.selectedVenue) {
+        [location setTitle:self.selectedVenue.name forState:UIControlStateNormal];
+    }
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -103,10 +111,15 @@
     [self.navigationController popViewControllerAnimated:TRUE];
 }
 
+
 - (IBAction)venueButtonDown:(id)sender {
-    VenueSelectViewController *venueViewController = [[VenueSelectViewController alloc] initWithNibName:@"VenueSelectView" bundle:nil];
-    [self.navigationController pushViewController:venueViewController animated:YES];
-    [self.navigationController setNavigationBarHidden:false animated:true];
+    if (!venueNavViewController) {
+        VenueSelectViewController *venueViewController = [[VenueSelectViewController alloc] initWithNibName:@"VenueSelectView" bundle:nil];
+        venueViewController.delegate = self;
+        venueNavViewController = [[UINavigationController alloc]initWithRootViewController:venueViewController];
+    }
+    [self presentViewController:venueNavViewController
+                       animated:YES completion:nil];
 }
 
 - (IBAction)notifySwitched:(id)sender {

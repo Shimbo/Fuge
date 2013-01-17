@@ -50,8 +50,6 @@ static NSMutableDictionary *attributes;
 {
     if(!attributes)
         attributes = [[NSMutableDictionary alloc] init];
-    //	[self setFormat:HRDataFormatJSON];
-    //	[self setDelegate:self];
     [self setBaseURL:kBaseUrl];
 	NSUserDefaults *usDef = [NSUserDefaults standardUserDefaults];
 	if ([usDef objectForKey:@"access_token2"] != nil) {
@@ -916,7 +914,7 @@ callback:(Foursquare2Callback)callback;
     [paramStr appendString:methodName];
 	[paramStr appendFormat:@"?client_id=%@",OAUTH_KEY];
     [paramStr appendFormat:@"&client_secret=%@",OAUTH_SECRET];
-    [paramStr appendFormat:@"&v=20120214"];
+    [paramStr appendFormat:@"&v=%@",VERSION];
     NSLocale *locale = [NSLocale currentLocale];
     NSString *countryCode = [locale objectForKey: NSLocaleLanguageCode];
     [paramStr appendFormat:@"&locale=%@",countryCode];

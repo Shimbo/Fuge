@@ -26,6 +26,11 @@
 		47534D8D16A6F8DC008CC823 /* FSWebLogin.m in Sources */ = {isa = PBXBuildFile; fileRef = 47534D8916A6F8DC008CC823 /* FSWebLogin.m */; };
 		47534D8E16A6F8DC008CC823 /* FSRequester.m in Sources */ = {isa = PBXBuildFile; fileRef = 47534D8B16A6F8DC008CC823 /* FSRequester.m */; };
 		47534DC616A70B17008CC823 /* FSTargetCallback.m in Sources */ = {isa = PBXBuildFile; fileRef = 47534D9016A6F93D008CC823 /* FSTargetCallback.m */; };
+		476D1E2316A8273600077458 /* FSVenue.m in Sources */ = {isa = PBXBuildFile; fileRef = 476D1E2216A8273600077458 /* FSVenue.m */; };
+		47A1AC6716A7DBD2004B4CFA /* AsyncImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 47A1AC6416A7DBD2004B4CFA /* AsyncImageView.m */; };
+		47A1AC6816A7DBD2004B4CFA /* ImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 47A1AC6616A7DBD2004B4CFA /* ImageLoader.m */; };
+		47A1AC6C16A7DDB9004B4CFA /* VenueCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 47A1AC6B16A7DDB9004B4CFA /* VenueCell.m */; };
+		47A1AC6E16A7DDD3004B4CFA /* VenueCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47A1AC6D16A7DDD3004B4CFA /* VenueCell.xib */; };
 		4998650515BF305000803E05 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4998650415BF305000803E05 /* StoreKit.framework */; };
 		4C05731A166ACC7500EF6FAD /* LoginView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C057319166ACC7500EF6FAD /* LoginView.xib */; };
 		4C057320166ACED200EF6FAD /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C05731E166ACED200EF6FAD /* LoginViewController.m */; };
@@ -102,6 +107,15 @@
 		47534D8B16A6F8DC008CC823 /* FSRequester.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSRequester.m; sourceTree = "<group>"; };
 		47534D8F16A6F93D008CC823 /* FSTargetCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FSTargetCallback.h; sourceTree = "<group>"; };
 		47534D9016A6F93D008CC823 /* FSTargetCallback.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FSTargetCallback.m; sourceTree = "<group>"; };
+		476D1E2116A8273500077458 /* FSVenue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSVenue.h; sourceTree = "<group>"; };
+		476D1E2216A8273600077458 /* FSVenue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSVenue.m; sourceTree = "<group>"; };
+		47A1AC6316A7DBD2004B4CFA /* AsyncImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncImageView.h; sourceTree = "<group>"; };
+		47A1AC6416A7DBD2004B4CFA /* AsyncImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncImageView.m; sourceTree = "<group>"; };
+		47A1AC6516A7DBD2004B4CFA /* ImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageLoader.h; sourceTree = "<group>"; };
+		47A1AC6616A7DBD2004B4CFA /* ImageLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageLoader.m; sourceTree = "<group>"; };
+		47A1AC6A16A7DDB9004B4CFA /* VenueCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VenueCell.h; sourceTree = "<group>"; };
+		47A1AC6B16A7DDB9004B4CFA /* VenueCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VenueCell.m; sourceTree = "<group>"; };
+		47A1AC6D16A7DDD3004B4CFA /* VenueCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VenueCell.xib; sourceTree = "<group>"; };
 		4998650415BF305000803E05 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		4C057319166ACC7500EF6FAD /* LoginView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginView.xib; sourceTree = "<group>"; };
 		4C05731E166ACED200EF6FAD /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
@@ -304,10 +318,23 @@
 		47534DC916A7143F008CC823 /* libs */ = {
 			isa = PBXGroup;
 			children = (
+				47A1AC6216A7DBD2004B4CFA /* AsyncImages */,
 				4C27C9691691862A00B2A905 /* TestFlightSDK */,
 				47534D8516A6F8DC008CC823 /* Foursquare2 */,
 			);
 			name = libs;
+			sourceTree = "<group>";
+		};
+		47A1AC6216A7DBD2004B4CFA /* AsyncImages */ = {
+			isa = PBXGroup;
+			children = (
+				47A1AC6316A7DBD2004B4CFA /* AsyncImageView.h */,
+				47A1AC6416A7DBD2004B4CFA /* AsyncImageView.m */,
+				47A1AC6516A7DBD2004B4CFA /* ImageLoader.h */,
+				47A1AC6616A7DBD2004B4CFA /* ImageLoader.m */,
+			);
+			name = AsyncImages;
+			path = libs/AsyncImages;
 			sourceTree = "<group>";
 		};
 		4C08DDCD163C88480093C851 /* UI */ = {
@@ -339,6 +366,11 @@
 				4C7E3FE0169A1BB30065484F /* MeetupViewController.m */,
 				4C7E3FE9169A456B0065484F /* VenueSelectViewController.h */,
 				4C7E3FEA169A456B0065484F /* VenueSelectViewController.m */,
+				476D1E2116A8273500077458 /* FSVenue.h */,
+				476D1E2216A8273600077458 /* FSVenue.m */,
+				47A1AC6A16A7DDB9004B4CFA /* VenueCell.h */,
+				47A1AC6B16A7DDB9004B4CFA /* VenueCell.m */,
+				47A1AC6D16A7DDD3004B4CFA /* VenueCell.xib */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -454,6 +486,7 @@
 				4C7E3FD71699017C0065484F /* NewEventView.xib in Resources */,
 				4C7E3FE3169A1BB40065484F /* MeetupView.xib in Resources */,
 				4C7E3FED169A456B0065484F /* VenueSelectView.xib in Resources */,
+				47A1AC6E16A7DDD3004B4CFA /* VenueCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -491,6 +524,10 @@
 				47534D8D16A6F8DC008CC823 /* FSWebLogin.m in Sources */,
 				47534D8E16A6F8DC008CC823 /* FSRequester.m in Sources */,
 				47534DC616A70B17008CC823 /* FSTargetCallback.m in Sources */,
+				47A1AC6716A7DBD2004B4CFA /* AsyncImageView.m in Sources */,
+				47A1AC6816A7DBD2004B4CFA /* ImageLoader.m in Sources */,
+				47A1AC6C16A7DDB9004B4CFA /* VenueCell.m in Sources */,
+				476D1E2316A8273600077458 /* FSVenue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -574,7 +611,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/ParseStarterProject/KeenClient\"",
 					"\"$(SRCROOT)/ParseStarterProject/TestFlightSDK\"",
 				);
 				OTHER_LDFLAGS = "";
@@ -607,7 +643,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/ParseStarterProject/KeenClient\"",
 					"\"$(SRCROOT)/ParseStarterProject/TestFlightSDK\"",
 				);
 				OTHER_LDFLAGS = "";

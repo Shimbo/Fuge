@@ -21,6 +21,8 @@
 
 @property (nonatomic, retain) CLLocationManager* locationManager;
 
+@property (nonatomic, retain) NSCache *imageCache;
+
 //- (NSArray *)displayList;
 @property (nonatomic, retain, readonly) RootViewController *rootViewController;
 

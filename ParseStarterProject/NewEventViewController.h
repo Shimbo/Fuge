@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
+@class FSVenue;
 @interface NewEventViewController : UIViewController <UITextFieldDelegate>
 {
     IBOutlet UITextField *subject;
@@ -15,7 +16,11 @@
     IBOutlet UIDatePicker *dateTime;
     IBOutlet UIButton *location;
     IBOutlet UISwitch *notifySwitch;
+    UINavigationController *venueNavViewController;
 }
+
+@property (nonatomic,strong)FSVenue* selectedVenue;
+
 - (IBAction)cancelButtonDown:(id)sender;
 - (IBAction)createButtonDown:(id)sender;
 - (IBAction)venueButtonDown:(id)sender;

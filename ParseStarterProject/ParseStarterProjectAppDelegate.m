@@ -26,6 +26,9 @@
    
     NSLog(@"%@", launchOptions);
 
+    self.imageCache = [[NSCache alloc]init];
+    [self.imageCache setCountLimit:30];
+        
 #ifndef RELEASE
     [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
 #endif
@@ -151,7 +154,14 @@
 //    [super dealloc];
 }
 
-
+-(void)applicationDidReceiveMemoryWarning:(UIApplication *)application{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.imageCache removeAllObjects];
+            NSLog(@"cleaned");
+        });
+    });
+}
 
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
