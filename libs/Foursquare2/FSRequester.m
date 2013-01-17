@@ -136,7 +136,7 @@
 	id result = nil;
 	
     result = [NSJSONSerialization JSONObjectWithData:receivedData
-                                             options:NSJSONReadingAllowFragments
+                                             options:0
                                                error:nil];
 	if (target.resultCallback) {
         [self performSelector:target.resultCallback withObject:result withObject:target];
