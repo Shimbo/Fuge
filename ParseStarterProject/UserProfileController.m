@@ -293,7 +293,7 @@ double animatedDistance;
 }
 
 - (IBAction)meetButtonDown:(id)sender {
-    UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"WIP" message:@"'Private invites are under construction and to be added really soon! Thanks." delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
+    UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"WIP" message:@"Private invites are under construction and to be added really soon! Thanks." delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
     [errorAlert show];
 }
 

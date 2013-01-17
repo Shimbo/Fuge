@@ -283,6 +283,7 @@
 				09ABC07A13A1D52D009C3FCF /* InfoPlist.strings */,
 				09ABC07D13A1D52D009C3FCF /* SecondCircle-Prefix.pch */,
 				09ABC07E13A1D52D009C3FCF /* main.m */,
+				47A1AC6D16A7DDD3004B4CFA /* VenueCell.xib */,
 				4C7E3FEB169A456B0065484F /* VenueSelectView.xib */,
 				4C7E3FE1169A1BB30065484F /* MeetupView.xib */,
 				4C7E3FD51699017C0065484F /* NewEventView.xib */,
@@ -370,7 +371,6 @@
 				476D1E2216A8273600077458 /* FSVenue.m */,
 				47A1AC6A16A7DDB9004B4CFA /* VenueCell.h */,
 				47A1AC6B16A7DDB9004B4CFA /* VenueCell.m */,
-				47A1AC6D16A7DDD3004B4CFA /* VenueCell.xib */,
 			);
 			name = UI;
 			sourceTree = "<group>";

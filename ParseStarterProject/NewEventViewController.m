@@ -30,15 +30,20 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+
+    NSDateComponents* deltaCompsMin = [[NSDateComponents alloc] init];
+    [deltaCompsMin setMinute:15];
+    NSDate* dateMin = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsMin toDate:[NSDate date] options:0];
+    NSDateComponents* deltaCompsDefault = [[NSDateComponents alloc] init];
+    [deltaCompsDefault setMinute:30];
+    NSDate* dateDefault = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsDefault toDate:[NSDate date] options:0];
+    NSDateComponents* deltaCompsMax = [[NSDateComponents alloc] init];
+    [deltaCompsMax setDay:7];
+    NSDate* dateMax = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsMax toDate:[NSDate date] options:0];
     
-    NSDate* dateNow = [NSDate date];
-    NSDateComponents* deltaComps = [[NSDateComponents alloc] init];
-    [deltaComps setDay:7];
-    NSDate* dateThen = [[NSCalendar currentCalendar] dateByAddingComponents:deltaComps toDate:[NSDate date] options:0];
-    
-    [dateTime setMinimumDate:dateNow];
-    [dateTime setMaximumDate:dateThen];
-    // Do any additional setup after loading the view from its nib.
+    [dateTime setDate:dateDefault];
+    [dateTime setMinimumDate:dateMin];
+    [dateTime setMaximumDate:dateMax];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -68,8 +73,20 @@
 }
 
 - (IBAction)createButtonDown:(id)sender {
-    // TODO: Check if place was set up
-    // TODO: Check if subject is not empty (in case of public or 2ndO types at least)
+    
+    if ( subject.text.length == 0 )
+    {
+        UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Not yet!" message:@"Please, enter the subject of the meetup in the text above!" delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
+        [errorAlert show];
+        return;
+    }
+    
+    if ( ! self.selectedVenue )
+    {
+        UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Not yet!" message:@"Please, select a venue for the meetup using the big and noticeable button!" delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
+        [errorAlert show];
+        return;
+    }
     
     // Meetup creation
     PFObject* meetup = [[PFObject alloc] initWithClassName:@"Meetup"];
@@ -85,9 +102,9 @@
     NSString* strMeetupId = [[NSString alloc] initWithFormat:@"%d_%@", [timestamp integerValue], stringFromId];
     [meetup setObject:strMeetupId forKey:@"meetupId"];
     
-    // TODO: actual location!
-    PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:36//coord.latitude
-                                                  longitude:-115];//coord.longitude];
+    // Seeting actual location
+    PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:[self.selectedVenue.lat doubleValue]
+                                                  longitude:[self.selectedVenue.lon doubleValue]];
     [meetup setObject:geoPoint forKey:@"location"];
     
     [meetup setObject:[NSNumber numberWithBool:FALSE] forKey:@"isRead"];
