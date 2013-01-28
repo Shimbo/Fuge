@@ -16,6 +16,7 @@
 #import "Person.h"
 #import "Circle.h"
 #import "GlobalVariables.h"
+#import "GlobalData.h"
 
 #import "ParseStarterProjectAppDelegate.h"
 
@@ -25,7 +26,7 @@
 
 @implementation RootViewController
 
-@synthesize displayList;
+//@synthesize displayList;
 @synthesize initialized;
 @synthesize activityIndicator;
 
@@ -64,16 +65,16 @@
     [self.navigationController pushViewController:newEventViewController animated:YES];
 }
 
-- (void)addPerson:(NSDictionary*)user userCircle:(NSString*)circleStr circleList:(NSMutableArray*)circles {
+/*- (void)addPerson:(PFUser*)user userCircle:(NSUInteger)circleUser circleList:(NSMutableArray*)circles {
     
     // Filters  
     if ( [[PFUser currentUser] objectForKey:@"filter1stCircle"] )
         if ( [[[PFUser currentUser] objectForKey:@"filter1stCircle"] boolValue] == false )
-            if ( [circleStr compare:@"First circle"] == NSOrderedSame )
+            if ( circleUser == CIRCLE_FB )
                 return;
     if ( [[PFUser currentUser] objectForKey:@"filterEverybody"] )
         if ( [[[PFUser currentUser] objectForKey:@"filterEverybody"] boolValue] == false )
-            if ( [circleStr compare:@"Random connections"] == NSOrderedSame )
+            if ( circleUser == CIRCLE_RANDOM )
                 return;
     NSString* strProfileGender = [user objectForKey:@"fbGender"];
     NSNumber* numberFilterGender = [[PFUser currentUser] objectForKey:@"filterGender"];
@@ -102,8 +103,8 @@
     // Already added users
     Boolean bFound = false;
     for (Circle *circle in circles) {
-        for ( int n = 0; n < [circle.persons count]; n++ ) {
-            Person* person = circle.persons[n];
+        for ( Person* in [circle getPersons] ) {
+            Person* person = [circle getPersons][n];
             if ( [strId compare:person.strId] == NSOrderedSame )
             {
                 bFound = true;
@@ -158,11 +159,7 @@
     NSString *strAge = [NSString stringWithFormat:@"%d y/o", age];
     
     // Circle
-    NSString* strCircle = @"";
-    if ( [circleStr compare:@"First circle"] == NSOrderedSame )
-        strCircle = @"FB friend";
-    if ( [circleStr compare:@"Second circle"] == NSOrderedSame )
-        strCircle = @"2ndO friend";
+    NSString* strCircle = [Circle getCircleName:circleUser];
     
     // Adding new person
     Person *person = [[Person alloc] init:@[strName, strId, strAge,
@@ -170,23 +167,41 @@
                       strDistance, [user objectForKey:@"profileRole"],
                       [user objectForKey:@"profileArea"], strCircle]];
     [person setLocation:locationFriend.coordinate];
-    
-    Circle *circle = [Circle circleNamed:circleStr];
-    if ( ! circle )
+    */
+    //Circle *circle = [globalData getCircle:circleUser];
+/*    if ( ! circle )
     {
-        circle = [Circle newCircleWithName:circleStr];
+        circle = [globalData newCircle:circleUser];
         [circles addObject:circle];
-    }
-    [circle addPerson:person];
+    }*/
+//    [circle addPerson:person];
+//}
+
+- (void) reloadFinished
+{
+    self.initialized = YES;
+    self.tableView.alpha = 0;
+    [[self tableView] reloadData];
+    [UIView animateWithDuration:0.3 animations:^{
+        self.tableView.alpha = 1;
+    }];
+    
+    [TestFlight passCheckpoint:@"List loading ended"];
+    
+    [activityIndicator stopAnimating];
+    self.navigationController.view.userInteractionEnabled = YES;
+    [self.navigationController popViewControllerAnimated:TRUE];
 }
 
-- (void) actualReload {
+- (void) actualReload
+{
+    [globalData reload:self];
     
-    Boolean bShouldSendPushToFriends = [globalVariables shouldSendPushToFriends];
+    /*Boolean bShouldSendPushToFriends = [globalVariables shouldSendPushToFriends];
     NSMutableDictionary* dicPushesSent = [[NSMutableDictionary alloc] init];
     
     // Clean for sure old data
-    [Circle clean];
+    [globalData clean];
     
     // Current user data
     PF_FBRequest *request = [PF_FBRequest requestForMe];
@@ -222,30 +237,24 @@
                     [friendIds addObject:[friendObject objectForKey:@"id"]];
                 }
                 
-                // Saving user friends
+                // Saving user FB friends
                 [[PFUser currentUser] addUniqueObjectsFromArray:friendIds
                                                          forKey:@"fbFriends"];
                 
-                // Construct a PFUser query that will find friends whose facebook ids
-                // are contained in the current user's friend list.
+                // FB friends
                 PFQuery *friendQuery = [PFUser query];
                 [friendQuery whereKey:@"fbId" containedIn:friendIds];
-                
-                // List initialization
-                
-                
-                // findObjects will return a list of PFUsers that are friends
-                // with the current user
+                [friendQuery whereKey:@"profileDiscoverable" notEqualTo:FALSE];
                 [friendQuery findObjectsInBackgroundWithBlock:^(NSArray *friendUsers, NSError* error) {
                     NSMutableArray *circles = [NSMutableArray array];
-                    for (NSDictionary *friendUser in friendUsers)
+                    for (PFUser *friendUser in friendUsers)
                     {
                         // Collecting second circle data
                         NSMutableArray *friendFriendIds = [friendUser objectForKey:@"fbFriends"];
                         [[PFUser currentUser] addUniqueObjectsFromArray:friendFriendIds forKey:@"fbFriends2O"];
                         
                         // Adding first circle friends
-                        [self addPerson:friendUser userCircle:@"First circle" circleList:circles];
+                        [self addPerson:friendUser userCircle:CIRCLE_FB circleList:circles];
                         
                         // Notification for that user if the friend is new
                         if ( bShouldSendPushToFriends )
@@ -266,11 +275,12 @@
                     NSMutableArray *friend2OIds = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
                     PFQuery *friend2OQuery = [PFUser query];
                     [friend2OQuery whereKey:@"fbId" containedIn:friend2OIds];
+                    [friend2OQuery whereKey:@"profileDiscoverable" notEqualTo:FALSE];
                     [friend2OQuery findObjectsInBackgroundWithBlock:^(NSArray *friend2OUsers, NSError* error){
                         
-                        for (NSDictionary *friend2OUser in friend2OUsers)
+                        for (PFUser *friend2OUser in friend2OUsers)
                         {
-                            [self addPerson:friend2OUser userCircle:@"Second circle" circleList:circles];
+                            [self addPerson:friend2OUser userCircle:CIRCLE_2O circleList:circles];
                             
                             // Notification for that user if the friend is new
                             if ( bShouldSendPushToFriends )
@@ -291,10 +301,11 @@
                         // Everybody else
                         PFQuery *friendAnyQuery = [PFUser query];
                         [friendAnyQuery whereKey:@"location" nearGeoPoint:[[PFUser currentUser] objectForKey:@"location"] withinKilometers:RANDOM_PERSON_KILOMETERS];
+                        [friendAnyQuery whereKey:@"profileDiscoverable" notEqualTo:FALSE];
                         [friendAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *friendAnyUsers, NSError* error){
                             
-                            for (NSDictionary *friendAnyUser in friendAnyUsers)
-                                [self addPerson:friendAnyUser userCircle:@"Random connections" circleList:circles];
+                            for (PFUser *friendAnyUser in friendAnyUsers)
+                                [self addPerson:friendAnyUser userCircle:CIRCLE_RANDOM circleList:circles];
                             
                             // Invite friends
                             NSInteger count = 0;
@@ -310,15 +321,16 @@
                                 if ( bFound )
                                     continue;
                                 
-                                Circle *circle = [Circle circleNamed:@"Invite friends"];
-                                if ( ! circle )
-                                {
-                                    circle = [Circle newCircleWithName:@"Invite friends"];
-                                    [circles addObject:circle];
-                                }
-                                
-                                NSString* strTemp = [[NSString alloc] initWithFormat:@"Expand your network!"];
-                                [circle addPersonWithComponents:@[strTemp, strId, @"", @"", @"", @"", @"", @""]];
+                                // TODO: refactor, just add invite to list separately
+//                                Circle *circle = [Circle circleNamed:@"Invite friends"];
+//                                if ( ! circle )
+//                                {
+//                                    circle = [Circle newCircleWithName:@"Invite friends"];
+//                                    [circles addObject:circle];
+//                                }
+//
+//                                NSString* strTemp = [[NSString alloc] initWithFormat:@"Expand your network!"];
+//                                [circle addPersonWithComponents:@[strTemp, strId, @"", @"", @"", @"", @"", @""]];
                                 
                                 count++;
                                 if ( count >= 1 )
@@ -341,7 +353,7 @@
                             
                             // Setup
                             self.initialized = YES;
-                            displayList = (NSArray *) circles;
+                            //displayList = (NSArray *) circles;
                             self.tableView.alpha = 0;
                             [[self tableView] reloadData];
                             [UIView animateWithDuration:0.3 animations:^{
@@ -372,7 +384,7 @@
                 NSLog(@"Uh oh. An error occurred: %@", error);
             }
         }];
-    }];
+    }];*/
 }
 
 - (void) reloadData {
@@ -443,22 +455,23 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)aTableView {
 	// Number of sections is the number of regions
-	return [displayList count];
+    NSInteger nCount = [[globalData getCircles] count];
+	return nCount;
 }
 
 
 - (NSInteger)tableView:(UITableView *)aTableView numberOfRowsInSection:(NSInteger)section {
 	// Number of rows is the number of time zones in the region for the specified section
-	Circle *circle = [displayList objectAtIndex:section];
-	NSArray *persons = circle.persons;
+	Circle *circle = [globalData getCircle:section+1];
+	NSArray *persons = [circle getPersons];
 	return [persons count];
 }
 
 
 - (NSString *)tableView:(UITableView *)aTableView titleForHeaderInSection:(NSInteger)section {
 	// Section title is the region name
-	Circle *circle = [displayList objectAtIndex:section];
-	return circle.name;
+    Circle *circle = [globalData getCircle:section+1];
+	return [Circle getCircleName:circle.idCircle];
 }
 
 
@@ -474,8 +487,8 @@
 	}
 	
 	// Get the time zones for the region for the section
-	Circle *circle = [displayList objectAtIndex:indexPath.section];
-	NSArray *persons = circle.persons;
+	Circle* circle = [globalData getCircle:indexPath.section+1];
+	NSArray *persons = [circle getPersons];
 	
 	// Get the time zone wrapper for the row
 	[personCell setPerson:persons[indexPath.row]];
@@ -491,8 +504,8 @@
 	 */
     NSInteger nRow = indexPath.row;
     NSInteger nSection = indexPath.section;
-    Circle* circle = [displayList objectAtIndex:nSection];
-    Person* person = circle.persons[nRow];
+    Circle *circle = [globalData getCircle:nSection+1];
+    Person* person = [circle getPersons][nRow];
     
     // Showing profile (TODO: check if user was created, then skip this step)
     //[self.navigationController popViewControllerAnimated:false];

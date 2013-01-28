@@ -1,10 +1,13 @@
 
 #import "CoreLocation/CLLocationManager.h"
 #import <CoreLocation/CoreLocation.h>
+#import <Parse/Parse.h>
 
 @class PersonView;
 
 @interface Person : NSObject {
+    PFUser* object;
+    
     NSString *strId;
     NSString *strName;
     NSString *strAge;

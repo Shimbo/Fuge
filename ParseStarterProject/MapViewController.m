@@ -35,32 +35,27 @@
 
 - (void)addPersonAnnotations:(NSInteger)circleNumber limit:(NSInteger)l
 {
-    NSString* strCircle;
+    //NSString* strCircle = [Circle getCircleName:circleNumber];
     NSUInteger color;
     switch (circleNumber)
     {
         case 1:
-            strCircle = @"First circle";
             color = MKPinAnnotationColorGreen;
             break;
         case 2:
-            strCircle = @"Second circle";
             color = MKPinAnnotationColorRed;
             break;
         case 3:
-            strCircle = @"Random connections";
             color = MKPinAnnotationColorPurple;
             break;
     }
-    if ( ! strCircle )
-        return;
     
-    Circle* circle = [Circle circleNamed:strCircle];
+    Circle* circle = [globalData getCircle:circleNumber];
     if ( ! circle )
         return;
     
     int n = 0;
-    for (Person* person in circle.persons )
+    for (Person* person in [circle getPersons] )
     {
         PersonAnnotation *ann = [[PersonAnnotation alloc] init];
         ann.title = person.strName;
