@@ -12,5 +12,6 @@
 @property (strong, nonatomic) IBOutlet AsyncImageView *icon;
 @property (strong, nonatomic) IBOutlet UILabel *name;
 @property (strong, nonatomic) IBOutlet UILabel *distance;
+@property (strong, nonatomic) IBOutlet UILabel *address;
 
 @end

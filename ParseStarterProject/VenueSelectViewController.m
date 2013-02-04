@@ -14,23 +14,7 @@
 
 
 
-@interface VenueAnnotation : NSObject<MKAnnotation>{
-    CLLocationCoordinate2D _coordinate;
-}
-@property (nonatomic, copy) NSString *title;
-@end
 
-@implementation VenueAnnotation
-
--(void)setCoordinate:(CLLocationCoordinate2D)newCoordinate{
-    _coordinate = newCoordinate;
-}
-
--(CLLocationCoordinate2D)coordinate{
-    return _coordinate;
-}
-
-@end
 
 
 
@@ -58,13 +42,9 @@
     // Do any additional setup after loading the view from its nib.
     UINib *nib = [UINib nibWithNibName:@"VenueCell" bundle:nil];
     [self.tableView registerNib:nib forCellReuseIdentifier:@"VenueCell"];
-
-    _locationManager =[[CLLocationManager alloc] init];
-    _locationManager.delegate = self;
-    _locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-    [_locationManager startUpdatingLocation];
     
-
+    [self updateLocation];
+    
     self.navigationItem.leftBarButtonItem =
     [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
                                      style:UIBarButtonItemStyleBordered
@@ -74,26 +54,52 @@
     self.tableView.tableHeaderView = self.headerView;
 }
 
+-(void)updateLocation{
+    _locationManager =[[CLLocationManager alloc] init];
+    _locationManager.delegate = self;
+    _locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    [_locationManager startUpdatingLocation];
+}
+
 -(void)close{
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
-{
+-(void)setMapCenter:(CLLocationDegrees)lat lon:(CLLocationDegrees)lon{
+    CLLocationCoordinate2D location;
+    location.latitude = lat;
+    location.longitude = lon;
     MKCoordinateRegion region;
     MKCoordinateSpan span;
-    span.latitudeDelta = 0.005;
-    span.longitudeDelta = 0.005;
-    CLLocationCoordinate2D location;
-    location.latitude = newLocation.coordinate.latitude;
-    location.longitude = newLocation.coordinate.longitude;
+    span.latitudeDelta = 0.0025;
+    span.longitudeDelta = 0.0025;
     region.span = span;
     region.center = location;
     [self.mapView setRegion:region animated:YES];
+}
+
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [self.tableView setContentOffset:CGPointMake(0, 0)];
+
+    if (_delegate.selectedVenue) {
+        [self.mapView selectAnnotation:_delegate.selectedVenue animated:NO];
+        [self setMapCenter:_delegate.selectedVenue.lat.doubleValue+0.00035
+                       lon:_delegate.selectedVenue.lon.doubleValue];
+    }
+}
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
+{
+    [self setMapCenter:newLocation.coordinate.latitude
+                   lon:newLocation.coordinate.longitude];
     _location = newLocation.coordinate;
     [self reload];
     [_locationManager stopUpdatingLocation];
     _locationManager = nil;
+}
+- (void)locationManager:(CLLocationManager *)manager
+       didFailWithError:(NSError *)error{
 }
 
 
@@ -109,36 +115,37 @@
     [self setMapView:nil];
     [self setTableView:nil];
     [self setHeaderView:nil];
+    [self setLocationButton:nil];
     [super viewDidUnload];
 }
 
--(void)reloadMap{
-    [self.mapView removeAnnotations:_annotations];
-    _annotations = [NSMutableArray arrayWithCapacity:self.venues.count];
-    for (NSDictionary *ven in self.venues) {
-        VenueAnnotation *ann = [[VenueAnnotation alloc]init];
-        ann.title = ven[@"name"];
-        [ann setCoordinate:CLLocationCoordinate2DMake([ven[@"location"][@"lat"] doubleValue],
-                                                      [ven[@"location"][@"lng"] doubleValue])];
-        [_annotations addObject:ann];
+-(void)removeAllAnnotationExceptOfCurrentUser
+{
+    NSMutableArray *annForRemove = [[NSMutableArray alloc] initWithArray:self.mapView.annotations];
+    if ([self.mapView.annotations.lastObject isKindOfClass:[MKUserLocation class]]) {
+        [annForRemove removeObject:self.mapView.annotations.lastObject];
+    }else{
+        for (id <MKAnnotation> annot_ in self.mapView.annotations)
+        {
+            if ([annot_ isKindOfClass:[MKUserLocation class]] ) {
+                [annForRemove removeObject:annot_];
+                break;
+            }
+        }
     }
-    [self.mapView addAnnotations: _annotations];
+    
+    
+    [self.mapView removeAnnotations:annForRemove];
 }
 
+-(void)reloadMap{
+    [self removeAllAnnotationExceptOfCurrentUser];
+    [self.mapView addAnnotations: self.venuesForTable];
+}
+
+
+
 -(void)reloadTable{
-    CLLocation *curLoc = self.mapView.userLocation.location;
-    NSMutableArray *v = [NSMutableArray arrayWithCapacity:self.venues.count];
-    for (NSDictionary *ven in self.venues) {
-        CLLocation *l = [[CLLocation alloc]initWithLatitude:[ven[@"location"][@"lat"]doubleValue]
-                                                  longitude:[ven[@"location"][@"lng"] doubleValue]];
-        int dist = (int)[curLoc distanceFromLocation:l];
-        [v addObject:@{@"dist":@(dist),@"venue":ven}];
-    }
-    [v sortUsingComparator:^NSComparisonResult(NSDictionary* obj1, NSDictionary* obj2) {
-        return [obj1[@"dist"] compare:obj2[@"dist"]];
-    }];
-    self.venuesForTable = v;
-    
     [self.tableView reloadData];
 }
 
@@ -147,6 +154,48 @@
     self.mapView.userInteractionEnabled = YES;
     [self reloadMap];
     [self reloadTable];
+}
+
+//-(void)sortByDistance{
+//    [v sortUsingComparator:^NSComparisonResult(NSDictionary* obj1, NSDictionary* obj2) {
+//        return [obj1[@"dist"] compare:obj2[@"dist"]];
+//    }];
+//}
+
+
+-(NSArray*)convertToObjects:(NSArray*)venues{
+    NSMutableArray *v = [NSMutableArray arrayWithCapacity:venues.count];
+    CLLocation *curLoc = self.mapView.userLocation.location;
+    for (NSDictionary *dic in venues) {
+        FSVenue *venue = [[FSVenue alloc]init];
+        NSDictionary *location = dic[@"location"];
+        CLLocation *l = [[CLLocation alloc]initWithLatitude:[location[@"lat"]doubleValue]
+                                                  longitude:[location[@"lng"] doubleValue]];
+        [venue setCoordinate:CLLocationCoordinate2DMake([location[@"lat"] doubleValue],
+                                                      [location[@"lng"] doubleValue])];
+        venue.dist = (int)[curLoc distanceFromLocation:l];
+        venue.name = dic[@"name"];
+        venue.venueId = dic[@"id"];
+        
+
+        venue.lon = location[@"lng"];
+        venue.lat = location[@"lat"];
+        
+        venue.city = location[@"city"];
+        venue.state = location[@"state"];
+        venue.country = location[@"country"];
+        venue.cc = location[@"cc"];
+        venue.postalCode = location[@"postalCode"];
+        venue.address = location[@"address"];
+        venue.fsVenue = dic;
+        
+        [v addObject:venue];
+        
+    }
+    [v sortUsingComparator:^NSComparisonResult(FSVenue* obj1, FSVenue* obj2) {
+        return [obj1.name localizedCaseInsensitiveCompare:obj2.name];
+    }];
+    return v;
 }
 
 -(void)reload{
@@ -163,7 +212,8 @@
                                      intent:nil
                                      radius:@(500)
                                    callback:^(BOOL success, id result) {
-                                       self.venues = result[@"response"][@"venues"];
+                                       NSArray *a = [self convertToObjects:result[@"response"][@"venues"]];
+                                       self.venuesForTable = a;
                                        [self didUpdate];
                                    }];
 }
@@ -186,40 +236,53 @@
         return nil;
     }
     static NSString *s =@"ann";
-    MKAnnotationView *ann = [mapView dequeueReusableAnnotationViewWithIdentifier:s];
-    if (!ann) {
-        ann = [[MKPinAnnotationView alloc]initWithAnnotation:annotation reuseIdentifier:s];
-        ann.canShowCallout = YES;
+    MKAnnotationView *pin = [mapView dequeueReusableAnnotationViewWithIdentifier:s];
+    if (!pin) {
+        pin = [[MKPinAnnotationView alloc]initWithAnnotation:annotation reuseIdentifier:s];
+        pin.canShowCallout = YES;
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+        [button addTarget:self
+                   action:@selector(select) forControlEvents:UIControlEventTouchUpInside];
+        pin.rightCalloutAccessoryView = button;
+        
     }
-    return ann;
+    return pin;
+}
+
+-(void)userDidSelectVenue:(FSVenue*)venue{
+    self.delegate.selectedVenue = venue;
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+-(void)select{
+    FSVenue *venue = self.mapView.selectedAnnotations.lastObject;
+    [self userDidSelectVenue:venue];
 }
 
 #pragma mark -
 
 #pragma mark Table Delegate
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return self.venuesForTable.count;
+-(NSArray*)getVenuesForTable:(UITableView*)tableView{
+    if (self.searchDisplayController.searchResultsTableView == tableView) {
+        return self.venuesForSearch;
+    }else{
+        return self.venuesForTable;
+    }
 }
 
--(NSString*)getIconURLFromVenue:(NSDictionary*)venue{
-    if ([venue[@"categories"] count]) {
-        NSDictionary *iconDic = venue[@"categories"][0][@"icon"];
-        NSString* url = [NSString stringWithFormat:@"%@bg_88%@",iconDic[@"prefix"],iconDic[@"suffix"]];
-        return url;
-    }else{
-        return nil;
-    }
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return [self getVenuesForTable:tableView].count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     static NSString *ident = @"VenueCell";
     VenueCell *cell = [tableView dequeueReusableCellWithIdentifier:ident];
-    NSDictionary *venue = self.venuesForTable[indexPath.row][@"venue"];
-    cell.name.text = venue[@"name"];
-    cell.distance.text = [NSString stringWithFormat:@"%@m",
-                          self.venuesForTable[indexPath.row][@"dist"]];
-    [cell.icon loadImageFromURL:[self getIconURLFromVenue:self.venues[indexPath.row]]];
+    FSVenue *venue = [self getVenuesForTable:tableView][indexPath.row];
+    cell.name.text = venue.name;
+    cell.distance.text = [NSString stringWithFormat:@"%0.1fkm",(float)venue.dist/1000.0];
+    cell.address.text = venue.address;
+    [cell.icon loadImageFromURL:[venue iconURL]];
     return cell;
 }
 
@@ -227,25 +290,48 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    NSDictionary *dic = self.venuesForTable[indexPath.row][@"venue"];
-    FSVenue *venue = [[FSVenue alloc]init];
-    venue.name = dic[@"name"];
-    venue.venueId = dic[@"id"];
+    FSVenue *venue = [self getVenuesForTable:tableView][indexPath.row];
+    [self.searchDisplayController setActive:NO animated:YES];
+    [self userDidSelectVenue:venue];
+    self.venuesForSearch = nil;
+}
+
+-(void)searchForString:(NSString*)string{
+    [Foursquare2 searchVenuesNearByLatitude:@(_location.latitude)
+                                  longitude:@(_location.longitude)
+                                 accuracyLL:nil
+                                   altitude:nil
+                                accuracyAlt:nil
+                                      query:string
+                                      limit:@(50)
+                                     intent:nil
+                                     radius:nil
+                                   callback:^(BOOL success, id result) {
+                                       NSArray *a = [self convertToObjects:result[@"response"][@"venues"]];
+                                       self.venuesForSearch = a;
+                                       [self.searchDisplayController.searchResultsTableView reloadData];
+                                   }];
+}
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    [self performSelector:@selector(searchForString:)
+               withObject:searchText
+               afterDelay:0.7];
     
-    venue.lon = dic[@"location"][@"lng"];
-    venue.lat = dic[@"location"][@"lat"];
-    
-    venue.city = dic[@"location"][@"city"];
-    venue.state = dic[@"location"][@"state"];
-    venue.country = dic[@"location"][@"country"];
-    venue.cc = dic[@"location"][@"cc"];
-    venue.postalCode = dic[@"location"][@"postalCode"];
-    
-    self.delegate.selectedVenue = venue;
-    [self dismissViewControllerAnimated:YES completion:nil];
+}
+- (void)searchBarCancelButtonClicked:(UISearchBar *) searchBar{
+    self.venuesForSearch = nil;
 }
 
 
+- (void)searchDisplayController:(UISearchDisplayController *)controller didLoadSearchResultsTableView:(UITableView *)tableView{
+    UINib *nib = [UINib nibWithNibName:@"VenueCell" bundle:nil];
+    [self.searchDisplayController.searchResultsTableView
+     registerNib:nib forCellReuseIdentifier:@"VenueCell"];
+    self.searchDisplayController.searchResultsTableView.rowHeight = 70;
+}
 #pragma mark -
+
 
 @end

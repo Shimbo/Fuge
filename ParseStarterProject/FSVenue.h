@@ -7,8 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <MapKit/MapKit.h>
 
-@interface FSVenue : NSObject
+@interface FSVenue : NSObject<MKAnnotation>{
+    CLLocationCoordinate2D _coordinate;
+}
 
 @property(nonatomic,strong)NSString *name;
 @property(nonatomic,strong)NSNumber *venueId;
@@ -17,10 +20,15 @@
 @property(nonatomic,strong)NSNumber *lon;
 
 
+@property(nonatomic,strong)NSString *address;
 @property(nonatomic,strong)NSString *city;
 @property(nonatomic,strong)NSString *state;
 @property(nonatomic,strong)NSString *country;
 @property(nonatomic,strong)NSString *cc;
 @property(nonatomic,strong)NSString *postalCode;
+@property(nonatomic,assign)int dist;
 
+@property(nonatomic,strong)NSDictionary *fsVenue;
+
+-(NSString*)iconURL;
 @end
