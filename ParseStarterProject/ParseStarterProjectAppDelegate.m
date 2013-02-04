@@ -189,7 +189,7 @@
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [PFPush handlePush:userInfo];
     NSLog(@"%@", userInfo);
-    [rootViewController reloadData];
+    //[rootViewController reloadData];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

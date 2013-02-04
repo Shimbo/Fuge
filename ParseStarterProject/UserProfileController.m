@@ -7,8 +7,8 @@
 //
 
 #import <Parse/Parse.h>
-
 #import "UserProfileController.h"
+#import "PushManager.h"
 
 @implementation UserProfileController
 @synthesize buttonProfile;
@@ -250,7 +250,7 @@ double animatedDistance;
     
     [UIView commitAnimations];
     
-    if ( messageNew.text == @"" )
+    if ( [messageNew.text compare:@""] == NSOrderedSame )
         return;
     
     // Adding comment
@@ -265,10 +265,7 @@ double animatedDistance;
     [message save];
     
     // Creating push
-    NSString* strFrom = [[PFUser currentUser] objectForKey:@"fbName"];
-    NSString* strPush =[[NSString alloc] initWithFormat:@"New message from %@!", strFrom];
-    NSString* strChannel =[[NSString alloc] initWithFormat:@"fb%@", personThis.strId];
-    [PFPush sendPushMessageToChannelInBackground:strChannel withMessage:strPush];
+    [pushManager sendPushNewMessage:PUSH_NEW_MESSAGE idTo:personThis.strId];
     
     // Updating history
     NSMutableString* stringHistory = [[NSMutableString alloc] initWithFormat:@""];

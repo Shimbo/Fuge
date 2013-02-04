@@ -8,6 +8,7 @@
 
 #import "GlobalData.h"
 #import "GlobalVariables.h"
+#import "PushManager.h"
 
 @implementation GlobalData
 
@@ -22,13 +23,14 @@ static GlobalData *sharedInstance = nil;
     return sharedInstance;
 }
 
-// We can still have a regular init method, that will get called the first time the Singleton is used.
+// Initialization
 - (id)init
 {
     self = [super init];
     
     if (self) {
         circles = [[NSMutableDictionary alloc] init];
+        meetups = [[NSMutableArray alloc] init];
     }
     
     return self;
@@ -61,6 +63,11 @@ static GlobalData *sharedInstance = nil;
         [circles setObject:result forKey:[Circle getCircleName:circle]];
     }
     return result;
+}
+
+- (NSArray*) getMeetups
+{
+    return meetups;
 }
 
 
@@ -140,6 +147,59 @@ static GlobalData *sharedInstance = nil;
     [circle addPerson:person];
 }
 
+- (void) reloadFbFriends:(id)friends
+{
+    // result will contain an array with your user's friends in the "data" key
+    NSArray *friendObjects = [friends objectForKey:@"data"];
+    NSMutableArray *friendIds = [NSMutableArray arrayWithCapacity:friendObjects.count];
+    
+    // Create a list of friends' Facebook IDs
+    for (NSDictionary *friendObject in friendObjects)
+        [friendIds addObject:[friendObject objectForKey:@"id"]];
+            
+    // Saving user FB friends
+    [[PFUser currentUser] addUniqueObjectsFromArray:friendIds forKey:@"fbFriends"];
+    
+    // FB friends query
+    PFQuery *friendQuery = [PFUser query];
+    [friendQuery whereKey:@"fbId" containedIn:friendIds];
+    [friendQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
+    NSArray *friendUsers = [friendQuery findObjects];
+    
+    // Data collection
+    for (PFUser *friendUser in friendUsers)
+    {
+        // Collecting second circle data
+        NSMutableArray *friendFriendIds = [friendUser objectForKey:@"fbFriends"];
+        [[PFUser currentUser] addUniqueObjectsFromArray:friendFriendIds forKey:@"fbFriends2O"];
+        
+        // Adding first circle friends
+        [self addPerson:friendUser userCircle:CIRCLE_FB];
+        
+        // Notification for that user if the friend is new
+        [pushManager sendPushNewUser:PUSH_NEW_FBFRIEND idTo:[friendUser objectForKey:@"fbId"]];
+    }
+}
+
+- (void) reload2OFriends
+{
+    // Second circle friends query
+    NSMutableArray *friend2OIds = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
+    PFQuery *friend2OQuery = [PFUser query];
+    [friend2OQuery whereKey:@"fbId" containedIn:friend2OIds];
+    [friend2OQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
+    NSArray *friend2OUsers = [friend2OQuery findObjects];
+    
+    // Data collection
+    for (PFUser *friend2OUser in friend2OUsers)
+    {
+        [self addPerson:friend2OUser userCircle:CIRCLE_2O];
+        
+        // Notification for that user if the friend is new
+        [pushManager sendPushNewUser:PUSH_NEW_2OFRIEND idTo:[friend2OUser objectForKey:@"fbId"]];
+    }
+}
+
 - (void) reloadRandom
 {
     // Query
@@ -151,105 +211,72 @@ static GlobalData *sharedInstance = nil;
     // Adding users
     for (PFUser *friendAnyUser in friendAnyUsers)
         [self addPerson:friendAnyUser userCircle:CIRCLE_RANDOM];
-
+    
 }
 
-- (void) reloadFriends:(RootViewController*)controller
+- (void)addMeetup:(Meetup*)meetup
 {
-    Boolean bShouldSendPushToFriends = [globalVariables shouldSendPushToFriends];
-    NSMutableDictionary* dicPushesSent = [[NSMutableDictionary alloc] init];
+    // TODO: test if such meetup was already added
     
-    // FB friendlist
-    PF_FBRequest *request2 = [PF_FBRequest requestForMyFriends];
-    [request2 startWithCompletionHandler:^(PF_FBRequestConnection *connection,
-                                           id result, NSError *error)
+    [meetups addObject:meetup];
+}
+
+- (Meetup*)addMeetupWithData:(PFObject*)meetupData
+{
+    // TODO: test if such meetup was already added
+    
+    Meetup* meetup = [[Meetup alloc] init];
+    [meetup unpack:meetupData];
+    
+    // 2ndO meetups check
+    if ( meetup.privacy == 1 )
     {
-        if (!error)
-        {
-            // result will contain an array with your user's friends in the "data" key
-            NSArray *friendObjects = [result objectForKey:@"data"];
-            NSMutableArray *friendIds = [NSMutableArray arrayWithCapacity:friendObjects.count];
-            
-            // Create a list of friends' Facebook IDs
-            for (NSDictionary *friendObject in friendObjects)
-                [friendIds addObject:[friendObject objectForKey:@"id"]];
-            
-            // Saving user FB friends
-            [[PFUser currentUser] addUniqueObjectsFromArray:friendIds
-                                                     forKey:@"fbFriends"];
-            
-            // FB friends
-            PFQuery *friendQuery = [PFUser query];
-            [friendQuery whereKey:@"fbId" containedIn:friendIds];
-            [friendQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
-            [friendQuery findObjectsInBackgroundWithBlock:^(NSArray *friendUsers, NSError* error)
-            {
-                for (PFUser *friendUser in friendUsers)
-                {
-                    // Collecting second circle data
-                    NSMutableArray *friendFriendIds = [friendUser objectForKey:@"fbFriends"];
-                    [[PFUser currentUser] addUniqueObjectsFromArray:friendFriendIds forKey:@"fbFriends2O"];
-                    
-                    // Adding first circle friends
-                    [self addPerson:friendUser userCircle:CIRCLE_FB];
-                    
-                    // Notification for that user if the friend is new
-                    if ( bShouldSendPushToFriends )
-                    {
-                        NSString* strName = [[PFUser currentUser] objectForKey:@"fbName"];
-                        NSString* strId = [friendUser objectForKey:@"fbId"];
-                        NSString* strPush =[[NSString alloc] initWithFormat:@"Woohoo! Your Facebook friend %@ joined Second Circle! Check if you've got new connections!", strName];
-                        NSString* strChannel =[[NSString alloc] initWithFormat:@"fb%@", strId];
-                        if ( [strId compare:[[PFUser currentUser] objectForKey:@"fbId"]] != NSOrderedSame )
-                            [PFPush sendPushMessageToChannelInBackground:strChannel withMessage:strPush];
-                        [dicPushesSent setObject:@"Sent" forKey:strId];
-                    }
-                }
-                
-                // Second circle friends
-                NSMutableArray *friend2OIds = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
-                PFQuery *friend2OQuery = [PFUser query];
-                [friend2OQuery whereKey:@"fbId" containedIn:friend2OIds];
-                [friend2OQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
-                [friend2OQuery findObjectsInBackgroundWithBlock:^(NSArray *friend2OUsers, NSError* error)
-                {    
-                    for (PFUser *friend2OUser in friend2OUsers)
-                    {
-                        [self addPerson:friend2OUser userCircle:CIRCLE_2O];
-                        
-                        // Notification for that user if the friend is new
-                        if ( bShouldSendPushToFriends )
-                        {
-                            NSString* strName = [[PFUser currentUser] objectForKey:@"fbName"];
-                            NSString* strId = [friend2OUser objectForKey:@"fbId"];
-                            NSString* strPush =[[NSString alloc] initWithFormat:@"Hurray! Your 2ndO friend %@ joined Second Circle!", strName];
-                            NSString* strChannel =[[NSString alloc] initWithFormat:@"fb%@", strId];
-                            if ( [strId compare:[[PFUser currentUser] objectForKey:@"fbId"]] != NSOrderedSame )
-                            {
-                                if ( ! [dicPushesSent objectForKey:strId] )
-                                    [PFPush sendPushMessageToChannelInBackground:strChannel withMessage:strPush];
-                                [dicPushesSent setObject:@"Sent" forKey:strId];
-                            }
-                        }
-                    }
-                    
-                    // Random friends
-                    [self reloadRandom];
-                    
-                    // Push sent for the first time
-                    [globalVariables pushToFriendsSent];
-                        
-                    [[PFUser currentUser] save];
-                        
-                    [controller reloadFinished];
-                }];
-            }];
-        }
-        else
-        {
-            NSLog(@"Uh oh. An error occurred: %@", error);
-        }
-    }];
+        Boolean bSkip = true;
+        NSArray* friends = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
+        if ( [friends containsObject:meetup.strOwnerId ] )
+            bSkip = false;
+        friends = [[PFUser currentUser] objectForKey:@"fbFriends"];
+        if ( [friends containsObject:meetup.strOwnerId ] )
+            bSkip = false;
+        if ( [meetup.strOwnerId compare:[[PFUser currentUser] objectForKey:@"fbId"] ] == NSOrderedSame )
+            bSkip = false;
+        if ( bSkip )
+            return nil;
+    }
+    
+    [meetups addObject:meetup];
+    
+    return meetup;
+}
+
+
+- (void)reloadMeetups
+{
+    PFQuery *meetupAnyQuery = [PFQuery queryWithClassName:@"Meetup"];
+    
+    // Location filter
+    [meetupAnyQuery whereKey:@"location" nearGeoPoint:[[PFUser currentUser] objectForKey:@"location"] withinKilometers:RANDOM_EVENT_KILOMETERS];
+    
+    // Date-time filter
+    NSNumber* timestampNow = [[NSNumber alloc] initWithDouble:[[NSDate date] timeIntervalSince1970]];
+    [meetupAnyQuery whereKey:@"meetupTimestamp" greaterThan:timestampNow];
+    
+    // Privacy filter
+    NSNumber* privacyType = [[NSNumber alloc] initWithInt:MEETUP_PRIVATE];
+    [meetupAnyQuery whereKey:@"privacy" notEqualTo:privacyType];
+    
+    // Query for public/2O meetups
+    NSArray *meetupsData = [meetupAnyQuery findObjects];
+    for (PFObject *meetupData in meetupsData)
+        [self addMeetupWithData:meetupData];
+    
+    // Query for meetups with invitations (both private and distant 2O or public)
+    meetupAnyQuery = [PFQuery queryWithClassName:@"Meetup"];
+    [meetupAnyQuery whereKey:@"meetupTimestamp" greaterThan:timestampNow];
+    // TODO: add invitation check
+    meetupsData = [meetupAnyQuery findObjects];
+    //for (PFObject *meetupData in meetupsData)
+    //    [self addMeetup:meetupData];
 }
 
 
@@ -278,10 +305,41 @@ static GlobalData *sharedInstance = nil;
             NSLog(@"Uh oh. An error occurred: %@", error);
         }
         
-        [self reloadFriends:controller];
+        // FB friendlist
+        PF_FBRequest *request2 = [PF_FBRequest requestForMyFriends];
+        [request2 startWithCompletionHandler:^(PF_FBRequestConnection *connection,
+                                               id result, NSError *error)
+        {
+            if (!error)
+            {
+                // FB friends
+                [self reloadFbFriends:result];
+                
+                // 2O friends
+                [self reload2OFriends];
+                
+                // Random friends
+                [self reloadRandom];
+                
+                // Meetups
+                [self reloadMeetups];
+                
+                // Pushes sent for new users, turn it off
+                [globalVariables pushToFriendsSent];
+                
+                // Save user data
+                [[PFUser currentUser] save];
+                
+                // Reload table
+                [controller reloadFinished];
+            }
+            else
+            {
+                NSLog(@"Uh oh. An error occurred: %@", error);
+            }
+        }];
     }];
 }
-
 
 - (void)clean
 {

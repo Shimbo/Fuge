@@ -10,6 +10,7 @@
 #import "VenueSelectViewController.h"
 #import <Parse/Parse.h>
 #import "FSVenue.h"
+#import "GlobalData.h"
 
 
 @interface NewEventViewController ()
@@ -22,9 +23,14 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
+        meetup = nil;
     }
     return self;
+}
+
+-(void) setMeetup:(Meetup*)m
+{
+    meetup = m;
 }
 
 - (void)viewDidLoad
@@ -41,9 +47,20 @@
     [deltaCompsMax setDay:7];
     NSDate* dateMax = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsMax toDate:[NSDate date] options:0];
     
-    [dateTime setDate:dateDefault];
+    
     [dateTime setMinimumDate:dateMin];
     [dateTime setMaximumDate:dateMax];
+    
+    if ( meetup )
+    {
+        [dateTime setDate:meetup.dateTime];
+        [subject setText:meetup.strSubject];
+        [privacy setSelectedSegmentIndex:meetup.privacy];
+        [location setTitle:meetup.strVenue forState:UIControlStateNormal];
+        [createButton setTitle:@"Save" forState:UIControlStateNormal];
+    }
+    else
+        [dateTime setDate:dateDefault];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -64,6 +81,7 @@
     subject = nil;
     notifySwitch = nil;
     location = nil;
+    createButton = nil;
     [super viewDidUnload];
 }
 
@@ -74,6 +92,8 @@
 
 - (IBAction)createButtonDown:(id)sender {
     
+    Boolean newMeetup = meetup ? false : true;
+    
     if ( subject.text.length == 0 )
     {
         UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Not yet!" message:@"Please, enter the subject of the meetup in the text above!" delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
@@ -81,7 +101,7 @@
         return;
     }
     
-    if ( ! self.selectedVenue )
+    if ( ! self.selectedVenue && ! meetup )
     {
         UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Not yet!" message:@"Please, select a venue for the meetup using the big and noticeable button!" delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
         [errorAlert show];
@@ -89,36 +109,38 @@
     }
     
     // Meetup creation
-    PFObject* meetup = [[PFObject alloc] initWithClassName:@"Meetup"];
-    NSString* stringFromId = (NSString *) [[PFUser currentUser] objectForKey:@"fbId"];
-    NSString* stringFromName = (NSString *) [[PFUser currentUser] objectForKey:@"fbName"];
-    [meetup setObject:stringFromId forKey:@"userFromId"];
-    [meetup setObject:stringFromName forKey:@"userFromName"];
-    [meetup setObject:subject.text forKey:@"subject"];
-    [meetup setObject:[NSNumber numberWithInt:[privacy selectedSegmentIndex]] forKey:@"privacy"];
-    [meetup setObject:[dateTime date] forKey:@"meetupDate"];
-    NSNumber* timestamp = [[NSNumber alloc] initWithDouble:[[dateTime date] timeIntervalSince1970]];
-    [meetup setObject:timestamp forKey:@"meetupTimestamp"];
-    NSString* strMeetupId = [[NSString alloc] initWithFormat:@"%d_%@", [timestamp integerValue], stringFromId];
-    [meetup setObject:strMeetupId forKey:@"meetupId"];
-    
-    // Seeting actual location
-    PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:[self.selectedVenue.lat doubleValue]
+    if ( ! meetup )
+        meetup = [[Meetup alloc] init];
+    meetup.strOwnerId = (NSString *) [[PFUser currentUser] objectForKey:@"fbId"];
+    meetup.strOwnerName = (NSString *) [[PFUser currentUser] objectForKey:@"fbName"];
+    meetup.strSubject = subject.text;
+    meetup.privacy = [privacy selectedSegmentIndex];
+    meetup.dateTime = [dateTime date];
+    if ( self.selectedVenue )
+    {
+        meetup.location = [PFGeoPoint geoPointWithLatitude:[self.selectedVenue.lat doubleValue]
                                                   longitude:[self.selectedVenue.lon doubleValue]];
-    [meetup setObject:geoPoint forKey:@"location"];
-    
-    [meetup setObject:[NSNumber numberWithBool:FALSE] forKey:@"isRead"];
+        meetup.strVenue = self.selectedVenue.name;
+    }
     [meetup save];
+    
+    // Adding to our own meetup list
+    [globalData addMeetup:meetup];
     
     // Creating comment about meetup creation in db
     PFObject* comment = [[PFObject alloc] initWithClassName:@"Comment"];
     NSMutableString* strComment = [[NSMutableString alloc] initWithFormat:@""];
     [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
-    [strComment appendString:@" created the meetup: "];
-    [strComment appendString:subject.text];
-    [comment setObject:stringFromId forKey:@"userId"];
+    if ( newMeetup )
+    {
+        [strComment appendString:@" created the meetup: "];
+        [strComment appendString:subject.text];
+    }
+    else
+        [strComment appendString:@" changed meetup details."];
+    [comment setObject:meetup.strOwnerId forKey:@"userId"];
     [comment setObject:@"" forKey:@"userName"]; // As it's not a normal comment, it's ok
-    [comment setObject:strMeetupId forKey:@"meetupId"];
+    [comment setObject:meetup.strId forKey:@"meetupId"];
     [comment setObject:strComment forKey:@"comment"];
     [comment save];
     

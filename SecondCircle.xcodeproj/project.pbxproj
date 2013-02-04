@@ -66,6 +66,7 @@
 		4C7E3FE3169A1BB40065484F /* MeetupView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E3FE1169A1BB30065484F /* MeetupView.xib */; };
 		4C7E3FEC169A456B0065484F /* VenueSelectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FEA169A456B0065484F /* VenueSelectViewController.m */; };
 		4C7E3FED169A456B0065484F /* VenueSelectView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E3FEB169A456B0065484F /* VenueSelectView.xib */; };
+		4CE307FD16BF424600F427DE /* PushManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CE307FC16BF424600F427DE /* PushManager.m */; };
 		4CFE78C8166BBA7900E1BF72 /* FilterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CFE78C6166BBA7900E1BF72 /* FilterViewController.m */; };
 		4CFE78C9166BBA7900E1BF72 /* FilterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CFE78C7166BBA7900E1BF72 /* FilterView.xib */; };
 		6332375415E438E900AE2736 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6332375315E438E900AE2736 /* libsqlite3.dylib */; };
@@ -172,6 +173,8 @@
 		4C7E3FE9169A456B0065484F /* VenueSelectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VenueSelectViewController.h; sourceTree = "<group>"; };
 		4C7E3FEA169A456B0065484F /* VenueSelectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VenueSelectViewController.m; sourceTree = "<group>"; };
 		4C7E3FEB169A456B0065484F /* VenueSelectView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VenueSelectView.xib; sourceTree = "<group>"; };
+		4CE307FB16BF424600F427DE /* PushManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushManager.h; sourceTree = "<group>"; };
+		4CE307FC16BF424600F427DE /* PushManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushManager.m; sourceTree = "<group>"; };
 		4CFE78C5166BBA7900E1BF72 /* FilterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterViewController.h; sourceTree = "<group>"; };
 		4CFE78C6166BBA7900E1BF72 /* FilterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FilterViewController.m; sourceTree = "<group>"; };
 		4CFE78C7166BBA7900E1BF72 /* FilterView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FilterView.xib; sourceTree = "<group>"; };
@@ -413,6 +416,8 @@
 				4C08DDD2163C88580093C851 /* Person.m */,
 				4C7E3FDC169A09D10065484F /* Meetup.h */,
 				4C7E3FDD169A09D20065484F /* Meetup.m */,
+				4CE307FB16BF424600F427DE /* PushManager.h */,
+				4CE307FC16BF424600F427DE /* PushManager.m */,
 			);
 			name = Data;
 			sourceTree = "<group>";
@@ -443,7 +448,7 @@
 		09ABC06413A1D52D009C3FCF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0460;
 			};
 			buildConfigurationList = 09ABC06713A1D52D009C3FCF /* Build configuration list for PBXProject "SecondCircle" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -528,6 +533,7 @@
 				47A1AC6816A7DBD2004B4CFA /* ImageLoader.m in Sources */,
 				47A1AC6C16A7DDB9004B4CFA /* VenueCell.m in Sources */,
 				476D1E2316A8273600077458 /* FSVenue.m in Sources */,
+				4CE307FD16BF424600F427DE /* PushManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -558,6 +564,10 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -566,6 +576,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				SDKROOT = iphoneos;
@@ -577,11 +588,16 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";

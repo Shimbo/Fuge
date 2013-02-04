@@ -8,10 +8,7 @@
 
 #import "MeetupViewController.h"
 #import <Parse/Parse.h>
-
-@interface MeetupViewController ()
-
-@end
+#import "NewEventViewController.h"
 
 @implementation MeetupViewController
 
@@ -59,6 +56,14 @@
     // TODO: push notification
 }
 
+- (void)editClicked
+{
+    NewEventViewController *newEventViewController = [[NewEventViewController alloc] initWithNibName:@"NewEventView" bundle:nil];
+    [newEventViewController setMeetup:meetup];
+    [self.navigationController setNavigationBarHidden:true animated:true];
+    [self.navigationController pushViewController:newEventViewController animated:YES];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -74,6 +79,10 @@
             if ( [attendees count] == 0 )
                 [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Join" style:UIBarButtonItemStylePlain target:self action:@selector(joinClicked)]];
         }];
+    }
+    else
+    {
+        [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStylePlain target:self action:@selector(editClicked)]];
     }
     
     // Loading comments
@@ -210,7 +219,7 @@ double animatedDistance;
     
     [UIView commitAnimations];
     
-    if ( newComment.text == @"" )
+    if ( [newComment.text compare:@""] == NSOrderedSame )
         return;
     
     // Creating comment in db

@@ -12,6 +12,7 @@
 #include "LoginViewController.h"
 #include "ProfileViewController.h"
 #include "GlobalVariables.h"
+#import "PushManager.h"
 
 @implementation LoginViewController
 
@@ -22,14 +23,6 @@
         activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
 	}
 	return self;
-}
-
-- (void)subscribeFinished:(NSNumber *)result error:(NSError *)error {
-    if ([result boolValue]) {
-        NSLog(@"ParseStarterProject successfully subscribed to push notifications on the broadcast channel.");
-    } else {
-        NSLog(@"ParseStarterProject failed to subscribe to push notifications on the broadcast channel.");
-    }
 }
 
 - (IBAction)touchDown:(UIButton *)sender
@@ -66,13 +59,8 @@
                 [[PFUser currentUser] refresh];
             }
             
-            // Login and push stuff
-            NSString* strUserChannel =[[NSString alloc] initWithFormat:@"fb%@", [user objectForKey:@"fbId"]];
-            [[PFInstallation currentInstallation] addUniqueObject:strUserChannel forKey:@"channels"];
-            [[PFInstallation currentInstallation] addUniqueObject:@"" forKey:@"channels"];
-            [[PFInstallation currentInstallation] saveEventually];
-            [PFPush subscribeToChannelInBackground:@"" target:self selector:@selector(subscribeFinished:error:)];
-            [PFPush subscribeToChannelInBackground:strUserChannel target:self selector:@selector(subscribeFinished:error:)];
+            // Push channels initialization
+            [pushManager initChannelsFirstTime];
         }
         
         [activityIndicator stopAnimating];
