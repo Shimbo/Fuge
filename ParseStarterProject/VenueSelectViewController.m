@@ -173,7 +173,7 @@
                                                   longitude:[location[@"lng"] doubleValue]];
         [venue setCoordinate:CLLocationCoordinate2DMake([location[@"lat"] doubleValue],
                                                       [location[@"lng"] doubleValue])];
-        venue.dist = [curLoc distanceFromLocation:l];
+        venue.dist = [curLoc distanceFromLocation:l]/1000.0;
 //        NSLog(@"%f- %d",venue.dist,[location[@"distance"] intValue]);
         venue.name = dic[@"name"];
         venue.venueId = dic[@"id"];
@@ -281,7 +281,7 @@
     VenueCell *cell = [tableView dequeueReusableCellWithIdentifier:ident];
     FSVenue *venue = [self getVenuesForTable:tableView][indexPath.row];
     cell.name.text = venue.name;
-    cell.distance.text = [NSString stringWithFormat:@"%0.1fkm",venue.dist/1000.0];
+    cell.distance.text = [NSString stringWithFormat:@"%0.1fkm",venue.dist];
     cell.address.text = venue.address;
     [cell.icon loadImageFromURL:[venue iconURL]];
     return cell;
