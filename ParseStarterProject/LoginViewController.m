@@ -13,6 +13,7 @@
 #include "ProfileViewController.h"
 #include "GlobalVariables.h"
 #import "PushManager.h"
+#import "ParseStarterProjectAppDelegate.h"
 
 @implementation LoginViewController
 
@@ -73,6 +74,8 @@
             //[self.navigationController popViewControllerAnimated:false];
             ProfileViewController *profileViewController = [[ProfileViewController alloc] initWithNibName:@"ProfileView" bundle:nil];
             [self.navigationController pushViewController:profileViewController animated:YES];
+            ParseStarterProjectAppDelegate *delegate = AppDelegate;
+            [delegate userDidLogin];
         }
     }];
 }

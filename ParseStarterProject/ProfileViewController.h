@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MainViewController.h"
 
-@interface ProfileViewController : UIViewController <UIPickerViewDelegate, UIPickerViewDataSource, UIActionSheetDelegate, UITextFieldDelegate> {
+@interface ProfileViewController : MainViewController <UIPickerViewDelegate, UIPickerViewDataSource, UIActionSheetDelegate, UITextFieldDelegate> {
     
     IBOutlet UILabel*   labelRoles;
     NSMutableArray*     arrayRoles;
@@ -19,7 +20,7 @@
     IBOutlet UITextField *areaEdit;
     IBOutlet UISwitch *discoverySwitch;
 }
-
+@property (nonatomic,assign)BOOL main;
 - (IBAction) showSearchWhereOptions;
 
 @end

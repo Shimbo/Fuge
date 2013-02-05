@@ -7,8 +7,6 @@
 #import "UIKit/UIActivityIndicatorView.h"
 
 #import "RootViewController.h"
-#import "ProfileViewController.h"
-#import "MapViewController.h"
 #import "FilterViewController.h"
 #import "UserProfileController.h"
 #import "NewEventViewController.h"
@@ -30,23 +28,10 @@
 @synthesize initialized;
 @synthesize activityIndicator;
 
-- (id)initWithStyle:(UITableViewStyle)style {
-	if (self = [super initWithStyle:style]) {
-		//self.title = NSLocalizedString(@"Connections", @"Connections");
-        self.initialized = NO;
-
-	}
-	return self;
-}
 
 - (void)viewWillAppear:(BOOL)animated {
 }
 
-- (void)profileClicked{
-    ProfileViewController *profileViewController = [[ProfileViewController alloc] initWithNibName:@"ProfileView" bundle:nil];
-    [self.navigationController pushViewController:profileViewController animated:YES];
-    //[self.navigationController setNavigationBarHidden:true animated:true];
-}
 
 - (void)filterClicked{
     FilterViewController *filterViewController = [[FilterViewController alloc] initWithNibName:@"FilterView" bundle:nil];
@@ -54,15 +39,10 @@
     //[self.navigationController setNavigationBarHidden:true animated:true];
 }
 
-- (void)mapClicked{
-    MapViewController *mapViewController = [[MapViewController alloc] initWithNibName:@"MapView" bundle:nil];
-    [self.navigationController pushViewController:mapViewController animated:YES];
-}
 
 - (void)newMeetupClicked{
     NewEventViewController *newEventViewController = [[NewEventViewController alloc] initWithNibName:@"NewEventView" bundle:nil];
-    [self.navigationController setNavigationBarHidden:true animated:true];
-    [self.navigationController pushViewController:newEventViewController animated:YES];
+    [self.navigationController presentViewController:newEventViewController animated:YES completion:nil];
 }
 
 - (void) reloadFinished
@@ -112,15 +92,10 @@
     
     [self.navigationItem setHidesBackButton:true animated:false];
     
-    self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:
-                                              [[UIBarButtonItem alloc] initWithTitle:@"Profile" style:UIBarButtonItemStyleBordered target:self /*.viewDeckController*/ action:@selector(profileClicked)],
-                                              [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)],
-                                              [[UIBarButtonItem alloc] initWithTitle:@"Map" style:UIBarButtonItemStyleBordered target:self action:@selector(mapClicked)],
-                                              nil];
-    
-    self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:
-                                               [[UIBarButtonItem alloc] initWithTitle:@"New meet-up" style:UIBarButtonItemStyleBordered target:self /*.viewDeckController*/ action:@selector(newMeetupClicked)],
-                                               nil];
+    self.navigationItem.rightBarButtonItems = @[
+                [[UIBarButtonItem alloc] initWithTitle:@"New meet-up" style:UIBarButtonItemStyleBordered target:self /*.viewDeckController*/ action:@selector(newMeetupClicked)],
+                [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)]];
+
     
 /*    buttonProfile = [[UIBarButtonItem alloc] initWithTitle:@"Profile" style:UIBarButtonItemStylePlain target:self action:@selector(profileClicked)];
     buttonFilter = [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)];*/
@@ -137,6 +112,10 @@
         [TestFlight passCheckpoint:@"List restored"];
     }
 
+    
+}
+
+-(void)userDidRefresh{
     
 }
 

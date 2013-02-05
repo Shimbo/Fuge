@@ -12,7 +12,6 @@
 #import "GlobalData.h"
 #import "Person.h"
 #import "Circle.h"
-#import "ProfileViewController.h"
 #import "MeetupViewController.h"
 #import "FilterViewController.h"
 #import "UserProfileController.h"
@@ -145,10 +144,8 @@
     else
         [mapView setUserTrackingMode:MKUserTrackingModeFollow animated:TRUE];
         
-    self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:
-                                               [[UIBarButtonItem alloc] initWithTitle:@"Profile" style:UIBarButtonItemStyleBordered target:self /*.viewDeckController*/ action:@selector(profileClicked)],
-                                               [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)],
-                                               nil];
+    self.navigationItem.rightBarButtonItem =
+    [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)];
     
     [TestFlight passCheckpoint:@"Map"];
 }
@@ -216,11 +213,6 @@
     [super viewDidUnload];
 }
 
-- (void)profileClicked{
-    ProfileViewController *profileViewController = [[ProfileViewController alloc] initWithNibName:@"ProfileView" bundle:nil];
-    [self.navigationController pushViewController:profileViewController animated:YES];
-    //[self.navigationController setNavigationBarHidden:true animated:true];
-}
 
 - (void)filterClicked{
     FilterViewController *filterViewController = [[FilterViewController alloc] initWithNibName:@"FilterView" bundle:nil];

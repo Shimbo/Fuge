@@ -86,8 +86,7 @@
 }
 
 - (IBAction)cancelButtonDown:(id)sender {
-    [self.navigationController setNavigationBarHidden:false animated:true];
-    [self.navigationController popViewControllerAnimated:TRUE];
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 - (IBAction)createButtonDown:(id)sender {

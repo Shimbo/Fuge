@@ -22,6 +22,17 @@
 		09ABC08513A1D52E009C3FCF /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 09ABC08313A1D52D009C3FCF /* MainWindow.xib */; };
 		09BEF34C13D51C3F001BBCDB /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09BEF34B13D51C3F001BBCDB /* Security.framework */; };
 		2FCDD6B014A573F500295AAC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FCDD6AF14A573F500295AAC /* QuartzCore.framework */; };
+		4706D0FD16C10D0600CAF9AF /* PKRevealController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4706D0F816C10D0600CAF9AF /* PKRevealController.m */; };
+		4706D0FE16C10D0600CAF9AF /* PKRevealControllerContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4706D0FA16C10D0600CAF9AF /* PKRevealControllerContainerView.m */; };
+		4706D0FF16C10D0600CAF9AF /* UIViewController+PKRevealController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4706D0FC16C10D0600CAF9AF /* UIViewController+PKRevealController.m */; };
+		4706D10316C10DBF00CAF9AF /* LeftMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4706D10116C10DBF00CAF9AF /* LeftMenuController.m */; };
+		4706D10416C10DBF00CAF9AF /* LeftMenuController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4706D10216C10DBF00CAF9AF /* LeftMenuController.xib */; };
+		4706D10816C1188300CAF9AF /* RightViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4706D10616C1188300CAF9AF /* RightViewController.m */; };
+		4706D10916C1188300CAF9AF /* RightViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4706D10716C1188300CAF9AF /* RightViewController.xib */; };
+		4706D10C16C11A2400CAF9AF /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4706D10B16C11A2300CAF9AF /* MainViewController.m */; };
+		4706D10E16C11BA200CAF9AF /* RootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4706D10D16C11BA200CAF9AF /* RootViewController.xib */; };
+		4706D11116C11CA600CAF9AF /* reveal_menu_icon_portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 4706D10F16C11CA600CAF9AF /* reveal_menu_icon_portrait.png */; };
+		4706D11216C11CA600CAF9AF /* reveal_menu_icon_portrait@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4706D11016C11CA600CAF9AF /* reveal_menu_icon_portrait@2x.png */; };
 		471EAC5C16C0D419009F88F9 /* Foursquare2.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5216C0D3E0009F88F9 /* Foursquare2.m */; };
 		471EAC5D16C0D42C009F88F9 /* FSRequester.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5416C0D3E0009F88F9 /* FSRequester.m */; };
 		471EAC5E16C0D42F009F88F9 /* FSTargetCallback.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5616C0D3E0009F88F9 /* FSTargetCallback.m */; };
@@ -103,6 +114,23 @@
 		09ABC08413A1D52E009C3FCF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
 		09BEF34B13D51C3F001BBCDB /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		2FCDD6AF14A573F500295AAC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		4706D0F716C10D0600CAF9AF /* PKRevealController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PKRevealController.h; sourceTree = "<group>"; };
+		4706D0F816C10D0600CAF9AF /* PKRevealController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PKRevealController.m; sourceTree = "<group>"; };
+		4706D0F916C10D0600CAF9AF /* PKRevealControllerContainerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PKRevealControllerContainerView.h; sourceTree = "<group>"; };
+		4706D0FA16C10D0600CAF9AF /* PKRevealControllerContainerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PKRevealControllerContainerView.m; sourceTree = "<group>"; };
+		4706D0FB16C10D0600CAF9AF /* UIViewController+PKRevealController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+PKRevealController.h"; sourceTree = "<group>"; };
+		4706D0FC16C10D0600CAF9AF /* UIViewController+PKRevealController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+PKRevealController.m"; sourceTree = "<group>"; };
+		4706D10016C10DBF00CAF9AF /* LeftMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeftMenuController.h; sourceTree = "<group>"; };
+		4706D10116C10DBF00CAF9AF /* LeftMenuController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LeftMenuController.m; sourceTree = "<group>"; };
+		4706D10216C10DBF00CAF9AF /* LeftMenuController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LeftMenuController.xib; sourceTree = "<group>"; };
+		4706D10516C1188200CAF9AF /* RightViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RightViewController.h; sourceTree = "<group>"; };
+		4706D10616C1188300CAF9AF /* RightViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RightViewController.m; sourceTree = "<group>"; };
+		4706D10716C1188300CAF9AF /* RightViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RightViewController.xib; sourceTree = "<group>"; };
+		4706D10A16C11A2300CAF9AF /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		4706D10B16C11A2300CAF9AF /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
+		4706D10D16C11BA200CAF9AF /* RootViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RootViewController.xib; sourceTree = "<group>"; };
+		4706D10F16C11CA600CAF9AF /* reveal_menu_icon_portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = reveal_menu_icon_portrait.png; sourceTree = "<group>"; };
+		4706D11016C11CA600CAF9AF /* reveal_menu_icon_portrait@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reveal_menu_icon_portrait@2x.png"; sourceTree = "<group>"; };
 		471EAC5116C0D3E0009F88F9 /* Foursquare2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Foursquare2.h; sourceTree = "<group>"; };
 		471EAC5216C0D3E0009F88F9 /* Foursquare2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Foursquare2.m; sourceTree = "<group>"; };
 		471EAC5316C0D3E0009F88F9 /* FSRequester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FSRequester.h; sourceTree = "<group>"; };
@@ -292,6 +320,7 @@
 				09ABC07A13A1D52D009C3FCF /* InfoPlist.strings */,
 				09ABC07D13A1D52D009C3FCF /* SecondCircle-Prefix.pch */,
 				09ABC07E13A1D52D009C3FCF /* main.m */,
+				4706D10D16C11BA200CAF9AF /* RootViewController.xib */,
 				47A1AC6D16A7DDD3004B4CFA /* VenueCell.xib */,
 				4C7E3FEB169A456B0065484F /* VenueSelectView.xib */,
 				4C7E3FE1169A1BB30065484F /* MeetupView.xib */,
@@ -307,6 +336,22 @@
 				4C057323166AEE0A00EF6FAD /* Background.jpg */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		4706D0F616C10D0600CAF9AF /* PKRevealController */ = {
+			isa = PBXGroup;
+			children = (
+				4706D10F16C11CA600CAF9AF /* reveal_menu_icon_portrait.png */,
+				4706D11016C11CA600CAF9AF /* reveal_menu_icon_portrait@2x.png */,
+				4706D0F716C10D0600CAF9AF /* PKRevealController.h */,
+				4706D0F816C10D0600CAF9AF /* PKRevealController.m */,
+				4706D0F916C10D0600CAF9AF /* PKRevealControllerContainerView.h */,
+				4706D0FA16C10D0600CAF9AF /* PKRevealControllerContainerView.m */,
+				4706D0FB16C10D0600CAF9AF /* UIViewController+PKRevealController.h */,
+				4706D0FC16C10D0600CAF9AF /* UIViewController+PKRevealController.m */,
+			);
+			name = PKRevealController;
+			path = libs/PKRevealController;
 			sourceTree = "<group>";
 		};
 		47534D8516A6F8DC008CC823 /* Foursquare2 */ = {
@@ -331,6 +376,7 @@
 		47534DC916A7143F008CC823 /* libs */ = {
 			isa = PBXGroup;
 			children = (
+				4706D0F616C10D0600CAF9AF /* PKRevealController */,
 				47A1AC6216A7DBD2004B4CFA /* AsyncImages */,
 				4C27C9691691862A00B2A905 /* TestFlightSDK */,
 				47534D8516A6F8DC008CC823 /* Foursquare2 */,
@@ -383,6 +429,14 @@
 				476D1E2216A8273600077458 /* FSVenue.m */,
 				47A1AC6A16A7DDB9004B4CFA /* VenueCell.h */,
 				47A1AC6B16A7DDB9004B4CFA /* VenueCell.m */,
+				4706D10A16C11A2300CAF9AF /* MainViewController.h */,
+				4706D10B16C11A2300CAF9AF /* MainViewController.m */,
+				4706D10516C1188200CAF9AF /* RightViewController.h */,
+				4706D10616C1188300CAF9AF /* RightViewController.m */,
+				4706D10716C1188300CAF9AF /* RightViewController.xib */,
+				4706D10016C10DBF00CAF9AF /* LeftMenuController.h */,
+				4706D10116C10DBF00CAF9AF /* LeftMenuController.m */,
+				4706D10216C10DBF00CAF9AF /* LeftMenuController.xib */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -504,6 +558,11 @@
 				471EAC6016C0D435009F88F9 /* FSWebLogin.xib in Resources */,
 				471EAC6116C0D43A009F88F9 /* poweredByFoursquare_gray.png in Resources */,
 				471EAC6216C0D43A009F88F9 /* poweredByFoursquare_gray@2x.png in Resources */,
+				4706D10416C10DBF00CAF9AF /* LeftMenuController.xib in Resources */,
+				4706D10916C1188300CAF9AF /* RightViewController.xib in Resources */,
+				4706D10E16C11BA200CAF9AF /* RootViewController.xib in Resources */,
+				4706D11116C11CA600CAF9AF /* reveal_menu_icon_portrait.png in Resources */,
+				4706D11216C11CA600CAF9AF /* reveal_menu_icon_portrait@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -546,6 +605,12 @@
 				471EAC5D16C0D42C009F88F9 /* FSRequester.m in Sources */,
 				471EAC5E16C0D42F009F88F9 /* FSTargetCallback.m in Sources */,
 				471EAC5F16C0D432009F88F9 /* FSWebLogin.m in Sources */,
+				4706D0FD16C10D0600CAF9AF /* PKRevealController.m in Sources */,
+				4706D0FE16C10D0600CAF9AF /* PKRevealControllerContainerView.m in Sources */,
+				4706D0FF16C10D0600CAF9AF /* UIViewController+PKRevealController.m in Sources */,
+				4706D10316C10DBF00CAF9AF /* LeftMenuController.m in Sources */,
+				4706D10816C1188300CAF9AF /* RightViewController.m in Sources */,
+				4706D10C16C11A2400CAF9AF /* MainViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

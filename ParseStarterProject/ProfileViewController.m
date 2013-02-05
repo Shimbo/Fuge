@@ -20,6 +20,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        self.main = NO;
     }
     return self;
 }
@@ -48,9 +49,7 @@
     [[PFUser currentUser] setObject:areaEdit.text forKey:@"profileArea"];
     //[[PFUser currentUser] save];
     
-    [self.navigationController setNavigationBarHidden:false animated:true];
-    //[self.navigationController popViewControllerAnimated:true];
-    [self.navigationController popToRootViewControllerAnimated:true];
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 
@@ -70,6 +69,10 @@
 
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
+    if (!self.main) {
+        self.navigationItem.leftBarButtonItem = nil;
+    }
     arrayRoles = [[NSMutableArray alloc] init];
     [arrayRoles addObject:@"CEO"];
     [arrayRoles addObject:@"CTO"];

@@ -3,10 +3,11 @@
 #import "RootViewController.h"
 
 #import "LoginViewController.h"
-#import "RootViewController.h"
 #import "Circle.h"
 
 #import "GlobalData.h"
+
+#import "LeftMenuController.h"
 
 #import "TestFlightSDK/TestFlight.h"
 
@@ -14,9 +15,6 @@
 @implementation ParseStarterProjectAppDelegate
 
 @synthesize window;
-@synthesize navigationController;
-
-@synthesize rootViewController;
 
 @synthesize locationManager;
 
@@ -32,7 +30,13 @@
 #ifndef RELEASE
     [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
 #endif
-    [TestFlight takeOff:@"f8d7037b262277589cd287681817220a_MTUyNzAwMjAxMi0xMS0wNyAyMToxMDo0Ni43OTY5OTc"];
+    @try {
+        [TestFlight takeOff:@"f8d7037b262277589cd287681817220a_MTUyNzAwMjAxMi0xMS0wNyAyMToxMDo0Ni43OTY5OTc"];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"----%@",exception);
+    }
+
     
     [TestFlight passCheckpoint:@"Initialization started"];
     
@@ -58,23 +62,28 @@
 	// Create the navigation and view controllers
 //	RootViewController *rootViewController = [[RootViewController alloc] initWithStyle:UITableViewStylePlain];
     
-    rootViewController = [[RootViewController alloc] initWithStyle:UITableViewStylePlain];
-    UINavigationController *aNavigationController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
-    self.navigationController = aNavigationController;
+    [self createNewMainNavigation];
+    LeftMenuController *leftMenu = [[LeftMenuController alloc]init];
+    self.revealController = [PKRevealController revealControllerWithFrontViewController:self.mainNavigation
+                                                                     leftViewController:leftMenu
+                                                                    rightViewController:nil
+                                                                                options:nil];
+    window.rootViewController = self.revealController;
+    [window makeKeyAndVisible];
     
     if (! PFFacebookUtils.session.isOpen) {
-        LoginViewController *loginViewController = [[LoginViewController alloc] initWithNibName:@"LoginView" bundle:nil];
-        [aNavigationController pushViewController:loginViewController animated:YES];
-        [aNavigationController setNavigationBarHidden:true animated:false];
+        [self showLoginWindow];
     }
-    else
+    else{
+        
         [[PFUser currentUser] refresh];
+    }
     
     // Location data
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
-    locationManager.desiredAccuracy = [[NSNumber numberWithDouble:kCLLocationAccuracyHundredMeters] doubleValue];
-    locationManager.distanceFilter = [[NSNumber numberWithDouble:100.0] doubleValue];
+    locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+    locationManager.distanceFilter = 100.0f;
     [locationManager startUpdatingLocation];
     
     // Retrieving initial data
@@ -86,8 +95,7 @@
 
 	
 	// Configure and show the window
-	window.rootViewController = navigationController;
-    [window makeKeyAndVisible];
+
 
     
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|
@@ -99,7 +107,29 @@
     return YES;
 }
 
+-(void)createNewMainNavigation{
+    RootViewController *rootViewController = [[RootViewController alloc] init];
+    self.mainNavigation = [[UINavigationController alloc] initWithRootViewController:rootViewController];
+    [self.revealController setFrontViewController:self.mainNavigation focusAfterChange:YES completion:nil];
 
+}
+
+-(void)showLoginWindow{
+    LoginViewController *loginViewController = [[LoginViewController alloc] initWithNibName:@"LoginView" bundle:nil];
+    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:loginViewController];
+    
+    [self.revealController presentViewController:nav animated:YES
+                                      completion:nil];
+}
+
+-(void)userDidLogin{
+    [self createNewMainNavigation];
+    
+}
+
+-(void)userDidLogout{
+    [self showLoginWindow];    
+}
 
 
 #pragma mark -
