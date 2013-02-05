@@ -26,7 +26,7 @@
 @property(nonatomic,strong)NSString *country;
 @property(nonatomic,strong)NSString *cc;
 @property(nonatomic,strong)NSString *postalCode;
-@property(nonatomic,assign)int dist;
+@property(nonatomic,assign)CLLocationDistance dist;
 
 @property(nonatomic,strong)NSDictionary *fsVenue;
 

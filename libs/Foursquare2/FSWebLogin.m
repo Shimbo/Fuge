@@ -7,7 +7,7 @@
 //
 
 #import "FSWebLogin.h"
-#import "FSApi.h"
+#import "Foursquare2.h"
 
 
 @implementation FSWebLogin
@@ -35,24 +35,14 @@
 
 
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
-- (void)loadView {
-	[super loadView];
+- (void)viewDidLoad{
+    [super viewDidLoad];
 
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonSystemItemCancel target:self action:@selector(cancel)];
 	
 	self.navigationController.navigationBar.barStyle = UIBarStyleBlackOpaque;
-	
-
-	
-	
-	webView = [[UIWebView alloc]initWithFrame:CGRectMake(0, 0, 320, 480)];
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:_url]];
 	[webView loadRequest:request];
-	[webView setDelegate:self];
-	[self.view addSubview:webView];
-
-	
-	
 }
 
 
@@ -60,12 +50,13 @@
 
 -(void)cancel{
     [delegate performSelector:selector withObject:nil afterDelay:0];
-	[self dismissModalViewControllerAnimated:YES];
+	[self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType{
 	NSString *url =[[request URL] absoluteString];
-	if ([url rangeOfString:@"code="].length != 0) {
+
+	if ([url rangeOfString:@"access_token="].length != 0) {
 		NSHTTPCookie *cookie;
 		NSHTTPCookieStorage *storage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
 		for (cookie in [storage cookies]) {
@@ -76,8 +67,9 @@
 		}
 		
 		NSArray *arr = [url componentsSeparatedByString:@"="];
-		[delegate performSelector:selector withObject:arr[1]];
-		[self cancel];
+        [Foursquare2 setAccessToken:arr[1]];
+		[delegate performSelector:selector withObject:nil];
+		[self dismissViewControllerAnimated:YES completion:nil];
 	}else if ([url rangeOfString:@"error="].length != 0) {
 		NSArray *arr = [url componentsSeparatedByString:@"="];
 		[delegate performSelector:selector withObject:arr[1]];

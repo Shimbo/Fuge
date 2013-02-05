@@ -6,8 +6,9 @@
 //  Copyright 2011 Home. All rights reserved.
 //
 
-#import "FSApi.h"
+#import "Foursquare2.h"
 #import "FSTargetCallback.h"
+
 
 
 @interface Foursquare2 (PrivateAPI)
@@ -48,8 +49,6 @@ static NSMutableDictionary *attributes;
 
 + (void)initialize
 {
-    if(!attributes)
-        attributes = [[NSMutableDictionary alloc] init];
     [self setBaseURL:kBaseUrl];
 	NSUserDefaults *usDef = [NSUserDefaults standardUserDefaults];
 	if ([usDef objectForKey:@"access_token2"] != nil) {
@@ -57,19 +56,7 @@ static NSMutableDictionary *attributes;
 	}
 }
 
-+(void)getAccessTokenForCode:(NSString*)code callback:(Foursquare2Callback)callback{
-    if (!code) {
-        callback(NO,nil);
-        return;
-    }
-    
-	[self setBaseURL:@"https://foursquare.com/"];
-	NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-	dic[@"code"] = code;
-	dic[@"grant_type"] = @"authorization_code";
-	dic[@"redirect_uri"] = REDIRECT_URL;
-	[self get:@"oauth2/access_token" withParams:dic callback:callback];
-}
+
 
 + (void)setBaseURL:(NSString *)uri {
     [self setAttributeValue:uri forKey:@"kBaseUrl"];
@@ -103,6 +90,10 @@ static NSMutableDictionary *attributes;
 
 +(BOOL)isNeedToAuthorize{
 	return ([self classAttributes][@"access_token"] == nil);
+}
+
++(BOOL)isAuthorized{
+    return ([self classAttributes][@"access_token"] != nil);
 }
 
 
@@ -347,7 +338,7 @@ static NSMutableDictionary *attributes;
 					  accuracyAlt:(NSNumber*)accuracyAlt
 							query:(NSString*)query
 							limit:(NSNumber*)limit
-						   intent:(NSString*)intent
+						   intent:(FoursquareIntentType)intent
                            radius:(NSNumber*)radius
 						 callback:(Foursquare2Callback)callback
 {
@@ -371,7 +362,10 @@ static NSMutableDictionary *attributes;
 		dic[@"limit"] = limit.stringValue;
 	}
 	if (intent) {
-		dic[@"intent"] = intent;
+		dic[@"intent"] = [self inentTypeToString:intent];
+	}
+    if (radius) {
+		dic[@"radius"] = radius.stringValue;
 	}
 	[self get:@"venues/search" withParams:dic callback:callback];
 }
@@ -833,6 +827,28 @@ callback:(Foursquare2Callback)callback;
 
 #pragma mark Private methods
 
++(NSString*)inentTypeToString:(FoursquareIntentType)broadcast{
+	switch (broadcast) {
+		case intentBrowse:
+			return @"browse";
+			break;
+		case intentCheckin:
+			return @"checkin";
+			break;
+		case intentGlobal:
+			return @"global";
+			break;
+		case intentMatch:
+			return @"match";
+			break;
+		default:
+			return nil;
+			break;
+	}
+	
+}
+
+
 +(NSString*)broadcastTypeToString:(FoursquareBroadcastType)broadcast{
 	switch (broadcast) {
 		case broadcastPublic:
@@ -908,7 +924,7 @@ callback:(Foursquare2Callback)callback;
 }
 
 + (NSString *)constructRequestUrlForMethod:(NSString *)methodName 
-                                    params:(NSDictionary *)paramMap {	
+                                    params:(NSDictionary *)paramMap {
     NSMutableString *paramStr = [NSMutableString stringWithString: [self classAttributes][@"kBaseUrl"]];
     
     [paramStr appendString:methodName];
@@ -1070,4 +1086,48 @@ static Foursquare2 *instance;
     [self makeAsyncRequestWithRequest:request
                                target:target];
 }
+
+
+#ifndef __MAC_OS_X_VERSION_MAX_ALLOWED
+
+Foursquare2Callback authorizeCallbackDelegate;
++(void)authorizeWithCallback:(Foursquare2Callback)callback{
+	authorizeCallbackDelegate = [callback copy];
+	NSString *url = [NSString stringWithFormat:@"https://foursquare.com/oauth2/authenticate?client_id=%@&response_type=token&redirect_uri=%@",OAUTH_KEY,REDIRECT_URL];
+	FSWebLogin *loginCon = [[FSWebLogin alloc] initWithUrl:url];
+	loginCon.delegate = self;
+	loginCon.selector = @selector(done:);
+	UINavigationController *navCon = [[UINavigationController alloc]initWithRootViewController:loginCon];
+    navCon.navigationBar.tintColor = [UIColor lightGrayColor];
+	UIWindow *mainWindow = [[UIApplication sharedApplication]keyWindow];
+    UIViewController *controller = [self topViewController:mainWindow.rootViewController];
+	[controller presentViewController:navCon animated:YES completion:nil];
+}
+
++ (UIViewController *)topViewController:(UIViewController *)rootViewController
+{
+    if (rootViewController.presentedViewController == nil) {
+        return rootViewController;
+    }
+    
+    if ([rootViewController.presentedViewController isMemberOfClass:[UINavigationController class]]) {
+        UINavigationController *navigationController = (UINavigationController *)rootViewController.presentedViewController;
+        UIViewController *lastViewController = [[navigationController viewControllers] lastObject];
+        return [self topViewController:lastViewController];
+    }
+    
+    UIViewController *presentedViewController = (UIViewController *)rootViewController.presentedViewController;
+    return [self topViewController:presentedViewController];
+}
+
++(void)done:(NSError*)error{
+    if ([Foursquare2 isAuthorized]) {
+        [Foursquare2 setBaseURL:kBaseUrl];
+        authorizeCallbackDelegate(YES,error);
+    }else{
+        authorizeCallbackDelegate(NO,error);
+    }
+    
+}
+#endif
 @end

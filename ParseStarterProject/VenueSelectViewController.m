@@ -7,7 +7,7 @@
 //
 
 #import "VenueSelectViewController.h"
-#import "FSApi.h"
+#import "Foursquare2.h"
 #import "VenueCell.h"
 #import "NewEventViewController.h"
 #import "FSVenue.h"
@@ -173,7 +173,8 @@
                                                   longitude:[location[@"lng"] doubleValue]];
         [venue setCoordinate:CLLocationCoordinate2DMake([location[@"lat"] doubleValue],
                                                       [location[@"lng"] doubleValue])];
-        venue.dist = (int)[curLoc distanceFromLocation:l];
+        venue.dist = [curLoc distanceFromLocation:l];
+//        NSLog(@"%f- %d",venue.dist,[location[@"distance"] intValue]);
         venue.name = dic[@"name"];
         venue.venueId = dic[@"id"];
         
@@ -209,7 +210,7 @@
                                 accuracyAlt:nil
                                       query:nil
                                       limit:nil
-                                     intent:nil
+                                     intent:intentBrowse
                                      radius:@(500)
                                    callback:^(BOOL success, id result) {
                                        NSArray *a = [self convertToObjects:result[@"response"][@"venues"]];
@@ -280,7 +281,7 @@
     VenueCell *cell = [tableView dequeueReusableCellWithIdentifier:ident];
     FSVenue *venue = [self getVenuesForTable:tableView][indexPath.row];
     cell.name.text = venue.name;
-    cell.distance.text = [NSString stringWithFormat:@"%0.1fkm",(float)venue.dist/1000.0];
+    cell.distance.text = [NSString stringWithFormat:@"%0.1fkm",venue.dist/1000.0];
     cell.address.text = venue.address;
     [cell.icon loadImageFromURL:[venue iconURL]];
     return cell;
@@ -297,14 +298,15 @@
 }
 
 -(void)searchForString:(NSString*)string{
-    [Foursquare2 searchVenuesNearByLatitude:@(_location.latitude)
-                                  longitude:@(_location.longitude)
+    CLLocation *curLoc = self.mapView.userLocation.location;
+    [Foursquare2 searchVenuesNearByLatitude:@(curLoc.coordinate.latitude)
+                                  longitude:@(curLoc.coordinate.longitude)
                                  accuracyLL:nil
                                    altitude:nil
                                 accuracyAlt:nil
                                       query:string
                                       limit:@(50)
-                                     intent:nil
+                                     intent:intentCheckin
                                      radius:nil
                                    callback:^(BOOL success, id result) {
                                        NSArray *a = [self convertToObjects:result[@"response"][@"venues"]];
