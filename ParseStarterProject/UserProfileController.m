@@ -7,8 +7,8 @@
 //
 
 #import <Parse/Parse.h>
-
 #import "UserProfileController.h"
+#import "PushManager.h"
 
 @implementation UserProfileController
 @synthesize buttonProfile;
@@ -72,12 +72,12 @@ NSInteger sort(id message1, id message2, void *context)
     personThis = person;
     
     PFQuery *messageQuery1 = [PFQuery queryWithClassName:@"Message"];
-    [messageQuery1 whereKey:@"userFrom" equalTo:[ [PFUser currentUser] objectForKey:@"fbId"] ];
-    [messageQuery1 whereKey:@"userTo" equalTo:personThis.strId ];
+    [messageQuery1 whereKey:@"idUserFrom" equalTo:[ [PFUser currentUser] objectForKey:@"fbId"] ];
+    [messageQuery1 whereKey:@"idUserTo" equalTo:personThis.strId ];
     
     PFQuery *messageQuery2 = [PFQuery queryWithClassName:@"Message"];
-    [messageQuery2 whereKey:@"userFrom" equalTo:personThis.strId ];
-    [messageQuery2 whereKey:@"userTo" equalTo:[ [PFUser currentUser] objectForKey:@"fbId"] ];
+    [messageQuery2 whereKey:@"idUserFrom" equalTo:personThis.strId ];
+    [messageQuery2 whereKey:@"idUserTo" equalTo:[ [PFUser currentUser] objectForKey:@"fbId"] ];
     
     [messageQuery1 findObjectsInBackgroundWithBlock:^(NSArray *messages1, NSError* error) {
         [messageQuery2 findObjectsInBackgroundWithBlock:^(NSArray *messages2, NSError* error) {
@@ -93,7 +93,7 @@ NSInteger sort(id message1, id message2, void *context)
             {
                 NSDictionary* message = sortedArray[n];
                 NSString* strText = [message objectForKey:@"text"];
-                if ( [ person.strId compare:[ message objectForKey:@"userFrom"] ] == NSOrderedSame )
+                if ( [ person.strId compare:[ message objectForKey:@"idUserFrom"] ] == NSOrderedSame )
                 {
                     [stringHistory appendString:@"    "];
                     [stringHistory appendString:person.strName];
@@ -250,22 +250,24 @@ double animatedDistance;
     
     [UIView commitAnimations];
     
-    if ( messageNew.text == @"" )
+    if ( [messageNew.text compare:@""] == NSOrderedSame )
         return;
     
+    // Adding comment
     PFObject* message = [[PFObject alloc] initWithClassName:@"Message"];
     NSString* stringFrom = (NSString *) [[PFUser currentUser] objectForKey:@"fbId"];
-    [message setObject:stringFrom forKey:@"userFrom"];
-    [message setObject:personThis.strId forKey:@"userTo"];
+    [message setObject:stringFrom forKey:@"idUserFrom"];
+    [message setObject:personThis.strId forKey:@"idUserTo"];
     [message setObject:messageNew.text forKey:@"text"];
+    [message setObject:[PFUser currentUser] forKey:@"objUserFrom"];
+    //[message setObject:[PFUser currentUser] forKey:@"objUserFrom"];
     [message setObject:[NSNumber numberWithBool:FALSE] forKey:@"isRead"];
     [message save];
     
-    NSString* strFrom = [[PFUser currentUser] objectForKey:@"fbName"];
-    NSString* strPush =[[NSString alloc] initWithFormat:@"New message from %@!", strFrom];
-    NSString* strChannel =[[NSString alloc] initWithFormat:@"fb%@", personThis.strId];
-    [PFPush sendPushMessageToChannelInBackground:strChannel withMessage:strPush];
+    // Creating push
+    [pushManager sendPushNewMessage:PUSH_NEW_MESSAGE idTo:personThis.strId];
     
+    // Updating history
     NSMutableString* stringHistory = [[NSMutableString alloc] initWithFormat:@""];
     [stringHistory appendString:@"    You: "];
     [stringHistory appendString:messageNew.text];
@@ -293,7 +295,7 @@ double animatedDistance;
 }
 
 - (IBAction)meetButtonDown:(id)sender {
-    UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"WIP" message:@"'Private invites are under construction and to be added really soon! Thanks." delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
+    UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"WIP" message:@"Private invites are under construction and to be added really soon! Thanks." delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
     [errorAlert show];
 }
 

@@ -35,32 +35,27 @@
 
 - (void)addPersonAnnotations:(NSInteger)circleNumber limit:(NSInteger)l
 {
-    NSString* strCircle;
+    //NSString* strCircle = [Circle getCircleName:circleNumber];
     NSUInteger color;
     switch (circleNumber)
     {
         case 1:
-            strCircle = @"First circle";
             color = MKPinAnnotationColorGreen;
             break;
         case 2:
-            strCircle = @"Second circle";
             color = MKPinAnnotationColorRed;
             break;
         case 3:
-            strCircle = @"Random connections";
             color = MKPinAnnotationColorPurple;
             break;
     }
-    if ( ! strCircle )
-        return;
     
-    Circle* circle = [Circle circleNamed:strCircle];
+    Circle* circle = [globalData getCircle:circleNumber];
     if ( ! circle )
         return;
     
     int n = 0;
-    for (Person* person in circle.persons )
+    for (Person* person in [circle getPersons] )
     {
         PersonAnnotation *ann = [[PersonAnnotation alloc] init];
         ann.title = person.strName;
@@ -69,6 +64,7 @@
         ann.color = color;
         [ann setPerson:person];
         [mapView addAnnotation:ann];
+        
         n++;
         if ( n >= l )
             return;
@@ -77,77 +73,37 @@
 
 - (void)addMeetupAnnotations:(NSInteger)l
 {
-    PFQuery *meetupAnyQuery = [PFQuery queryWithClassName:@"Meetup"];
+    int n = 0;
     
-    // Location filter
-    [meetupAnyQuery whereKey:@"location" nearGeoPoint:[[PFUser currentUser] objectForKey:@"location"] withinKilometers:RANDOM_EVENT_KILOMETERS];
-    
-    // Date-time filter
-    NSNumber* timestampNow = [[NSNumber alloc] initWithDouble:[[NSDate date] timeIntervalSince1970]];
-    [meetupAnyQuery whereKey:@"meetupTimestamp" greaterThan:timestampNow];
-    //[meetupAnyQuery whereKey:@"privacy" notEqualTo:@"2"]; // Hide private events
-    // TODO: uncomment it and add another query for the events user is subscribed or invited to, as we need to disable geo-filter for it.
-    
-    // TODO: refactor this request, moving in a separate method meetup creation
-    [meetupAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *meetups, NSError* error)
+    for (Meetup *meetup in [globalData getMeetups])
     {
-        int n = 0;
-        for (NSDictionary *meetupData in meetups)
+        MeetupAnnotation *ann = [[MeetupAnnotation alloc] init];
+        
+        NSString* strPrivacy = nil;
+        NSUInteger color;
+        switch ( meetup.privacy )
         {
-            MeetupAnnotation *ann = [[MeetupAnnotation alloc] init];
-            
-            // TODO: temp
-            Meetup* meetup = [[Meetup alloc] init];
-            meetup.strSubject = [meetupData objectForKey:@"subject"];
-            meetup.strId = [meetupData objectForKey:@"meetupId"];
-            meetup.strOwnerId = [meetupData objectForKey:@"userFromId"];
-            meetup.strOwnerName = [meetupData objectForKey:@"userFromName"];
-            meetup.privacy = [[meetupData objectForKey:@"privacy"] integerValue];
-            PFGeoPoint* loc = [meetupData objectForKey:@"location"];
-            CLLocationCoordinate2D coord = { loc.latitude, loc.longitude };
-            meetup.location = coord;
-            
-            // Private meetups
-            if ( meetup.privacy == 2 )
-                if ( FALSE )    // TODO: is in invitation list
-                    continue;
-            
-            // 2ndO meetups (TODO: should be tested)
-            if ( meetup.privacy == 1 )
-            {
-                Boolean bSkip = false;
-                NSArray* friends = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
-                if ( [friends containsObject:meetup.strOwnerId ] )
-                    bSkip = true;
-                friends = [[PFUser currentUser] objectForKey:@"fbFriends"];
-                if ( [friends containsObject:meetup.strOwnerId ] )
-                    bSkip = true;
-                if ( bSkip )
-                    continue;
-            }
-            
-            NSString* strPrivacy = nil;
-            NSUInteger color;
-            switch ( meetup.privacy )
-            {
-                case 0: strPrivacy = @"Public"; color = MKPinAnnotationColorGreen; break;
-                case 1: strPrivacy = @"2ndO"; color = MKPinAnnotationColorPurple; break;
-                case 2: strPrivacy = @"Private"; color = MKPinAnnotationColorRed; break;
-            }
-            ann.title = meetup.strSubject;
-            ann.subtitle = [[NSString alloc] initWithFormat:@"Organizer: %@", meetup.strOwnerName ];
-            ann.strId = meetup.strId;
-            ann.coordinate = meetup.location;
-            ann.color = color;
-            [ann setMeetup:meetup];
-            
-            [mapView addAnnotation:ann];
-            n++;
-            if ( n >= l )
-                break;
-
+            case 0: strPrivacy = @"Public"; color = MKPinAnnotationColorGreen; break;
+            case 1: strPrivacy = @"2ndO"; color = MKPinAnnotationColorPurple; break;
+            case 2: strPrivacy = @"Private"; color = MKPinAnnotationColorRed; break;
         }
-    }];
+        ann.title = meetup.strSubject;
+        ann.subtitle = [[NSString alloc] initWithFormat:@"Organizer: %@", meetup.strOwnerName ];
+        ann.strId = meetup.strId;
+        ann.color = color;
+        
+        CLLocationCoordinate2D coord;
+        coord.latitude = meetup.location.latitude;
+        coord.longitude = meetup.location.longitude;
+        ann.coordinate = coord;
+        
+        [ann setMeetup:meetup];
+        [mapView addAnnotation:ann];
+        
+        n++;
+        if ( n >= l )
+            return;
+    }
 }
 
 - (void)viewDidLoad
@@ -182,8 +138,8 @@
         MKCoordinateRegion region = { {0.0, 0.0 }, { 0.0, 0.0 } };
         region.center.latitude = locationUser.coordinate.latitude;//..mapView.userLocation.location.coordinate.latitude;
         region.center.longitude = locationUser.coordinate.longitude;//mapView.userLocation.location.coordinate.longitude;
-        region.span.longitudeDelta = 0.5f;
-        region.span.latitudeDelta = 0.5f;
+        region.span.longitudeDelta = 0.05f;
+        region.span.latitudeDelta = 0.05f;
         [mapView setRegion:region animated:YES];
     }
     else
@@ -217,7 +173,7 @@
         if ( [annotation isMemberOfClass:[MeetupAnnotation class]] )
         {
             pinView.pinColor = ((MeetupAnnotation*) annotation).color;
-            pinView.image = nil;
+            //pinView.image = nil;
         }
         
         UIButton *btnView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];

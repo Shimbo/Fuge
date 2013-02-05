@@ -3,40 +3,15 @@
 #import "Circle.h"
 #import "Person.h"
 
-
-static NSMutableDictionary *circles;
-
 @implementation Circle
 
-@synthesize name;
-@synthesize  persons;
+@synthesize idCircle;
 
-/*
- Class methods to manage global regions.
- */
-+ (void)initialize {
-	circles = [[NSMutableDictionary alloc] init];
-}
-
-
-+ (Circle *)circleNamed:(NSString *)name {
-	return [circles objectForKey:name];
-}
-
-+ (void)clean
+- (id)init:(NSUInteger)circle
 {
-    [circles removeAllObjects];
-}
-
-+ (Circle *)newCircleWithName:(NSString *)circleName {
-    // Create a new region with a given name; add it to the regions dictionary.
-	Circle *newCircle = [[Circle alloc] init];
-	newCircle.name = circleName;
-	NSMutableArray *array = [[NSMutableArray alloc] init];
-	newCircle.persons = array;
-	//[array release];
-	[circles setObject:newCircle forKey:circleName];
-	return newCircle;
+    idCircle = circle;
+	persons = [[NSMutableArray alloc] init];
+    return self;
 }
 
 - (void)addPerson:(Person *)person {
@@ -48,12 +23,39 @@ static NSMutableDictionary *circles;
 	[persons addObject:person];
 }
 
-- (void)sortZones {
-    // Sort the zone wrappers by locale name.
-	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"timeZoneLocaleName" ascending:YES];
+- (void)sort
+{
+	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"strName" ascending:YES];
 	NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:&sortDescriptor count:1];
 	[persons sortUsingDescriptors:sortDescriptors];
 }
 
+- (NSMutableArray*) getPersons
+{
+    return persons;
+}
+
++ (NSString*) getPersonType:(NSUInteger)circle
+{
+    switch (circle)
+    {
+        case CIRCLE_FB: return @"Facebook friend";
+        case CIRCLE_2O: return @"2ndO friend";
+        case CIRCLE_RANDOM: return @"Random encounter";
+    }
+    return @"";
+}
+
+
++ (NSString*) getCircleName:(NSUInteger)circle
+{
+    switch (circle)
+    {
+        case CIRCLE_FB: return @"First circle";
+        case CIRCLE_2O: return @"Second circle";
+        case CIRCLE_RANDOM: return @"Random connections";
+    }
+    return @"";
+}
 
 @end

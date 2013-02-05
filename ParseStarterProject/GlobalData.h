@@ -7,21 +7,28 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Circle.h"
+#import "Meetup.h"
+#import "RootViewController.h"
 
 #define globalData [GlobalData sharedInstance]
 
 @interface GlobalData : NSObject
 {
-    NSMutableArray *listPersons;
-    //NSMutableArray *listCircles;
+    NSMutableDictionary *circles;
+    NSMutableArray      *meetups;
 }
-
-@property (nonatomic, strong) NSArray *listPersons;
-//@property (nonatomic, strong) NSArray *listCircles;
 
 + (id)sharedInstance;
 
-//- (NSMutableArray*) getPersons;
-//- (NSMutableArray*) getCircles;
+- (Circle*) getCircle:(NSUInteger)circle;
+- (NSArray*) getCircles;
+- (NSArray*) getMeetups;
+
+- (void)addMeetup:(Meetup*)meetup;
+- (Meetup*) addMeetupWithData:(PFObject*)meetupData;
+
+- (void)clean;
+- (void)reload:(RootViewController*)controller;
 
 @end

@@ -1,18 +1,18 @@
 
 @interface RootViewController : UITableViewController {
-	NSArray *displayList;
-    Boolean initialized;
+	//NSArray *displayList;
     
     UIActivityIndicatorView* activityIndicator;
 }
 
 - (void) reloadData;
+- (void) reloadFinished;
 
-@property (nonatomic, retain) NSArray *displayList;
+//@property (nonatomic, retain) NSArray *displayList;
 
 @property (nonatomic, retain) UIActivityIndicatorView *activityIndicator;
 
-@property Boolean initialized;
+@property BOOL initialized;
 
 @end
 
