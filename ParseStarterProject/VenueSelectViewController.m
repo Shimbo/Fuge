@@ -70,7 +70,7 @@
     span.longitudeDelta = 0.0025;
     region.span = span;
     region.center = location;
-    [self.mapView setRegion:region animated:YES];
+    [self.mapView setRegion:region animated:NO];
 }
 
 
@@ -198,20 +198,47 @@
     self.refreshButton.hidden = YES;
     self.mapView.userInteractionEnabled = NO;
     [self.activityIndicator startAnimating];
-    [Foursquare2 searchVenuesNearByLatitude:@(_location.latitude)
-                                  longitude:@(_location.longitude)
-                                 accuracyLL:nil
-                                   altitude:nil
-                                accuracyAlt:nil
-                                      query:nil
-                                      limit:nil
-                                     intent:intentBrowse
-                                     radius:@(500)
-                                   callback:^(BOOL success, id result) {
-                                       NSArray *a = [self convertToObjects:result[@"response"][@"venues"]];
-                                       self.venuesForTable = a;
-                                       [self didUpdate];
-                                   }];
+//    [Foursquare2 searchVenuesNearByLatitude:@(_location.latitude)
+//                                  longitude:@(_location.longitude)
+//                                 accuracyLL:nil
+//                                   altitude:nil
+//                                accuracyAlt:nil
+//                                      query:nil
+//                                      limit:nil
+//                                     intent:intentBrowse
+//                                     radius:@(500)
+//                                   callback:^(BOOL success, id result) {
+//                                       NSArray *a = [self convertToObjects:result[@"response"][@"venues"]];
+//                                       self.venuesForTable = a;
+//                                       [self didUpdate];
+//                                   }];
+    CGFloat offset = 20;
+    CGPoint swPoint = CGPointMake(self.mapView.bounds.origin.x+offset, _mapView.bounds.origin.y+ _mapView.bounds.size.height-offset);
+    CGPoint nePoint = CGPointMake((self.mapView.bounds.origin.x + _mapView.bounds.size.width-offset), (_mapView.bounds.origin.y+2.5*offset));
+    
+    //Then transform those point into lat,lng values
+    CLLocationCoordinate2D swCoord;
+    swCoord = [_mapView convertPoint:swPoint toCoordinateFromView:_mapView];
+    
+    CLLocationCoordinate2D neCoord;
+    neCoord = [_mapView convertPoint:nePoint toCoordinateFromView:_mapView];
+
+    [Foursquare2 searchVenuesInBoundingQuadrangleS:@(swCoord.latitude)
+                                                 w:@(swCoord.longitude)
+                                                 n:@(neCoord.latitude)
+                                                 e:@(neCoord.longitude)
+                                             query:nil
+                                             limit:@(50)
+                                            intent:intentBrowse
+                                          callback:^(BOOL success, id result) {
+                                              if (success) {
+                                                  NSArray *a = [self convertToObjects:result[@"response"][@"venues"]];
+                                                  self.venuesForTable = a;
+                                                  
+                                              }
+                                              [self didUpdate];
+
+                                          }];
 }
 
 - (IBAction)refresh:(UIButton*)sender {
@@ -304,9 +331,12 @@
                                      intent:intentCheckin
                                      radius:nil
                                    callback:^(BOOL success, id result) {
-                                       NSArray *a = [self convertToObjects:result[@"response"][@"venues"]];
-                                       self.venuesForSearch = a;
-                                       [self.searchDisplayController.searchResultsTableView reloadData];
+                                       if (success) {
+                                           NSArray *a = [self convertToObjects:result[@"response"][@"venues"]];
+                                           self.venuesForSearch = a;
+                                           [self.searchDisplayController.searchResultsTableView reloadData];
+                                       }
+
                                    }];
 }
 
