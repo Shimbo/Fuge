@@ -11,7 +11,7 @@
 #import <EventKit/EventKit.h>
 #import <EventKitUI/EventKitUI.h>
 
-@interface MeetupViewController : UIViewController <UITextViewDelegate, EKEventEditViewDelegate>
+@interface MeetupViewController : UIViewController <UITextViewDelegate>
 {
     Meetup* meetup;
     __unsafe_unretained IBOutlet UITextView *comments;

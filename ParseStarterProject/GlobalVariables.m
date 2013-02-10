@@ -7,6 +7,7 @@
 //
 
 #import "GlobalVariables.h"
+#import <Parse/Parse.h>
 
 @implementation GlobalVariables
 
@@ -29,6 +30,7 @@ static GlobalVariables *sharedInstance = nil;
     if (self) {
         bNewUser = FALSE;
         bSendPushToFriends = FALSE;
+        settings = nil;
     }
     
     return self;
@@ -67,6 +69,36 @@ static GlobalVariables *sharedInstance = nil;
 - (void)pushToFriendsSent
 {
     sharedInstance->bSendPushToFriends = FALSE;
+}
+
+
+- (void) checkSettings
+{
+    if ( ! settings )
+    {
+        settings = [[PFUser currentUser] objectForKey:@"settings"];
+        if ( ! settings )
+        {
+            settings = [[NSMutableDictionary alloc] init];
+            NSNumber* falseNum = [[NSNumber alloc] initWithBool:false];
+            [settings setValue:[falseNum stringValue] forKey:@"addToCalendar"];
+            [[PFUser currentUser] setObject:settings forKey:@"settings"];
+        }
+    }
+}
+
+- (Boolean)shouldAlwaysAddToCalendar
+{
+    [self checkSettings];
+    return [[settings objectForKey:@"addToCalendar"] boolValue];
+}
+
+- (void)setToAlwaysAddToCalendar
+{
+    NSNumber* trueNum = [[NSNumber alloc] initWithBool:true];
+    [settings setValue:[trueNum stringValue] forKey:@"addToCalendar"];
+    [[PFUser currentUser] setObject:settings forKey:@"settings"];
+    [[PFUser currentUser] saveInBackground];
 }
 
 @end

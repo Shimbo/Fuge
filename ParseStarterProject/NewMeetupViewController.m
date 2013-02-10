@@ -12,11 +12,6 @@
 #import "FSVenue.h"
 #import "GlobalData.h"
 
-
-@interface NewMeetupViewController ()
-
-@end
-
 @implementation NewMeetupViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -87,6 +82,8 @@
 
 - (IBAction)cancelButtonDown:(id)sender {
     [self dismissModalViewControllerAnimated:YES];
+    [self.navigationController setNavigationBarHidden:false animated:true];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (IBAction)createButtonDown:(id)sender {
@@ -167,7 +164,13 @@
     
     // TODO: Send to everybody around (using public/2ndO filter, send checkbox and geo-query) push about the meetup
     
+    // Add to calendar call
+    [meetup addToCalendar:self shouldAlert:newMeetup];
+    
+    // Close the window
     [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController setNavigationBarHidden:false animated:true];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 

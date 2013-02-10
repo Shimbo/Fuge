@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Parse/Parse.h>
 
 #define globalVariables [GlobalVariables sharedInstance]
 
@@ -17,6 +18,7 @@
 {
     Boolean bNewUser;
     Boolean bSendPushToFriends;
+    NSMutableDictionary* settings;
 }
 
 - (Boolean)isNewUser;
@@ -24,6 +26,9 @@
 
 - (Boolean)shouldSendPushToFriends;
 - (void)pushToFriendsSent;
+
+- (Boolean)shouldAlwaysAddToCalendar;
+- (void)setToAlwaysAddToCalendar;
 
 + (id)sharedInstance;
 
