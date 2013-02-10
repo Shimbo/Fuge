@@ -60,7 +60,6 @@
 		4C08DDD4163C88580093C851 /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD2163C88580093C851 /* Person.m */; };
 		4C08DDDB163C88640093C851 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD6163C88640093C851 /* RootViewController.m */; };
 		4C08DDDC163C88640093C851 /* PersonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD8163C88640093C851 /* PersonCell.m */; };
-		4C08DDDD163C88640093C851 /* PersonView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDDA163C88640093C851 /* PersonView.m */; };
 		4C08DDDF163C89A80093C851 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C08DDDE163C89A80093C851 /* MainWindow.xib */; };
 		4C188D151698C1CA004CF42D /* IISideController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C188D101698C1CA004CF42D /* IISideController.m */; };
 		4C188D161698C1CA004CF42D /* IIViewDeckController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C188D121698C1CA004CF42D /* IIViewDeckController.m */; };
@@ -587,7 +586,6 @@
 				4C08DDD4163C88580093C851 /* Person.m in Sources */,
 				4C08DDDB163C88640093C851 /* RootViewController.m in Sources */,
 				4C08DDDC163C88640093C851 /* PersonCell.m in Sources */,
-				4C08DDDD163C88640093C851 /* PersonView.m in Sources */,
 				4C057320166ACED200EF6FAD /* LoginViewController.m in Sources */,
 				4C05732A166AEF9B00EF6FAD /* ProfileViewController.m in Sources */,
 				4C05733B166B73D900EF6FAD /* UserProfileController.m in Sources */,

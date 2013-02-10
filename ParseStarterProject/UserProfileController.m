@@ -9,15 +9,11 @@
 #import <Parse/Parse.h>
 #import "UserProfileController.h"
 #import "PushManager.h"
+#import "AsyncImageView.h"
 
 @implementation UserProfileController
 @synthesize buttonProfile;
 
-@synthesize image;
-@synthesize imageData;
-@synthesize urlConnection;
-@synthesize pictureURL;
-@synthesize urlRequest;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -110,15 +106,7 @@ NSInteger sort(id message1, id message2, void *context)
         }];
     }];
     
-    // Image
-    // Download the user's facebook profile picture
-    imageData = [[NSMutableData alloc] init]; // the data will be loaded in here
-    
-    // URL should point to https://graph.facebook.com/{facebookId}/picture?type=large&return_ssl_resources=1
-    pictureURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", personThis.strId]];
-    
-    urlRequest = [NSMutableURLRequest requestWithURL:pictureURL
-                                         cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.0f];
+    [profileImage loadImageFromURL:person.largeImageURL];
     
     // Distance and circle
     NSString* strDistance = [[NSString alloc] initWithFormat:@"%@ away", person.strDistance];
@@ -131,22 +119,10 @@ NSInteger sort(id message1, id message2, void *context)
         addButton.hidden = YES;
     
     // Run network request asynchronously
-    urlConnection = [[NSURLConnection alloc] initWithRequest:urlRequest delegate:self];
+
 
 }
 
-// Called every time a chunk of the data is received
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-    [imageData appendData:data]; // Build the image
-}
-
-// Called when the entire image is finished downloading
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-    // Set the image in the header imageView
-    image = [UIImage imageWithData:imageData];
-    [profileImage setImage:image];
-    //[self setNeedsDisplay];
-}
 
 
 

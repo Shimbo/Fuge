@@ -18,6 +18,9 @@
 #import "TestFlightSDK/TestFlight.h"
 #import <Parse/Parse.h>
 #import "GlobalVariables.h"
+#import "AsyncImageView.h"
+#import "ImageLoader.h"
+
 
 @implementation MapViewController
 
@@ -150,6 +153,8 @@
     [TestFlight passCheckpoint:@"Map"];
 }
 
+#define kAsyncTag 321
+
 -(MKAnnotationView *)mapView:(MKMapView *)mV viewForAnnotation:(id <MKAnnotation>)annotation
 {
     MKPinAnnotationView *pinView = nil;
@@ -157,7 +162,10 @@
     {
         static NSString *defaultPinID = @"secondcircle.pin";
         pinView = (MKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:defaultPinID];
-        if ( pinView == nil ) pinView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:defaultPinID];
+
+        if ( pinView == nil ){
+            pinView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:defaultPinID];
+        }
         
         if ( [annotation isMemberOfClass:[PersonAnnotation class]] )
         {
@@ -165,7 +173,19 @@
             //UIImage *image = ((PersonAnnotation*) annotation).person.image;
             //UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
             //[pinView addSubview:imageView];
-            pinView.image = ((PersonAnnotation*) annotation).person.image;
+            pinView.image = nil;
+            ImageLoader *loader = [[ImageLoader alloc]init];
+            [loader loadImageWithUrl:((PersonAnnotation*) annotation).person.imageURL
+                             handler:^(UIImage *image) {
+                                 if (pinView.image == nil) {
+                                     pinView.image = [UIImage imageWithCGImage:image.CGImage
+                                                                         scale:2
+                                                                   orientation:image.imageOrientation];
+                                 }
+
+            }];
+
+//            pinView.image = ((PersonAnnotation*) annotation).person.image;
         }
         if ( [annotation isMemberOfClass:[MeetupAnnotation class]] )
         {

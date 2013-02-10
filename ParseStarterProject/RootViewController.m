@@ -98,8 +98,12 @@
                 [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)]];
 
     
+    //если ты сделал это
+    //то не надо if (personCell == nil) в cellForRowAtIndexPath
     UINib *nib = [UINib nibWithNibName:@"PersonCell" bundle:nil];
     [self.tableView registerNib:nib forCellReuseIdentifier:@"PersonCellIdent"];
+    
+    
     
 /*    buttonProfile = [[UIBarButtonItem alloc] initWithTitle:@"Profile" style:UIBarButtonItemStylePlain target:self action:@selector(profileClicked)];
     buttonFilter = [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)];*/
@@ -158,7 +162,7 @@
 	static NSString *CellIdentifier = @"PersonCellIdent";
 		
 	PersonCell *personCell = (PersonCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-	
+
 //	if (personCell == nil) {
 //		personCell = [[PersonCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
 ////		personCell.frame = CGRectMake(0.0, 0.0, 320.0, ROW_HEIGHT);
@@ -169,6 +173,9 @@
 	Person *person = [circle getPersons][indexPath.row];
     [personCell.personImage loadImageFromURL:person.imageURL];
     personCell.personName.text = person.strName;
+    personCell.personDistance.text = person.strDistance;
+    personCell.personRole.text = person.strRole;
+    personCell.personArea.text = person.strArea;
 	return personCell;
 }
 

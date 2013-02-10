@@ -36,19 +36,20 @@
 @property (nonatomic, retain) NSString *strArea;
 @property (nonatomic, retain) NSString *strCircle;
 
-@property (nonatomic, retain) NSMutableData *imageData;
-@property (nonatomic, retain) UIImage *image;
-@property (nonatomic, retain) NSURLConnection *urlConnection;
-@property (nonatomic, retain) NSURL *pictureURL;
+//@property (nonatomic, retain) NSMutableData *imageData;
+//@property (nonatomic, retain) UIImage *image;
+//@property (nonatomic, retain) NSURLConnection *urlConnection;
+//@property (nonatomic, retain) NSURL *pictureURL;
 @property (nonatomic, retain) NSMutableURLRequest *urlRequest;
 
-@property (nonatomic, retain) PersonView* pParent;
+//@property (nonatomic, retain) PersonView* pParent;
 
 // TODO: change it to more secure init
 - init:(NSArray*)nameComponents;
-- (void)addParent:(PersonView*)parent;
+//- (void)addParent:(PersonView*)parent;
 -(NSString*)imageURL;
-- (UIImage *) getImage;
+-(NSString*)largeImageURL;
+//- (UIImage *) getImage;
 
 - (void) setLocation:(CLLocationCoordinate2D) loc;
 - (CLLocationCoordinate2D) getLocation;

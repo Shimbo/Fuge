@@ -14,23 +14,23 @@
 @synthesize strArea;
 @synthesize strCircle;
 
-@synthesize image;
-@synthesize imageData;
-@synthesize urlConnection;
-@synthesize pictureURL;
+//@synthesize image;
+//@synthesize imageData;
+//@synthesize urlConnection;
+//@synthesize pictureURL;
 @synthesize urlRequest;
 
-@synthesize pParent;
+//@synthesize pParent;
 
 + (void)initialize {
 	if (self == [Person class]) {
 	}
 }
 
-- (void)addParent:(PersonView*)parent
-{
-    pParent = parent;
-}
+//- (void)addParent:(PersonView*)parent
+//{
+//    pParent = parent;
+//}
 
 - (id)init:(NSArray*) nameComponents {
 	
@@ -51,9 +51,14 @@
 }
 
 -(NSString*)imageURL{
-    return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&return_ssl_resources=1", strId];
+    return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&width=100&height=100&return_ssl_resources=1", strId];
 }
 
+-(NSString*)largeImageURL{
+    return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", strId];
+}
+
+/*
 - (UIImage *)getImage {
     if (image == nil && imageData == nil && urlConnection == nil )
     {
@@ -73,6 +78,7 @@
     // Return profile image
 	return image;
 }
+ 
 
 // Called every time a chunk of the data is received
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
@@ -87,7 +93,7 @@
 }
 
 - (void)dealloc {
-}
+}*/
 
 - (void) setLocation:(CLLocationCoordinate2D) loc
 {
