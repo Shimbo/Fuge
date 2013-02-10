@@ -9,7 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
 
-@class NewEventViewController;
+@class NewMeetupViewController;
+
 @interface VenueSelectViewController : UIViewController<MKMapViewDelegate,UITableViewDataSource,UITableViewDelegate,CLLocationManagerDelegate>{
     BOOL initilized;
     CLLocationCoordinate2D _location;
@@ -31,7 +32,7 @@
 @property (strong, nonatomic) IBOutlet NSArray *venuesForSearch;
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 
-@property (weak, nonatomic)  NewEventViewController *delegate;
+@property (weak, nonatomic)  NewMeetupViewController *delegate;
 
 
 

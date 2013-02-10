@@ -9,7 +9,7 @@
 #import "RootViewController.h"
 #import "FilterViewController.h"
 #import "UserProfileController.h"
-#import "NewEventViewController.h"
+#import "NewMeetupViewController.h"
 #import "PersonCell.h"
 #import "Person.h"
 #import "Circle.h"
@@ -42,8 +42,9 @@
 
 
 - (void)newMeetupClicked{
-    NewEventViewController *newEventViewController = [[NewEventViewController alloc] initWithNibName:@"NewEventView" bundle:nil];
-    [self.navigationController presentViewController:newEventViewController animated:YES completion:nil];
+    NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
+    
+    [self.navigationController presentViewController:newMeetupViewController animated:YES completion:nil];
 }
 
 - (void) reloadFinished
@@ -144,7 +145,7 @@
 
 - (NSInteger)tableView:(UITableView *)aTableView numberOfRowsInSection:(NSInteger)section {
 	// Number of rows is the number of time zones in the region for the specified section
-	Circle *circle = [globalData getCircle:section+1];
+	Circle *circle = [globalData getCircleByNumber:section];
 	NSArray *persons = [circle getPersons];
 	return [persons count];
 }
@@ -152,7 +153,7 @@
 
 - (NSString *)tableView:(UITableView *)aTableView titleForHeaderInSection:(NSInteger)section {
 	// Section title is the region name
-    Circle *circle = [globalData getCircle:section+1];
+    Circle *circle = [globalData getCircleByNumber:section];
 	return [Circle getCircleName:circle.idCircle];
 }
 
@@ -169,13 +170,14 @@
 //	}
 	
 	// Get the time zones for the region for the section
-	Circle* circle = [globalData getCircle:indexPath.section+1];
+	Circle* circle = [globalData getCircleByNumber:indexPath.section];
 	Person *person = [circle getPersons][indexPath.row];
     [personCell.personImage loadImageFromURL:person.imageURL];
     personCell.personName.text = person.strName;
     personCell.personDistance.text = person.strDistance;
     personCell.personRole.text = person.strRole;
     personCell.personArea.text = person.strArea;
+
 	return personCell;
 }
 
@@ -185,11 +187,11 @@
     
     NSInteger nRow = indexPath.row;
     NSInteger nSection = indexPath.section;
-    Circle *circle = [globalData getCircle:nSection+1];
+    Circle *circle = [globalData getCircleByNumber:nSection];
     Person* person = [circle getPersons][nRow];
     
     // Empty profile, should open invite window
-    if ( [person.strRole compare:@""] == NSOrderedSame ) {
+    if ( person.idCircle == CIRCLE_FBOTHERS ) {
         NSMutableDictionary* params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                        @"Check out this awesome app.",  @"message",
                                        nil];

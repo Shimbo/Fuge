@@ -14,10 +14,8 @@
 @synthesize strArea;
 @synthesize strCircle;
 
-//@synthesize image;
-//@synthesize imageData;
-//@synthesize urlConnection;
-//@synthesize pictureURL;
+@synthesize idCircle;
+
 @synthesize urlRequest;
 
 //@synthesize pParent;
@@ -32,7 +30,7 @@
 //    pParent = parent;
 //}
 
-- (id)init:(NSArray*) nameComponents {
+- (id)init:(NSArray*) nameComponents circle:(NSUInteger)nCircle{
 	
 	if (self = [super init]) {
         strName = [[nameComponents objectAtIndex:0] copy];
@@ -43,9 +41,11 @@
         strRole = [[nameComponents objectAtIndex:5] copy];
         strArea = [[nameComponents objectAtIndex:6] copy];
         strCircle = [[nameComponents objectAtIndex:7] copy];
+        idCircle = nCircle;
         image = nil;
         imageData = nil;
         urlConnection = nil;
+        object = nil;
 	}
 	return self;
 }

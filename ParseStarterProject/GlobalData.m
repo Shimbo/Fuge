@@ -62,8 +62,37 @@ static GlobalData *sharedInstance = nil;
         result = [[Circle alloc] init:circle];
         [circles setObject:result forKey:[Circle getCircleName:circle]];
     }
+    
     return result;
 }
+
+NSInteger sortByName(id num1, id num2, void *context)
+{
+    Circle* v1 = num1;
+    Circle* v2 = num2;
+    if (v1.idCircle < v2.idCircle)
+        return NSOrderedAscending;
+    else if (v1.idCircle > v2.idCircle)
+        return NSOrderedDescending;
+    else
+        return NSOrderedSame;
+}
+
+- (Circle*)getCircleByNumber:(NSUInteger)num
+{
+    NSArray* values = [circles allValues];
+    NSArray* sortedValues = [values sortedArrayUsingFunction:sortByName context:nil];
+    
+    int n = 0;
+    for (Circle *circle in sortedValues)
+    {
+        if ( n == num )
+            return circle;
+        n++;
+    }
+    return nil;
+}
+
 
 - (NSArray*) getMeetups
 {
@@ -140,7 +169,7 @@ static GlobalData *sharedInstance = nil;
     Person *person = [[Person alloc] init:@[strName, strId, strAge,
                       [user objectForKey:@"fbGender"],
                       strDistance, [user objectForKey:@"profileRole"],
-                      [user objectForKey:@"profileArea"], strCircle]];
+                      [user objectForKey:@"profileArea"], strCircle] circle:circleUser];
     [person setLocation:locationFriend.coordinate];
     
     Circle *circle = [globalData getCircle:circleUser];
@@ -212,6 +241,35 @@ static GlobalData *sharedInstance = nil;
     for (PFUser *friendAnyUser in friendAnyUsers)
         [self addPerson:friendAnyUser userCircle:CIRCLE_RANDOM];
     
+}
+
+- (void) reloadFbOthers
+{
+    NSArray *friendIds = [[PFUser currentUser] objectForKey:@"fbFriends"];
+    
+    NSString* strName = [[NSString alloc] initWithFormat:@"Unknown friend (TBD)"];
+    NSString* strRole = [[NSString alloc] initWithFormat:@"Invite to expand your network!"];
+    
+    for (NSString *strId in friendIds)
+    {
+        // Already added users
+        Boolean bFound = false;
+        for (Circle *circle in [circles allValues])
+        {
+            for (Person *friendUser in [circle getPersons])
+            {
+                //NSString *strId2 = [friendUser objectForKey:@"strId"];
+                if ( [strId compare:friendUser.strId ] == NSOrderedSame )
+                    bFound = true;
+            }
+        }
+        if ( bFound )
+            continue;
+        
+        // Adding new "person"
+        Circle *circle = [globalData getCircle:CIRCLE_FBOTHERS];
+        [circle addPersonWithComponents:@[strName, strId, @"", @"", @"", strRole, @"", @""]];
+    }
 }
 
 - (void)addMeetup:(Meetup*)meetup
@@ -320,6 +378,9 @@ static GlobalData *sharedInstance = nil;
                 
                 // Random friends
                 [self reloadRandom];
+                
+                // FB friends out of the app
+                [self reloadFbOthers];
                 
                 // Meetups
                 [self reloadMeetups];

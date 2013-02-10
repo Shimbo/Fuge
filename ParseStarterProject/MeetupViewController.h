@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "Meetup.h"
+#import <EventKit/EventKit.h>
+#import <EventKitUI/EventKitUI.h>
 
 @interface MeetupViewController : UIViewController <UITextViewDelegate>
 {

@@ -19,7 +19,7 @@
 }
 
 - (void)addPersonWithComponents:(NSArray *)nameComponents {
-	Person *person = [[Person alloc] init:nameComponents];
+	Person *person = [[Person alloc] init:nameComponents circle:idCircle];
 	[persons addObject:person];
 }
 
@@ -42,10 +42,10 @@
         case CIRCLE_FB: return @"Facebook friend";
         case CIRCLE_2O: return @"2ndO friend";
         case CIRCLE_RANDOM: return @"Random encounter";
+        case CIRCLE_FBOTHERS: return @"Facebook friend";
     }
     return @"";
 }
-
 
 + (NSString*) getCircleName:(NSUInteger)circle
 {
@@ -54,6 +54,7 @@
         case CIRCLE_FB: return @"First circle";
         case CIRCLE_2O: return @"Second circle";
         case CIRCLE_RANDOM: return @"Random connections";
+        case CIRCLE_FBOTHERS: return @"Facebook friends";
     }
     return @"";
 }

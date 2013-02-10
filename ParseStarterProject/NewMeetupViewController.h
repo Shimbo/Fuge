@@ -10,7 +10,8 @@
 #import "Meetup.h"
 
 @class FSVenue;
-@interface NewEventViewController : UIViewController <UITextFieldDelegate>
+
+@interface NewMeetupViewController : UIViewController <UITextFieldDelegate>
 {
     IBOutlet UITextField *subject;
     IBOutlet UISegmentedControl *privacy;

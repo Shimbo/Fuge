@@ -19,6 +19,8 @@
     
     CLLocationCoordinate2D location;
     
+    NSUInteger idCircle;
+    
 	UIImage *image;
     NSMutableData* imageData;
     NSURLConnection *urlConnection;
@@ -36,20 +38,23 @@
 @property (nonatomic, retain) NSString *strArea;
 @property (nonatomic, retain) NSString *strCircle;
 
-//@property (nonatomic, retain) NSMutableData *imageData;
-//@property (nonatomic, retain) UIImage *image;
-//@property (nonatomic, retain) NSURLConnection *urlConnection;
-//@property (nonatomic, retain) NSURL *pictureURL;
+
+
+@property (nonatomic) NSUInteger idCircle;
+
 @property (nonatomic, retain) NSMutableURLRequest *urlRequest;
 
 //@property (nonatomic, retain) PersonView* pParent;
 
 // TODO: change it to more secure init
+
 - init:(NSArray*)nameComponents;
-//- (void)addParent:(PersonView*)parent;
+
 -(NSString*)imageURL;
 -(NSString*)largeImageURL;
-//- (UIImage *) getImage;
+
+- (id)init:(NSArray*) nameComponents circle:(NSUInteger)nCircle;
+
 
 - (void) setLocation:(CLLocationCoordinate2D) loc;
 - (CLLocationCoordinate2D) getLocation;

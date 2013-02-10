@@ -8,7 +8,7 @@
 
 #import "MeetupViewController.h"
 #import <Parse/Parse.h>
-#import "NewEventViewController.h"
+#import "NewMeetupViewController.h"
 
 @implementation MeetupViewController
 
@@ -23,8 +23,10 @@
 
 - (void)joinClicked
 {
-    // Hiding join button
-    [self.navigationItem setRightBarButtonItem:nil];
+    // Chaning join button to leave and adding addToCalendar
+    self.navigationItem.rightBarButtonItems = @[
+                                                [[UIBarButtonItem alloc] initWithTitle:@"Leave" style:UIBarButtonItemStyleBordered target:self action:@selector(leaveClicked)],
+                                                [[UIBarButtonItem alloc] initWithTitle:@"Add to calendar" style:UIBarButtonItemStyleBordered target:self action:@selector(calendarClicked)]];
     
     // Creating attendee in db
     PFObject* attendee = [[PFObject alloc] initWithClassName:@"Attendee"];
@@ -34,7 +36,7 @@
     [attendee setObject:strUserId forKey:@"userId"];
     [attendee setObject:strUserName forKey:@"userName"];
     [attendee setObject:strMeetupId forKey:@"meetupId"];
-    [attendee save];
+    [attendee saveInBackground];
     
     // Creating comment about joining in db
     PFObject* comment = [[PFObject alloc] initWithClassName:@"Comment"];
@@ -45,7 +47,7 @@
     [comment setObject:@"" forKey:@"userName"]; // As it's not a normal comment, it's ok
     [comment setObject:strMeetupId forKey:@"meetupId"];
     [comment setObject:strComment forKey:@"comment"];
-    [comment save];
+    [comment saveInBackground];
     
     // Add comment to the text field
     NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
@@ -54,14 +56,37 @@
     [comments setText:stringComments];
     
     // TODO: push notification
+    
+    // Ask to add to calendar
+    [meetup addToCalendar:self shouldAlert:true];
 }
 
 - (void)editClicked
 {
-    NewEventViewController *newEventViewController = [[NewEventViewController alloc] initWithNibName:@"NewEventView" bundle:nil];
+    NewMeetupViewController *newEventViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
     [newEventViewController setMeetup:meetup];
     [self.navigationController setNavigationBarHidden:true animated:true];
     [self.navigationController pushViewController:newEventViewController animated:YES];
+}
+
+- (void)calendarClicked
+{
+    [meetup addToCalendar:self shouldAlert:true];
+    return;
+}
+
+- (void)leaveClicked
+{
+    UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Under construction!" message:@"Leaving meetups is not implemented yet." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil,nil];
+    [message show];
+    return;
+}
+
+- (void)cancelClicked
+{
+    UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Under construction!" message:@"Canceling meetups is not implemented yet." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil,nil];
+    [message show];
+    return;
 }
 
 - (void)viewDidLoad
@@ -78,11 +103,36 @@
         {
             if ( [attendees count] == 0 )
                 [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Join" style:UIBarButtonItemStylePlain target:self action:@selector(joinClicked)]];
+            else
+            {
+                if ( ! [meetup addedToCalendar] )
+                {
+                    self.navigationItem.rightBarButtonItems = @[
+                                                                [[UIBarButtonItem alloc] initWithTitle:@"Leave" style:UIBarButtonItemStyleBordered target:self action:@selector(leaveClicked)],
+                                                                [[UIBarButtonItem alloc] initWithTitle:@"Add to calendar" style:UIBarButtonItemStyleBordered target:self action:@selector(calendarClicked)]];
+                }
+                else
+                {
+                    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Leave" style:UIBarButtonItemStylePlain target:self action:@selector(leaveClicked)]];
+                }
+            }
         }];
     }
     else
     {
-        [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStylePlain target:self action:@selector(editClicked)]];
+        if ( ! [meetup addedToCalendar] )
+        {
+            self.navigationItem.rightBarButtonItems = @[
+                                                    [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleBordered target:self action:@selector(cancelClicked)],
+                                                    [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(editClicked)],
+                                                    [[UIBarButtonItem alloc] initWithTitle:@"Add to calendar" style:UIBarButtonItemStyleBordered target:self action:@selector(calendarClicked)]];
+        }
+        else
+        {
+            self.navigationItem.rightBarButtonItems = @[
+                                                        [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleBordered target:self action:@selector(cancelClicked)],
+                                                        [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(editClicked)]];
+        }
     }
     
     // Loading comments
@@ -122,12 +172,6 @@
 {
     meetup = m;
 }
-
-// TODO: add join button
-// TODO: add join mechanics (attendee class and list in db)
-// TODO: use owner and subject as first comment.
-// TODO: add joins as comments (except of owner)
-// TODO: support actuall comments
 
 - (void)viewDidUnload {
     comments = nil;

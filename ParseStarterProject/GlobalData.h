@@ -22,6 +22,7 @@
 + (id)sharedInstance;
 
 - (Circle*) getCircle:(NSUInteger)circle;
+- (Circle*) getCircleByNumber:(NSUInteger)num;
 - (NSArray*) getCircles;
 - (NSArray*) getMeetups;
 

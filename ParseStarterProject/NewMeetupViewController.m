@@ -6,18 +6,13 @@
 //
 //
 
-#import "NewEventViewController.h"
+#import "NewMeetupViewController.h"
 #import "VenueSelectViewController.h"
 #import <Parse/Parse.h>
 #import "FSVenue.h"
 #import "GlobalData.h"
 
-
-@interface NewEventViewController ()
-
-@end
-
-@implementation NewEventViewController
+@implementation NewMeetupViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -87,6 +82,8 @@
 
 - (IBAction)cancelButtonDown:(id)sender {
     [self dismissModalViewControllerAnimated:YES];
+    [self.navigationController setNavigationBarHidden:false animated:true];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (IBAction)createButtonDown:(id)sender {
@@ -120,6 +117,28 @@
         meetup.location = [PFGeoPoint geoPointWithLatitude:[self.selectedVenue.lat doubleValue]
                                                   longitude:[self.selectedVenue.lon doubleValue]];
         meetup.strVenue = self.selectedVenue.name;
+        if ( self.selectedVenue.address )
+            meetup.strAddress = self.selectedVenue.address;
+        if ( self.selectedVenue.city )
+        {
+            meetup.strAddress = [meetup.strAddress stringByAppendingString:@" "];
+            meetup.strAddress = [meetup.strAddress stringByAppendingString:self.selectedVenue.city];
+        }
+        if ( self.selectedVenue.state )
+        {
+            meetup.strAddress = [meetup.strAddress stringByAppendingString:@" "];
+            meetup.strAddress = [meetup.strAddress stringByAppendingString:self.selectedVenue.state];
+        }
+        if ( self.selectedVenue.postalCode )
+        {
+            meetup.strAddress = [meetup.strAddress stringByAppendingString:@" "];
+            meetup.strAddress = [meetup.strAddress stringByAppendingString:self.selectedVenue.postalCode];
+        }
+        if ( self.selectedVenue.country )
+        {
+            meetup.strAddress = [meetup.strAddress stringByAppendingString:@" "];
+            meetup.strAddress = [meetup.strAddress stringByAppendingString:self.selectedVenue.country];
+        }
     }
     [meetup save];
     
@@ -141,12 +160,17 @@
     [comment setObject:@"" forKey:@"userName"]; // As it's not a normal comment, it's ok
     [comment setObject:meetup.strId forKey:@"meetupId"];
     [comment setObject:strComment forKey:@"comment"];
-    [comment save];
+    [comment saveInBackground];
     
     // TODO: Send to everybody around (using public/2ndO filter, send checkbox and geo-query) push about the meetup
     
+    // Add to calendar call
+    [meetup addToCalendar:self shouldAlert:newMeetup];
+    
+    // Close the window
+    [self dismissViewControllerAnimated:YES completion:nil];
     [self.navigationController setNavigationBarHidden:false animated:true];
-    [self.navigationController popViewControllerAnimated:TRUE];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 

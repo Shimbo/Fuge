@@ -10,6 +10,9 @@
 #import <CoreLocation/CoreLocation.h>
 #import <Parse/Parse.h>
 
+#import <EventKit/EventKit.h>
+#import <EventKitUI/EventKitUI.h>
+
 enum EMeetupPrivacy
 {
     MEETUP_PUBLIC   = 0,
@@ -18,13 +21,14 @@ enum EMeetupPrivacy
 };
 
 
-@interface Meetup : NSObject
+@interface Meetup : NSObject <EKEventEditViewDelegate, UIAlertViewDelegate>
 {
     NSString    *strId;
     NSString    *strOwnerId;
     NSString    *strOwnerName;
     NSString    *strSubject;
     NSString    *strVenue;
+    NSString    *strAddress;
     NSDate      *dateTime;
     PFGeoPoint  *location;
     NSUInteger  privacy;
@@ -40,6 +44,7 @@ enum EMeetupPrivacy
 @property (nonatomic, copy) NSDate *dateTime;
 @property (nonatomic, copy) PFGeoPoint *location;
 @property (nonatomic, copy) NSString *strVenue;
+@property (nonatomic, copy) NSString *strAddress;
 @property (nonatomic, assign) NSUInteger privacy;
 
 @property (nonatomic, copy) PFObject *meetupData;
@@ -47,5 +52,8 @@ enum EMeetupPrivacy
 -(id) init;
 -(void) save;
 -(void) unpack:(PFObject*)data;
+
+-(Boolean) addedToCalendar;
+-(void) addToCalendar:(UIViewController*)controller shouldAlert:(Boolean)alert;
 
 @end
