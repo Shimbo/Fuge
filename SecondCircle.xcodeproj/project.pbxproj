@@ -61,9 +61,6 @@
 		4C08DDDC163C88640093C851 /* PersonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD8163C88640093C851 /* PersonCell.m */; };
 		4C08DDDD163C88640093C851 /* PersonView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDDA163C88640093C851 /* PersonView.m */; };
 		4C08DDDF163C89A80093C851 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C08DDDE163C89A80093C851 /* MainWindow.xib */; };
-		4C188D151698C1CA004CF42D /* IISideController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C188D101698C1CA004CF42D /* IISideController.m */; };
-		4C188D161698C1CA004CF42D /* IIViewDeckController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C188D121698C1CA004CF42D /* IIViewDeckController.m */; };
-		4C188D171698C1CA004CF42D /* IIWrapController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C188D141698C1CA004CF42D /* IIWrapController.m */; };
 		4C188D221698C51A004CF42D /* MapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C188D201698C51A004CF42D /* MapViewController.m */; };
 		4C188D231698C51A004CF42D /* MapView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C188D211698C51A004CF42D /* MapView.xib */; };
 		4C188D251698C72C004CF42D /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C188D241698C72B004CF42D /* MapKit.framework */; };
@@ -73,8 +70,10 @@
 		4C27C96F1691862B00B2A905 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 4C27C96B1691862A00B2A905 /* README.md */; };
 		4C27C9701691862B00B2A905 /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = 4C27C96C1691862A00B2A905 /* release_notes.md */; };
 		4C27C9731692ACBE00B2A905 /* GlobalVariables.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C27C9721692ACBD00B2A905 /* GlobalVariables.m */; };
-		4C7E3FD61699017C0065484F /* NewEventViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FD41699017C0065484F /* NewEventViewController.m */; };
-		4C7E3FD71699017C0065484F /* NewEventView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E3FD51699017C0065484F /* NewEventView.xib */; };
+		4C4228E716C46B62008EBA67 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C4228E516C46B62008EBA67 /* EventKit.framework */; };
+		4C4228E816C46B62008EBA67 /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C4228E616C46B62008EBA67 /* EventKitUI.framework */; };
+		4C7E3FD61699017C0065484F /* NewMeetupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FD41699017C0065484F /* NewMeetupViewController.m */; };
+		4C7E3FD71699017C0065484F /* NewMeetupView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E3FD51699017C0065484F /* NewMeetupView.xib */; };
 		4C7E3FDB169A09880065484F /* MeetupAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FDA169A09880065484F /* MeetupAnnotation.m */; };
 		4C7E3FDE169A09D20065484F /* Meetup.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FDD169A09D20065484F /* Meetup.m */; };
 		4C7E3FE2169A1BB40065484F /* MeetupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FE0169A1BB30065484F /* MeetupViewController.m */; };
@@ -176,12 +175,6 @@
 		4C08DDD9163C88640093C851 /* PersonView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersonView.h; sourceTree = "<group>"; };
 		4C08DDDA163C88640093C851 /* PersonView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersonView.m; sourceTree = "<group>"; };
 		4C08DDDE163C89A80093C851 /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
-		4C188D0F1698C1CA004CF42D /* IISideController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IISideController.h; sourceTree = "<group>"; };
-		4C188D101698C1CA004CF42D /* IISideController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IISideController.m; sourceTree = "<group>"; };
-		4C188D111698C1CA004CF42D /* IIViewDeckController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IIViewDeckController.h; sourceTree = "<group>"; };
-		4C188D121698C1CA004CF42D /* IIViewDeckController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IIViewDeckController.m; sourceTree = "<group>"; };
-		4C188D131698C1CA004CF42D /* IIWrapController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IIWrapController.h; sourceTree = "<group>"; };
-		4C188D141698C1CA004CF42D /* IIWrapController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IIWrapController.m; sourceTree = "<group>"; };
 		4C188D1F1698C51A004CF42D /* MapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapViewController.h; sourceTree = "<group>"; };
 		4C188D201698C51A004CF42D /* MapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapViewController.m; sourceTree = "<group>"; };
 		4C188D211698C51A004CF42D /* MapView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MapView.xib; sourceTree = "<group>"; };
@@ -196,9 +189,11 @@
 		4C27C96D1691862A00B2A905 /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
 		4C27C9711692ACBD00B2A905 /* GlobalVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalVariables.h; sourceTree = "<group>"; };
 		4C27C9721692ACBD00B2A905 /* GlobalVariables.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlobalVariables.m; sourceTree = "<group>"; };
-		4C7E3FD31699017C0065484F /* NewEventViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewEventViewController.h; sourceTree = "<group>"; };
-		4C7E3FD41699017C0065484F /* NewEventViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewEventViewController.m; sourceTree = "<group>"; };
-		4C7E3FD51699017C0065484F /* NewEventView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NewEventView.xib; sourceTree = "<group>"; };
+		4C4228E516C46B62008EBA67 /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
+		4C4228E616C46B62008EBA67 /* EventKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKitUI.framework; path = System/Library/Frameworks/EventKitUI.framework; sourceTree = SDKROOT; };
+		4C7E3FD31699017C0065484F /* NewMeetupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewMeetupViewController.h; sourceTree = "<group>"; };
+		4C7E3FD41699017C0065484F /* NewMeetupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewMeetupViewController.m; sourceTree = "<group>"; };
+		4C7E3FD51699017C0065484F /* NewMeetupView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NewMeetupView.xib; sourceTree = "<group>"; };
 		4C7E3FD9169A09880065484F /* MeetupAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetupAnnotation.h; sourceTree = "<group>"; };
 		4C7E3FDA169A09880065484F /* MeetupAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetupAnnotation.m; sourceTree = "<group>"; };
 		4C7E3FDC169A09D10065484F /* Meetup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Meetup.h; sourceTree = "<group>"; };
@@ -230,6 +225,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C4228E716C46B62008EBA67 /* EventKit.framework in Frameworks */,
+				4C4228E816C46B62008EBA67 /* EventKitUI.framework in Frameworks */,
 				4C188D251698C72C004CF42D /* MapKit.framework in Frameworks */,
 				97E18B1F1624CB5700B17A67 /* CoreLocation.framework in Frameworks */,
 				6372FF581613CC47002132AF /* AdSupport.framework in Frameworks */,
@@ -277,6 +274,8 @@
 		09ABC07013A1D52D009C3FCF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4C4228E516C46B62008EBA67 /* EventKit.framework */,
+				4C4228E616C46B62008EBA67 /* EventKitUI.framework */,
 				4C188D241698C72B004CF42D /* MapKit.framework */,
 				6372FF571613CC47002132AF /* AdSupport.framework */,
 				6372FF551613CC42002132AF /* Social.framework */,
@@ -302,7 +301,6 @@
 		09ABC07713A1D52D009C3FCF /* ParseStarterProject */ = {
 			isa = PBXGroup;
 			children = (
-				4C188D0D1698C1BB004CF42D /* ViewDeck */,
 				09ABC08013A1D52D009C3FCF /* ParseStarterProjectAppDelegate.h */,
 				09ABC08113A1D52D009C3FCF /* ParseStarterProjectAppDelegate.m */,
 				4C7E3FE4169A1F260065484F /* Data */,
@@ -327,7 +325,7 @@
 				47A1AC6D16A7DDD3004B4CFA /* VenueCell.xib */,
 				4C7E3FEB169A456B0065484F /* VenueSelectView.xib */,
 				4C7E3FE1169A1BB30065484F /* MeetupView.xib */,
-				4C7E3FD51699017C0065484F /* NewEventView.xib */,
+				4C7E3FD51699017C0065484F /* NewMeetupView.xib */,
 				4C188D211698C51A004CF42D /* MapView.xib */,
 				09ABC08313A1D52D009C3FCF /* MainWindow.xib */,
 				4C057319166ACC7500EF6FAD /* LoginView.xib */,
@@ -422,8 +420,8 @@
 				4C057339166B73D900EF6FAD /* UserProfileController.m */,
 				4CFE78C5166BBA7900E1BF72 /* FilterViewController.h */,
 				4CFE78C6166BBA7900E1BF72 /* FilterViewController.m */,
-				4C7E3FD31699017C0065484F /* NewEventViewController.h */,
-				4C7E3FD41699017C0065484F /* NewEventViewController.m */,
+				4C7E3FD31699017C0065484F /* NewMeetupViewController.h */,
+				4C7E3FD41699017C0065484F /* NewMeetupViewController.m */,
 				4C7E3FDF169A1BB20065484F /* MeetupViewController.h */,
 				4C7E3FE0169A1BB30065484F /* MeetupViewController.m */,
 				4C7E3FE9169A456B0065484F /* VenueSelectViewController.h */,
@@ -442,19 +440,6 @@
 				4706D10216C10DBF00CAF9AF /* LeftMenuController.xib */,
 			);
 			name = UI;
-			sourceTree = "<group>";
-		};
-		4C188D0D1698C1BB004CF42D /* ViewDeck */ = {
-			isa = PBXGroup;
-			children = (
-				4C188D0F1698C1CA004CF42D /* IISideController.h */,
-				4C188D101698C1CA004CF42D /* IISideController.m */,
-				4C188D111698C1CA004CF42D /* IIViewDeckController.h */,
-				4C188D121698C1CA004CF42D /* IIViewDeckController.m */,
-				4C188D131698C1CA004CF42D /* IIWrapController.h */,
-				4C188D141698C1CA004CF42D /* IIWrapController.m */,
-			);
-			name = ViewDeck;
 			sourceTree = "<group>";
 		};
 		4C27C9691691862A00B2A905 /* TestFlightSDK */ = {
@@ -554,7 +539,7 @@
 				4C27C96F1691862B00B2A905 /* README.md in Resources */,
 				4C27C9701691862B00B2A905 /* release_notes.md in Resources */,
 				4C188D231698C51A004CF42D /* MapView.xib in Resources */,
-				4C7E3FD71699017C0065484F /* NewEventView.xib in Resources */,
+				4C7E3FD71699017C0065484F /* NewMeetupView.xib in Resources */,
 				4C7E3FE3169A1BB40065484F /* MeetupView.xib in Resources */,
 				4C7E3FED169A456B0065484F /* VenueSelectView.xib in Resources */,
 				47A1AC6E16A7DDD3004B4CFA /* VenueCell.xib in Resources */,
@@ -589,13 +574,10 @@
 				4C05733B166B73D900EF6FAD /* UserProfileController.m in Sources */,
 				4CFE78C8166BBA7900E1BF72 /* FilterViewController.m in Sources */,
 				4C27C9731692ACBE00B2A905 /* GlobalVariables.m in Sources */,
-				4C188D151698C1CA004CF42D /* IISideController.m in Sources */,
-				4C188D161698C1CA004CF42D /* IIViewDeckController.m in Sources */,
-				4C188D171698C1CA004CF42D /* IIWrapController.m in Sources */,
 				4C188D221698C51A004CF42D /* MapViewController.m in Sources */,
 				4C188D281698CB7F004CF42D /* PersonAnnotation.m in Sources */,
 				4C188D2B1698CDE9004CF42D /* GlobalData.m in Sources */,
-				4C7E3FD61699017C0065484F /* NewEventViewController.m in Sources */,
+				4C7E3FD61699017C0065484F /* NewMeetupViewController.m in Sources */,
 				4C7E3FDB169A09880065484F /* MeetupAnnotation.m in Sources */,
 				4C7E3FDE169A09D20065484F /* Meetup.m in Sources */,
 				4C7E3FE2169A1BB40065484F /* MeetupViewController.m in Sources */,

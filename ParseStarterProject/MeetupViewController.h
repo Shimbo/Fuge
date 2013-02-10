@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "Meetup.h"
+#import <EventKit/EventKit.h>
+#import <EventKitUI/EventKitUI.h>
 
-@interface MeetupViewController : UIViewController <UITextViewDelegate>
+@interface MeetupViewController : UIViewController <UITextViewDelegate, EKEventEditViewDelegate>
 {
     Meetup* meetup;
     __unsafe_unretained IBOutlet UITextView *comments;

@@ -5,7 +5,8 @@ enum ECircle
 {
     CIRCLE_FB       = 1,
     CIRCLE_2O       = 2,
-    CIRCLE_RANDOM   = 3
+    CIRCLE_RANDOM   = 3,
+    CIRCLE_FBOTHERS = 4
 };
 
 @interface Circle : NSObject {

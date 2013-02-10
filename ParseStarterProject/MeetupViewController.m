@@ -8,7 +8,7 @@
 
 #import "MeetupViewController.h"
 #import <Parse/Parse.h>
-#import "NewEventViewController.h"
+#import "NewMeetupViewController.h"
 
 @implementation MeetupViewController
 
@@ -23,8 +23,10 @@
 
 - (void)joinClicked
 {
-    // Hiding join button
+    // Hiding join button and adding addToCalendar
+    // TODO: change join to leave, don't hide!
     [self.navigationItem setRightBarButtonItem:nil];
+    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Add to calendar" style:UIBarButtonItemStylePlain target:self action:@selector(calendarClicked)]];
     
     // Creating attendee in db
     PFObject* attendee = [[PFObject alloc] initWithClassName:@"Attendee"];
@@ -34,7 +36,7 @@
     [attendee setObject:strUserId forKey:@"userId"];
     [attendee setObject:strUserName forKey:@"userName"];
     [attendee setObject:strMeetupId forKey:@"meetupId"];
-    [attendee save];
+    [attendee saveInBackground];
     
     // Creating comment about joining in db
     PFObject* comment = [[PFObject alloc] initWithClassName:@"Comment"];
@@ -45,7 +47,7 @@
     [comment setObject:@"" forKey:@"userName"]; // As it's not a normal comment, it's ok
     [comment setObject:strMeetupId forKey:@"meetupId"];
     [comment setObject:strComment forKey:@"comment"];
-    [comment save];
+    [comment saveInBackground];
     
     // Add comment to the text field
     NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
@@ -58,10 +60,99 @@
 
 - (void)editClicked
 {
-    NewEventViewController *newEventViewController = [[NewEventViewController alloc] initWithNibName:@"NewEventView" bundle:nil];
+    NewMeetupViewController *newEventViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
     [newEventViewController setMeetup:meetup];
     [self.navigationController setNavigationBarHidden:true animated:true];
     [self.navigationController pushViewController:newEventViewController animated:YES];
+}
+
+- (void)presentEventEditViewControllerWithEventStore:(EKEventStore*)eventStore
+{
+    EKEvent *event  = [EKEvent eventWithEventStore:eventStore];
+    event.title     = [meetup.strSubject stringByAppendingFormat:@" at %@", meetup.strVenue];
+    event.startDate = meetup.dateTime;
+    event.endDate   = [[NSDate alloc] initWithTimeInterval:3600 sinceDate:event.startDate];
+    event.location = meetup.strAddress;
+    
+    /*EKCalendarChooser* chooser = [[EKCalendarChooser alloc] initWithSelectionStyle:EKCalendarChooserSelectionStyleSingle displayStyle:EKCalendarChooserDisplayWritableCalendarsOnly entityType:EKEntityTypeEvent eventStore:eventStore];
+     
+    [self.navigationController pushViewController:chooser animated:YES];*/
+    
+    EKEventEditViewController* eventView = [[EKEventEditViewController alloc] initWithNibName:nil bundle:nil];
+    [eventView setEventStore:eventStore];
+    [eventView setEvent:event];
+    
+    [self presentModalViewController:eventView animated:YES];
+    eventView.editViewDelegate = self;
+    
+//    [event setCalendar:[eventStore defaultCalendarForNewEvents]];
+//    NSError *err;
+//    [eventStore saveEvent:event span:EKSpanThisEvent error:&err];
+}
+
+#pragma mark -
+#pragma mark EKEventEditViewDelegate
+
+// Overriding EKEventEditViewDelegate method to update event store according to user actions.
+- (void)eventEditViewController:(EKEventEditViewController *)controller
+          didCompleteWithAction:(EKEventEditViewAction)action {
+    
+    NSError *error = nil;
+    EKEvent *thisEvent = controller.event;
+    
+    switch (action) {
+        case EKEventEditViewActionCanceled:
+            break;
+            
+        case EKEventEditViewActionSaved:
+            [controller.eventStore saveEvent:controller.event span:EKSpanThisEvent error:&error];
+            break;
+            
+        case EKEventEditViewActionDeleted:
+            [controller.eventStore removeEvent:thisEvent span:EKSpanThisEvent error:&error];
+            break;
+            
+        default:
+            break;
+    }
+    // Dismiss the modal view controller
+    [controller dismissModalViewControllerAnimated:YES];
+}
+
+
+// Set the calendar edited by EKEventEditViewController to our chosen calendar - the default calendar.
+/*- (EKCalendar *)eventEditViewControllerDefaultCalendarForNewEvents:(EKEventEditViewController *)controller {
+    //EKCalendar *calendarForEdit = self.defaultCalendar;
+    return calendarForEdit;
+}*/
+
+- (void)calendarClicked
+{
+    // TODO: hide add to calendar, but for both cases: join/edit (keep edit in the second)
+    
+    EKEventStore *eventStore = [[EKEventStore alloc] init];
+    
+    // iOS 6 introduced a requirement where the app must
+    // explicitly request access to the user's calendar. This
+    // function is built to support the new iOS 6 requirement,
+    // as well as earlier versions of the OS.
+    if([eventStore respondsToSelector:
+        @selector(requestAccessToEntityType:completion:)]) {
+        // iOS 6 and later
+        [eventStore
+         requestAccessToEntityType:EKEntityTypeEvent
+         completion:^(BOOL granted, NSError *error) {
+             // If you don't perform your presentation logic on the
+             // main thread, the app hangs for 10 - 15 seconds.
+             [self performSelectorOnMainThread:
+              @selector(presentEventEditViewControllerWithEventStore:)
+                                    withObject:eventStore
+                                 waitUntilDone:NO];
+         }];
+    } else {
+        // iOS 5
+        [self presentEventEditViewControllerWithEventStore:eventStore];
+    }
 }
 
 - (void)viewDidLoad
@@ -78,11 +169,20 @@
         {
             if ( [attendees count] == 0 )
                 [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Join" style:UIBarButtonItemStylePlain target:self action:@selector(joinClicked)]];
+            else if ( TRUE ) // TODO: check if meetup is already added to calendar
+            {
+                [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Add to calendar" style:UIBarButtonItemStylePlain target:self action:@selector(calendarClicked)]];
+            }
         }];
     }
     else
     {
-        [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStylePlain target:self action:@selector(editClicked)]];
+        //[self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStylePlain target:self action:@selector(editClicked)]];
+        
+        // TODO: check if already added to calendar, if so, use code above
+        self.navigationItem.rightBarButtonItems = @[
+                                                    [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(editClicked)],
+                                                    [[UIBarButtonItem alloc] initWithTitle:@"Add to calendar" style:UIBarButtonItemStyleBordered target:self action:@selector(calendarClicked)]];
     }
     
     // Loading comments

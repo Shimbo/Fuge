@@ -8,14 +8,16 @@
 
 #import "Meetup.h"
 
+
 @implementation Meetup
 
-@synthesize strId,strOwnerId,strOwnerName,strSubject,dateTime,privacy,location,strVenue,meetupData;
+@synthesize strId,strOwnerId,strOwnerName,strSubject,dateTime,privacy,location,strVenue,strAddress,meetupData;
 
 -(id) init
 {
     if (self = [super init]) {
         meetupData = nil;
+        strAddress = @"";
     }
     
     return self;
@@ -30,8 +32,8 @@
         meetupData = [[PFObject alloc] initWithClassName:@"Meetup"];
         
         // Id, fromStr, fromId
-        NSString* strMeetupId = [[NSString alloc] initWithFormat:@"%d_%@", [timestamp integerValue], strOwnerId];
-        [meetupData setObject:strMeetupId forKey:@"meetupId"];
+        strId = [[NSString alloc] initWithFormat:@"%d_%@", [timestamp integerValue], strOwnerId];
+        [meetupData setObject:strId forKey:@"meetupId"];
         [meetupData setObject:strOwnerId forKey:@"userFromId"];
         [meetupData setObject:strOwnerName forKey:@"userFromName"];
         
@@ -46,6 +48,7 @@
     [meetupData setObject:timestamp forKey:@"meetupTimestamp"];
     [meetupData setObject:location forKey:@"location"];
     [meetupData setObject:strVenue forKey:@"venue"];
+    [meetupData setObject:strAddress forKey:@"address"];
     
     // Save
     [meetupData saveInBackground];
@@ -63,6 +66,7 @@
     dateTime = [meetupData objectForKey:@"meetupDate"];
     location = [meetupData objectForKey:@"location"];
     strVenue = [meetupData objectForKey:@"venue"];
+    strAddress = [meetupData objectForKey:@"address"];
 }
 
 @end

@@ -25,6 +25,7 @@ enum EMeetupPrivacy
     NSString    *strOwnerName;
     NSString    *strSubject;
     NSString    *strVenue;
+    NSString    *strAddress;
     NSDate      *dateTime;
     PFGeoPoint  *location;
     NSUInteger  privacy;
@@ -40,6 +41,7 @@ enum EMeetupPrivacy
 @property (nonatomic, copy) NSDate *dateTime;
 @property (nonatomic, copy) PFGeoPoint *location;
 @property (nonatomic, copy) NSString *strVenue;
+@property (nonatomic, copy) NSString *strAddress;
 @property (nonatomic, assign) NSUInteger privacy;
 
 @property (nonatomic, copy) PFObject *meetupData;

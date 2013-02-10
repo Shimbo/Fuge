@@ -9,13 +9,8 @@
 #import "VenueSelectViewController.h"
 #import "Foursquare2.h"
 #import "VenueCell.h"
-#import "NewEventViewController.h"
+#import "NewMeetupViewController.h"
 #import "FSVenue.h"
-
-
-
-
-
 
 
 
