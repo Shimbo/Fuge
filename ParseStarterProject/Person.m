@@ -50,6 +50,10 @@
 	return self;
 }
 
+-(NSString*)imageURL{
+    return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&return_ssl_resources=1", strId];
+}
+
 - (UIImage *)getImage {
     if (image == nil && imageData == nil && urlConnection == nil )
     {

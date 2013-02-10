@@ -16,8 +16,8 @@
 		/*
 		 Cache the formatter. Normally you would use one of the date formatter styles (such as NSDateFormatterShortStyle), but here we want a specific format that excludes seconds.
 		 */
-		dateFormatter = [[NSDateFormatter alloc] init];
-		[dateFormatter setDateFormat:@"h:mm a"];
+//		dateFormatter = [[NSDateFormatter alloc] init];
+//		[dateFormatter setDateFormat:@"h:mm a"];
 		self.opaque = YES;
 		self.backgroundColor = [UIColor whiteColor];
 	}

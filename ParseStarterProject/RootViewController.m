@@ -17,6 +17,7 @@
 #import "GlobalData.h"
 
 #import "ParseStarterProjectAppDelegate.h"
+#import "AsyncImageView.h"
 
 #import "TestFlightSDK/TestFlight.h"
 
@@ -97,6 +98,9 @@
                 [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)]];
 
     
+    UINib *nib = [UINib nibWithNibName:@"PersonCell" bundle:nil];
+    [self.tableView registerNib:nib forCellReuseIdentifier:@"PersonCellIdent"];
+    
 /*    buttonProfile = [[UIBarButtonItem alloc] initWithTitle:@"Profile" style:UIBarButtonItemStylePlain target:self action:@selector(profileClicked)];
     buttonFilter = [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)];*/
     
@@ -151,21 +155,20 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath  {
 		
-	static NSString *CellIdentifier = @"TimeZoneCell";
+	static NSString *CellIdentifier = @"PersonCellIdent";
 		
 	PersonCell *personCell = (PersonCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	
-	if (personCell == nil) {
-		personCell = [[PersonCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-//		personCell.frame = CGRectMake(0.0, 0.0, 320.0, ROW_HEIGHT);
-	}
+//	if (personCell == nil) {
+//		personCell = [[PersonCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+////		personCell.frame = CGRectMake(0.0, 0.0, 320.0, ROW_HEIGHT);
+//	}
 	
 	// Get the time zones for the region for the section
 	Circle* circle = [globalData getCircle:indexPath.section+1];
-	NSArray *persons = [circle getPersons];
-	
-	// Get the time zone wrapper for the row
-	[personCell setPerson:persons[indexPath.row]];
+	Person *person = [circle getPersons][indexPath.row];
+    [personCell.personImage loadImageFromURL:person.imageURL];
+    personCell.personName.text = person.strName;
 	return personCell;
 }
 

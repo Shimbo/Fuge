@@ -1,15 +1,9 @@
 
 
-@class Person;
-@class PersonView;
+@class AsyncImageView;
+@interface PersonCell : UITableViewCell 
 
-@interface PersonCell : UITableViewCell {
-	PersonView *personView;
-}
-
-- (void)setPerson:(Person*)newPerson;
-@property (nonatomic, retain) PersonView *personView;
-
-- (void)redisplay;
+@property (strong, nonatomic) IBOutlet AsyncImageView *personImage;
+@property (strong, nonatomic) IBOutlet UILabel *personName;
 
 @end

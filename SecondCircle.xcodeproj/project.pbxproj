@@ -46,6 +46,7 @@
 		47A1AC6816A7DBD2004B4CFA /* ImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 47A1AC6616A7DBD2004B4CFA /* ImageLoader.m */; };
 		47A1AC6C16A7DDB9004B4CFA /* VenueCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 47A1AC6B16A7DDB9004B4CFA /* VenueCell.m */; };
 		47A1AC6E16A7DDD3004B4CFA /* VenueCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47A1AC6D16A7DDD3004B4CFA /* VenueCell.xib */; };
+		47A5ED2A16C7C2CD00084ED9 /* PersonCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47A5ED2916C7C2CD00084ED9 /* PersonCell.xib */; };
 		4998650515BF305000803E05 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4998650415BF305000803E05 /* StoreKit.framework */; };
 		4C05731A166ACC7500EF6FAD /* LoginView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C057319166ACC7500EF6FAD /* LoginView.xib */; };
 		4C057320166ACED200EF6FAD /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C05731E166ACED200EF6FAD /* LoginViewController.m */; };
@@ -153,6 +154,7 @@
 		47A1AC6A16A7DDB9004B4CFA /* VenueCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VenueCell.h; sourceTree = "<group>"; };
 		47A1AC6B16A7DDB9004B4CFA /* VenueCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VenueCell.m; sourceTree = "<group>"; };
 		47A1AC6D16A7DDD3004B4CFA /* VenueCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VenueCell.xib; sourceTree = "<group>"; };
+		47A5ED2916C7C2CD00084ED9 /* PersonCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PersonCell.xib; sourceTree = "<group>"; };
 		4998650415BF305000803E05 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		4C057319166ACC7500EF6FAD /* LoginView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginView.xib; sourceTree = "<group>"; };
 		4C05731E166ACED200EF6FAD /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
@@ -412,6 +414,7 @@
 				4C08DDD6163C88640093C851 /* RootViewController.m */,
 				4C08DDD7163C88640093C851 /* PersonCell.h */,
 				4C08DDD8163C88640093C851 /* PersonCell.m */,
+				47A5ED2916C7C2CD00084ED9 /* PersonCell.xib */,
 				4C08DDD9163C88640093C851 /* PersonView.h */,
 				4C08DDDA163C88640093C851 /* PersonView.m */,
 				4C05731F166ACED200EF6FAD /* LoginViewController.h */,
@@ -567,6 +570,7 @@
 				4706D11116C11CA600CAF9AF /* reveal_menu_icon_portrait.png in Resources */,
 				4706D11216C11CA600CAF9AF /* reveal_menu_icon_portrait@2x.png in Resources */,
 				4706D11416C12A1600CAF9AF /* README.md in Resources */,
+				47A5ED2A16C7C2CD00084ED9 /* PersonCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

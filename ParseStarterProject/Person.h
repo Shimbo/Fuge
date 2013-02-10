@@ -47,6 +47,7 @@
 // TODO: change it to more secure init
 - init:(NSArray*)nameComponents;
 - (void)addParent:(PersonView*)parent;
+-(NSString*)imageURL;
 - (UIImage *) getImage;
 
 - (void) setLocation:(CLLocationCoordinate2D) loc;

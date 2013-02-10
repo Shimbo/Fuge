@@ -26,6 +26,11 @@
 	return self;
 }
 
+-(void)viewDidLoad{
+    [super viewDidLoad];
+    self.title = @"Welcome";
+}
+
 - (IBAction)touchDown:(UIButton *)sender
 {
     // Activity indicator
