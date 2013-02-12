@@ -33,7 +33,7 @@ static GlobalData *sharedInstance = nil;
     if (self) {
         circles = [[NSMutableDictionary alloc] init];
         meetups = [[NSMutableArray alloc] init];
-        unreadMessages = [[NSMutableArray alloc] init];
+        messages = [[NSMutableArray alloc] init];
         nInboxLoadingStage = 0;
     }
     
@@ -117,7 +117,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 - (NSArray*) getInbox
 {
     NSMutableArray* inboxData = [[NSMutableArray alloc] init];
-    [inboxData addObjectsFromArray:unreadMessages];
+    [inboxData addObjectsFromArray:[self getUniqueMessages]];
     return inboxData;
 }
 
@@ -364,38 +364,77 @@ NSInteger sortByName(id num1, id num2, void *context)
     nInboxLoadingStage++;
 }
 
-- (void)loadUnreadMessages
+- (NSArray*)getUniqueMessages
+{
+    NSMutableArray *messagesUnique = [[NSMutableArray alloc] init];
+    
+    for (PFObject *message in messages)
+    {
+        // Looking for already created thread
+        Boolean bSuchUserAlreadyAdded = false;
+        for (PFObject *messageOld in messagesUnique)
+            if ( [[message objectForKey:@"idUserFrom"] compare:[messageOld objectForKey:@"idUserFrom"]] == NSOrderedSame )
+            {
+                // Replacing with an older unread:
+                // checking date, if it's > than last read, but < than current, replace
+                
+                Boolean bExchange = false;
+                
+                NSDate* lastReadDate = [self getConversationDate:[message objectForKey:@"idUserFrom"]];
+                
+                Boolean bOldBeforeThanReadDate = false;
+                Boolean bNewLaterThanReadDate = true;
+                Boolean bNewIsBeforeOld = ( [ message.createdAt compare:messageOld.createdAt ] == NSOrderedAscending );
+                if ( lastReadDate )
+                {
+                    bOldBeforeThanReadDate = [messageOld.createdAt compare:lastReadDate] == NSOrderedAscending;
+                    bNewLaterThanReadDate = [message.createdAt compare:lastReadDate] == NSOrderedDescending;
+                }
+                
+                if ( ! bNewIsBeforeOld && bOldBeforeThanReadDate )
+                    bExchange = true;
+                
+                if ( bNewIsBeforeOld && bNewLaterThanReadDate )
+                    bExchange = true;
+                
+                if ( bExchange)
+                    [messagesUnique removeObject:messageOld];
+                else
+                    bSuchUserAlreadyAdded = true;
+                break;
+            }
+        
+        // Adding object
+        if ( ! bSuchUserAlreadyAdded )
+            [messagesUnique addObject:message];
+    }
+    
+    return messagesUnique;
+}
+
+- (void)loadMessages
 {
     // Query
-    PFQuery *unreadMessagesQuery = [PFQuery queryWithClassName:@"Message"];
-    [unreadMessagesQuery whereKey:@"idUserTo" equalTo:[[PFUser currentUser] objectForKey:@"fbId"]];
-    [unreadMessagesQuery whereKey:@"isRead" equalTo:[[NSNumber alloc] initWithBool:FALSE]];
+    PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Message"];
+    [messagesQuery whereKey:@"idUserTo" equalTo:[[PFUser currentUser] objectForKey:@"fbId"]];
+    
+    // TODO: add here later another query limitation by date (like 10 last days) to not push server too hard. It will be like pages, loading every 10 previous days or so.
     
     // Loading
-    [unreadMessagesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        for (PFObject *message in objects)
-        {
-            // Looking for already created thread
-            Boolean bSuchUserAlreadyAdded = false;
-            for (PFObject *messageOld in unreadMessages)
-                if ( [[message objectForKey:@"idUserFrom"] compare:[messageOld objectForKey:@"idUserFrom"]] == NSOrderedSame )
-                {
-                    bSuchUserAlreadyAdded = true;
-                    break;
-                }
-            if ( bSuchUserAlreadyAdded )
-                continue;
-            
-            // Adding object
-            [unreadMessages addObject:message];
-        }
+    [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        
+        // Actuall messages
+        messages = objects;
+        
+        // Recalc what to show in inbox
+        //[self updateUniqueMessages];
         
         // Loading stage complete
         nInboxLoadingStage++;
     }];
 }
 
-- (void)loadUnreadComments
+- (void)loadComments
 {
     // TBD
     nInboxLoadingStage++;
@@ -478,17 +517,14 @@ NSInteger sortByName(id num1, id num2, void *context)
 {
     nInboxLoadingStage = 0;
     
-    // Clean old data
-    [unreadMessages removeAllObjects];
-    
     // Invites
     [self loadInvites];
     
     // Unread PMs
-    [self loadUnreadMessages];
+    [self loadMessages];
     
     // Unread comments
-    [self loadUnreadComments];
+    [self loadComments];
     
     // During initial load controller could be nil as we're loading from main view
     //if ( controller )
@@ -498,6 +534,29 @@ NSInteger sortByName(id num1, id num2, void *context)
 - (Boolean)isInboxLoaded
 {
     return ( nInboxLoadingStage == INBOX_LOADED );
+}
+
+
+#pragma mark -
+#pragma mark Inbox misc
+
+
+- (void) updateConverationDate:(NSDate*)date user:(NSString*)strUser
+{
+    NSMutableDictionary* conversations = [[PFUser currentUser] objectForKey:@"messageDates"];
+    if ( ! conversations )
+        conversations = [[NSMutableDictionary alloc] init];
+    [conversations setValue:date forKey:strUser];
+    [[PFUser currentUser] setObject:conversations forKey:@"messageDates"];
+    [[PFUser currentUser] saveEventually];
+}
+
+- (NSDate*) getConversationDate:(NSString*)strUser
+{
+    NSMutableDictionary* conversations = [[PFUser currentUser] objectForKey:@"messageDates"];
+    if ( ! conversations )
+        return nil;
+    return [conversations valueForKey:strUser];
 }
 
 @end

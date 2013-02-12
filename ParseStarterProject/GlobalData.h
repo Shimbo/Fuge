@@ -24,10 +24,10 @@
     NSMutableArray      *meetups;
     
     // Inbox and notifications
-    NSMutableArray      *newUsers;
-    NSMutableArray      *invites;
-    NSMutableArray      *unreadMessages;
-    NSMutableArray      *unreadComments;
+    NSArray             *newUsers;
+    NSArray             *invites;
+    NSArray             *messages;
+    NSArray             *comments;
     NSUInteger          nInboxLoadingStage;
 }
 
@@ -50,5 +50,9 @@
 // Inbox data, loading in background
 - (void)reloadInbox:(InboxViewController*)controller;
 - (Boolean)isInboxLoaded;
+
+// Inbox utils
+- (void) updateConverationDate:(NSDate*)date user:(NSString*)strUser;
+- (NSDate*) getConversationDate:(NSString*)strUser;
 
 @end

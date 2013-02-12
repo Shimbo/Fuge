@@ -42,16 +42,17 @@
     self.tableView.tableFooterView = [[UIView alloc]init];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     self.tableView.rowHeight = ROW_HEIGHT;
-    
-    // Loading
-    [TestFlight passCheckpoint:@"Inbox opened"];
-    [self reloadData];
 }
 
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    activityIndicator.center = self.view.center;
+    
+    // Loading
+    [TestFlight passCheckpoint:@"Inbox appeared"];
+    [self reloadData];
+    
+    //activityIndicator.center = self.view.center;
 }
 
 
@@ -94,6 +95,17 @@
     NSDate* dateRecent = [[NSDate alloc] initWithTimeIntervalSinceNow:-24*60*60*7];
     for ( InboxViewItem* item in tempArray )
     {
+        NSDictionary* conversation = [[PFUser currentUser] objectForKey:@"messageDates"];
+        if ( conversation )
+        {
+            NSDate* lastDate = [conversation objectForKey:item.fromId];
+            if ( [item.dateTime compare:lastDate] == NSOrderedDescending )
+            {
+                [inboxNew addObject:item];
+                continue;
+            }
+        }
+        
         if ( [item.dateTime compare:dateRecent] == NSOrderedDescending )
             [inboxRecent addObject:item];
         else
@@ -107,8 +119,7 @@
     if ( [inboxOld count] > 0 )
         [inbox setObject:inboxOld forKey:@"Old"];
     
-    
-    
+    // Some animation
     self.tableView.alpha = 0;
     [[self tableView] reloadData];
     [UIView animateWithDuration:0.3 animations:^{

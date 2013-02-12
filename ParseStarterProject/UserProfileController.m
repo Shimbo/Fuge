@@ -10,6 +10,7 @@
 #import "UserProfileController.h"
 #import "PushManager.h"
 #import "AsyncImageView.h"
+#import "GlobalData.h"
 
 @implementation UserProfileController
 @synthesize buttonProfile;
@@ -87,7 +88,7 @@ NSInteger sort(id message1, id message2, void *context)
             
             for ( int n = 0; n < sortedArray.count; n++ ) //NSDictionary *message in array)
             {
-                NSDictionary* message = sortedArray[n];
+                PFObject* message = sortedArray[n];
                 NSString* strText = [message objectForKey:@"text"];
                 if ( [ person.strId compare:[ message objectForKey:@"idUserFrom"] ] == NSOrderedSame )
                 {
@@ -103,6 +104,10 @@ NSInteger sort(id message1, id message2, void *context)
             }
             
             [messageHistory setText:stringHistory];
+            
+            // Last read message date
+            if ( [sortedArray count] > 0 )
+                [globalData updateConverationDate:((PFObject*)sortedArray[0]).createdAt user:personThis.strId];
         }];
     }];
     
