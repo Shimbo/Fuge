@@ -25,13 +25,11 @@
 
 @implementation RootViewController
 
-//@synthesize displayList;
 @synthesize initialized;
 @synthesize activityIndicator;
 
-
-- (void)viewWillAppear:(BOOL)animated {
-}
+#pragma mark -
+#pragma mark Buttons
 
 
 - (void)filterClicked{
@@ -46,6 +44,11 @@
     
     [self.navigationController presentViewController:newMeetupViewController animated:YES completion:nil];
 }
+
+
+#pragma mark -
+#pragma mark Data reload
+
 
 - (void) reloadFinished
 {
@@ -74,6 +77,10 @@
     [self performSelectorOnMainThread:@selector(actualReload) withObject:nil waitUntilDone:NO];
 }
 
+#pragma mark -
+#pragma mark View loadi
+
+
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
@@ -83,28 +90,25 @@
 - (void) viewDidLoad {
     [super viewDidLoad];
     
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-    self.tableView.rowHeight = ROW_HEIGHT;
+    // Activity indicator
     activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     activityIndicator.hidesWhenStopped = YES;
     NSLog(@"%f",self.view.frame.size.height);
-    
     activityIndicator.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleTopMargin;
     [self.view addSubview:activityIndicator];
     
+    // Navigation bar
     [self.navigationItem setHidesBackButton:true animated:false];
-    
     self.navigationItem.rightBarButtonItems = @[
                 [[UIBarButtonItem alloc] initWithTitle:@"New meet-up" style:UIBarButtonItemStyleBordered target:self /*.viewDeckController*/ action:@selector(newMeetupClicked)],
                 [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)]];
-
     
-    //если ты сделал это
-    //то не надо if (personCell == nil) в cellForRowAtIndexPath
+    // Table view
     UINib *nib = [UINib nibWithNibName:@"PersonCell" bundle:nil];
     [self.tableView registerNib:nib forCellReuseIdentifier:@"PersonCellIdent"];
-    
-    
+    self.tableView.tableFooterView = [[UIView alloc]init];
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    self.tableView.rowHeight = ROW_HEIGHT;
     
 /*    buttonProfile = [[UIBarButtonItem alloc] initWithTitle:@"Profile" style:UIBarButtonItemStylePlain target:self action:@selector(profileClicked)];
     buttonFilter = [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)];*/
@@ -112,29 +116,19 @@
 //    [self.navigationItem setLeftBarButtonItem:buttonProfile];
 //    [self.navigationItem setRightBarButtonItem:buttonFilter];
     
-    self.tableView.tableFooterView = [[UIView alloc]init];
-
+    // Data reloading
     if (!self.initialized) {
         [TestFlight passCheckpoint:@"List loading started"];
         [self reloadData];
     }else{
         [TestFlight passCheckpoint:@"List restored"];
     }
-
-    
-}
-
--(void)userDidRefresh{
-    
-}
-
-
-- (void)viewWillDisappear:(BOOL)animated {
 }
 
 
 #pragma mark -
 #pragma mark Table view datasource and delegate methods
+
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)aTableView {
 	// Number of sections is the number of regions
@@ -161,13 +155,8 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath  {
 		
 	static NSString *CellIdentifier = @"PersonCellIdent";
-		
+    
 	PersonCell *personCell = (PersonCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-
-//	if (personCell == nil) {
-//		personCell = [[PersonCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-////		personCell.frame = CGRectMake(0.0, 0.0, 320.0, ROW_HEIGHT);
-//	}
 	
 	// Get the time zones for the region for the section
 	Circle* circle = [globalData getCircleByNumber:indexPath.section];

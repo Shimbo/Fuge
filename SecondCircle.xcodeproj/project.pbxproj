@@ -66,6 +66,10 @@
 		4C188D251698C72C004CF42D /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C188D241698C72B004CF42D /* MapKit.framework */; };
 		4C188D281698CB7F004CF42D /* PersonAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C188D271698CB7E004CF42D /* PersonAnnotation.m */; };
 		4C188D2B1698CDE9004CF42D /* GlobalData.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C188D2A1698CDE9004CF42D /* GlobalData.m */; };
+		4C1C438316C9B126008BA9CA /* InboxViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C1C438116C9B125008BA9CA /* InboxViewController.m */; };
+		4C1C438416C9B126008BA9CA /* InboxViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C1C438216C9B125008BA9CA /* InboxViewController.xib */; };
+		4C1C438716C9BE11008BA9CA /* InboxCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C1C438616C9BE11008BA9CA /* InboxCell.m */; };
+		4C1C438916C9BF64008BA9CA /* InboxCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C1C438816C9BF64008BA9CA /* InboxCell.xib */; };
 		4C27C96E1691862A00B2A905 /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C27C96A1691862A00B2A905 /* libTestFlight.a */; };
 		4C27C96F1691862B00B2A905 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 4C27C96B1691862A00B2A905 /* README.md */; };
 		4C27C9701691862B00B2A905 /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = 4C27C96C1691862A00B2A905 /* release_notes.md */; };
@@ -184,6 +188,12 @@
 		4C188D271698CB7E004CF42D /* PersonAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersonAnnotation.m; sourceTree = "<group>"; };
 		4C188D291698CDE9004CF42D /* GlobalData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalData.h; sourceTree = "<group>"; };
 		4C188D2A1698CDE9004CF42D /* GlobalData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlobalData.m; sourceTree = "<group>"; };
+		4C1C438016C9B125008BA9CA /* InboxViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxViewController.h; sourceTree = "<group>"; };
+		4C1C438116C9B125008BA9CA /* InboxViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxViewController.m; sourceTree = "<group>"; };
+		4C1C438216C9B125008BA9CA /* InboxViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InboxViewController.xib; sourceTree = "<group>"; };
+		4C1C438516C9BE11008BA9CA /* InboxCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxCell.h; sourceTree = "<group>"; };
+		4C1C438616C9BE11008BA9CA /* InboxCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxCell.m; sourceTree = "<group>"; };
+		4C1C438816C9BF64008BA9CA /* InboxCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InboxCell.xib; sourceTree = "<group>"; };
 		4C27C96A1691862A00B2A905 /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
 		4C27C96B1691862A00B2A905 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		4C27C96C1691862A00B2A905 /* release_notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.md; sourceTree = "<group>"; };
@@ -305,6 +315,7 @@
 				09ABC08013A1D52D009C3FCF /* ParseStarterProjectAppDelegate.h */,
 				09ABC08113A1D52D009C3FCF /* ParseStarterProjectAppDelegate.m */,
 				4C7E3FE4169A1F260065484F /* Data */,
+				4C1C437F16C9998D008BA9CA /* XIB */,
 				4C08DDCD163C88480093C851 /* UI */,
 				09ABC07813A1D52D009C3FCF /* Supporting Files */,
 			);
@@ -322,20 +333,10 @@
 				09ABC07A13A1D52D009C3FCF /* InfoPlist.strings */,
 				09ABC07D13A1D52D009C3FCF /* SecondCircle-Prefix.pch */,
 				09ABC07E13A1D52D009C3FCF /* main.m */,
-				4706D10D16C11BA200CAF9AF /* RootViewController.xib */,
-				47A1AC6D16A7DDD3004B4CFA /* VenueCell.xib */,
-				4C7E3FEB169A456B0065484F /* VenueSelectView.xib */,
-				4C7E3FE1169A1BB30065484F /* MeetupView.xib */,
-				4C7E3FD51699017C0065484F /* NewMeetupView.xib */,
-				4C188D211698C51A004CF42D /* MapView.xib */,
-				09ABC08313A1D52D009C3FCF /* MainWindow.xib */,
-				4C057319166ACC7500EF6FAD /* LoginView.xib */,
-				4C057325166AEF4800EF6FAD /* ProfileView.xib */,
-				4C08DDDE163C89A80093C851 /* MainWindow.xib */,
-				4C05733A166B73D900EF6FAD /* UserProfile.xib */,
-				4CFE78C7166BBA7900E1BF72 /* FilterView.xib */,
 				4C057321166AE74D00EF6FAD /* FacebookLogin.png */,
 				4C057323166AEE0A00EF6FAD /* Background.jpg */,
+				09ABC08313A1D52D009C3FCF /* MainWindow.xib */,
+				4C08DDDE163C89A80093C851 /* MainWindow.xib */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -409,9 +410,12 @@
 				4C188D201698C51A004CF42D /* MapViewController.m */,
 				4C08DDD5163C88640093C851 /* RootViewController.h */,
 				4C08DDD6163C88640093C851 /* RootViewController.m */,
+				4C1C438016C9B125008BA9CA /* InboxViewController.h */,
+				4C1C438116C9B125008BA9CA /* InboxViewController.m */,
 				4C08DDD7163C88640093C851 /* PersonCell.h */,
 				4C08DDD8163C88640093C851 /* PersonCell.m */,
-				47A5ED2916C7C2CD00084ED9 /* PersonCell.xib */,
+				4C1C438516C9BE11008BA9CA /* InboxCell.h */,
+				4C1C438616C9BE11008BA9CA /* InboxCell.m */,
 				4C08DDD9163C88640093C851 /* PersonView.h */,
 				4C08DDDA163C88640093C851 /* PersonView.m */,
 				4C05731F166ACED200EF6FAD /* LoginViewController.h */,
@@ -436,12 +440,32 @@
 				4706D10B16C11A2300CAF9AF /* MainViewController.m */,
 				4706D10516C1188200CAF9AF /* RightViewController.h */,
 				4706D10616C1188300CAF9AF /* RightViewController.m */,
-				4706D10716C1188300CAF9AF /* RightViewController.xib */,
 				4706D10016C10DBF00CAF9AF /* LeftMenuController.h */,
 				4706D10116C10DBF00CAF9AF /* LeftMenuController.m */,
-				4706D10216C10DBF00CAF9AF /* LeftMenuController.xib */,
 			);
 			name = UI;
+			sourceTree = "<group>";
+		};
+		4C1C437F16C9998D008BA9CA /* XIB */ = {
+			isa = PBXGroup;
+			children = (
+				4C188D211698C51A004CF42D /* MapView.xib */,
+				4706D10D16C11BA200CAF9AF /* RootViewController.xib */,
+				47A5ED2916C7C2CD00084ED9 /* PersonCell.xib */,
+				4C1C438816C9BF64008BA9CA /* InboxCell.xib */,
+				4C057319166ACC7500EF6FAD /* LoginView.xib */,
+				4C057325166AEF4800EF6FAD /* ProfileView.xib */,
+				4C05733A166B73D900EF6FAD /* UserProfile.xib */,
+				4CFE78C7166BBA7900E1BF72 /* FilterView.xib */,
+				4C7E3FD51699017C0065484F /* NewMeetupView.xib */,
+				4C7E3FE1169A1BB30065484F /* MeetupView.xib */,
+				4C7E3FEB169A456B0065484F /* VenueSelectView.xib */,
+				47A1AC6D16A7DDD3004B4CFA /* VenueCell.xib */,
+				4706D10716C1188300CAF9AF /* RightViewController.xib */,
+				4706D10216C10DBF00CAF9AF /* LeftMenuController.xib */,
+				4C1C438216C9B125008BA9CA /* InboxViewController.xib */,
+			);
+			name = XIB;
 			sourceTree = "<group>";
 		};
 		4C27C9691691862A00B2A905 /* TestFlightSDK */ = {
@@ -555,6 +579,8 @@
 				4706D11216C11CA600CAF9AF /* reveal_menu_icon_portrait@2x.png in Resources */,
 				4706D11416C12A1600CAF9AF /* README.md in Resources */,
 				47A5ED2A16C7C2CD00084ED9 /* PersonCell.xib in Resources */,
+				4C1C438416C9B126008BA9CA /* InboxViewController.xib in Resources */,
+				4C1C438916C9BF64008BA9CA /* InboxCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -599,6 +625,8 @@
 				4706D10316C10DBF00CAF9AF /* LeftMenuController.m in Sources */,
 				4706D10816C1188300CAF9AF /* RightViewController.m in Sources */,
 				4706D10C16C11A2400CAF9AF /* MainViewController.m in Sources */,
+				4C1C438316C9B126008BA9CA /* InboxViewController.m in Sources */,
+				4C1C438716C9BE11008BA9CA /* InboxCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

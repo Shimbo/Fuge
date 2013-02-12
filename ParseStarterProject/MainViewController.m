@@ -9,10 +9,6 @@
 #import "MainViewController.h"
 #import "ParseStarterProjectAppDelegate.h"
 
-@interface MainViewController ()
-
-@end
-
 @implementation MainViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil

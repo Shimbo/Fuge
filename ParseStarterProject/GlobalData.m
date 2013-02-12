@@ -9,6 +9,8 @@
 #import "GlobalData.h"
 #import "GlobalVariables.h"
 #import "PushManager.h"
+#import "RootViewController.h"
+#import "InboxViewController.h"
 
 @implementation GlobalData
 
@@ -31,6 +33,8 @@ static GlobalData *sharedInstance = nil;
     if (self) {
         circles = [[NSMutableDictionary alloc] init];
         meetups = [[NSMutableArray alloc] init];
+        unreadMessages = [[NSMutableArray alloc] init];
+        nInboxLoadingStage = 0;
     }
     
     return self;
@@ -47,6 +51,9 @@ static GlobalData *sharedInstance = nil;
     return self;
 }
 
+
+#pragma mark -
+#pragma mark Getters
 
 
 - (NSArray*) getCircles
@@ -93,18 +100,30 @@ NSInteger sortByName(id num1, id num2, void *context)
     return nil;
 }
 
+- (Person*) getPersonById:(NSString*)strFbId
+{
+    for ( Circle* circle in [circles allValues] )
+        for (Person* person in [circle getPersons])
+            if ( [person.strId compare:strFbId] == NSOrderedSame )
+                return person;
+    return nil;
+}
 
 - (NSArray*) getMeetups
 {
     return meetups;
 }
 
+- (NSArray*) getInbox
+{
+    NSMutableArray* inboxData = [[NSMutableArray alloc] init];
+    [inboxData addObjectsFromArray:unreadMessages];
+    return inboxData;
+}
 
 
-
-
-
-
+#pragma mark -
+#pragma mark Friends
 
 
 - (void)addPerson:(PFUser*)user userCircle:(NSUInteger)circleUser
@@ -115,16 +134,8 @@ NSInteger sortByName(id num1, id num2, void *context)
         return;
     
     // Already added users
-    for (Circle *circle in [circles allValues])
-    {
-        NSMutableArray* per = [circle getPersons];
-        for ( int n = 0; n < [per count]; n++ )
-        {
-            Person* person = per[n];
-            if ( [strId compare:person.strId] == NSOrderedSame )
-                return;
-        }
-    }
+    if ( [self getPersonById:strId] )
+        return;
     
     // Creating user: name
     NSString* strName = [user objectForKey:@"fbName"];
@@ -176,7 +187,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [circle addPerson:person];
 }
 
-- (void) reloadFbFriends:(id)friends
+- (void) loadFbFriends:(id)friends
 {
     // result will contain an array with your user's friends in the "data" key
     NSArray *friendObjects = [friends objectForKey:@"data"];
@@ -210,7 +221,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     }
 }
 
-- (void) reload2OFriends
+- (void) load2OFriends
 {
     // Second circle friends query
     NSMutableArray *friend2OIds = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
@@ -229,7 +240,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     }
 }
 
-- (void) reloadRandom
+- (void) loadRandom
 {
     // Query
     PFQuery *friendAnyQuery = [PFUser query];
@@ -243,7 +254,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     
 }
 
-- (void) reloadFbOthers
+- (void) loadFbOthers
 {
     NSArray *friendIds = [[PFUser currentUser] objectForKey:@"fbFriends"];
     
@@ -272,6 +283,11 @@ NSInteger sortByName(id num1, id num2, void *context)
     }
 }
 
+
+#pragma mark -
+#pragma mark Reloaders: meetups
+
+// This one is used by new meetup window
 - (void)addMeetup:(Meetup*)meetup
 {
     // TODO: test if such meetup was already added
@@ -279,6 +295,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [meetups addObject:meetup];
 }
 
+// This one is used by loader
 - (Meetup*)addMeetupWithData:(PFObject*)meetupData
 {
     // TODO: test if such meetup was already added
@@ -307,8 +324,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     return meetup;
 }
 
-
-- (void)reloadMeetups
+- (void)loadMeetups
 {
     PFQuery *meetupAnyQuery = [PFQuery queryWithClassName:@"Meetup"];
     
@@ -338,10 +354,63 @@ NSInteger sortByName(id num1, id num2, void *context)
 }
 
 
+#pragma mark -
+#pragma mark Inbox
+
+
+- (void)loadInvites
+{
+    // TBD
+    nInboxLoadingStage++;
+}
+
+- (void)loadUnreadMessages
+{
+    // Query
+    PFQuery *unreadMessagesQuery = [PFQuery queryWithClassName:@"Message"];
+    [unreadMessagesQuery whereKey:@"idUserTo" equalTo:[[PFUser currentUser] objectForKey:@"fbId"]];
+    [unreadMessagesQuery whereKey:@"isRead" equalTo:[[NSNumber alloc] initWithBool:FALSE]];
+    
+    // Loading
+    [unreadMessagesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        for (PFObject *message in objects)
+        {
+            // Looking for already created thread
+            Boolean bSuchUserAlreadyAdded = false;
+            for (PFObject *messageOld in unreadMessages)
+                if ( [[message objectForKey:@"idUserFrom"] compare:[messageOld objectForKey:@"idUserFrom"]] == NSOrderedSame )
+                {
+                    bSuchUserAlreadyAdded = true;
+                    break;
+                }
+            if ( bSuchUserAlreadyAdded )
+                continue;
+            
+            // Adding object
+            [unreadMessages addObject:message];
+        }
+        
+        // Loading stage complete
+        nInboxLoadingStage++;
+    }];
+}
+
+- (void)loadUnreadComments
+{
+    // TBD
+    nInboxLoadingStage++;
+}
+
+
+#pragma mark -
+#pragma mark Global
+
+
 - (void)reload:(RootViewController*)controller
 {
-    // Clean for sure old data
-    [self clean];
+    // Clean old data
+    [circles removeAllObjects];
+    [meetups removeAllObjects];
     
     // Current user data
     PF_FBRequest *request = [PF_FBRequest requestForMe];
@@ -371,19 +440,19 @@ NSInteger sortByName(id num1, id num2, void *context)
             if (!error)
             {
                 // FB friends
-                [self reloadFbFriends:result];
+                [self loadFbFriends:result];
                 
                 // 2O friends
-                [self reload2OFriends];
+                [self load2OFriends];
                 
                 // Random friends
-                [self reloadRandom];
+                [self loadRandom];
                 
                 // FB friends out of the app
-                [self reloadFbOthers];
+                [self loadFbOthers];
                 
                 // Meetups
-                [self reloadMeetups];
+                [self loadMeetups];
                 
                 // Pushes sent for new users, turn it off
                 [globalVariables pushToFriendsSent];
@@ -393,6 +462,9 @@ NSInteger sortByName(id num1, id num2, void *context)
                 
                 // Reload table
                 [controller reloadFinished];
+                
+                // Start background loading for inbox
+                [self reloadInbox:nil];
             }
             else
             {
@@ -402,10 +474,30 @@ NSInteger sortByName(id num1, id num2, void *context)
     }];
 }
 
-- (void)clean
+- (void)reloadInbox:(InboxViewController*)controller
 {
-    [sharedInstance->circles removeAllObjects];
+    nInboxLoadingStage = 0;
+    
+    // Clean old data
+    [unreadMessages removeAllObjects];
+    
+    // Invites
+    [self loadInvites];
+    
+    // Unread PMs
+    [self loadUnreadMessages];
+    
+    // Unread comments
+    [self loadUnreadComments];
+    
+    // During initial load controller could be nil as we're loading from main view
+    //if ( controller )
+    //    [controller reloadFinished];
 }
 
+- (Boolean)isInboxLoaded
+{
+    return ( nInboxLoadingStage == INBOX_LOADED );
+}
 
 @end

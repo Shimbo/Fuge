@@ -7,14 +7,11 @@
 //
 
 #import "LeftMenuController.h"
+#import "InboxViewController.h"
 #import "MapViewController.h"
 #import "ProfileViewController.h"
 #import <Parse/Parse.h>
 
-
-@interface LeftMenuController ()
-
-@end
 
 @implementation LeftMenuController
 
@@ -22,9 +19,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    _items = @[@"Cycles",@"Map",@"User Profile",@"Logout"];
-    _selectors = @[@"showCicles",@"showMap",@"showUser",@"logout"];
+    _items = @[@"Inbox",@"Cycles",@"Map",@"User Profile",@"Logout"];
+    _selectors = @[@"showInbox",@"showCicles",@"showMap",@"showUser",@"logout"];
     self.appDelegate = AppDelegate;
+}
+
+-(void)showInbox{
+    InboxViewController *inboxViewController = [[InboxViewController alloc] initWithNibName:@"InboxViewController" bundle:nil];
+    [self showViewController:inboxViewController];
 }
 
 -(void)showCicles{

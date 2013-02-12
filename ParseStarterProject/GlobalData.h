@@ -9,27 +9,46 @@
 #import <Foundation/Foundation.h>
 #import "Circle.h"
 #import "Meetup.h"
-#import "RootViewController.h"
+
+@class RootViewController;
+@class InboxViewController;
 
 #define globalData [GlobalData sharedInstance]
 
+#define INBOX_LOADED    4   // Number of stages in loading
+
 @interface GlobalData : NSObject
 {
+    // Main data pack
     NSMutableDictionary *circles;
     NSMutableArray      *meetups;
+    
+    // Inbox and notifications
+    NSMutableArray      *newUsers;
+    NSMutableArray      *invites;
+    NSMutableArray      *unreadMessages;
+    NSMutableArray      *unreadComments;
+    NSUInteger          nInboxLoadingStage;
 }
 
 + (id)sharedInstance;
 
+// Retrievers
 - (Circle*) getCircle:(NSUInteger)circle;
 - (Circle*) getCircleByNumber:(NSUInteger)num;
+- (Person*) getPersonById:(NSString*)strFbId;
 - (NSArray*) getCircles;
 - (NSArray*) getMeetups;
+- (NSArray*) getInbox;
 
+// New meetup window calls
 - (void)addMeetup:(Meetup*)meetup;
-- (Meetup*) addMeetupWithData:(PFObject*)meetupData;
 
-- (void)clean;
+// Global data, loading in foreground
 - (void)reload:(RootViewController*)controller;
+
+// Inbox data, loading in background
+- (void)reloadInbox:(InboxViewController*)controller;
+- (Boolean)isInboxLoaded;
 
 @end

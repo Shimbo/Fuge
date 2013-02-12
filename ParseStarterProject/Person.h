@@ -3,7 +3,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <Parse/Parse.h>
 
-@class PersonView;
+//@class PersonView;
 
 @interface Person : NSObject {
     PFUser* object;
@@ -21,12 +21,12 @@
     
     NSUInteger idCircle;
     
-	UIImage *image;
+/*	UIImage *image;
     NSMutableData* imageData;
     NSURLConnection *urlConnection;
     NSURL *pictureURL;
     NSMutableURLRequest *urlRequest;
-    PersonView* pParent;
+    PersonView* pParent;*/
 }
 
 @property (nonatomic, retain) NSString *strId;
@@ -37,18 +37,15 @@
 @property (nonatomic, retain) NSString *strRole;
 @property (nonatomic, retain) NSString *strArea;
 @property (nonatomic, retain) NSString *strCircle;
-
-
-
 @property (nonatomic) NSUInteger idCircle;
 
-@property (nonatomic, retain) NSMutableURLRequest *urlRequest;
+//@property (nonatomic, retain) NSMutableURLRequest *urlRequest;
 
 //@property (nonatomic, retain) PersonView* pParent;
 
 // TODO: change it to more secure init
 
-- init:(NSArray*)nameComponents;
+//- init:(NSArray*)nameComponents;
 
 -(NSString*)imageURL;
 -(NSString*)largeImageURL;

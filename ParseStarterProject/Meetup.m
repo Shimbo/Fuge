@@ -39,6 +39,10 @@
         
         // Is read? TODO: it is p2a so it won't work at all
         [meetupData setObject:[NSNumber numberWithBool:FALSE] forKey:@"isRead"];
+        
+        // Protection (read only for all, write for owner)
+        //meetupData.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
+        //[meetupData.ACL setPublicReadAccess:true];
     }
     
     // Subject, privacy, date, timestamp, location
@@ -81,10 +85,6 @@ static UIViewController* tempController = nil;
     event.endDate   = [[NSDate alloc] initWithTimeInterval:3600 sinceDate:event.startDate];
     event.location = strAddress;
     
-    /*EKCalendarChooser* chooser = [[EKCalendarChooser alloc] initWithSelectionStyle:EKCalendarChooserSelectionStyleSingle displayStyle:EKCalendarChooserDisplayWritableCalendarsOnly entityType:EKEntityTypeEvent eventStore:eventStore];
-     
-     [self.navigationController pushViewController:chooser animated:YES];*/
-    
     EKEventEditViewController* eventView = [[EKEventEditViewController alloc] initWithNibName:nil bundle:nil];
     [eventView setEventStore:eventStore];
     [eventView setEvent:event];
@@ -95,10 +95,6 @@ static UIViewController* tempController = nil;
     }
     
     eventView.editViewDelegate = self;
-    
-    //    [event setCalendar:[eventStore defaultCalendarForNewEvents]];
-    //    NSError *err;
-    //    [eventStore saveEvent:event span:EKSpanThisEvent error:&err];
 }
 
 #pragma mark -

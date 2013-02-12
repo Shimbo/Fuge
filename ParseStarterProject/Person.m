@@ -13,10 +13,9 @@
 @synthesize strRole;
 @synthesize strArea;
 @synthesize strCircle;
-
 @synthesize idCircle;
 
-@synthesize urlRequest;
+//@synthesize urlRequest;
 
 //@synthesize pParent;
 
@@ -42,9 +41,9 @@
         strArea = [[nameComponents objectAtIndex:6] copy];
         strCircle = [[nameComponents objectAtIndex:7] copy];
         idCircle = nCircle;
-        image = nil;
-        imageData = nil;
-        urlConnection = nil;
+//        image = nil;
+//        imageData = nil;
+//        urlConnection = nil;
         object = nil;
 	}
 	return self;

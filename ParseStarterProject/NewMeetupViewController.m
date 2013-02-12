@@ -64,6 +64,7 @@
         [location setTitle:self.selectedVenue.name forState:UIControlStateNormal];
     }
 }
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -160,17 +161,20 @@
     [comment setObject:@"" forKey:@"userName"]; // As it's not a normal comment, it's ok
     [comment setObject:meetup.strId forKey:@"meetupId"];
     [comment setObject:strComment forKey:@"comment"];
+    //comment.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
+    //[comment.ACL setPublicReadAccess:true];
+    
     [comment saveInBackground];
     
     // TODO: Send to everybody around (using public/2ndO filter, send checkbox and geo-query) push about the meetup
     
+    // Close the window - why no animation? Because animations conflict!
+    [self dismissViewControllerAnimated:NO completion:nil];
+    [self.navigationController setNavigationBarHidden:false animated:true];
+    [self.navigationController popViewControllerAnimated:NO];
+    
     // Add to calendar call
     [meetup addToCalendar:self shouldAlert:newMeetup];
-    
-    // Close the window
-    [self dismissViewControllerAnimated:YES completion:nil];
-    [self.navigationController setNavigationBarHidden:false animated:true];
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 

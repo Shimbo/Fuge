@@ -229,16 +229,17 @@ double animatedDistance;
     if ( [messageNew.text compare:@""] == NSOrderedSame )
         return;
     
-    // Adding comment
+    // Adding message
     PFObject* message = [[PFObject alloc] initWithClassName:@"Message"];
     NSString* stringFrom = (NSString *) [[PFUser currentUser] objectForKey:@"fbId"];
     [message setObject:stringFrom forKey:@"idUserFrom"];
     [message setObject:personThis.strId forKey:@"idUserTo"];
     [message setObject:messageNew.text forKey:@"text"];
     [message setObject:[PFUser currentUser] forKey:@"objUserFrom"];
+    [message setObject:personThis.strName forKey:@"nameUserFrom"];
     //[message setObject:[PFUser currentUser] forKey:@"objUserFrom"];
     [message setObject:[NSNumber numberWithBool:FALSE] forKey:@"isRead"];
-    [message save];
+    [message saveInBackground];
     
     // Creating push
     [pushManager sendPushNewMessage:PUSH_NEW_MESSAGE idTo:personThis.strId];
