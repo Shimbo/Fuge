@@ -18,8 +18,10 @@ enum EInboxItemType
 @interface InboxViewItem : NSObject
 @property (nonatomic) NSUInteger type;
 @property (strong, nonatomic) id data;
-@property (strong, nonatomic) AsyncImageView *iconImage;
+//@property (strong, nonatomic) AsyncImageView *iconImage;
+//@property (strong, nonatomic) AsyncImageView *mainImage;
 @property (strong, nonatomic) NSString *fromId;
+@property (strong, nonatomic) NSString *toId;
 @property (strong, nonatomic) NSString *subject;
 @property (strong, nonatomic) NSString *message;
 @property (strong, nonatomic) NSString *misc;

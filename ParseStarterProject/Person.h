@@ -6,7 +6,7 @@
 //@class PersonView;
 
 @interface Person : NSObject {
-    PFUser* object;
+//    PFUser* object;
     
     NSString *strId;
     NSString *strName;
@@ -49,6 +49,9 @@
 
 -(NSString*)imageURL;
 -(NSString*)largeImageURL;
+
++(NSString*)imageURLWithId:(NSString*)fbId;
++(NSString*)largeImageURLWithId:(NSString*)fbId;
 
 - (id)init:(NSArray*) nameComponents circle:(NSUInteger)nCircle;
 

@@ -241,10 +241,14 @@ double animatedDistance;
     [message setObject:personThis.strId forKey:@"idUserTo"];
     [message setObject:messageNew.text forKey:@"text"];
     [message setObject:[PFUser currentUser] forKey:@"objUserFrom"];
-    [message setObject:personThis.strName forKey:@"nameUserFrom"];
-    //[message setObject:[PFUser currentUser] forKey:@"objUserFrom"];
-    [message setObject:[NSNumber numberWithBool:FALSE] forKey:@"isRead"];
+//    [message setObject:personThis.object forKey:@"objUserTo"]; // TODO
+    [message setObject:[[PFUser currentUser] objectForKey:@"fbName"] forKey:@"nameUserFrom"];
+    [message setObject:personThis.strName forKey:@"nameUserTo"];
+    // TODO: it's bad approach, use the name from PFUser, load PFUsers for all messages
     [message saveInBackground];
+    
+    // Adding to inbox
+    [globalData addMessage:message];
     
     // Creating push
     [pushManager sendPushNewMessage:PUSH_NEW_MESSAGE idTo:personThis.strId];

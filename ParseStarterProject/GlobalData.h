@@ -26,7 +26,7 @@
     // Inbox and notifications
     NSArray             *newUsers;
     NSArray             *invites;
-    NSArray             *messages;
+    NSMutableArray      *messages;
     NSArray             *comments;
     NSUInteger          nInboxLoadingStage;
 }
@@ -41,8 +41,10 @@
 - (NSArray*) getMeetups;
 - (NSArray*) getInbox;
 
-// New meetup window calls
+// New meetup created during the session
 - (void)addMeetup:(Meetup*)meetup;
+// New message created in user profile window
+- (void)addMessage:(PFObject*)message;
 
 // Global data, loading in foreground
 - (void)reload:(RootViewController*)controller;

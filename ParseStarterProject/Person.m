@@ -44,17 +44,30 @@
 //        image = nil;
 //        imageData = nil;
 //        urlConnection = nil;
-        object = nil;
+//        object = nil;
 	}
 	return self;
 }
 
++(NSString*)imageURLWithId:(NSString*)fbId
+{
+    return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&width=100&height=100&return_ssl_resources=1", fbId];
+}
+
++(NSString*)largeImageURLWithId:(NSString*)fbId
+{
+    return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", fbId];
+}
+
+
 -(NSString*)imageURL{
-    return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&width=100&height=100&return_ssl_resources=1", strId];
+    return [Person imageURLWithId:strId];
+//    return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&width=100&height=100&return_ssl_resources=1", fbId ? fbId : strId];
 }
 
 -(NSString*)largeImageURL{
-    return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", strId];
+    return [Person largeImageURLWithId:strId];
+//    return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", fbId ? fbId : strId];
 }
 
 /*

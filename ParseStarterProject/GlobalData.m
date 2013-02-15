@@ -373,28 +373,54 @@ NSInteger sortByName(id num1, id num2, void *context)
         // Looking for already created thread
         Boolean bSuchUserAlreadyAdded = false;
         for (PFObject *messageOld in messagesUnique)
-            if ( [[message objectForKey:@"idUserFrom"] compare:[messageOld objectForKey:@"idUserFrom"]] == NSOrderedSame )
+            if ( ( [[message objectForKey:@"idUserFrom"] compare:[messageOld objectForKey:@"idUserFrom"]] == NSOrderedSame ) ||
+                ( [[message objectForKey:@"idUserTo"] compare:[messageOld objectForKey:@"idUserFrom"]] == NSOrderedSame ) ||
+                ( [[message objectForKey:@"idUserFrom"] compare:[messageOld objectForKey:@"idUserTo"]] == NSOrderedSame) )
             {
                 // Replacing with an older unread:
                 // checking date, if it's > than last read, but < than current, replace
                 
                 Boolean bExchange = false;
                 
-                NSDate* lastReadDate = [self getConversationDate:[message objectForKey:@"idUserFrom"]];
+                Boolean bOwnMessage = ( [[message objectForKey:@"idUserFrom"] compare:[[PFUser currentUser] objectForKey:@"fbId"]] == NSOrderedSame );
+                Boolean bOldOwnMessage = ( [[messageOld objectForKey:@"idUserFrom"] compare:[[PFUser currentUser] objectForKey:@"fbId"]] == NSOrderedSame );
+                
+                NSDate* lastReadDate;
+                if ( bOwnMessage )
+                    lastReadDate = [self getConversationDate:[message objectForKey:@"idUserTo"]];
+                else
+                    lastReadDate = [self getConversationDate:[message objectForKey:@"idUserFrom"]];
                 
                 Boolean bOldBeforeThanReadDate = false;
                 Boolean bNewLaterThanReadDate = true;
-                Boolean bNewIsBeforeOld = ( [ message.createdAt compare:messageOld.createdAt ] == NSOrderedAscending );
-                if ( lastReadDate )
+                Boolean bNewIsBeforeOld = false;
+                if ( messageOld.createdAt && message.createdAt )
                 {
-                    bOldBeforeThanReadDate = [messageOld.createdAt compare:lastReadDate] == NSOrderedAscending;
-                    bNewLaterThanReadDate = [message.createdAt compare:lastReadDate] == NSOrderedDescending;
+                    bNewIsBeforeOld = ( [ message.createdAt compare:messageOld.createdAt ] == NSOrderedAscending );
+                    if ( lastReadDate )
+                    {
+                        bOldBeforeThanReadDate = [messageOld.createdAt compare:lastReadDate] != NSOrderedDescending;
+                        bNewLaterThanReadDate = [message.createdAt compare:lastReadDate] == NSOrderedDescending;
+                    }
                 }
                 
+                //NSLog([message objectForKey:@"text"]);
+                //NSLog([messageOld objectForKey:@"text"]);
+                
+                // New message is not older, but old message is already read
                 if ( ! bNewIsBeforeOld && bOldBeforeThanReadDate )
                     bExchange = true;
                 
-                if ( bNewIsBeforeOld && bNewLaterThanReadDate )
+                // New message is older but still unread
+                if ( bNewIsBeforeOld && bNewLaterThanReadDate && ! bOwnMessage )
+                    bExchange = true;
+                
+                // User own messages is later than old unread
+                if ( ! bNewIsBeforeOld && bOwnMessage )
+                    bExchange = true;
+                
+                // New message is after own users message
+                if ( ! bNewIsBeforeOld && bOldOwnMessage )
                     bExchange = true;
                 
                 if ( bExchange)
@@ -421,16 +447,26 @@ NSInteger sortByName(id num1, id num2, void *context)
     // TODO: add here later another query limitation by date (like 10 last days) to not push server too hard. It will be like pages, loading every 10 previous days or so.
     
     // Loading
-    [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+    [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects1, NSError *error) {
         
-        // Actuall messages
-        messages = objects;
+        PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Message"];
+        [messagesQuery whereKey:@"idUserFrom" equalTo:[[PFUser currentUser] objectForKey:@"fbId"]];
         
-        // Recalc what to show in inbox
-        //[self updateUniqueMessages];
-        
-        // Loading stage complete
-        nInboxLoadingStage++;
+        [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects2, NSError *error) {
+            
+            // Merging results
+            NSMutableSet *set = [NSMutableSet setWithArray:objects1];
+            [set addObjectsFromArray:objects2];
+            
+            // Actuall messages
+            messages = [[NSMutableArray alloc] initWithArray:[set allObjects]];
+            
+            // Recalc what to show in inbox
+            //[self updateUniqueMessages];
+            
+            // Loading stage complete
+            nInboxLoadingStage++;
+        }];
     }];
 }
 
@@ -438,6 +474,11 @@ NSInteger sortByName(id num1, id num2, void *context)
 {
     // TBD
     nInboxLoadingStage++;
+}
+
+- (void)addMessage:(PFObject*)message
+{
+    [messages addObject:message];
 }
 
 

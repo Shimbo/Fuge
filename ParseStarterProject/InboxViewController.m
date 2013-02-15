@@ -74,8 +74,14 @@
             if ( [[pObject className] compare:@"Message"] == NSOrderedSame )
             {
                 item.type = INBOX_ITEM_MESSAGE;
-                item.subject = [pObject objectForKey:@"nameUserFrom"];
                 item.fromId = [pObject objectForKey:@"idUserFrom"];
+                item.toId = [pObject objectForKey:@"idUserTo"];
+                
+                if ( [item.fromId compare:[[PFUser currentUser] objectForKey:@"fbId"]] == NSOrderedSame )
+                    item.subject = [[NSString alloc] initWithFormat:@"To: %@", [pObject objectForKey:@"nameUserTo"]];
+                else
+                    item.subject = [[NSString alloc] initWithFormat:@"From: %@", [pObject objectForKey:@"nameUserFrom"]];
+                
                 item.message = [pObject objectForKey:@"text"];
                 item.misc = nil;
                 item.data = pObject;
@@ -177,10 +183,13 @@
 	InboxViewItem *item = [items objectAtIndex:indexPath.row];
     
     // Here should follow big switch
-    inboxCell.mainImage = item.iconImage;
     inboxCell.subject.text = item.subject;
     inboxCell.message.text = item.message;
     inboxCell.misc.text = item.misc;
+    if ( [item.fromId compare:[[PFUser currentUser] objectForKey:@"fbId"]] == NSOrderedSame )
+        [inboxCell.mainImage loadImageFromURL:[Person imageURLWithId:item.toId]];
+    else
+        [inboxCell.mainImage loadImageFromURL:[Person imageURLWithId:item.fromId]];
     
 	return inboxCell;
 }
@@ -200,7 +209,12 @@
     if ( item.type == INBOX_ITEM_MESSAGE )
     {
         // TODO: what if person is unknown and not in our global data? We should load him/her!
-        Person* person = [globalData getPersonById:item.fromId];
+        NSString* strId;
+        if ( [item.fromId compare:[[PFUser currentUser] objectForKey:@"fbId"]] == NSOrderedSame )
+            strId = item.toId;
+        else
+            strId = item.fromId;
+        Person* person = [globalData getPersonById:strId];
         if ( person )
         {
             UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
