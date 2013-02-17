@@ -40,7 +40,9 @@
 
 - (void)newMeetupClicked{
     NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
-    [self.navigationController presentViewController:newMeetupViewController animated:YES completion:nil];
+    UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:newMeetupViewController];
+    [self.navigationController presentViewController:navigation
+                                            animated:YES completion:nil];
 }
 
 
