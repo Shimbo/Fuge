@@ -54,7 +54,10 @@
 - (Boolean)isInboxLoaded;
 
 // Inbox utils
-- (void) updateConverationDate:(NSDate*)date user:(NSString*)strUser;
-- (NSDate*) getConversationDate:(NSString*)strUser;
+- (void) updateConversationDate:(NSDate*)date thread:(NSString*)strThread;
+- (NSDate*) getConversationDate:(NSString*)strThread;
+- (void) subscribeToThread:(NSString*)strThread;
+- (void) unsubscribeToThread:(NSString*)strThread;
+- (Boolean) isSubscribedToThread:(NSString*)strThread;
 
 @end

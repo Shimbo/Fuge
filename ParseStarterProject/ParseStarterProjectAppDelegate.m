@@ -64,10 +64,7 @@
     
     [self createNewMainNavigation];
     LeftMenuController *leftMenu = [[LeftMenuController alloc]init];
-    self.revealController = [PKRevealController revealControllerWithFrontViewController:self.mainNavigation
-                                                                     leftViewController:leftMenu
-                                                                    rightViewController:nil
-                                                                                options:nil];
+    self.revealController = [PKRevealController revealControllerWithFrontViewController:self.mainNavigation leftViewController:leftMenu rightViewController:nil options:nil];
     window.rootViewController = self.revealController;
     [window makeKeyAndVisible];
     
@@ -133,56 +130,7 @@
 
 
 #pragma mark -
-#pragma mark Setting up the display list
-
-/*- (NSArray *)displayList {
-
-	NSArray *knownTimeZoneNames = [NSTimeZone knownTimeZoneNames];
-	
-	NSMutableArray *regions = [NSMutableArray array];
-	
-	for (NSString *timeZoneName in knownTimeZoneNames)
-    {
-		
-		NSArray *components = [timeZoneName componentsSeparatedByString:@"/"];
-		NSString *circleName = [components objectAtIndex:0];
-		
-		Circle* circle = [Circle circleNamed:circleName];
-		if (circle == nil) {
-			circle = [Circle newCircleWithName:regionName];
-			[circles addObject:circle];
-//			[region release];
-		}
-		
-		[circle addPersonWithComponents:components];
-//		[timeZone release];
-	}
-	
-	//NSDate *date = [NSDate date];
-	// Now sort the time zones by name
-	for (Region *region in regions) {
-		[region sortZones];
-//		[region setDate:date];
-	}
-	// Sort the regions
-	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
-	NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
-	[regions sortUsingDescriptors:sortDescriptors];
-//	[sortDescriptor release];
-	
-	return regions;
-}*/
-
-
-#pragma mark -
 #pragma mark Memory management
-
-- (void)dealloc {
-//	[navigationController release];
-//    [window release];
-//    [calendar release];
-//    [super dealloc];
-}
 
 -(void)applicationDidReceiveMemoryWarning:(UIApplication *)application{
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
@@ -192,6 +140,10 @@
         });
     });
 }
+
+
+#pragma mark -
+#pragma mark Some stuff
 
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
@@ -251,12 +203,8 @@
 }
 
 
-#pragma mark - ()
-
-
-
-
-
+#pragma mark -
+#pragma mark Location Stuff
 
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
@@ -265,19 +213,14 @@
     
     NSTimeInterval locationAge = -[newLocation.timestamp timeIntervalSinceNow];
     if (locationAge > 5.0)
-    {
-        
+    {        
     }
     
     CLLocationCoordinate2D coord = newLocation.coordinate;
     
-    //NSNumber* latitude = [[NSNumber alloc] initWithDouble:coord.latitude];
-    //NSNumber* longitude = [[NSNumber alloc] initWithDouble:coord.longitude];
     PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:coord.latitude
                                                   longitude:coord.longitude];
     [[PFUser currentUser] setObject:geoPoint forKey:@"location"];
-    //[[PFUser currentUser] setObject:latitude forKey:@"loclat"];
-    //[[PFUser currentUser] setObject:longitude forKey:@"loclon"];
     
     [locationManager stopUpdatingLocation];
 }

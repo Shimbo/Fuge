@@ -9,6 +9,8 @@
 #import "MeetupViewController.h"
 #import <Parse/Parse.h>
 #import "NewMeetupViewController.h"
+#import "GlobalData.h"
+#import "MeetupAnnotation.h"
 
 @implementation MeetupViewController
 
@@ -16,7 +18,7 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
+        self.navigationItem.leftItemsSupplementBackButton = true;
     }
     return self;
 }
@@ -44,7 +46,9 @@
     [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
     [strComment appendString:@" joined the event."];
     [comment setObject:strUserId forKey:@"userId"];
-    [comment setObject:@"" forKey:@"userName"]; // As it's not a normal comment, it's ok
+    NSNumber* trueNum = [[NSNumber alloc] initWithBool:true];
+    [comment setObject:[trueNum stringValue] forKey:@"system"];
+    [comment setObject:strUserName forKey:@"userName"];
     [comment setObject:strMeetupId forKey:@"meetupId"];
     [comment setObject:strComment forKey:@"comment"];
     [comment saveInBackground];
@@ -59,14 +63,16 @@
     
     // Ask to add to calendar
     [meetup addToCalendar:self shouldAlert:true];
+    
+    // Auto subscribe
+    [self subscribeClicked];
 }
 
 - (void)editClicked
 {
-    NewMeetupViewController *newEventViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
-    [newEventViewController setMeetup:meetup];
-    [self.navigationController setNavigationBarHidden:true animated:true];
-    [self.navigationController pushViewController:newEventViewController animated:YES];
+    NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
+    [newMeetupViewController setMeetup:meetup];
+    [self.navigationController presentViewController:newMeetupViewController animated:YES completion:nil];
 }
 
 - (void)calendarClicked
@@ -89,9 +95,44 @@
     return;
 }
 
+- (void)subscribeClicked
+{
+    [globalData subscribeToThread:meetup.strId];
+    [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Unsubscribe" style:UIBarButtonItemStylePlain target:self action:@selector(unsubscribeClicked)]];
+}
+
+- (void)unsubscribeClicked
+{
+    [globalData unsubscribeToThread:meetup.strId];
+    [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Subscribe" style:UIBarButtonItemStylePlain target:self action:@selector(subscribeClicked)]];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    // Map
+    CLLocationCoordinate2D loc = CLLocationCoordinate2DMake(meetup.location.latitude,meetup.location.longitude);
+    MKCoordinateRegion reg = MKCoordinateRegionMakeWithDistance(loc, 200.0f, 200.0f);
+    mapView.showsUserLocation = TRUE;
+    [mapView setDelegate:self];
+    [mapView setRegion:reg animated:true];
+    MeetupAnnotation *ann = [[MeetupAnnotation alloc] init];
+    NSUInteger color;
+    switch (meetup.privacy)
+    {
+        case 0: color = MKPinAnnotationColorGreen; break;
+        case 1: color = MKPinAnnotationColorPurple; break;
+        case 2: color = MKPinAnnotationColorRed; break;
+    }
+    ann.title = meetup.strVenue;
+    ann.subtitle = meetup.strAddress;
+    ann.color = color;
+    CLLocationCoordinate2D coord;
+    coord.latitude = meetup.location.latitude;
+    coord.longitude = meetup.location.longitude;
+    ann.coordinate = coord;
+    [mapView addAnnotation:ann];
     
     // Join button checks
     if ( [meetup.strOwnerId compare:[[PFUser currentUser] objectForKey:@"fbId"] ] != NSOrderedSame )
@@ -115,6 +156,11 @@
                 {
                     [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Leave" style:UIBarButtonItemStylePlain target:self action:@selector(leaveClicked)]];
                 }
+                
+                if ( [globalData isSubscribedToThread:meetup.strId])
+                    [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Unsubscribe" style:UIBarButtonItemStylePlain target:self action:@selector(unsubscribeClicked)]];
+                else
+                    [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Subscribe" style:UIBarButtonItemStylePlain target:self action:@selector(subscribeClicked)]];
             }
         }];
     }
@@ -144,8 +190,9 @@
         NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
         for (NSDictionary *comment in commentsList)
         {
+            NSString* strSystem = [comment objectForKey:@"system"];
             NSString* strUserName = [comment objectForKey:@"userName"];
-            if ( [strUserName compare:@""] != NSOrderedSame )   // System comment like join
+            if ( ! strSystem || [strSystem compare:@""] != NSOrderedSame )   // System comment like join
             {
                 [stringComments appendString:@"    "];
                 [stringComments appendString:strUserName];
@@ -159,6 +206,10 @@
             [stringComments appendString:@"\n"];
         }
         [comments setText:stringComments];
+        
+        // Last read message date
+        if ( [commentsList count] > 0 )
+            [globalData updateConversationDate:((PFObject*)commentsList[0]).createdAt thread:meetup.strId];
     }];
 }
 
@@ -176,8 +227,36 @@
 - (void)viewDidUnload {
     comments = nil;
     newComment = nil;
+    mapView = nil;
     [super viewDidUnload];
 }
+
+
+
+
+-(MKAnnotationView *)mapView:(MKMapView *)mV viewForAnnotation:(id <MKAnnotation>)annotation
+{
+    MKPinAnnotationView *pinView = nil;
+    if (annotation != mapView.userLocation)
+    {
+        static NSString *defaultPinID = @"secondcircle.pin";
+        pinView = (MKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:defaultPinID];
+        
+        if ( pinView == nil ){
+            pinView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:defaultPinID];
+        }
+        
+        pinView.pinColor = ((MeetupAnnotation*) annotation).color;
+        
+        pinView.canShowCallout = YES;
+        pinView.animatesDrop = YES;
+    }
+    else {
+        [mapView.userLocation setTitle:@"I am here"];
+    }
+    return pinView;
+}
+
 
 
 
@@ -287,6 +366,9 @@ double animatedDistance;
     [comments setText:stringComments];
     
     [newComment setText:@""];
+    
+    // Auto subscription
+    [self subscribeClicked];
 }
 
 

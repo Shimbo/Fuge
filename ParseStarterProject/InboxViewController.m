@@ -101,7 +101,7 @@
     NSDate* dateRecent = [[NSDate alloc] initWithTimeIntervalSinceNow:-24*60*60*7];
     for ( InboxViewItem* item in tempArray )
     {
-        NSDictionary* conversation = [[PFUser currentUser] objectForKey:@"messageDates"];
+        NSDictionary* conversation = [[PFUser currentUser] objectForKey:@"datesMessages"];
         if ( conversation )
         {
             NSDate* lastDate = [conversation objectForKey:item.fromId];

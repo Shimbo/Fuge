@@ -10,12 +10,14 @@
 #import "Meetup.h"
 #import <EventKit/EventKit.h>
 #import <EventKitUI/EventKitUI.h>
+#import <MapKit/MapKit.h>
 
-@interface MeetupViewController : UIViewController <UITextViewDelegate>
+@interface MeetupViewController : UIViewController <UITextViewDelegate, MKMapViewDelegate>
 {
     Meetup* meetup;
-    __unsafe_unretained IBOutlet UITextView *comments;
-    __unsafe_unretained IBOutlet UITextView *newComment;
+    IBOutlet UITextView *comments;
+    IBOutlet UITextView *newComment;
+    IBOutlet MKMapView *mapView;
 }
 
 -(void) setMeetup:(Meetup*)m;

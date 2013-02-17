@@ -345,12 +345,23 @@ NSInteger sortByName(id num1, id num2, void *context)
         [self addMeetupWithData:meetupData];
     
     // Query for meetups with invitations (both private and distant 2O or public)
-    meetupAnyQuery = [PFQuery queryWithClassName:@"Meetup"];
-    [meetupAnyQuery whereKey:@"meetupTimestamp" greaterThan:timestampNow];
+    // TODO: remove, load meetups with invitation upon invitation enter
+    // Really? Shouldn't we show em on the map? I believe we should.
+    //meetupAnyQuery = [PFQuery queryWithClassName:@"Meetup"];
+    //[meetupAnyQuery whereKey:@"meetupTimestamp" greaterThan:timestampNow];
     // TODO: add invitation check
-    meetupsData = [meetupAnyQuery findObjects];
+    //meetupsData = [meetupAnyQuery findObjects];
     //for (PFObject *meetupData in meetupsData)
     //    [self addMeetup:meetupData];
+    
+    // TODO: query for meetups that were joined or subscribed to
+    // Subscriptions should be saved in user itself as only user access this info. Join/comment subscibes. Unsubscribe/subscribe button in thread (where join/exit for meetups)
+    
+    // Invite of two types: to join and to subscribe (invitation to thread, see/cancel). Meeting invitaton. Petro Petronico invited you: /n ... Acceptance will be seen in meetup messages (inbox too)
+    
+    // Read times for meetups as for PMs
+    
+    // Resume: Subscription in user, invitation as separate database, two types: to see thread and to join meeting. Accepting/canceling invitation closes it and joins meeting/opens thread. Probably, meeting should be opened as well, don't join from inbox.
 }
 
 
@@ -472,8 +483,34 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 - (void)loadComments
 {
-    // TBD
-    nInboxLoadingStage++;
+    // Query
+    /*PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Comment"];
+    [messagesQuery whereKey:@"idUserTo" equalTo:[[PFUser currentUser] objectForKey:@"fbId"]];
+    
+    // TODO: add here later another query limitation by date (like 10 last days) to not push server too hard. It will be like pages, loading every 10 previous days or so.
+    
+    // Loading
+    [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects1, NSError *error) {
+        
+        PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Message"];
+        [messagesQuery whereKey:@"idUserFrom" equalTo:[[PFUser currentUser] objectForKey:@"fbId"]];
+        
+        [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects2, NSError *error) {
+            
+            // Merging results
+            NSMutableSet *set = [NSMutableSet setWithArray:objects1];
+            [set addObjectsFromArray:objects2];
+            
+            // Actuall messages
+            messages = [[NSMutableArray alloc] initWithArray:[set allObjects]];
+            
+            // Recalc what to show in inbox
+            //[self updateUniqueMessages];
+            
+            // Loading stage complete
+            nInboxLoadingStage++;
+        }];
+    }];*/
 }
 
 - (void)addMessage:(PFObject*)message
@@ -582,22 +619,60 @@ NSInteger sortByName(id num1, id num2, void *context)
 #pragma mark Inbox misc
 
 
-- (void) updateConverationDate:(NSDate*)date user:(NSString*)strUser
+- (void) updateConversationDate:(NSDate*)date thread:(NSString*)strThread
 {
-    NSMutableDictionary* conversations = [[PFUser currentUser] objectForKey:@"messageDates"];
+    NSMutableDictionary* conversations = [[PFUser currentUser] objectForKey:@"datesMessages"];
     if ( ! conversations )
         conversations = [[NSMutableDictionary alloc] init];
-    [conversations setValue:date forKey:strUser];
-    [[PFUser currentUser] setObject:conversations forKey:@"messageDates"];
+    [conversations setValue:date forKey:strThread];
+    [[PFUser currentUser] setObject:conversations forKey:@"datesMessages"];
     [[PFUser currentUser] saveEventually];
 }
 
-- (NSDate*) getConversationDate:(NSString*)strUser
+- (NSDate*) getConversationDate:(NSString*)strThread
 {
-    NSMutableDictionary* conversations = [[PFUser currentUser] objectForKey:@"messageDates"];
+    NSMutableDictionary* conversations = [[PFUser currentUser] objectForKey:@"datesMessages"];
     if ( ! conversations )
         return nil;
-    return [conversations valueForKey:strUser];
+    return [conversations valueForKey:strThread];
+}
+
+- (void) subscribeToThread:(NSString*)strThread
+{
+    NSMutableArray* subscriptions = [[PFUser currentUser] objectForKey:@"subscriptions"];
+    if ( ! subscriptions )
+        subscriptions = [[NSMutableArray alloc] init];
+    [subscriptions addObject:strThread];
+    [[PFUser currentUser] setObject:subscriptions forKey:@"subscriptions"];
+    [[PFUser currentUser] saveEventually];
+}
+
+- (void) unsubscribeToThread:(NSString*)strThread
+{
+    NSMutableArray* subscriptions = [[PFUser currentUser] objectForKey:@"subscriptions"];
+    if ( ! subscriptions )
+        subscriptions = [[NSMutableArray alloc] init];
+    for (NSString* str in subscriptions)
+    {
+        if ( [str compare:strThread] == NSOrderedSame )
+        {
+            [subscriptions removeObject:str];
+            break;
+        }
+    }
+    [[PFUser currentUser] setObject:subscriptions forKey:@"subscriptions"];
+    [[PFUser currentUser] saveEventually];
+}
+
+- (Boolean) isSubscribedToThread:(NSString *)strThread
+{
+    NSMutableArray* subscriptions = [[PFUser currentUser] objectForKey:@"subscriptions"];
+    if ( ! subscriptions )
+        return false;
+    for (NSString* str in subscriptions)
+        if ( [str compare:strThread] == NSOrderedSame )
+            return true;
+    return false;
 }
 
 @end

@@ -13,6 +13,12 @@
 #import <EventKit/EventKit.h>
 #import <EventKitUI/EventKitUI.h>
 
+enum EMeetupType
+{
+    TYPE_MEETUP     = 0,
+    TYPE_THREAD     = 1
+};
+
 enum EMeetupPrivacy
 {
     MEETUP_PUBLIC   = 0,

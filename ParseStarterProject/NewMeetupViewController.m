@@ -19,6 +19,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         meetup = nil;
+        self.navigationItem.leftItemsSupplementBackButton = true;
     }
     return self;
 }
@@ -31,7 +32,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    
+    // Navigation
+    [self.navigationController setNavigationBarHidden:false animated:false];
+    [self.navigationItem setHidesBackButton:false animated:false];
+    [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancelButtonDown)]];
+    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(createButtonDown)]];
+    
+    // Defaults
     NSDateComponents* deltaCompsMin = [[NSDateComponents alloc] init];
     [deltaCompsMin setMinute:15];
     NSDate* dateMin = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsMin toDate:[NSDate date] options:0];
@@ -52,7 +60,6 @@
         [subject setText:meetup.strSubject];
         [privacy setSelectedSegmentIndex:meetup.privacy];
         [location setTitle:meetup.strVenue forState:UIControlStateNormal];
-        [createButton setTitle:@"Save" forState:UIControlStateNormal];
     }
     else
         [dateTime setDate:dateDefault];
@@ -71,23 +78,22 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)viewDidUnload {
+/*- (void)viewDidUnload {
     dateTime = nil;
     privacy = nil;
     subject = nil;
     notifySwitch = nil;
     location = nil;
-    createButton = nil;
     [super viewDidUnload];
-}
+}*/
 
-- (IBAction)cancelButtonDown:(id)sender {
+- (void)cancelButtonDown {
     [self dismissModalViewControllerAnimated:YES];
-    [self.navigationController setNavigationBarHidden:false animated:true];
-    [self.navigationController popViewControllerAnimated:YES];
+    //[self.navigationController setNavigationBarHidden:false animated:true];
+    //[self.navigationController popViewControllerAnimated:YES];
 }
 
-- (IBAction)createButtonDown:(id)sender {
+- (void)createButtonDown {
     
     Boolean newMeetup = meetup ? false : true;
     
@@ -158,7 +164,10 @@
     else
         [strComment appendString:@" changed meetup details."];
     [comment setObject:meetup.strOwnerId forKey:@"userId"];
-    [comment setObject:@"" forKey:@"userName"]; // As it's not a normal comment, it's ok
+    NSNumber* trueNum = [[NSNumber alloc] initWithBool:true];
+    [comment setObject:[trueNum stringValue] forKey:@"system"];
+    NSString* strUserName = (NSString *) [[PFUser currentUser] objectForKey:@"fbName"];
+    [comment setObject:strUserName forKey:@"userName"];
     [comment setObject:meetup.strId forKey:@"meetupId"];
     [comment setObject:strComment forKey:@"comment"];
     //comment.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
@@ -168,10 +177,13 @@
     
     // TODO: Send to everybody around (using public/2ndO filter, send checkbox and geo-query) push about the meetup
     
+    // Subscription
+    [globalData subscribeToThread:meetup.strId];
+    
     // Close the window - why no animation? Because animations conflict!
     [self dismissViewControllerAnimated:NO completion:nil];
-    [self.navigationController setNavigationBarHidden:false animated:true];
-    [self.navigationController popViewControllerAnimated:NO];
+    //[self.navigationController setNavigationBarHidden:false animated:true];
+    //[self.navigationController popViewControllerAnimated:NO];
     
     // Add to calendar call
     [meetup addToCalendar:self shouldAlert:newMeetup];

@@ -20,13 +20,10 @@
     IBOutlet UISwitch *notifySwitch;
     UINavigationController *venueNavViewController;
     Meetup* meetup;
-    IBOutlet UIButton *createButton;
 }
 
 @property (nonatomic,strong)FSVenue* selectedVenue;
 
-- (IBAction)cancelButtonDown:(id)sender;
-- (IBAction)createButtonDown:(id)sender;
 - (IBAction)venueButtonDown:(id)sender;
 - (IBAction)notifySwitched:(id)sender;
 - (IBAction)privacySwitched:(id)sender;

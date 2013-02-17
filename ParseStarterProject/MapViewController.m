@@ -147,8 +147,8 @@
     else
         [mapView setUserTrackingMode:MKUserTrackingModeFollow animated:TRUE];
         
-    self.navigationItem.rightBarButtonItem =
-    [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)];
+    //self.navigationItem.rightBarButtonItem =
+    //[[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)];
     
     [TestFlight passCheckpoint:@"Map"];
 }

@@ -35,13 +35,11 @@
 - (void)filterClicked{
     FilterViewController *filterViewController = [[FilterViewController alloc] initWithNibName:@"FilterView" bundle:nil];
     [self.navigationController pushViewController:filterViewController animated:YES];
-    //[self.navigationController setNavigationBarHidden:true animated:true];
 }
 
 
 - (void)newMeetupClicked{
     NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
-    
     [self.navigationController presentViewController:newMeetupViewController animated:YES completion:nil];
 }
 
@@ -100,8 +98,8 @@
     // Navigation bar
     [self.navigationItem setHidesBackButton:true animated:false];
     self.navigationItem.rightBarButtonItems = @[
-                [[UIBarButtonItem alloc] initWithTitle:@"New meet-up" style:UIBarButtonItemStyleBordered target:self /*.viewDeckController*/ action:@selector(newMeetupClicked)],
-                [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)]];
+                [[UIBarButtonItem alloc] initWithTitle:@"New meet-up" style:UIBarButtonItemStyleBordered target:self /*.viewDeckController*/ action:@selector(newMeetupClicked)]/*,
+                [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)]*/];
     
     // Table view
     UINib *nib = [UINib nibWithNibName:@"PersonCell" bundle:nil];
@@ -109,12 +107,6 @@
     self.tableView.tableFooterView = [[UIView alloc]init];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     self.tableView.rowHeight = ROW_HEIGHT;
-    
-/*    buttonProfile = [[UIBarButtonItem alloc] initWithTitle:@"Profile" style:UIBarButtonItemStylePlain target:self action:@selector(profileClicked)];
-    buttonFilter = [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)];*/
-    
-//    [self.navigationItem setLeftBarButtonItem:buttonProfile];
-//    [self.navigationItem setRightBarButtonItem:buttonFilter];
     
     // Data reloading
     if (!self.initialized) {
@@ -136,7 +128,6 @@
 	return nCount;
 }
 
-
 - (NSInteger)tableView:(UITableView *)aTableView numberOfRowsInSection:(NSInteger)section {
 	// Number of rows is the number of time zones in the region for the specified section
 	Circle *circle = [globalData getCircleByNumber:section];
@@ -144,13 +135,11 @@
 	return [persons count];
 }
 
-
 - (NSString *)tableView:(UITableView *)aTableView titleForHeaderInSection:(NSInteger)section {
 	// Section title is the region name
     Circle *circle = [globalData getCircleByNumber:section];
 	return [Circle getCircleName:circle.idCircle];
 }
-
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath  {
 		
@@ -169,8 +158,6 @@
 
 	return personCell;
 }
-
-
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
