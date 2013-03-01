@@ -72,8 +72,10 @@
         [self showLoginWindow];
     }
     else{
-        
-        [[PFUser currentUser] refresh];
+        NSError* error;
+        [[PFUser currentUser] refresh:&error];
+        if ( error )
+            NSLog(@"Uh oh. An error occurred: %@", error);
     }
     
     // Location data
@@ -223,6 +225,8 @@
     [[PFUser currentUser] setObject:geoPoint forKey:@"location"];
     
     [locationManager stopUpdatingLocation];
+    
+    NSLog(@"Location updated");
 }
 
 
