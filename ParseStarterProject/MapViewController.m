@@ -20,6 +20,7 @@
 #import "GlobalVariables.h"
 #import "AsyncImageView.h"
 #import "ImageLoader.h"
+#import "NewMeetupViewController.h"
 
 
 @implementation MapViewController
@@ -86,8 +87,7 @@
         switch ( meetup.privacy )
         {
             case 0: strPrivacy = @"Public"; color = MKPinAnnotationColorGreen; break;
-            case 1: strPrivacy = @"2ndO"; color = MKPinAnnotationColorPurple; break;
-            case 2: strPrivacy = @"Private"; color = MKPinAnnotationColorRed; break;
+            case 1: strPrivacy = @"Private"; color = MKPinAnnotationColorRed; break;
         }
         ann.title = meetup.strSubject;
         ann.subtitle = [[NSString alloc] initWithFormat:@"Organizer: %@", meetup.strOwnerName ];
@@ -108,11 +108,24 @@
     }
 }
 
+- (void)newThreadClicked{
+    NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
+    UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:newMeetupViewController];
+    [self.navigationController presentViewController:navigation
+                                            animated:YES completion:nil];
+}
+
+- (void)newMeetupClicked{
+    NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
+    UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:newMeetupViewController];
+    [self.navigationController presentViewController:navigation animated:YES completion:nil];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    self.title = NSLocalizedString(@"Map", @"Map");
+    //self.title = NSLocalizedString(@"Map", @"Map");
     
     mapView.showsUserLocation = TRUE;
     
@@ -121,15 +134,12 @@
     [mapView setScrollEnabled:YES];
     [mapView setDelegate:self];
     
-    //[mapView setUserTrackingMode:MKUserTrackingModeFollow animated:FALSE];
+    // Navigation bar
+    [self.navigationItem setHidesBackButton:true animated:false];
+    self.navigationItem.rightBarButtonItems = @[
+                                                [[UIBarButtonItem alloc] initWithTitle:@"New thread" style:UIBarButtonItemStyleBordered target:self action:@selector(newThreadClicked)],                                                                                                                                                                                                                 [[UIBarButtonItem alloc] initWithTitle:@"New meetup" style:UIBarButtonItemStyleBordered target:self action:@selector(newMeetupClicked)]];
     
-    // Persons and meetups adding
-    //TODO: return count of added to use single limit for persons, move limits to config
-    [self addPersonAnnotations:1 limit:20];
-    [self addPersonAnnotations:2 limit:20];
-    [self addPersonAnnotations:3 limit:20];
-    [self addMeetupAnnotations:20];
-    
+    // Setting user location
     PFGeoPoint *geoPointUser = [[PFUser currentUser] objectForKey:@"location"];
     if ( geoPointUser )
     {
@@ -146,11 +156,31 @@
     }
     else
         [mapView setUserTrackingMode:MKUserTrackingModeFollow animated:TRUE];
-        
-    //self.navigationItem.rightBarButtonItem =
-    //[[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)];
     
     [TestFlight passCheckpoint:@"Map"];
+}
+
+- (void) viewDidAppear:(BOOL)animated
+{
+    //[mapView setUserTrackingMode:MKUserTrackingModeFollow animated:FALSE];
+    
+    // Remove all pins except of user
+    id userLocation = [mapView userLocation];
+    NSMutableArray *pins = [[NSMutableArray alloc] initWithArray:[mapView annotations]];
+    if ( userLocation != nil ) {
+        [pins removeObject:userLocation]; // avoid removing user location off the map
+    }
+    [mapView removeAnnotations:pins];
+    
+    // Persons and meetups adding
+    //TODO: return count of added to use single limit for persons, move limits to config
+    [self addPersonAnnotations:1 limit:20];
+    [self addPersonAnnotations:2 limit:20];
+    [self addPersonAnnotations:3 limit:20];
+    [self addMeetupAnnotations:20];
+    
+    //self.navigationItem.rightBarButtonItem =
+    //[[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)];
 }
 
 #define kAsyncTag 321
@@ -179,8 +209,7 @@
                              handler:^(UIImage *image) {
                                  if (pinView.image == nil) {
                                      pinView.image = [UIImage imageWithCGImage:image.CGImage
-                                                                         scale:2
-                                                                   orientation:image.imageOrientation];
+                                        scale:2 orientation:image.imageOrientation];
                                  }
 
             }];

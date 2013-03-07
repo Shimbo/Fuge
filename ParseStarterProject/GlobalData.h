@@ -14,6 +14,15 @@
 @class InboxViewController;
 
 #define globalData [GlobalData sharedInstance]
+#define strCurrentUserId [[PFUser currentUser] objectForKey:@"fbId"]
+#define strCurrentUserName [[PFUser currentUser] objectForKey:@"fbName"]
+
+enum EInviteStatus
+{
+    INVITE_NEW      = 0,
+    INVITE_DECLINED = 1,
+    INVITE_ACCEPTED = 2
+};
 
 #define INBOX_LOADED    4   // Number of stages in loading
 
@@ -59,5 +68,10 @@
 - (void) subscribeToThread:(NSString*)strThread;
 - (void) unsubscribeToThread:(NSString*)strThread;
 - (Boolean) isSubscribedToThread:(NSString*)strThread;
+
+// Invites
+// One of two last parameters should be nil
+- (void)createInvite:(Meetup*)meetup objectTo:(PFUser*)recipient stringTo:(NSString*)strRecipient;
+
 
 @end

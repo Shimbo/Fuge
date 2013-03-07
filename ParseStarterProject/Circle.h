@@ -19,7 +19,7 @@ enum ECircle
 - (id)init:(NSUInteger)circle;
 
 - (void)addPerson:(Person *)person;
-- (void)addPersonWithComponents:(NSArray *)nameComponents;
+- (id)addPersonWithData:(PFUser*)data;
 
 - (NSMutableArray*) getPersons;
 

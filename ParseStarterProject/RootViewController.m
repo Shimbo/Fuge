@@ -99,9 +99,9 @@
     
     // Navigation bar
     [self.navigationItem setHidesBackButton:true animated:false];
-    self.navigationItem.rightBarButtonItems = @[
-                [[UIBarButtonItem alloc] initWithTitle:@"New meet-up" style:UIBarButtonItemStyleBordered target:self /*.viewDeckController*/ action:@selector(newMeetupClicked)]/*,
-                [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)]*/];
+    /*self.navigationItem.rightBarButtonItems = @[
+                [[UIBarButtonItem alloc] initWithTitle:@"New meet-up" style:UIBarButtonItemStyleBordered target:self action:@selector(newMeetupClicked)],
+                [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)]];*/
     
     // Table view
     UINib *nib = [UINib nibWithNibName:@"PersonCell" bundle:nil];

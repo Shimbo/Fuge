@@ -15,11 +15,19 @@
 @interface MeetupViewController : UIViewController <UITextViewDelegate, MKMapViewDelegate>
 {
     Meetup* meetup;
+    PFObject* invite;
     IBOutlet UITextView *comments;
     IBOutlet UITextView *newComment;
     IBOutlet MKMapView *mapView;
+    IBOutlet UILabel *labelDate;
+    IBOutlet UILabel *labelLocation;
+    
+    id delegate;
 }
 
 -(void) setMeetup:(Meetup*)m;
+-(void) setInvite:(PFObject*)i;
+
+@property (nonatomic,strong) id delegate;
 
 @end

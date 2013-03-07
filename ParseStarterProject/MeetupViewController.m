@@ -14,13 +14,29 @@
 
 @implementation MeetupViewController
 
+@synthesize delegate;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
+        meetup = nil;
+        invite = nil;
         self.navigationItem.leftItemsSupplementBackButton = true;
     }
     return self;
+}
+
+- (void)declineClicked
+{
+    if ( ! invite )
+        return;
+    NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_DECLINED];
+    [invite setObject:inviteStatus forKey:@"status"];
+    [invite saveInBackground];
+    //[self.delegate dismissMeetup];
+    //[self.navigationController popViewControllerAnimated:TRUE];
+    [self dismissViewControllerAnimated:TRUE completion:nil];
 }
 
 - (void)joinClicked
@@ -61,6 +77,14 @@
     
     // TODO: push notification
     
+    // Accepting invite if it was
+    if ( invite )
+    {
+        NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_ACCEPTED];
+        [invite setObject:inviteStatus forKey:@"status"];
+        [invite saveInBackground];
+    }
+    
     // Ask to add to calendar
     [meetup addToCalendar:self shouldAlert:true];
     
@@ -72,7 +96,9 @@
 {
     NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
     [newMeetupViewController setMeetup:meetup];
-    [self.navigationController presentViewController:newMeetupViewController animated:YES completion:nil];
+    
+    UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:newMeetupViewController];
+    [self.navigationController presentViewController:navigation animated:YES completion:nil];
 }
 
 - (void)calendarClicked
@@ -111,6 +137,8 @@
 {
     [super viewDidLoad];
     
+    self.title = meetup.strSubject;
+    
     // Map
     CLLocationCoordinate2D loc = CLLocationCoordinate2DMake(meetup.location.latitude,meetup.location.longitude);
     MKCoordinateRegion reg = MKCoordinateRegionMakeWithDistance(loc, 200.0f, 200.0f);
@@ -143,7 +171,14 @@
         [meetupAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *attendees, NSError* error)
         {
             if ( [attendees count] == 0 )
-                [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Join" style:UIBarButtonItemStylePlain target:self action:@selector(joinClicked)]];
+            {
+                if ( invite )
+                    self.navigationItem.rightBarButtonItems = @[
+                        [[UIBarButtonItem alloc] initWithTitle:@"Join" style:UIBarButtonItemStyleBordered target:self action:@selector(joinClicked)],
+                        [[UIBarButtonItem alloc] initWithTitle:@"Decline" style:UIBarButtonItemStyleBordered target:self action:@selector(declineClicked)]];
+                else
+                    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Join" style:UIBarButtonItemStylePlain target:self action:@selector(joinClicked)]];
+            }
             else
             {
                 if ( ! [meetup addedToCalendar] )
@@ -180,6 +215,13 @@
                                                         [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(editClicked)]];
         }
     }
+    
+    // Setting location and date labels
+    [labelLocation setText:meetup.strVenue];
+    NSString *dateString = [NSDateFormatter localizedStringFromDate:meetup.dateTime
+                                                          dateStyle:NSDateFormatterMediumStyle
+                                                          timeStyle:NSDateFormatterShortStyle];
+    [labelDate setText:dateString];
     
     // Loading comments
     PFQuery *commentsQuery = [PFQuery queryWithClassName:@"Comment"];
@@ -224,10 +266,17 @@
     meetup = m;
 }
 
+-(void) setInvite:(PFObject*)i
+{
+    invite = i;
+}
+
 - (void)viewDidUnload {
     comments = nil;
     newComment = nil;
     mapView = nil;
+    labelDate = nil;
+    labelLocation = nil;
     [super viewDidUnload];
 }
 

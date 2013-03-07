@@ -6,7 +6,6 @@
 //@class PersonView;
 
 @interface Person : NSObject {
-//    PFUser* object;
     
     NSString *strId;
     NSString *strName;
@@ -21,12 +20,8 @@
     
     NSUInteger idCircle;
     
-/*	UIImage *image;
-    NSMutableData* imageData;
-    NSURLConnection *urlConnection;
-    NSURL *pictureURL;
-    NSMutableURLRequest *urlRequest;
-    PersonView* pParent;*/
+    // Read-only of course
+    PFUser* personData;
 }
 
 @property (nonatomic, retain) NSString *strId;
@@ -39,13 +34,10 @@
 @property (nonatomic, retain) NSString *strCircle;
 @property (nonatomic) NSUInteger idCircle;
 
-//@property (nonatomic, retain) NSMutableURLRequest *urlRequest;
+@property (nonatomic, copy) PFUser *personData;
 
-//@property (nonatomic, retain) PersonView* pParent;
-
-// TODO: change it to more secure init
-
-//- init:(NSArray*)nameComponents;
+// User could be nil (!) for fb friends who are not in the app yet for example
+- (id)init:(PFUser*)user circle:(NSUInteger)nCircle;
 
 -(NSString*)imageURL;
 -(NSString*)largeImageURL;
@@ -53,10 +45,8 @@
 +(NSString*)imageURLWithId:(NSString*)fbId;
 +(NSString*)largeImageURLWithId:(NSString*)fbId;
 
-- (id)init:(NSArray*) nameComponents circle:(NSUInteger)nCircle;
 
-
-- (void) setLocation:(CLLocationCoordinate2D) loc;
+//- (void) setLocation:(CLLocationCoordinate2D) loc;
 - (CLLocationCoordinate2D) getLocation;
 
 @end

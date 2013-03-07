@@ -11,6 +11,7 @@
 // TODO: move all this stuff to InboxViewItem file
 enum EInboxItemType
 {
+    INBOX_ITEM_INVITE   = 0,
     INBOX_ITEM_MESSAGE  = 1
 };
 
@@ -38,6 +39,8 @@ enum EInboxItemType
 
 - (void) reloadData;
 //- (void) reloadFinished;
+
+- (void) dismissMeetup;
 
 @property (nonatomic, retain) UIActivityIndicatorView *activityIndicator;
 

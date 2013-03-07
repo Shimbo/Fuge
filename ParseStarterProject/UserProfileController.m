@@ -11,6 +11,7 @@
 #import "PushManager.h"
 #import "AsyncImageView.h"
 #import "GlobalData.h"
+#import "NewMeetupViewController.h"
 
 @implementation UserProfileController
 @synthesize buttonProfile;
@@ -281,8 +282,12 @@ double animatedDistance;
 }
 
 - (IBAction)meetButtonDown:(id)sender {
-    UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"WIP" message:@"Private invites are under construction and to be added really soon! Thanks." delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
-    [errorAlert show];
+    NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
+    [newMeetupViewController setInvitee:personThis.personData];
+    UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:newMeetupViewController];
+    [self.navigationController presentViewController:navigation
+                                            animated:YES completion:nil];
+    
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex

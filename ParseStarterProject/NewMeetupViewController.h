@@ -14,20 +14,19 @@
 @interface NewMeetupViewController : UIViewController <UITextFieldDelegate>
 {
     IBOutlet UITextField *subject;
-    IBOutlet UISegmentedControl *privacy;
     IBOutlet UIDatePicker *dateTime;
     IBOutlet UIButton *location;
     IBOutlet UISwitch *notifySwitch;
     UINavigationController *venueNavViewController;
     Meetup* meetup;
+    PFUser* invitee;
 }
 
 @property (nonatomic,strong)FSVenue* selectedVenue;
 
 - (IBAction)venueButtonDown:(id)sender;
-- (IBAction)notifySwitched:(id)sender;
-- (IBAction)privacySwitched:(id)sender;
 
 -(void) setMeetup:(Meetup*)m;
+-(void) setInvitee:(PFUser*)i;
 
 @end

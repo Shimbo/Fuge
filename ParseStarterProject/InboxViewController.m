@@ -11,7 +11,7 @@
 #import "GlobalData.h"
 #import "InboxCell.h"
 #import "AsyncImageView.h"
-
+#import "MeetupViewController.h"
 #import "UserProfileController.h"
 
 @implementation InboxViewItem
@@ -71,6 +71,32 @@
         if ( [object isKindOfClass:[PFObject class]] )
         {
             PFObject* pObject = object;
+            if ( [[pObject className] compare:@"Invite"] == NSOrderedSame )
+            {
+                // Already accepted or declined invite
+                if ( [[pObject objectForKey:@"status"] integerValue] == INVITE_ACCEPTED )
+                    item.misc = @"Accepted!";
+                else if ( [[pObject objectForKey:@"status"] integerValue] == INVITE_DECLINED )
+                    item.misc = @"Declined.";
+                else item.misc = nil;
+                
+                item.type = INBOX_ITEM_INVITE;
+                item.fromId = [pObject objectForKey:@"idUserFrom"];
+                item.toId = [pObject objectForKey:@"idUserTo"];
+                item.subject = [[NSString alloc] initWithFormat:@"From: %@", [pObject objectForKey:@"nameUserFrom"]];
+                item.message = @"Loading...";
+                item.data = object;
+                
+                PFObject *meetupData = [pObject objectForKey:@"meetupData"];
+                [meetupData fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                    item.message = [meetupData objectForKey:@"subject"];
+                    [[self tableView] reloadData];
+                    // TODO: probably we should reload not the whole table but only this cell? How?
+                }];
+                
+                item.dateTime = pObject.createdAt;
+                [tempArray addObject:item];
+            }
             if ( [[pObject className] compare:@"Message"] == NSOrderedSame )
             {
                 item.type = INBOX_ITEM_MESSAGE;
@@ -206,7 +232,24 @@
     InboxViewItem* item = [items objectAtIndex:nRow];
     
     // Another switch depending on item type
-    if ( item.type == INBOX_ITEM_MESSAGE )
+    if ( item.type == INBOX_ITEM_INVITE )
+    {
+        PFObject *meetupData = [item.data objectForKey:@"meetupData"];
+        NSError* error;
+        [meetupData fetchIfNeeded:&error];
+        if ( ! error )
+        {
+            MeetupViewController *meetupController = [[MeetupViewController alloc] initWithNibName:@"MeetupView" bundle:nil];
+            Meetup* meetup = [[Meetup alloc] init];
+            [meetup unpack:meetupData];
+            [meetupController setMeetup:meetup];
+            [meetupController setInvite:item.data];
+            self.navigationItem.leftItemsSupplementBackButton = true;
+            UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:meetupController];
+            [self.navigationController presentViewController:navigation animated:YES completion:nil];
+        }
+    }
+    else if ( item.type == INBOX_ITEM_MESSAGE )
     {
         // TODO: what if person is unknown and not in our global data? We should load him/her!
         NSString* strId;
@@ -226,5 +269,9 @@
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
+- (void) dismissMeetup
+{
+    [self dismissViewControllerAnimated:TRUE completion:nil];
+}
 
 @end

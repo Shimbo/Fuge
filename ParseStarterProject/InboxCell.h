@@ -19,5 +19,4 @@
 @property (strong, nonatomic) IBOutlet UILabel *message;
 @property (strong, nonatomic) IBOutlet UILabel *misc;
 
-
 @end

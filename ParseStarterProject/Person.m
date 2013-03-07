@@ -2,52 +2,79 @@
 #import "Person.h"
 #import "ParseStarterProjectAppDelegate.h"
 #import "PersonView.h"
+#import "Circle.h"
 
 @implementation Person
 
-@synthesize strId;
-@synthesize strName;
-@synthesize strAge;
-@synthesize strGender;
-@synthesize strDistance;
-@synthesize strRole;
-@synthesize strArea;
-@synthesize strCircle;
-@synthesize idCircle;
-
-//@synthesize urlRequest;
-
-//@synthesize pParent;
+@synthesize strId, strName, strAge, strGender, strDistance, strRole, strArea, strCircle, idCircle, personData;
 
 + (void)initialize {
 	if (self == [Person class]) {
 	}
 }
 
-//- (void)addParent:(PersonView*)parent
-//{
-//    pParent = parent;
-//}
-
-- (id)init:(NSArray*) nameComponents circle:(NSUInteger)nCircle{
+- (id)init:(PFUser*)user circle:(NSUInteger)nCircle{
 	
 	if (self = [super init]) {
-        strName = [[nameComponents objectAtIndex:0] copy];
-        strId = [[nameComponents objectAtIndex:1] copy];
-        strAge = [[nameComponents objectAtIndex:2] copy];
-        strGender = [[nameComponents objectAtIndex:3] copy];
-        strDistance = [[nameComponents objectAtIndex:4] copy];
-        strRole = [[nameComponents objectAtIndex:5] copy];
-        strArea = [[nameComponents objectAtIndex:6] copy];
-        strCircle = [[nameComponents objectAtIndex:7] copy];
+        
+        personData = user;
+        
+        // Data parsing
+        strId = [user objectForKey:@"fbId"];
+        strName = [user objectForKey:@"fbName"];
+        strGender = [user objectForKey:@"fbGender"];
+        strRole = [user objectForKey:@"profileRole"];
+        strArea = [user objectForKey:@"profileArea"];
+        strCircle = [Circle getPersonType:nCircle];
         idCircle = nCircle;
-//        image = nil;
-//        imageData = nil;
-//        urlConnection = nil;
-//        object = nil;
+        
+        // Distance calculation
+        strDistance = @"? km";
+        PFGeoPoint *geoPointUser = [[PFUser currentUser] objectForKey:@"location"];
+        PFGeoPoint *geoPointFriend = [user objectForKey:@"location"];
+        CLLocation* locationFriend = nil;
+        CLLocationDistance distance = 40000000.0f;
+        if ( geoPointUser && geoPointFriend )
+        {
+            CLLocation* locationUser = [[CLLocation alloc] initWithLatitude:geoPointUser.latitude longitude:geoPointUser.longitude];
+            locationFriend = [[CLLocation alloc] initWithLatitude:geoPointFriend.latitude longitude:geoPointFriend.longitude];
+            distance = [locationUser distanceFromLocation:locationFriend];
+            
+            if ( distance < 1000.0f )
+                strDistance = [[NSString alloc] initWithFormat:@"%.2f km", distance/1000.0f];
+            else if ( distance < 10000.0f )
+                strDistance = [[NSString alloc] initWithFormat:@"%.1f km", distance/1000.0f];
+            else
+                strDistance = [[NSString alloc] initWithFormat:@"%.0f km", distance/1000.0f];
+            
+            location = locationFriend.coordinate;
+        }
+        
+        // Age calculations
+        NSDateFormatter* myFormatter = [[NSDateFormatter alloc] init];
+        [myFormatter setDateFormat:@"MM/dd/yyyy"];
+        NSDate* birthday = [myFormatter dateFromString:[user objectForKey:@"fbBirthday"]];
+        NSDate* now = [NSDate date];
+        NSDateComponents* ageComponents = [[NSCalendar currentCalendar]
+                                           components:NSYearCalendarUnit
+                                           fromDate:birthday
+                                           toDate:now
+                                           options:0];
+        NSInteger age = [ageComponents year];
+        strAge = [NSString stringWithFormat:@"%d y/o", age];
 	}
 	return self;
 }
+
+
+
+
+
+
+
+
+
+
 
 +(NSString*)imageURLWithId:(NSString*)fbId
 {
@@ -69,6 +96,7 @@
     return [Person largeImageURLWithId:strId];
 //    return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", fbId ? fbId : strId];
 }
+
 
 /*
 - (UIImage *)getImage {
@@ -107,10 +135,10 @@
 - (void)dealloc {
 }*/
 
-- (void) setLocation:(CLLocationCoordinate2D) loc
+/*- (void) setLocation:(CLLocationCoordinate2D) loc
 {
     location = loc;
-}
+}*/
 
 - (CLLocationCoordinate2D) getLocation
 {

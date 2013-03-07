@@ -19,6 +19,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         meetup = nil;
+        invitee = nil;
         self.navigationItem.leftItemsSupplementBackButton = true;
     }
     return self;
@@ -27,6 +28,11 @@
 -(void) setMeetup:(Meetup*)m
 {
     meetup = m;
+}
+
+-(void) setInvitee:(PFUser*)i
+{
+    invitee = i;
 }
 
 - (void)viewDidLoad
@@ -58,11 +64,15 @@
     {
         [dateTime setDate:meetup.dateTime];
         [subject setText:meetup.strSubject];
-        [privacy setSelectedSegmentIndex:meetup.privacy];
+        [notifySwitch setOn:meetup.privacy];
         [location setTitle:meetup.strVenue forState:UIControlStateNormal];
     }
     else
+    {
         [dateTime setDate:dateDefault];
+        if ( invitee )
+            [notifySwitch setOn:TRUE];
+    }
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -117,7 +127,7 @@
     meetup.strOwnerId = (NSString *) [[PFUser currentUser] objectForKey:@"fbId"];
     meetup.strOwnerName = (NSString *) [[PFUser currentUser] objectForKey:@"fbName"];
     meetup.strSubject = subject.text;
-    meetup.privacy = [privacy selectedSegmentIndex];
+    meetup.privacy = notifySwitch.isOn;
     meetup.dateTime = [dateTime date];
     if ( self.selectedVenue )
     {
@@ -182,13 +192,20 @@
     
     // Close the window - why no animation? Because animations conflict!
     [self dismissViewControllerAnimated:NO completion:nil];
+    //[self.navigationController popViewControllerAnimated:TRUE];
     //[self.navigationController setNavigationBarHidden:false animated:true];
     //[self.navigationController popViewControllerAnimated:NO];
+    
+    // Invites
+    // TODO: Replace it with single window, add invitee to this window by default if specified
+    if ( invitee )
+    {
+        [globalData createInvite:meetup objectTo:invitee stringTo:nil];
+    }
     
     // Add to calendar call
     [meetup addToCalendar:self shouldAlert:newMeetup];
 }
-
 
 - (IBAction)venueButtonDown:(id)sender {
     if (!venueNavViewController) {
@@ -198,16 +215,6 @@
     }
     [self presentViewController:venueNavViewController
                        animated:YES completion:nil];
-}
-
-- (IBAction)notifySwitched:(id)sender {
-    if ( notifySwitch.isOn && privacy.selectedSegmentIndex == 2 )
-        [privacy setSelectedSegmentIndex:0];
-}
-
-- (IBAction)privacySwitched:(id)sender {
-    if ( privacy.selectedSegmentIndex == 2 )
-        [notifySwitch setOn:FALSE animated:TRUE];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField

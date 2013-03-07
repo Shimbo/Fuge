@@ -18,9 +18,10 @@
 	[persons addObject:person];
 }
 
-- (void)addPersonWithComponents:(NSArray *)nameComponents {
-	Person *person = [[Person alloc] init:nameComponents circle:idCircle];
+- (id)addPersonWithData:(PFUser*)data {
+	Person *person = [[Person alloc] init:data circle:idCircle];
 	[persons addObject:person];
+    return person;
 }
 
 - (void)sort

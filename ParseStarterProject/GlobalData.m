@@ -117,6 +117,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 - (NSArray*) getInbox
 {
     NSMutableArray* inboxData = [[NSMutableArray alloc] init];
+    [inboxData addObjectsFromArray:[self getUniqueInvites]];
     [inboxData addObjectsFromArray:[self getUniqueMessages]];
     return inboxData;
 }
@@ -137,51 +138,8 @@ NSInteger sortByName(id num1, id num2, void *context)
     if ( [self getPersonById:strId] )
         return;
     
-    // Creating user: name
-    NSString* strName = [user objectForKey:@"fbName"];
-    
-    // Distance calculation
-    NSString* strDistance = @"? km";
-    PFGeoPoint *geoPointUser = [[PFUser currentUser] objectForKey:@"location"];
-    PFGeoPoint *geoPointFriend = [user objectForKey:@"location"];
-    CLLocation* locationFriend = nil;
-    CLLocationDistance distance = 40000000.0f;
-    if ( geoPointUser && geoPointFriend )
-    {
-        CLLocation* locationUser = [[CLLocation alloc] initWithLatitude:geoPointUser.latitude longitude:geoPointUser.longitude];
-        locationFriend = [[CLLocation alloc] initWithLatitude:geoPointFriend.latitude longitude:geoPointFriend.longitude];
-        distance = [locationUser distanceFromLocation:locationFriend];
-        
-        if ( distance < 1000.0f )
-            strDistance = [[NSString alloc] initWithFormat:@"%.2f km", distance/1000.0f];
-        else if ( distance < 10000.0f )
-            strDistance = [[NSString alloc] initWithFormat:@"%.1f km", distance/1000.0f];
-        else
-            strDistance = [[NSString alloc] initWithFormat:@"%.0f km", distance/1000.0f];
-    }
-    
-    // Age calculations
-    NSDateFormatter* myFormatter = [[NSDateFormatter alloc] init];
-    [myFormatter setDateFormat:@"MM/dd/yyyy"];
-    NSDate* birthday = [myFormatter dateFromString:[user objectForKey:@"fbBirthday"]];
-    NSDate* now = [NSDate date];
-    NSDateComponents* ageComponents = [[NSCalendar currentCalendar]
-                                       components:NSYearCalendarUnit
-                                       fromDate:birthday
-                                       toDate:now
-                                       options:0];
-    NSInteger age = [ageComponents year];
-    NSString *strAge = [NSString stringWithFormat:@"%d y/o", age];
-    
-    // Circle
-    NSString* strCircle = [Circle getPersonType:circleUser];
-    
     // Adding new person
-    Person *person = [[Person alloc] init:@[strName, strId, strAge,
-                      [user objectForKey:@"fbGender"],
-                      strDistance, [user objectForKey:@"profileRole"],
-                      [user objectForKey:@"profileArea"], strCircle] circle:circleUser];
-    [person setLocation:locationFriend.coordinate];
+    Person *person = [[Person alloc] init:user circle:circleUser];
     
     Circle *circle = [globalData getCircle:circleUser];
     [circle addPerson:person];
@@ -279,7 +237,11 @@ NSInteger sortByName(id num1, id num2, void *context)
         
         // Adding new "person"
         Circle *circle = [globalData getCircle:CIRCLE_FBOTHERS];
-        [circle addPersonWithComponents:@[strName, strId, @"", @"", @"", strRole, @"", @""]];
+        Person* person = [circle addPersonWithData:nil];
+        
+        person.strName = strName;
+        person.strId = strId;
+        person.strRole = strRole;
     }
 }
 
@@ -368,10 +330,48 @@ NSInteger sortByName(id num1, id num2, void *context)
 #pragma mark -
 #pragma mark Inbox
 
+- (NSArray*)getUniqueInvites
+{
+    return invites;
+}
 
 - (void)loadInvites
 {
-    // TBD
+    // Query
+    PFQuery *invitesQuery = [PFQuery queryWithClassName:@"Invite"];
+    [invitesQuery whereKey:@"idUserTo" equalTo:strCurrentUserId];
+    
+    // Date-time filter
+    NSNumber* timestampNow = [[NSNumber alloc] initWithDouble:[[NSDate date] timeIntervalSince1970]];
+    [invitesQuery whereKey:@"meetupTimestamp" greaterThan:timestampNow];
+    
+    // 0 means it's unaccepted invite
+    NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_NEW];
+    [invitesQuery whereKey:@"status" equalTo:inviteStatus];
+    
+    // Loading
+    [invitesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects1, NSError *error) {
+        
+        /*PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Message"];
+        [messagesQuery whereKey:@"idUserFrom" equalTo:[[PFUser currentUser] objectForKey:@"fbId"]];
+        
+        [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects2, NSError *error) {*/
+            
+            // Merging results
+            NSMutableSet *set = [NSMutableSet setWithArray:objects1];
+            //[set addObjectsFromArray:objects2];
+            
+            // Actuall messages
+            invites = [[NSMutableArray alloc] initWithArray:[set allObjects]];
+            
+            // Recalc what to show in inbox
+            //[self updateUniqueMessages];
+            
+            // Loading stage complete
+            nInboxLoadingStage++;
+        //}];
+    }];
+    
     nInboxLoadingStage++;
 }
 
@@ -516,6 +516,45 @@ NSInteger sortByName(id num1, id num2, void *context)
 - (void)addMessage:(PFObject*)message
 {
     [messages addObject:message];
+}
+
+
+#pragma mark -
+#pragma mark Invites
+
+- (void)createInvite:(Meetup*)meetup objectTo:(PFUser*)recipient stringTo:(NSString*)strRecipient
+{
+    PFObject* invite = [[PFObject alloc] initWithClassName:@"Invite"];
+    
+    // Id, fromStr, fromId
+    [invite setObject:meetup.strId forKey:@"meetupId"];
+    [invite setObject:meetup.meetupData forKey:@"meetupData"];
+    [invite setObject:[[NSNumber alloc] initWithDouble:[meetup.dateTime timeIntervalSince1970]] forKey:@"meetupTimestamp"];
+    
+    [invite setObject:strCurrentUserId forKey:@"idUserFrom"];
+    [invite setObject:strCurrentUserName forKey:@"nameUserFrom"];
+    [invite setObject:[PFUser currentUser] forKey:@"objUserFrom"];
+    NSString* strTo = strRecipient;
+    if ( recipient )
+        strTo = [recipient objectForKey:@"fbId"];
+    [invite setObject:strTo forKey:@"idUserTo"];
+    NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_NEW];
+    [invite setObject:inviteStatus forKey:@"status"];
+    
+    // Protection if there is object already
+    invite.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
+    if ( recipient )
+    {
+        [invite.ACL setReadAccess:true forUser:recipient];
+        [invite.ACL setWriteAccess:true forUser:recipient];
+    }
+    else
+    {
+        [invite.ACL setPublicReadAccess:true];
+        [invite.ACL setPublicWriteAccess:true];
+    }
+    
+    [invite save];
 }
 
 
