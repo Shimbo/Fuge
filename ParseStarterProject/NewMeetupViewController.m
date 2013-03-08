@@ -20,6 +20,7 @@
     if (self) {
         meetup = nil;
         invitee = nil;
+        inviteController = nil;
         self.navigationItem.leftItemsSupplementBackButton = true;
     }
     return self;
@@ -30,7 +31,7 @@
     meetup = m;
 }
 
--(void) setInvitee:(PFUser*)i
+-(void) setInvitee:(Person*)i
 {
     invitee = i;
 }
@@ -44,9 +45,9 @@
     [self.navigationItem setHidesBackButton:false animated:false];
     [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancelButtonDown)]];
     
-    UIBarButtonItem *invite = [[UIBarButtonItem alloc] initWithTitle:@"Invite" style:UIBarButtonItemStylePlain target:self action:@selector(invite)];
+    //UIBarButtonItem *invite = [[UIBarButtonItem alloc] initWithTitle:@"Invite" style:UIBarButtonItemStylePlain target:self action:@selector(invite)];
     UIBarButtonItem *save = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(createButtonDown)];
-    [self.navigationItem setRightBarButtonItems:@[save,invite]];
+    [self.navigationItem setRightBarButtonItems:@[save/*,invite*/]];
     
     // Defaults
     NSDateComponents* deltaCompsMin = [[NSDateComponents alloc] init];
@@ -106,12 +107,12 @@
     //[self.navigationController popViewControllerAnimated:YES];
 }
 
--(void)invite{
+/*-(void)invite{
     if (!inviteController)
         inviteController = [[MeetupInviteViewController alloc]init];
     UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:inviteController];
     [self presentViewController:nav animated:YES completion:nil];
-}
+}*/
 
 - (void)createButtonDown {
     
@@ -202,19 +203,29 @@
     
     // Close the window - why no animation? Because animations conflict!
     [self dismissViewControllerAnimated:NO completion:nil];
-    //[self.navigationController popViewControllerAnimated:TRUE];
-    //[self.navigationController setNavigationBarHidden:false animated:true];
-    //[self.navigationController popViewControllerAnimated:NO];
+    
+    //////////////////// Если скрывать текущий контроллер ДО появления инвайтов, то почему-то они не появляются вообще. Если пытаться скрыть текущий контроллер после этого блока кода, он не скрывается.
+    ////// !!! ^^^^^^^^^^^^^^ //////////////////////
     
     // Invites
-    // TODO: Replace it with single window, add invitee to this window by default if specified
-    if ( invitee )
+    if ( newMeetup )
     {
-        [globalData createInvite:meetup objectTo:invitee stringTo:nil];
+        // Creating invite controller
+        if (!inviteController)
+            inviteController = [[MeetupInviteViewController alloc]init];
+        
+        // Add invitee if this window was ivoked from user profile
+        if ( invitee )
+            [inviteController addInvitee:invitee];
+        [inviteController setMeetup:meetup];
+        
+        // Showing invite controller
+        UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:inviteController];
+        [self presentViewController:nav animated:YES completion:nil];
+        
+        // Adding invite to user's calendar
+        [meetup addToCalendar:self shouldAlert:newMeetup];
     }
-    
-    // Add to calendar call
-    [meetup addToCalendar:self shouldAlert:newMeetup];
 }
 
 - (IBAction)venueButtonDown:(id)sender {

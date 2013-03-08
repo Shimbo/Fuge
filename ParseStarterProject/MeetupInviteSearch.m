@@ -26,7 +26,7 @@
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    [self performSelector:@selector(searchFor:) withObject:searchText afterDelay:0.7];
+    [self performSelector:@selector(searchFor:) withObject:searchText afterDelay:0.05];
 }
 
 - (NSInteger)tableView:(UITableView *)aTableView numberOfRowsInSection:(NSInteger)section {

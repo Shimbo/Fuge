@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "Meetup.h"
+#import "Person.h"
 
 @class FSVenue;
 
@@ -20,7 +21,7 @@
     IBOutlet UISwitch *notifySwitch;
     UINavigationController *venueNavViewController;
     Meetup* meetup;
-    PFUser* invitee;
+    Person* invitee;
     
     MeetupInviteViewController *inviteController;
 }
@@ -30,6 +31,6 @@
 - (IBAction)venueButtonDown:(id)sender;
 
 -(void) setMeetup:(Meetup*)m;
--(void) setInvitee:(PFUser*)i;
+-(void) setInvitee:(Person*)i;
 
 @end

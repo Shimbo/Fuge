@@ -283,7 +283,7 @@ double animatedDistance;
 
 - (IBAction)meetButtonDown:(id)sender {
     NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
-    [newMeetupViewController setInvitee:personThis.personData];
+    [newMeetupViewController setInvitee:personThis];
     UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:newMeetupViewController];
     [self.navigationController presentViewController:navigation
                                             animated:YES completion:nil];

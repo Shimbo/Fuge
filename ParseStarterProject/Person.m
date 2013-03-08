@@ -29,7 +29,7 @@
         idCircle = nCircle;
         
         // Distance calculation
-        strDistance = @"? km";
+        strDistance = @"";
         PFGeoPoint *geoPointUser = [[PFUser currentUser] objectForKey:@"location"];
         PFGeoPoint *geoPointFriend = [user objectForKey:@"location"];
         CLLocation* locationFriend = nil;
@@ -41,7 +41,7 @@
             distance = [locationUser distanceFromLocation:locationFriend];
             
             if ( distance < 1000.0f )
-                strDistance = [[NSString alloc] initWithFormat:@"%.2f km", distance/1000.0f];
+                strDistance = [[NSString alloc] initWithFormat:@"%.0f m", distance];
             else if ( distance < 10000.0f )
                 strDistance = [[NSString alloc] initWithFormat:@"%.1f km", distance/1000.0f];
             else

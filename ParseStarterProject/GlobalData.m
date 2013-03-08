@@ -109,6 +109,17 @@ NSInteger sortByName(id num1, id num2, void *context)
     return nil;
 }
 
+-(NSArray*)searchForUserName:(NSString*)searchStr
+{
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:100];
+    for ( Circle* circle in [circles allValues] )
+        for (Person* person in [circle getPersons])
+            if ([person.strName rangeOfString:searchStr].location != NSNotFound)
+                [result addObject:person];
+    return result;
+}
+
+
 - (NSArray*) getMeetups
 {
     return meetups;
@@ -179,27 +190,6 @@ NSInteger sortByName(id num1, id num2, void *context)
     }
 }
 
--(NSArray*)searchForUserName:(NSString*)searchStr{
-#warning Stub
-    
-    NSMutableArray *test = [NSMutableArray arrayWithCapacity:3];
-    Person *p = [[Person alloc]init];
-    p.strName = @"Michael Larionov";
-    p.strId = @"1377492801";
-    [test addObject:p];
-    p = [[Person alloc]init];
-    p.strName = @"Mark";
-    p.strId = @"4";
-    [test addObject:p];
-    p = [[Person alloc]init];
-    p.strName = @"Chris";
-    p.strId = @"5";
-    [test addObject:p];
-    
-
-    return test;
-}
-
 - (void) load2OFriends
 {
     // Second circle friends query
@@ -233,28 +223,39 @@ NSInteger sortByName(id num1, id num2, void *context)
     
 }
 
-- (void) loadFbOthers
+- (void) loadFbOthers:(id)friends
 {
     NSMutableArray *friendIds = [[[PFUser currentUser] objectForKey:@"fbFriends"] mutableCopy];
     
-    NSString* strName  = @"Unknown friend (TBD)";
-    NSString* strRole = @"Invite to expand your network!";
     Circle *fbCircle = [globalData getCircle:CIRCLE_FBOTHERS];
-    CFAbsoluteTime time = CFAbsoluteTimeGetCurrent();
+    
     NSMutableArray *array = [NSMutableArray arrayWithCapacity:30];
+    
+    // Filtering out added friends
     for (Circle *circle in [circles allValues]){
         [array addObjectsFromArray:[[circle getPersons]valueForKeyPath:@"strId"]];
     }
     [friendIds removeObjectsInArray:array];
     
+    // Extracting FB data
+    NSArray *friendObjects = [friends objectForKey:@"data"];
+    
+    // Creating persons for fb friends that don't use app yet
     for (NSString *strId in friendIds)
     {
-        Person* person = [fbCircle addPersonWithData:nil];
-        person.strName = strName;
-        person.strId = strId;
-        person.strRole = strRole;
+        for (NSDictionary *friendObject in friendObjects)
+        {
+            // Comparing fb id with stored id (yeah, I'm too lazy to refactor this, TODO as it's n*n)
+            NSString* strIdFb = [friendObject objectForKey:@"id"];
+            if ( [strId compare:strIdFb] == NSOrderedSame )
+            {
+                Person* person = [fbCircle addPersonWithData:nil];
+                person.strName = [friendObject objectForKey:@"name"];
+                person.strId = strId;
+                person.strRole = @"Invite!";
+            }
+        }
     }
-    NSLog(@"----- %f",CFAbsoluteTimeGetCurrent()- time);
 }
 
 
@@ -534,7 +535,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 #pragma mark -
 #pragma mark Invites
 
-- (void)createInvite:(Meetup*)meetup objectTo:(PFUser*)recipient stringTo:(NSString*)strRecipient
+- (void)createInvite:(Meetup*)meetup objectTo:(Person*)recipient stringTo:(NSString*)strRecipient
 {
     PFObject* invite = [[PFObject alloc] initWithClassName:@"Invite"];
     
@@ -548,17 +549,17 @@ NSInteger sortByName(id num1, id num2, void *context)
     [invite setObject:[PFUser currentUser] forKey:@"objUserFrom"];
     NSString* strTo = strRecipient;
     if ( recipient )
-        strTo = [recipient objectForKey:@"fbId"];
+        strTo = recipient.strId;
     [invite setObject:strTo forKey:@"idUserTo"];
     NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_NEW];
     [invite setObject:inviteStatus forKey:@"status"];
     
     // Protection if there is object already
     invite.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
-    if ( recipient )
+    if ( recipient.personData )
     {
-        [invite.ACL setReadAccess:true forUser:recipient];
-        [invite.ACL setWriteAccess:true forUser:recipient];
+        [invite.ACL setReadAccess:true forUser:recipient.personData];
+        [invite.ACL setWriteAccess:true forUser:recipient.personData];
     }
     else
     {
@@ -617,7 +618,7 @@ NSInteger sortByName(id num1, id num2, void *context)
                 [self loadRandom];
                 
                 // FB friends out of the app
-                [self loadFbOthers];
+                [self loadFbOthers:result];
                 
                 // Meetups
                 [self loadMeetups];

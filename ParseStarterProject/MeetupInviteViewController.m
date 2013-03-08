@@ -13,9 +13,6 @@
 #import "GlobalData.h"
 #import "PersonInviteCell.h"
 #import "MeetupInviteSearch.h"
-@interface MeetupInviteViewController ()
-
-@end
 
 @implementation MeetupInviteViewController
 
@@ -23,12 +20,31 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
+        meetup = nil;
     }
     return self;
 }
 
 -(void)done{
+    
+    // Creating invites
+    if ( meetup )
+    {
+        for ( Person* person in [self selectedPersons])
+            [globalData createInvite:meetup objectTo:nil stringTo:person.strId];
+        // TODO for Misha: try to find appropriate PFUser* for this strId to make invite protected for existing users
+    }
+    
+    // Saving recent
+    NSMutableArray* arrayRecentIds = [[NSMutableArray alloc] init];
+    [arrayRecentIds addObjectsFromArray:[[self selectedPersons] valueForKeyPath:@"strId"]];
+    [[PFUser currentUser] addUniqueObjectsFromArray:arrayRecentIds forKey:@"recentInvites"];
+    [[PFUser currentUser] saveEventually];
+    
+    // Constantine, use this code for recent users
+    NSArray* arrayRecentsIds = [[PFUser currentUser] objectForKey:@"recentInvites"];
+    /////////// ^^^ !!!! ^^^ ////////////
+    
     [self dismissModalViewControllerAnimated:YES];
 }
 
@@ -131,4 +147,15 @@
     [self setTableView:nil];
     [super viewDidUnload];
 }
+
+-(void)setMeetup:(Meetup*)m
+{
+    meetup = m;
+}
+
+-(void)addInvitee:(Person*)i
+{
+    selected[i.strId] = i;
+}
+
 @end

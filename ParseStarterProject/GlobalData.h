@@ -73,7 +73,7 @@ enum EInviteStatus
 
 // Invites
 // One of two last parameters should be nil
-- (void)createInvite:(Meetup*)meetup objectTo:(PFUser*)recipient stringTo:(NSString*)strRecipient;
+- (void)createInvite:(Meetup*)meetup objectTo:(Person*)recipient stringTo:(NSString*)strRecipient;
 
 
 @end
