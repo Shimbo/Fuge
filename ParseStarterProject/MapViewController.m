@@ -21,7 +21,7 @@
 #import "AsyncImageView.h"
 #import "ImageLoader.h"
 #import "NewMeetupViewController.h"
-
+#import "MeetupInviteViewController.h"
 
 @implementation MapViewController
 
@@ -109,11 +109,12 @@
 }
 
 - (void)newThreadClicked{
-    NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
-    UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:newMeetupViewController];
+    MeetupInviteViewController *invite = [[MeetupInviteViewController alloc] initWithNibName:@"MeetupInviteViewController" bundle:nil];
+    UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:invite];
     [self.navigationController presentViewController:navigation
                                             animated:YES completion:nil];
 }
+
 
 - (void)newMeetupClicked{
     NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];

@@ -11,6 +11,7 @@
 
 @class FSVenue;
 
+@class MeetupInviteViewController;
 @interface NewMeetupViewController : UIViewController <UITextFieldDelegate>
 {
     IBOutlet UITextField *subject;
@@ -20,6 +21,8 @@
     UINavigationController *venueNavViewController;
     Meetup* meetup;
     PFUser* invitee;
+    
+    MeetupInviteViewController *inviteController;
 }
 
 @property (nonatomic,strong)FSVenue* selectedVenue;

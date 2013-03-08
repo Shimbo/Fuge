@@ -146,7 +146,7 @@
         imageView.alpha = 0; 
         spinny.alpha = 1;
         [UIView beginAnimations:@"" context:nil];
-        [UIView setAnimationDuration:0.3];
+        [UIView setAnimationDuration:0.1];
         spinny.alpha = 0;
         imageView.alpha = 1;
         [UIView commitAnimations];

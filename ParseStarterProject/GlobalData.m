@@ -179,6 +179,27 @@ NSInteger sortByName(id num1, id num2, void *context)
     }
 }
 
+-(NSArray*)searchForUserName:(NSString*)searchStr{
+#warning Stub
+    
+    NSMutableArray *test = [NSMutableArray arrayWithCapacity:3];
+    Person *p = [[Person alloc]init];
+    p.strName = @"Michael Larionov";
+    p.strId = @"1377492801";
+    [test addObject:p];
+    p = [[Person alloc]init];
+    p.strName = @"Mark";
+    p.strId = @"4";
+    [test addObject:p];
+    p = [[Person alloc]init];
+    p.strName = @"Chris";
+    p.strId = @"5";
+    [test addObject:p];
+    
+
+    return test;
+}
+
 - (void) load2OFriends
 {
     // Second circle friends query
@@ -214,35 +235,26 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 - (void) loadFbOthers
 {
-    NSArray *friendIds = [[PFUser currentUser] objectForKey:@"fbFriends"];
+    NSMutableArray *friendIds = [[[PFUser currentUser] objectForKey:@"fbFriends"] mutableCopy];
     
-    NSString* strName = [[NSString alloc] initWithFormat:@"Unknown friend (TBD)"];
-    NSString* strRole = [[NSString alloc] initWithFormat:@"Invite to expand your network!"];
+    NSString* strName  = @"Unknown friend (TBD)";
+    NSString* strRole = @"Invite to expand your network!";
+    Circle *fbCircle = [globalData getCircle:CIRCLE_FBOTHERS];
+    CFAbsoluteTime time = CFAbsoluteTimeGetCurrent();
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:30];
+    for (Circle *circle in [circles allValues]){
+        [array addObjectsFromArray:[[circle getPersons]valueForKeyPath:@"strId"]];
+    }
+    [friendIds removeObjectsInArray:array];
     
     for (NSString *strId in friendIds)
     {
-        // Already added users
-        Boolean bFound = false;
-        for (Circle *circle in [circles allValues])
-        {
-            for (Person *friendUser in [circle getPersons])
-            {
-                //NSString *strId2 = [friendUser objectForKey:@"strId"];
-                if ( [strId compare:friendUser.strId ] == NSOrderedSame )
-                    bFound = true;
-            }
-        }
-        if ( bFound )
-            continue;
-        
-        // Adding new "person"
-        Circle *circle = [globalData getCircle:CIRCLE_FBOTHERS];
-        Person* person = [circle addPersonWithData:nil];
-        
+        Person* person = [fbCircle addPersonWithData:nil];
         person.strName = strName;
         person.strId = strId;
         person.strRole = strRole;
     }
+    NSLog(@"----- %f",CFAbsoluteTimeGetCurrent()- time);
 }
 
 

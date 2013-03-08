@@ -47,6 +47,11 @@
 		47A1AC6C16A7DDB9004B4CFA /* VenueCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 47A1AC6B16A7DDB9004B4CFA /* VenueCell.m */; };
 		47A1AC6E16A7DDD3004B4CFA /* VenueCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47A1AC6D16A7DDD3004B4CFA /* VenueCell.xib */; };
 		47A5ED2A16C7C2CD00084ED9 /* PersonCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47A5ED2916C7C2CD00084ED9 /* PersonCell.xib */; };
+		47BDBC9216EA268F008B12CF /* MeetupInviteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 47BDBC9016EA268F008B12CF /* MeetupInviteViewController.m */; };
+		47BDBC9316EA268F008B12CF /* MeetupInviteViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47BDBC9116EA268F008B12CF /* MeetupInviteViewController.xib */; };
+		47BDBC9516EA389C008B12CF /* PersonInviteCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47BDBC9416EA389C008B12CF /* PersonInviteCell.xib */; };
+		47BDBC9816EA3948008B12CF /* PersonInviteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 47BDBC9716EA3947008B12CF /* PersonInviteCell.m */; };
+		47BDBC9C16EA3EF4008B12CF /* MeetupInviteSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = 47BDBC9B16EA3EF3008B12CF /* MeetupInviteSearch.m */; };
 		4998650515BF305000803E05 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4998650415BF305000803E05 /* StoreKit.framework */; };
 		4C05731A166ACC7500EF6FAD /* LoginView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C057319166ACC7500EF6FAD /* LoginView.xib */; };
 		4C057320166ACED200EF6FAD /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C05731E166ACED200EF6FAD /* LoginViewController.m */; };
@@ -157,6 +162,14 @@
 		47A1AC6B16A7DDB9004B4CFA /* VenueCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VenueCell.m; sourceTree = "<group>"; };
 		47A1AC6D16A7DDD3004B4CFA /* VenueCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VenueCell.xib; sourceTree = "<group>"; };
 		47A5ED2916C7C2CD00084ED9 /* PersonCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PersonCell.xib; sourceTree = "<group>"; };
+		47BDBC8F16EA268F008B12CF /* MeetupInviteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetupInviteViewController.h; sourceTree = "<group>"; };
+		47BDBC9016EA268F008B12CF /* MeetupInviteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetupInviteViewController.m; sourceTree = "<group>"; };
+		47BDBC9116EA268F008B12CF /* MeetupInviteViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MeetupInviteViewController.xib; sourceTree = "<group>"; };
+		47BDBC9416EA389C008B12CF /* PersonInviteCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PersonInviteCell.xib; sourceTree = "<group>"; };
+		47BDBC9616EA3947008B12CF /* PersonInviteCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersonInviteCell.h; sourceTree = "<group>"; };
+		47BDBC9716EA3947008B12CF /* PersonInviteCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersonInviteCell.m; sourceTree = "<group>"; };
+		47BDBC9A16EA3EF2008B12CF /* MeetupInviteSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetupInviteSearch.h; sourceTree = "<group>"; };
+		47BDBC9B16EA3EF3008B12CF /* MeetupInviteSearch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetupInviteSearch.m; sourceTree = "<group>"; };
 		4998650415BF305000803E05 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		4C057319166ACC7500EF6FAD /* LoginView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginView.xib; sourceTree = "<group>"; };
 		4C05731E166ACED200EF6FAD /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
@@ -442,6 +455,12 @@
 				4706D10616C1188300CAF9AF /* RightViewController.m */,
 				4706D10016C10DBF00CAF9AF /* LeftMenuController.h */,
 				4706D10116C10DBF00CAF9AF /* LeftMenuController.m */,
+				47BDBC8F16EA268F008B12CF /* MeetupInviteViewController.h */,
+				47BDBC9016EA268F008B12CF /* MeetupInviteViewController.m */,
+				47BDBC9A16EA3EF2008B12CF /* MeetupInviteSearch.h */,
+				47BDBC9B16EA3EF3008B12CF /* MeetupInviteSearch.m */,
+				47BDBC9616EA3947008B12CF /* PersonInviteCell.h */,
+				47BDBC9716EA3947008B12CF /* PersonInviteCell.m */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -464,6 +483,8 @@
 				4706D10716C1188300CAF9AF /* RightViewController.xib */,
 				4706D10216C10DBF00CAF9AF /* LeftMenuController.xib */,
 				4C1C438216C9B125008BA9CA /* InboxViewController.xib */,
+				47BDBC9416EA389C008B12CF /* PersonInviteCell.xib */,
+				47BDBC9116EA268F008B12CF /* MeetupInviteViewController.xib */,
 			);
 			name = XIB;
 			sourceTree = "<group>";
@@ -581,6 +602,8 @@
 				47A5ED2A16C7C2CD00084ED9 /* PersonCell.xib in Resources */,
 				4C1C438416C9B126008BA9CA /* InboxViewController.xib in Resources */,
 				4C1C438916C9BF64008BA9CA /* InboxCell.xib in Resources */,
+				47BDBC9316EA268F008B12CF /* MeetupInviteViewController.xib in Resources */,
+				47BDBC9516EA389C008B12CF /* PersonInviteCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -627,6 +650,9 @@
 				4706D10C16C11A2400CAF9AF /* MainViewController.m in Sources */,
 				4C1C438316C9B126008BA9CA /* InboxViewController.m in Sources */,
 				4C1C438716C9BE11008BA9CA /* InboxCell.m in Sources */,
+				47BDBC9216EA268F008B12CF /* MeetupInviteViewController.m in Sources */,
+				47BDBC9816EA3948008B12CF /* PersonInviteCell.m in Sources */,
+				47BDBC9C16EA3EF4008B12CF /* MeetupInviteSearch.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

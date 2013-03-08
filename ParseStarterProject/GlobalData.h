@@ -50,6 +50,8 @@ enum EInviteStatus
 - (NSArray*) getMeetups;
 - (NSArray*) getInbox;
 
+-(NSArray*)searchForUserName:(NSString*)searchStr;
+
 // New meetup created during the session
 - (void)addMeetup:(Meetup*)meetup;
 // New message created in user profile window

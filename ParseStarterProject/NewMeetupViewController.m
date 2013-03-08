@@ -11,7 +11,7 @@
 #import <Parse/Parse.h>
 #import "FSVenue.h"
 #import "GlobalData.h"
-
+#import "MeetupInviteViewController.h"
 @implementation NewMeetupViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -43,7 +43,10 @@
     [self.navigationController setNavigationBarHidden:false animated:false];
     [self.navigationItem setHidesBackButton:false animated:false];
     [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancelButtonDown)]];
-    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(createButtonDown)]];
+    
+    UIBarButtonItem *invite = [[UIBarButtonItem alloc] initWithTitle:@"Invite" style:UIBarButtonItemStylePlain target:self action:@selector(invite)];
+    UIBarButtonItem *save = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(createButtonDown)];
+    [self.navigationItem setRightBarButtonItems:@[save,invite]];
     
     // Defaults
     NSDateComponents* deltaCompsMin = [[NSDateComponents alloc] init];
@@ -101,6 +104,13 @@
     [self dismissModalViewControllerAnimated:YES];
     //[self.navigationController setNavigationBarHidden:false animated:true];
     //[self.navigationController popViewControllerAnimated:YES];
+}
+
+-(void)invite{
+    if (!inviteController)
+        inviteController = [[MeetupInviteViewController alloc]init];
+    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:inviteController];
+    [self presentViewController:nav animated:YES completion:nil];
 }
 
 - (void)createButtonDown {
