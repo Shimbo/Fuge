@@ -20,7 +20,7 @@
     IBOutlet UIButton *location;
     IBOutlet UISwitch *notifySwitch;
     UINavigationController *venueNavViewController;
-    Meetup* meetup;
+    Meetup* _meetup;
     Person* invitee;
     
     MeetupInviteViewController *inviteController;

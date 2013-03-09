@@ -46,12 +46,15 @@ enum EInviteStatus
 - (Circle*) getCircle:(NSUInteger)circle;
 - (Circle*) getCircleByNumber:(NSUInteger)num;
 - (Person*) getPersonById:(NSString*)strFbId;
+- (NSArray*) getPersonsByIds:(NSArray*)strFbIds;
 - (NSArray*) getCircles;
 - (NSArray*) getMeetups;
 - (NSArray*) getInbox;
 
 -(NSArray*)searchForUserName:(NSString*)searchStr;
 
+-(void)createCommentForMeetup:(Meetup*)meetup
+                        isNew:(BOOL)newMeetup;
 // New meetup created during the session
 - (void)addMeetup:(Meetup*)meetup;
 // New message created in user profile window

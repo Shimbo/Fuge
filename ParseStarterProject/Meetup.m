@@ -8,6 +8,7 @@
 
 #import "Meetup.h"
 #import "GlobalVariables.h"
+#import "FSVenue.h"
 
 @implementation Meetup
 
@@ -215,6 +216,37 @@ static UIViewController* tempController = nil;
     }
     
     return false;
+}
+
+-(void)populateWithVenue:(FSVenue*)venue{
+    if ( venue )
+    {
+        self.location = [PFGeoPoint geoPointWithLatitude:[venue.lat doubleValue]
+                                                 longitude:[venue.lon doubleValue]];
+        self.strVenue = venue.name;
+        if ( venue.address )
+            self.strAddress = venue.address;
+        if ( venue.city )
+        {
+            self.strAddress = [self.strAddress stringByAppendingString:@" "];
+            self.strAddress = [self.strAddress stringByAppendingString:venue.city];
+        }
+        if ( venue.state )
+        {
+            self.strAddress = [self.strAddress stringByAppendingString:@" "];
+            self.strAddress = [self.strAddress stringByAppendingString:venue.state];
+        }
+        if ( venue.postalCode )
+        {
+            self.strAddress = [self.strAddress stringByAppendingString:@" "];
+            self.strAddress = [self.strAddress stringByAppendingString:venue.postalCode];
+        }
+        if ( venue.country )
+        {
+            self.strAddress = [self.strAddress stringByAppendingString:@" "];
+            self.strAddress = [self.strAddress stringByAppendingString:venue.country];
+        }
+    }
 }
 
 @end

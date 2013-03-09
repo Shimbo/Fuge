@@ -30,6 +30,13 @@
     // Creating invites
     if ( meetup )
     {
+        //we should save our new meetup
+        [meetup save];
+        [globalData addMeetup:meetup];
+        [globalData  createCommentForMeetup:meetup
+                                      isNew:YES];
+        [meetup addToCalendar:self shouldAlert:YES];
+        
         for ( Person* person in [self selectedPersons])
             [globalData createInvite:meetup objectTo:nil stringTo:person.strId];
         // TODO for Misha: try to find appropriate PFUser* for this strId to make invite protected for existing users
@@ -40,11 +47,7 @@
     [arrayRecentIds addObjectsFromArray:[[self selectedPersons] valueForKeyPath:@"strId"]];
     [[PFUser currentUser] addUniqueObjectsFromArray:arrayRecentIds forKey:@"recentInvites"];
     [[PFUser currentUser] saveEventually];
-    
-    // Constantine, use this code for recent users
-    NSArray* arrayRecentsIds = [[PFUser currentUser] objectForKey:@"recentInvites"];
-    /////////// ^^^ !!!! ^^^ ////////////
-    
+        
     [self dismissModalViewControllerAnimated:YES];
 }
 
@@ -52,7 +55,7 @@
 {
     [super viewDidLoad];
     self.title = @"Invite";
-    UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStylePlain target:self action:@selector(done)];
+    UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done)];
     [self.navigationItem setRightBarButtonItem:done];
     
     selected = [NSMutableDictionary dictionaryWithCapacity:10];
@@ -67,6 +70,13 @@
     self.searchDisplayController.searchResultsDataSource = searcher;
     self.searchDisplayController.searchBar.delegate = searcher;
     
+    
+    NSArray* arrayRecentsIds = [[PFUser currentUser] objectForKey:@"recentInvites"];
+    Person *p =[globalData getPersonById:arrayRecentsIds[0]];
+    NSLog(@"%@",p);
+    
+    NSArray *recentPersons = [globalData getPersonsByIds:arrayRecentsIds];
+    NSLog(@"%@",recentPersons);
     // Do any additional setup after loading the view from its nib.
 }
 

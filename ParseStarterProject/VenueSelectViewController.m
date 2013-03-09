@@ -41,8 +41,7 @@
     [self updateLocation];
     
     self.navigationItem.leftBarButtonItem =
-    [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
-                                     style:UIBarButtonItemStyleBordered
+    [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
                                     target:self
                                     action:@selector(close)];
     

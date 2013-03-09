@@ -25,7 +25,7 @@ enum EMeetupPrivacy
     MEETUP_2O       = 1,
     MEETUP_PRIVATE  = 2
 };
-
+@class FSVenue;
 
 @interface Meetup : NSObject <EKEventEditViewDelegate, UIAlertViewDelegate>
 {
@@ -62,4 +62,6 @@ enum EMeetupPrivacy
 -(Boolean) addedToCalendar;
 -(void) addToCalendar:(UIViewController*)controller shouldAlert:(Boolean)alert;
 
+
+-(void)populateWithVenue:(FSVenue*)venue;
 @end

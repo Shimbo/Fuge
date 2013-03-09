@@ -11,6 +11,7 @@
 #import "PushManager.h"
 #import "RootViewController.h"
 #import "InboxViewController.h"
+#import "FSVenue.h"
 
 @implementation GlobalData
 
@@ -25,6 +26,8 @@ static GlobalData *sharedInstance = nil;
     return sharedInstance;
 }
 
+
+
 // Initialization
 - (id)init
 {
@@ -38,6 +41,37 @@ static GlobalData *sharedInstance = nil;
     }
     
     return self;
+}
+
+-(void)createCommentForMeetup:(Meetup*)meetup
+                        isNew:(BOOL)newMeetup{
+    // Creating comment about meetup creation in db
+    PFObject* comment = [[PFObject alloc] initWithClassName:@"Comment"];
+    NSMutableString* strComment = [[NSMutableString alloc] initWithFormat:@""];
+    [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
+    if ( newMeetup )
+    {
+        [strComment appendString:@" created the meetup: "];
+        [strComment appendString:meetup.strSubject];
+    }
+    else
+        [strComment appendString:@" changed meetup details."];
+    [comment setObject:meetup.strOwnerId forKey:@"userId"];
+    NSNumber* trueNum = [[NSNumber alloc] initWithBool:true];
+    [comment setObject:[trueNum stringValue] forKey:@"system"];
+    NSString* strUserName = (NSString *) [[PFUser currentUser] objectForKey:@"fbName"];
+    [comment setObject:strUserName forKey:@"userName"];
+    [comment setObject:meetup.strId forKey:@"meetupId"];
+    [comment setObject:strComment forKey:@"comment"];
+    //comment.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
+    //[comment.ACL setPublicReadAccess:true];
+    
+    [comment saveInBackground];
+    
+    // TODO: Send to everybody around (using public/2ndO filter, send checkbox and geo-query) push about the meetup
+    
+    // Subscription
+    [globalData subscribeToThread:meetup.strId];
 }
 
 
@@ -100,8 +134,22 @@ NSInteger sortByName(id num1, id num2, void *context)
     return nil;
 }
 
+- (NSArray*) getPersonsByIds:(NSArray*)strFbIds
+{
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:20];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"strId IN %@",strFbIds];
+    for ( Circle* circle in [circles allValues] )
+        [result addObjectsFromArray:[circle.getPersons filteredArrayUsingPredicate:predicate]];
+    return result;
+}
+
+
+//посмотри сколько раз этот метод у тебя вызывается
+//очень узкое место
+//int a = 1;
 - (Person*) getPersonById:(NSString*)strFbId
 {
+//    NSLog(@"counter %d",a++);
     for ( Circle* circle in [circles allValues] )
         for (Person* person in [circle getPersons])
             if ( [person.strId compare:strFbId] == NSOrderedSame )
@@ -112,10 +160,9 @@ NSInteger sortByName(id num1, id num2, void *context)
 -(NSArray*)searchForUserName:(NSString*)searchStr
 {
     NSMutableArray *result = [NSMutableArray arrayWithCapacity:100];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"strName CONTAINS[cd] %@",searchStr];
     for ( Circle* circle in [circles allValues] )
-        for (Person* person in [circle getPersons])
-            if ([person.strName rangeOfString:searchStr].location != NSNotFound)
-                [result addObject:person];
+        [result addObjectsFromArray:[circle.getPersons filteredArrayUsingPredicate:predicate]];
     return result;
 }
 

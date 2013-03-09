@@ -18,7 +18,7 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        meetup = nil;
+        _meetup = nil;
         invitee = nil;
         inviteController = nil;
         self.navigationItem.leftItemsSupplementBackButton = true;
@@ -28,7 +28,7 @@
 
 -(void) setMeetup:(Meetup*)m
 {
-    meetup = m;
+    _meetup = m;
 }
 
 -(void) setInvitee:(Person*)i
@@ -39,15 +39,21 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    self.title = @"Meetup";
     // Navigation
     [self.navigationController setNavigationBarHidden:false animated:false];
     [self.navigationItem setHidesBackButton:false animated:false];
-    [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancelButtonDown)]];
+    [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelButtonDown)]];
     
     //UIBarButtonItem *invite = [[UIBarButtonItem alloc] initWithTitle:@"Invite" style:UIBarButtonItemStylePlain target:self action:@selector(invite)];
-    UIBarButtonItem *save = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(createButtonDown)];
-    [self.navigationItem setRightBarButtonItems:@[save/*,invite*/]];
+    UIBarButtonItem *button = nil;
+    if (_meetup) {
+        button = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(save)];
+    }else{
+        button = [[UIBarButtonItem alloc] initWithTitle:@"Next" style:UIBarButtonItemStylePlain target:self action:@selector(next)];
+        
+    }
+    [self.navigationItem setRightBarButtonItem:button];
     
     // Defaults
     NSDateComponents* deltaCompsMin = [[NSDateComponents alloc] init];
@@ -64,12 +70,12 @@
     [dateTime setMinimumDate:dateMin];
     [dateTime setMaximumDate:dateMax];
     
-    if ( meetup )
+    if ( _meetup )
     {
-        [dateTime setDate:meetup.dateTime];
-        [subject setText:meetup.strSubject];
-        [notifySwitch setOn:meetup.privacy];
-        [location setTitle:meetup.strVenue forState:UIControlStateNormal];
+        [dateTime setDate:_meetup.dateTime];
+        [subject setText:_meetup.strSubject];
+        [notifySwitch setOn:_meetup.privacy];
+        [location setTitle:_meetup.strVenue forState:UIControlStateNormal];
     }
     else
     {
@@ -114,118 +120,67 @@
     [self presentViewController:nav animated:YES completion:nil];
 }*/
 
-- (void)createButtonDown {
-    
-    Boolean newMeetup = meetup ? false : true;
-    
+-(BOOL)validateForm{
     if ( subject.text.length == 0 )
     {
         UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Not yet!" message:@"Please, enter the subject of the meetup in the text above!" delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
         [errorAlert show];
-        return;
+        return NO;
     }
     
-    if ( ! self.selectedVenue && ! meetup )
+    if ( ! self.selectedVenue && ! _meetup )
     {
         UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Not yet!" message:@"Please, select a venue for the meetup using the big and noticeable button!" delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
         [errorAlert show];
-        return;
+        return NO;
     }
-    
-    // Meetup creation
-    if ( ! meetup )
-        meetup = [[Meetup alloc] init];
+    return YES;
+}
+
+
+
+-(void)populateMeetupWithData:(Meetup*)meetup{
     meetup.strOwnerId = (NSString *) [[PFUser currentUser] objectForKey:@"fbId"];
     meetup.strOwnerName = (NSString *) [[PFUser currentUser] objectForKey:@"fbName"];
     meetup.strSubject = subject.text;
     meetup.privacy = notifySwitch.isOn;
     meetup.dateTime = [dateTime date];
-    if ( self.selectedVenue )
-    {
-        meetup.location = [PFGeoPoint geoPointWithLatitude:[self.selectedVenue.lat doubleValue]
-                                                  longitude:[self.selectedVenue.lon doubleValue]];
-        meetup.strVenue = self.selectedVenue.name;
-        if ( self.selectedVenue.address )
-            meetup.strAddress = self.selectedVenue.address;
-        if ( self.selectedVenue.city )
-        {
-            meetup.strAddress = [meetup.strAddress stringByAppendingString:@" "];
-            meetup.strAddress = [meetup.strAddress stringByAppendingString:self.selectedVenue.city];
-        }
-        if ( self.selectedVenue.state )
-        {
-            meetup.strAddress = [meetup.strAddress stringByAppendingString:@" "];
-            meetup.strAddress = [meetup.strAddress stringByAppendingString:self.selectedVenue.state];
-        }
-        if ( self.selectedVenue.postalCode )
-        {
-            meetup.strAddress = [meetup.strAddress stringByAppendingString:@" "];
-            meetup.strAddress = [meetup.strAddress stringByAppendingString:self.selectedVenue.postalCode];
-        }
-        if ( self.selectedVenue.country )
-        {
-            meetup.strAddress = [meetup.strAddress stringByAppendingString:@" "];
-            meetup.strAddress = [meetup.strAddress stringByAppendingString:self.selectedVenue.country];
-        }
-    }
-    [meetup save];
+    [meetup populateWithVenue:self.selectedVenue];
+}
+
+-(void)save{
+    if (![self validateForm])
+        return;
+    [self populateMeetupWithData:_meetup];
+    [_meetup save];
+    [globalData  createCommentForMeetup:_meetup
+                                  isNew:NO];
+    [self.navigationController pushViewController:inviteController animated:YES];
+}
+
+- (void)next {
+    if (![self validateForm])
+        return;
+
+    _meetup = [[Meetup alloc] init];
+    [self populateMeetupWithData:_meetup];
+    //we will save metup in invitation screen
     
-    // Adding to our own meetup list
-    [globalData addMeetup:meetup];
+
+
+    if (!inviteController)
+        inviteController = [[MeetupInviteViewController alloc]init];
     
-    // Creating comment about meetup creation in db
-    PFObject* comment = [[PFObject alloc] initWithClassName:@"Comment"];
-    NSMutableString* strComment = [[NSMutableString alloc] initWithFormat:@""];
-    [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
-    if ( newMeetup )
-    {
-        [strComment appendString:@" created the meetup: "];
-        [strComment appendString:subject.text];
-    }
-    else
-        [strComment appendString:@" changed meetup details."];
-    [comment setObject:meetup.strOwnerId forKey:@"userId"];
-    NSNumber* trueNum = [[NSNumber alloc] initWithBool:true];
-    [comment setObject:[trueNum stringValue] forKey:@"system"];
-    NSString* strUserName = (NSString *) [[PFUser currentUser] objectForKey:@"fbName"];
-    [comment setObject:strUserName forKey:@"userName"];
-    [comment setObject:meetup.strId forKey:@"meetupId"];
-    [comment setObject:strComment forKey:@"comment"];
-    //comment.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
-    //[comment.ACL setPublicReadAccess:true];
+    // Add invitee if this window was ivoked from user profile
+    if ( invitee )
+        [inviteController addInvitee:invitee];
+    [inviteController setMeetup:_meetup];
+    [self.navigationController pushViewController:inviteController animated:YES];
     
-    [comment saveInBackground];
-    
-    // TODO: Send to everybody around (using public/2ndO filter, send checkbox and geo-query) push about the meetup
-    
-    // Subscription
-    [globalData subscribeToThread:meetup.strId];
-    
-    // Close the window - why no animation? Because animations conflict!
-    [self dismissViewControllerAnimated:NO completion:nil];
-    
-    //////////////////// Если скрывать текущий контроллер ДО появления инвайтов, то почему-то они не появляются вообще. Если пытаться скрыть текущий контроллер после этого блока кода, он не скрывается.
-    ////// !!! ^^^^^^^^^^^^^^ //////////////////////
-    
-    // Invites
-    if ( newMeetup )
-    {
-        // Creating invite controller
-        if (!inviteController)
-            inviteController = [[MeetupInviteViewController alloc]init];
-        
-        // Add invitee if this window was ivoked from user profile
-        if ( invitee )
-            [inviteController addInvitee:invitee];
-        [inviteController setMeetup:meetup];
-        
-        // Showing invite controller
-        UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:inviteController];
-        [self presentViewController:nav animated:YES completion:nil];
-        
         // Adding invite to user's calendar
-        [meetup addToCalendar:self shouldAlert:newMeetup];
-    }
+        
+//    }
+//    [self dismissViewControllerAnimated:NO completion:nil];
 }
 
 - (IBAction)venueButtonDown:(id)sender {

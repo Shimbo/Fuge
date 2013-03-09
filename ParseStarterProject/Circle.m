@@ -10,7 +10,7 @@
 - (id)init:(NSUInteger)circle
 {
     idCircle = circle;
-	persons = [[NSMutableArray alloc] init];
+	persons = [[NSMutableArray alloc] initWithCapacity:30];
     return self;
 }
 
