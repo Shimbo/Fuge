@@ -25,7 +25,7 @@
     NSLog(@"%@", launchOptions);
 
     self.imageCache = [[NSCache alloc]init];
-    [self.imageCache setCountLimit:30];
+    [self.imageCache setCountLimit:90];
         
 #ifndef RELEASE
     [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];

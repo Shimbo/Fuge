@@ -30,6 +30,10 @@
     return self;
 }
 
+-(UIImage*)getImage:(NSString*)url{
+    return [_imageCache objectForKey:url];
+}
+
 -(void)loadImageWithUrl:(NSString*)url
                 handler:(ImageHandler)handler{
     

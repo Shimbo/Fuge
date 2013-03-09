@@ -201,23 +201,23 @@
 	_target = target_;
     selector = selector_;
     
-	[self cleanSubviews];
-    imageView.image = nil;
-    logo.hidden = NO;
+
     
     if (!loader) {
         loader = [[ImageLoader alloc]init];
     }
     
-    CFAbsoluteTime time = CFAbsoluteTimeGetCurrent();
+    UIImage *im = [loader getImage:url];
+    if (im) {
+        [self addImageToImageView:im animated:NO];
+        [_target performSelector:selector withObject:im];
+        return;
+    }
+    [self cleanSubviews];
+    imageView.image = nil;
+    logo.hidden = NO;
     [loader loadImageWithUrl:url handler:^(UIImage *image) {
-        BOOL animated = (CFAbsoluteTimeGetCurrent() - time) > 0.4;
-        [self addImageToImageView:image animated:animated];
-//        [self cleanSubviews];
-//        [spinny stopAnimating];
-        if (image) {
-            logo.hidden = YES;
-        }
+        [self addImageToImageView:image animated:YES];
         [_target performSelector:selector withObject:image];
     }];
 }

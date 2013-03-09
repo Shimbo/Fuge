@@ -16,7 +16,7 @@ typedef void (^ImageHandler)(UIImage *image);
 @property (nonatomic) CGSize maxSize;
 
 
-
+-(UIImage*)getImage:(NSString*)url;
 -(void)loadImageWithUrl:(NSString*)url
                 handler:(ImageHandler)handler;
 -(void)cancel;
