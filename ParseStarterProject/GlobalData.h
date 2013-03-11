@@ -24,6 +24,14 @@ enum EInviteStatus
     INVITE_ACCEPTED = 2
 };
 
+enum EMeetupCommentType
+{
+    COMMENT_PLAIN   = 0,
+    COMMENT_CREATED = 1,
+    COMMENT_SAVED   = 2,
+    COMMENT_JOINED  = 3
+};
+
 #define INBOX_LOADED    4   // Number of stages in loading
 
 @interface GlobalData : NSObject
@@ -53,8 +61,8 @@ enum EInviteStatus
 
 -(NSArray*)searchForUserName:(NSString*)searchStr;
 
--(void)createCommentForMeetup:(Meetup*)meetup
-                        isNew:(BOOL)newMeetup;
+-(void)createCommentForMeetup:(Meetup*)meetup commentType:(NSUInteger)type commentText:(NSString*)text;
+
 // New meetup created during the session
 - (void)addMeetup:(Meetup*)meetup;
 // New message created in user profile window

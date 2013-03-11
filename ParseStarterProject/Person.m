@@ -66,6 +66,17 @@
 	return self;
 }
 
+- (id)initEmpty:(NSUInteger)nCircle{
+    
+    if (self = [super init]) {
+        
+        personData = nil;
+        strCircle = [Circle getPersonType:nCircle];
+        idCircle = nCircle;
+    }
+    
+    return self;
+}
 
 
 

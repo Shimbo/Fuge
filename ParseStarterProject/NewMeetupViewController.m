@@ -153,8 +153,7 @@
         return;
     [self populateMeetupWithData:_meetup];
     [_meetup save];
-    [globalData  createCommentForMeetup:_meetup
-                                  isNew:NO];
+    [globalData createCommentForMeetup:_meetup commentType:COMMENT_SAVED commentText:nil];
     [self.navigationController pushViewController:inviteController animated:YES];
 }
 
@@ -164,10 +163,7 @@
 
     _meetup = [[Meetup alloc] init];
     [self populateMeetupWithData:_meetup];
-    //we will save metup in invitation screen
     
-
-
     if (!inviteController)
         inviteController = [[MeetupInviteViewController alloc]init];
     
@@ -176,11 +172,6 @@
         [inviteController addInvitee:invitee];
     [inviteController setMeetup:_meetup];
     [self.navigationController pushViewController:inviteController animated:YES];
-    
-        // Adding invite to user's calendar
-        
-//    }
-//    [self dismissViewControllerAnimated:NO completion:nil];
 }
 
 - (IBAction)venueButtonDown:(id)sender {

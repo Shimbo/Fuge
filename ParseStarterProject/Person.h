@@ -38,6 +38,7 @@
 
 // User could be nil (!) for fb friends who are not in the app yet for example
 - (id)init:(PFUser*)user circle:(NSUInteger)nCircle;
+- (id)initEmpty:(NSUInteger)nCircle;
 
 -(NSString*)imageURL;
 -(NSString*)largeImageURL;

@@ -57,17 +57,7 @@
     [attendee saveInBackground];
     
     // Creating comment about joining in db
-    PFObject* comment = [[PFObject alloc] initWithClassName:@"Comment"];
-    NSMutableString* strComment = [[NSMutableString alloc] initWithFormat:@""];
-    [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
-    [strComment appendString:@" joined the event."];
-    [comment setObject:strUserId forKey:@"userId"];
-    NSNumber* trueNum = [[NSNumber alloc] initWithBool:true];
-    [comment setObject:[trueNum stringValue] forKey:@"system"];
-    [comment setObject:strUserName forKey:@"userName"];
-    [comment setObject:strMeetupId forKey:@"meetupId"];
-    [comment setObject:strComment forKey:@"comment"];
-    [comment saveInBackground];
+    [globalData createCommentForMeetup:meetup commentType:COMMENT_JOINED commentText:nil];
     
     // Add comment to the text field
     NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
@@ -234,7 +224,7 @@
         {
             NSString* strSystem = [comment objectForKey:@"system"];
             NSString* strUserName = [comment objectForKey:@"userName"];
-            if ( ! strSystem || [strSystem compare:@""] != NSOrderedSame )   // System comment like join
+            if ( ! strSystem || [strSystem compare:@""] == NSOrderedSame )   // Not system comment
             {
                 [stringComments appendString:@"    "];
                 [stringComments appendString:strUserName];
@@ -395,20 +385,12 @@ double animatedDistance;
         return;
     
     // Creating comment in db
-    NSString* strUserId = (NSString *) [[PFUser currentUser] objectForKey:@"fbId"];
-    NSString* strUserName = (NSString *) [[PFUser currentUser] objectForKey:@"fbName"];
-    NSString* strMeetupId = meetup.strId;
-    PFObject* comment = [[PFObject alloc] initWithClassName:@"Comment"];
-    [comment setObject:strUserId forKey:@"userId"];
-    [comment setObject:strUserName forKey:@"userName"];
-    [comment setObject:strMeetupId forKey:@"meetupId"];
-    [comment setObject:newComment.text forKey:@"comment"];
-    [comment save];
+    [globalData createCommentForMeetup:meetup commentType:COMMENT_PLAIN commentText:newComment.text];
     
     // Adding comment to the list
     NSMutableString* stringComments = [[NSMutableString alloc] initWithString:comments.text];
     [stringComments appendString:@"    "];
-    [stringComments appendString:strUserName];
+    [stringComments appendString:strCurrentUserName];
     [stringComments appendString:@": "];
     [stringComments appendString:newComment.text];
     [stringComments appendString:@"\n"];

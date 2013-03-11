@@ -33,8 +33,7 @@
         //we should save our new meetup
         [meetup save];
         [globalData addMeetup:meetup];
-        [globalData  createCommentForMeetup:meetup
-                                      isNew:YES];
+        [globalData createCommentForMeetup:meetup commentType:COMMENT_CREATED commentText:nil];
         [meetup addToCalendar:self shouldAlert:YES];
         
         for ( Person* person in [self selectedPersons])
@@ -63,21 +62,16 @@
     [self.tableView registerNib:nib forCellReuseIdentifier:@"PersonCellIdent"];
     [self.searchDisplayController.searchResultsTableView registerNib:nib forCellReuseIdentifier:@"PersonCellIdent"];
     
-    
     searcher = [[MeetupInviteSearch alloc]init];
     searcher.selected = selected;
     self.searchDisplayController.searchResultsDelegate = searcher;
     self.searchDisplayController.searchResultsDataSource = searcher;
     self.searchDisplayController.searchBar.delegate = searcher;
     
-    
+    // This code works! Use it for recent users!
     NSArray* arrayRecentsIds = [[PFUser currentUser] objectForKey:@"recentInvites"];
-    Person *p =[globalData getPersonById:arrayRecentsIds[0]];
-    NSLog(@"%@",p);
-    
     NSArray *recentPersons = [globalData getPersonsByIds:arrayRecentsIds];
     NSLog(@"%@",recentPersons);
-    // Do any additional setup after loading the view from its nib.
 }
 
 - (void)searchDisplayController:(UISearchDisplayController *)controller willShowSearchResultsTableView:(UITableView *)tableView{

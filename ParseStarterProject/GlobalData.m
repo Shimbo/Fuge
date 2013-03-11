@@ -43,24 +43,39 @@ static GlobalData *sharedInstance = nil;
     return self;
 }
 
--(void)createCommentForMeetup:(Meetup*)meetup
-                        isNew:(BOOL)newMeetup{
+-(void)createCommentForMeetup:(Meetup*)meetup commentType:(NSUInteger)type commentText:(NSString*)text
+{
     // Creating comment about meetup creation in db
     PFObject* comment = [[PFObject alloc] initWithClassName:@"Comment"];
     NSMutableString* strComment = [[NSMutableString alloc] initWithFormat:@""];
-    [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
-    if ( newMeetup )
-    {
-        [strComment appendString:@" created the meetup: "];
-        [strComment appendString:meetup.strSubject];
-    }
-    else
-        [strComment appendString:@" changed meetup details."];
-    [comment setObject:meetup.strOwnerId forKey:@"userId"];
     NSNumber* trueNum = [[NSNumber alloc] initWithBool:true];
-    [comment setObject:[trueNum stringValue] forKey:@"system"];
-    NSString* strUserName = (NSString *) [[PFUser currentUser] objectForKey:@"fbName"];
-    [comment setObject:strUserName forKey:@"userName"];
+    
+    switch (type)
+    {
+        case COMMENT_CREATED:
+            [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
+            [strComment appendString:@" created the meetup: "];
+            [strComment appendString:meetup.strSubject];
+            [comment setObject:[trueNum stringValue] forKey:@"system"];
+            break;
+        case COMMENT_SAVED:
+            [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
+            [strComment appendString:@" changed meetup details."];
+            [comment setObject:[trueNum stringValue] forKey:@"system"];
+            break;
+        case COMMENT_JOINED:
+            [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
+            [strComment appendString:@" joined the event."];
+            [comment setObject:[trueNum stringValue] forKey:@"system"];
+            break;
+        case COMMENT_PLAIN:
+            [strComment appendString:text];
+            break;
+    }
+    
+    [comment setObject:strCurrentUserId forKey:@"userId"];
+    [comment setObject:meetup.strOwnerId forKey:@"userId"];
+    [comment setObject:strCurrentUserName forKey:@"userName"];
     [comment setObject:meetup.strId forKey:@"meetupId"];
     [comment setObject:strComment forKey:@"comment"];
     //comment.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
@@ -143,13 +158,8 @@ NSInteger sortByName(id num1, id num2, void *context)
     return result;
 }
 
-
-//посмотри сколько раз этот метод у тебя вызывается
-//очень узкое место
-//int a = 1;
 - (Person*) getPersonById:(NSString*)strFbId
 {
-//    NSLog(@"counter %d",a++);
     for ( Circle* circle in [circles allValues] )
         for (Person* person in [circle getPersons])
             if ( [person.strId compare:strFbId] == NSOrderedSame )
@@ -296,10 +306,11 @@ NSInteger sortByName(id num1, id num2, void *context)
             NSString* strIdFb = [friendObject objectForKey:@"id"];
             if ( [strId compare:strIdFb] == NSOrderedSame )
             {
-                Person* person = [fbCircle addPersonWithData:nil];
+                Person* person = [[Person alloc] initEmpty:CIRCLE_FBOTHERS];
                 person.strName = [friendObject objectForKey:@"name"];
                 person.strId = strId;
                 person.strRole = @"Invite!";
+                [fbCircle addPerson:person];
             }
         }
     }
@@ -741,6 +752,13 @@ NSInteger sortByName(id num1, id num2, void *context)
     NSMutableArray* subscriptions = [[PFUser currentUser] objectForKey:@"subscriptions"];
     if ( ! subscriptions )
         subscriptions = [[NSMutableArray alloc] init];
+    
+    // Check if already subscribed
+    for (NSString* str in subscriptions)
+        if ( [str compare:strThread] == NSOrderedSame )
+            return;
+    
+    // Subscribe
     [subscriptions addObject:strThread];
     [[PFUser currentUser] setObject:subscriptions forKey:@"subscriptions"];
     [[PFUser currentUser] saveEventually];
