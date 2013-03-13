@@ -20,7 +20,6 @@
     if (self) {
         _meetup = nil;
         invitee = nil;
-        inviteController = nil;
         self.navigationItem.leftItemsSupplementBackButton = true;
     }
     return self;
@@ -151,26 +150,33 @@
 -(void)save{
     if (![self validateForm])
         return;
+    
+    // Saving meetup on server
     [self populateMeetupWithData:_meetup];
     [_meetup save];
+    
+    // Creating comment
     [globalData createCommentForMeetup:_meetup commentType:COMMENT_SAVED commentText:nil];
-    [self.navigationController pushViewController:inviteController animated:YES];
 }
 
 - (void)next {
     if (![self validateForm])
         return;
-
+    
+    // Saving meetup on server
     _meetup = [[Meetup alloc] init];
     [self populateMeetupWithData:_meetup];
+    [_meetup save];
     
-    if (!inviteController)
-        inviteController = [[MeetupInviteViewController alloc]init];
+    // Adding to the list on client and creating comment
+    [globalData addMeetup:_meetup];
+    [globalData createCommentForMeetup:_meetup commentType:COMMENT_CREATED commentText:nil];
     
-    // Add invitee if this window was ivoked from user profile
-    if ( invitee )
+    // Invites
+    MeetupInviteViewController *inviteController = [[MeetupInviteViewController alloc]init];
+    if ( invitee ) // Add invitee if this window was ivoked from user profile
         [inviteController addInvitee:invitee];
-    [inviteController setMeetup:_meetup];
+    [inviteController setMeetup:_meetup newMeetup:true];
     [self.navigationController pushViewController:inviteController animated:YES];
 }
 

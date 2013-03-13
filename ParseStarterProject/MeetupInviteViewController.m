@@ -30,11 +30,9 @@
     // Creating invites
     if ( meetup )
     {
-        //we should save our new meetup
-        [meetup save];
-        [globalData addMeetup:meetup];
-        [globalData createCommentForMeetup:meetup commentType:COMMENT_CREATED commentText:nil];
-        [meetup addToCalendar:self shouldAlert:YES];
+        // Adding to calendar here
+        if ( bNewMeetup )
+            [meetup addToCalendar:self shouldAlert:YES];
         
         for ( Person* person in [self selectedPersons])
             [globalData createInvite:meetup objectTo:nil stringTo:person.strId];
@@ -152,9 +150,10 @@
     [super viewDidUnload];
 }
 
--(void)setMeetup:(Meetup*)m
+-(void)setMeetup:(Meetup*)m newMeetup:(Boolean)new;
 {
     meetup = m;
+    bNewMeetup = new;
 }
 
 -(void)addInvitee:(Person*)i

@@ -38,9 +38,6 @@
         [meetupData setObject:strOwnerId forKey:@"userFromId"];
         [meetupData setObject:strOwnerName forKey:@"userFromName"];
         
-        // Is read? TODO: it is p2a so it won't work at all
-        [meetupData setObject:[NSNumber numberWithBool:FALSE] forKey:@"isRead"];
-        
         // Protection (read only for all, write for owner)
         //meetupData.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
         //[meetupData.ACL setPublicReadAccess:true];

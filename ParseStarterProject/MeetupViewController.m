@@ -11,6 +11,7 @@
 #import "NewMeetupViewController.h"
 #import "GlobalData.h"
 #import "MeetupAnnotation.h"
+#import "MeetupInviteViewController.h"
 
 @implementation MeetupViewController
 
@@ -123,6 +124,14 @@
     [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Subscribe" style:UIBarButtonItemStylePlain target:self action:@selector(subscribeClicked)]];
 }
 
+-(void)inviteClicked
+{
+    MeetupInviteViewController *inviteController = [[MeetupInviteViewController alloc]init];
+    [inviteController setMeetup:meetup newMeetup:false];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:inviteController];
+    [self presentViewController:nav animated:YES completion:nil];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -152,58 +161,56 @@
     ann.coordinate = coord;
     [mapView addAnnotation:ann];
     
-    // Join button checks
-    if ( [meetup.strOwnerId compare:[[PFUser currentUser] objectForKey:@"fbId"] ] != NSOrderedSame )
+    // Buttons
+    UIBarButtonItem *joinBtn = [[UIBarButtonItem alloc] initWithTitle:@"Join" style:UIBarButtonItemStyleBordered target:self action:@selector(joinClicked)];
+    UIBarButtonItem *declineBtn = [[UIBarButtonItem alloc] initWithTitle:@"Decline" style:UIBarButtonItemStyleBordered target:self action:@selector(declineClicked)];
+    UIBarButtonItem *leaveBtn = [[UIBarButtonItem alloc] initWithTitle:@"Leave" style:UIBarButtonItemStyleBordered target:self action:@selector(leaveClicked)];
+    
+    UIBarButtonItem *subscribeBtn;
+    if ( [globalData isSubscribedToThread:meetup.strId])
+        subscribeBtn = [[UIBarButtonItem alloc] initWithTitle:@"Unsubscribe" style:UIBarButtonItemStylePlain target:self action:@selector(unsubscribeClicked)];
+    else
+        subscribeBtn = [[UIBarButtonItem alloc] initWithTitle:@"Subscribe" style:UIBarButtonItemStylePlain target:self action:@selector(subscribeClicked)];
+    UIBarButtonItem *inviteBtn = [[UIBarButtonItem alloc] initWithTitle:@"Invite" style:UIBarButtonItemStylePlain target:self action:@selector(inviteClicked)];
+    
+    UIBarButtonItem *cancelBtn = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleBordered target:self action:@selector(cancelClicked)];
+    UIBarButtonItem *editBtn = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(editClicked)];
+    UIBarButtonItem *calendarBtn = [[UIBarButtonItem alloc] initWithTitle:@"Add to calendar" style:UIBarButtonItemStyleBordered target:self action:@selector(calendarClicked)];
+    
+    // Own meetup or not
+    if ( [meetup.strOwnerId compare:strCurrentUserId ] != NSOrderedSame )
     {
         PFQuery *meetupAnyQuery = [PFQuery queryWithClassName:@"Attendee"];
         [meetupAnyQuery whereKey:@"userId" equalTo:[[PFUser currentUser] objectForKey:@"fbId"]];
         [meetupAnyQuery whereKey:@"meetupId" equalTo:meetup.strId];
         [meetupAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *attendees, NSError* error)
         {
-            if ( [attendees count] == 0 )
+            if ( [attendees count] == 0 )   // Not attending yet
             {
-                if ( invite )
-                    self.navigationItem.rightBarButtonItems = @[
-                        [[UIBarButtonItem alloc] initWithTitle:@"Join" style:UIBarButtonItemStyleBordered target:self action:@selector(joinClicked)],
-                        [[UIBarButtonItem alloc] initWithTitle:@"Decline" style:UIBarButtonItemStyleBordered target:self action:@selector(declineClicked)]];
+                if ( invite )   // Window opened from invite
+                    [self.navigationItem setRightBarButtonItems:@[joinBtn,declineBtn]];
                 else
-                    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Join" style:UIBarButtonItemStylePlain target:self action:@selector(joinClicked)]];
+                    [self.navigationItem setRightBarButtonItem:joinBtn];
             }
-            else
+            else    // Attending already
             {
                 if ( ! [meetup addedToCalendar] )
-                {
-                    self.navigationItem.rightBarButtonItems = @[
-                                                                [[UIBarButtonItem alloc] initWithTitle:@"Leave" style:UIBarButtonItemStyleBordered target:self action:@selector(leaveClicked)],
-                                                                [[UIBarButtonItem alloc] initWithTitle:@"Add to calendar" style:UIBarButtonItemStyleBordered target:self action:@selector(calendarClicked)]];
-                }
+                    [self.navigationItem setRightBarButtonItems:@[leaveBtn, calendarBtn]];
                 else
-                {
-                    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Leave" style:UIBarButtonItemStylePlain target:self action:@selector(leaveClicked)]];
-                }
+                    [self.navigationItem setRightBarButtonItem:leaveBtn];
                 
-                if ( [globalData isSubscribedToThread:meetup.strId])
-                    [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Unsubscribe" style:UIBarButtonItemStylePlain target:self action:@selector(unsubscribeClicked)]];
-                else
-                    [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Subscribe" style:UIBarButtonItemStylePlain target:self action:@selector(subscribeClicked)]];
+                [self.navigationItem setLeftBarButtonItems:@[subscribeBtn,inviteBtn]];
             }
         }];
     }
     else
-    {
+    {        
         if ( ! [meetup addedToCalendar] )
-        {
-            self.navigationItem.rightBarButtonItems = @[
-                                                    [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleBordered target:self action:@selector(cancelClicked)],
-                                                    [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(editClicked)],
-                                                    [[UIBarButtonItem alloc] initWithTitle:@"Add to calendar" style:UIBarButtonItemStyleBordered target:self action:@selector(calendarClicked)]];
-        }
+            [self.navigationItem setRightBarButtonItems:@[cancelBtn,editBtn,calendarBtn]];
         else
-        {
-            self.navigationItem.rightBarButtonItems = @[
-                                                        [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleBordered target:self action:@selector(cancelClicked)],
-                                                        [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(editClicked)]];
-        }
+            [self.navigationItem setRightBarButtonItems:@[cancelBtn,editBtn]];
+        
+        [self.navigationItem setLeftBarButtonItem:inviteBtn];
     }
     
     // Setting location and date labels

@@ -15,12 +15,13 @@
     MeetupInviteSearch *searcher;
     NSMutableDictionary *selected;
     Meetup *meetup;
+    Boolean bNewMeetup;
 }
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 
 -(NSArray*)selectedPersons;
 
--(void)setMeetup:(Meetup*)m;
+-(void)setMeetup:(Meetup*)m newMeetup:(Boolean)new;
 -(void)addInvitee:(Person*)i;
 
 

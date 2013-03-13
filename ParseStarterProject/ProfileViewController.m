@@ -35,6 +35,20 @@
     [TestFlight passCheckpoint:@"Profile"];
 }
 
+- (void)save
+{
+    NSNumber *boolDiscovery = [NSNumber numberWithBool:discoverySwitch.on];
+    [[PFUser currentUser] setObject:boolDiscovery forKey:@"profileDiscoverable"];
+    [[PFUser currentUser] setObject:labelRoles.text forKey:@"profileRole"];
+    [[PFUser currentUser] setObject:areaEdit.text forKey:@"profileArea"];
+    [[PFUser currentUser] saveEventually];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [self save];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -43,19 +57,9 @@
 
 - (IBAction)donePressed:(UIButton *)sender {
     
-    NSNumber *boolDiscovery = [NSNumber numberWithBool:discoverySwitch.on];
-    [[PFUser currentUser] setObject:boolDiscovery forKey:@"profileDiscoverable"];
-    [[PFUser currentUser] setObject:labelRoles.text forKey:@"profileRole"];
-    [[PFUser currentUser] setObject:areaEdit.text forKey:@"profileArea"];
-    //[[PFUser currentUser] save];
-    
+    [self save];
     [self dismissModalViewControllerAnimated:YES];
 }
-
-
-
-
-
 
 
 ///////////////////////// Dropdown list stuff

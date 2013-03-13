@@ -22,8 +22,6 @@
     UINavigationController *venueNavViewController;
     Meetup* _meetup;
     Person* invitee;
-    
-    MeetupInviteViewController *inviteController;
 }
 
 @property (nonatomic,strong)FSVenue* selectedVenue;
