@@ -12,6 +12,7 @@
 #import "RootViewController.h"
 #import "InboxViewController.h"
 #import "FSVenue.h"
+#import "MapViewController.h"
 
 @implementation GlobalData
 
@@ -633,7 +634,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 #pragma mark Global
 
 
-- (void)reload:(RootViewController*)controller
+- (void)reload:(MapViewController*)controller
 {
     // Clean old data
     [circles removeAllObjects];

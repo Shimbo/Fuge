@@ -17,4 +17,12 @@
 
 @property (nonatomic, retain) IBOutlet MKMapView *mapView;
 
+- (void) reloadData;
+- (void) reloadFinished;
+
+@property (nonatomic, retain) IBOutlet UIActivityIndicatorView *activityIndicator;
+
+@property BOOL initialized;
+
+
 @end

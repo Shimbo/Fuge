@@ -174,7 +174,8 @@
     
     NSArray *viewControllers = self.navigationController.viewControllers;
     UIViewController *rootView = viewControllers[0];
-    [(RootViewController*)rootView reloadData];
+#warning fix it
+//    [(RootViewController*)rootView reloadData];
     
     [self.navigationController popViewControllerAnimated:TRUE];
 }

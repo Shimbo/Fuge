@@ -50,32 +50,7 @@
 #pragma mark Data reload
 
 
-- (void) reloadFinished
-{
-    self.initialized = YES;
-    self.tableView.alpha = 0;
-    [[self tableView] reloadData];
-    [UIView animateWithDuration:0.3 animations:^{
-        self.tableView.alpha = 1;
-    }];
-    
-    [TestFlight passCheckpoint:@"List loading ended"];
-    
-    [activityIndicator stopAnimating];
-    self.navigationController.view.userInteractionEnabled = YES;
-    [self.navigationController popViewControllerAnimated:TRUE];
-}
 
-- (void) actualReload
-{
-    [globalData reload:self];
-}
-
-- (void) reloadData {
-    [activityIndicator startAnimating];
-    self.navigationController.view.userInteractionEnabled = NO;
-    [self performSelectorOnMainThread:@selector(actualReload) withObject:nil waitUntilDone:NO];
-}
 
 #pragma mark -
 #pragma mark View loadi
@@ -111,12 +86,7 @@
     self.tableView.rowHeight = ROW_HEIGHT;
     
     // Data reloading
-    if (!self.initialized) {
-        [TestFlight passCheckpoint:@"List loading started"];
-        [self reloadData];
-    }else{
-        [TestFlight passCheckpoint:@"List restored"];
-    }
+
 }
 
 

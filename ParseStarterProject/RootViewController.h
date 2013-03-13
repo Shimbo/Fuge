@@ -7,8 +7,7 @@
 }
 
 @property (nonatomic,retain) IBOutlet UITableView *tableView;
-- (void) reloadData;
-- (void) reloadFinished;
+
 
 @property (nonatomic, retain) UIActivityIndicatorView *activityIndicator;
 

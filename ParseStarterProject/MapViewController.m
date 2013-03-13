@@ -122,10 +122,37 @@
     [self.navigationController presentViewController:navigation animated:YES completion:nil];
 }
 
+- (void) reloadFinished
+{
+    self.initialized = YES;
+
+    [self reloadMapAnnotations];
+    [TestFlight passCheckpoint:@"List loading ended"];
+    
+    [self.activityIndicator stopAnimating];
+    self.navigationController.view.userInteractionEnabled = YES;
+}
+
+- (void) actualReload
+{
+    [globalData reload:self];
+}
+
+- (void) reloadData {
+    [self.activityIndicator startAnimating];
+    self.navigationController.view.userInteractionEnabled = NO;
+    [self performSelectorOnMainThread:@selector(actualReload) withObject:nil waitUntilDone:NO];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    if (!self.initialized) {
+        [TestFlight passCheckpoint:@"List loading started"];
+        [self reloadData];
+    }else{
+        [TestFlight passCheckpoint:@"List restored"];
+    }
     //self.title = NSLocalizedString(@"Map", @"Map");
     
     mapView.showsUserLocation = TRUE;
@@ -161,11 +188,7 @@
     [TestFlight passCheckpoint:@"Map"];
 }
 
-- (void) viewDidAppear:(BOOL)animated
-{
-    //[mapView setUserTrackingMode:MKUserTrackingModeFollow animated:FALSE];
-    
-    // Remove all pins except of user
+-(void)reloadMapAnnotations{
     id userLocation = [mapView userLocation];
     NSMutableArray *pins = [[NSMutableArray alloc] initWithArray:[mapView annotations]];
     if ( userLocation != nil ) {
@@ -179,9 +202,11 @@
     [self addPersonAnnotations:2 limit:20];
     [self addPersonAnnotations:3 limit:20];
     [self addMeetupAnnotations:20];
-    
-    //self.navigationItem.rightBarButtonItem =
-    //[[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)];
+}
+
+- (void) viewDidAppear:(BOOL)animated
+{
+    [self reloadMapAnnotations];
 }
 
 #define kAsyncTag 321
@@ -204,16 +229,21 @@
             //UIImage *image = ((PersonAnnotation*) annotation).person.image;
             //UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
             //[pinView addSubview:imageView];
-            pinView.image = nil;
+            
             ImageLoader *loader = [[ImageLoader alloc]init];
-            [loader loadImageWithUrl:((PersonAnnotation*) annotation).person.imageURL
-                             handler:^(UIImage *image) {
-                                 if (pinView.image == nil) {
-                                     pinView.image = [UIImage imageWithCGImage:image.CGImage
-                                        scale:2 orientation:image.imageOrientation];
-                                 }
+            pinView.image = nil;
+            pinView.animatesDrop = NO;
+            if (!pinView.image) {
+                [loader loadImageWithUrl:((PersonAnnotation*) annotation).person.imageURL
+                                 handler:^(UIImage *image) {
+                                     if (pinView.image == nil) {
+                                         pinView.image = [UIImage imageWithCGImage:image.CGImage
+                                                                             scale:2 orientation:image.imageOrientation];
+                                     }
+                                     
+                                 }];
+            }
 
-            }];
 
 //            pinView.image = ((PersonAnnotation*) annotation).person.image;
         }
@@ -221,12 +251,13 @@
         {
             pinView.pinColor = ((MeetupAnnotation*) annotation).color;
             //pinView.image = nil;
+            pinView.animatesDrop = YES;
         }
         
         UIButton *btnView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
         pinView.rightCalloutAccessoryView=btnView;
         pinView.canShowCallout = YES;
-        pinView.animatesDrop = YES;
+        
     }
     else {
         [mapView.userLocation setTitle:@"I am here"];
