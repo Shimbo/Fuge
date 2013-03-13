@@ -9,10 +9,9 @@
 #import "GlobalData.h"
 #import "GlobalVariables.h"
 #import "PushManager.h"
-#import "RootViewController.h"
+#import "MapViewController.h"
 #import "InboxViewController.h"
 #import "FSVenue.h"
-#import "MapViewController.h"
 
 @implementation GlobalData
 

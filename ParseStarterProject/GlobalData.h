@@ -10,7 +10,7 @@
 #import "Circle.h"
 #import "Meetup.h"
 
-@class RootViewController;
+@class MapViewController;
 @class InboxViewController;
 
 #define globalData [GlobalData sharedInstance]
@@ -69,7 +69,7 @@ enum EMeetupCommentType
 - (void)addMessage:(PFObject*)message;
 
 // Global data, loading in foreground
-- (void)reload:(RootViewController*)controller;
+- (void)reload:(MapViewController*)controller;
 
 // Inbox data, loading in background
 - (void)reloadInbox:(InboxViewController*)controller;

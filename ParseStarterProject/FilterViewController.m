@@ -172,9 +172,9 @@
     [[PFUser currentUser] setObject:labelRole.text forKey:@"filterRole"];
     //[[PFUser currentUser] save];
     
-    NSArray *viewControllers = self.navigationController.viewControllers;
-    UIViewController *rootView = viewControllers[0];
-#warning fix it
+//    NSArray *viewControllers = self.navigationController.viewControllers;
+//    UIViewController *rootView = viewControllers[0];
+//#warning fix it
 //    [(RootViewController*)rootView reloadData];
     
     [self.navigationController popViewControllerAnimated:TRUE];
