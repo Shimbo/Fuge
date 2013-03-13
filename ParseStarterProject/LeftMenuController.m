@@ -11,17 +11,24 @@
 #import "MapViewController.h"
 #import "ProfileViewController.h"
 #import <Parse/Parse.h>
-
+#import "RootViewController.h"
 
 @implementation LeftMenuController
-
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        self.appDelegate = AppDelegate;
+    }
+    return self;
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     _items = @[@"Inbox",@"Cycles",@"Map",@"User Profile",@"Logout"];
     _selectors = @[@"showInbox",@"showCicles",@"showMap",@"showUser",@"logout"];
-    self.appDelegate = AppDelegate;
+    
 }
 
 -(void)showInbox{
@@ -30,8 +37,10 @@
 }
 
 -(void)showCicles{
-    [self.appDelegate.revealController setFrontViewController:self.appDelegate.mainNavigation
-     focusAfterChange:YES completion:nil];
+    if (!_rootViewController) {
+        _rootViewController = [[RootViewController alloc]initWithNibName:@"RootViewController" bundle:nil];
+    }
+    [self showViewController:_rootViewController];
 }
 -(void)showUser{
     ProfileViewController *profileViewController = [[ProfileViewController alloc] initWithNibName:@"ProfileView" bundle:nil];
@@ -40,8 +49,10 @@
 }
 
 -(void)showMap{
-    MapViewController *mapViewController = [[MapViewController alloc] initWithNibName:@"MapView" bundle:nil];
-    [self showViewController:mapViewController];
+    if (!_mapViewController) {
+        _mapViewController = [[MapViewController alloc] initWithNibName:@"MapView" bundle:nil];
+    }
+    [self showViewController:_mapViewController];
 }
 
 -(void)showViewController:(UIViewController*)ctrl{
@@ -59,6 +70,8 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     if (buttonIndex == 1) {
         [PFUser logOut];
+        _mapViewController = nil;
+        _rootViewController = nil;
         [self.appDelegate userDidLogout];
     }
 }

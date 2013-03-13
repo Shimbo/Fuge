@@ -62,16 +62,17 @@
 	// Create the navigation and view controllers
 //	RootViewController *rootViewController = [[RootViewController alloc] initWithStyle:UITableViewStylePlain];
     
-    [self createNewMainNavigation];
+    
     LeftMenuController *leftMenu = [[LeftMenuController alloc]init];
-    self.revealController = [PKRevealController revealControllerWithFrontViewController:self.mainNavigation leftViewController:leftMenu rightViewController:nil options:nil];
+    self.revealController = [PKRevealController revealControllerWithFrontViewController:nil leftViewController:leftMenu rightViewController:nil options:nil];
     window.rootViewController = self.revealController;
     [window makeKeyAndVisible];
     
     if (! PFFacebookUtils.session.isOpen) {
-        [self showLoginWindow];
+        [self showLoginWindow:NO];
     }
     else{
+        [self createNewMainNavigation];
         NSError* error;
         [[PFUser currentUser] refresh:&error];
         if ( error )
@@ -107,17 +108,16 @@
 }
 
 -(void)createNewMainNavigation{
-    RootViewController *rootViewController = [[RootViewController alloc] init];
-    self.mainNavigation = [[UINavigationController alloc] initWithRootViewController:rootViewController];
-    [self.revealController setFrontViewController:self.mainNavigation focusAfterChange:YES completion:nil];
+    LeftMenuController *leftMenu = (LeftMenuController*)self.revealController.leftViewController;
+    [leftMenu showMap];
 
 }
 
--(void)showLoginWindow{
+-(void)showLoginWindow:(BOOL)animated{
     LoginViewController *loginViewController = [[LoginViewController alloc] initWithNibName:@"LoginView" bundle:nil];
     UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:loginViewController];
     
-    [self.revealController presentViewController:nav animated:YES
+    [self.revealController presentViewController:nav animated:animated
                                       completion:nil];
 }
 
@@ -127,7 +127,7 @@
 }
 
 -(void)userDidLogout{
-    [self showLoginWindow];    
+    [self showLoginWindow:YES];
 }
 
 
