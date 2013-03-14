@@ -38,6 +38,7 @@ static GlobalData *sharedInstance = nil;
         meetups = [[NSMutableArray alloc] init];
         messages = [[NSMutableArray alloc] init];
         nInboxLoadingStage = 0;
+        nInboxUnreadCount = 0;
     }
     
     return self;
@@ -186,14 +187,6 @@ NSInteger sortByName(id num1, id num2, void *context)
 - (NSArray*) getMeetups
 {
     return meetups;
-}
-
-- (NSArray*) getInbox
-{
-    NSMutableArray* inboxData = [[NSMutableArray alloc] init];
-    [inboxData addObjectsFromArray:[self getUniqueInvites]];
-    [inboxData addObjectsFromArray:[self getUniqueMessages]];
-    return inboxData;
 }
 
 
@@ -406,6 +399,126 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 #pragma mark -
 #pragma mark Inbox
+
+
+- (NSMutableDictionary*) getInbox:(InboxViewController*)controller
+{
+    // Gathering data
+    NSMutableArray* inboxData = [[NSMutableArray alloc] init];
+    [inboxData addObjectsFromArray:[self getUniqueInvites]];
+    [inboxData addObjectsFromArray:[self getUniqueMessages]];
+    
+    // Creating temporary overal array
+    NSMutableArray* tempArray = [[NSMutableArray alloc] init];
+    for ( id object in inboxData )
+    {
+        InboxViewItem* item = [[InboxViewItem alloc] init];
+        if ( [object isKindOfClass:[PFObject class]] )
+        {
+            PFObject* pObject = object;
+            if ( [[pObject className] compare:@"Invite"] == NSOrderedSame )
+            {
+                // Already accepted or declined invite
+                if ( [[pObject objectForKey:@"status"] integerValue] == INVITE_ACCEPTED )
+                    item.misc = @"Accepted!";
+                else if ( [[pObject objectForKey:@"status"] integerValue] == INVITE_DECLINED )
+                    item.misc = @"Declined.";
+                else item.misc = nil;
+                
+                item.type = INBOX_ITEM_INVITE;
+                item.fromId = [pObject objectForKey:@"idUserFrom"];
+                item.toId = [pObject objectForKey:@"idUserTo"];
+                NSUInteger meetupType = [[pObject objectForKey:@"type"] integerValue];
+                if ( meetupType == TYPE_MEETUP )
+                    item.subject = [[NSString alloc] initWithFormat:@"%@ invited to:", [pObject objectForKey:@"nameUserFrom"]];
+                else
+                    item.subject = [[NSString alloc] initWithFormat:@"%@ suggested:", [pObject objectForKey:@"nameUserFrom"]];
+                item.message = @"Loading...";
+                item.data = object;
+                
+                PFObject *meetupData = [pObject objectForKey:@"meetupData"];
+                [meetupData fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                    item.message = [meetupData objectForKey:@"subject"];
+                    [[controller tableView] reloadData];
+                    // TODO: probably we should reload not the whole table but only this cell? How?
+                }];
+                
+                item.dateTime = pObject.createdAt;
+                [tempArray addObject:item];
+            }
+            if ( [[pObject className] compare:@"Message"] == NSOrderedSame )
+            {
+                item.type = INBOX_ITEM_MESSAGE;
+                item.fromId = [pObject objectForKey:@"idUserFrom"];
+                item.toId = [pObject objectForKey:@"idUserTo"];
+                
+                if ( [item.fromId compare:[[PFUser currentUser] objectForKey:@"fbId"]] == NSOrderedSame )
+                    item.subject = [[NSString alloc] initWithFormat:@"To: %@", [pObject objectForKey:@"nameUserTo"]];
+                else
+                    item.subject = [[NSString alloc] initWithFormat:@"From: %@", [pObject objectForKey:@"nameUserFrom"]];
+                
+                item.message = [pObject objectForKey:@"text"];
+                item.misc = nil;
+                item.data = pObject;
+                item.dateTime = pObject.createdAt;
+                [tempArray addObject:item];
+                
+                // TODO: add fetch to message owner!
+            }
+        }
+    }
+    
+    // Creating arrays
+    NSMutableDictionary* inbox = [[NSMutableDictionary alloc] init];
+    NSMutableArray* inboxNew = [[NSMutableArray alloc] init];
+    NSMutableArray* inboxRecent = [[NSMutableArray alloc] init];
+    NSMutableArray* inboxOld = [[NSMutableArray alloc] init];
+    
+    // Parsing data
+    NSDate* dateRecent = [[NSDate alloc] initWithTimeIntervalSinceNow:-24*60*60*7];
+    for ( InboxViewItem* item in tempArray )
+    {
+        // Invites always in new
+        if ( item.type == INBOX_ITEM_INVITE )
+        {
+            [inboxNew addObject:item];
+            continue;
+        }
+        
+        // Messages
+        NSDictionary* conversation = [[PFUser currentUser] objectForKey:@"datesMessages"];
+        if ( conversation )
+        {
+            NSDate* lastDate = [conversation objectForKey:item.fromId];
+            if ( [item.dateTime compare:lastDate] == NSOrderedDescending )
+            {
+                [inboxNew addObject:item];
+                continue;
+            }
+        }
+        
+        if ( [item.dateTime compare:dateRecent] == NSOrderedDescending )
+            [inboxRecent addObject:item];
+        else
+            [inboxOld addObject:item];
+    }
+    
+    if ( [inboxNew count] > 0 )
+        [inbox setObject:inboxNew forKey:@"New"];
+    if ( [inboxRecent count] > 0 )
+        [inbox setObject:inboxRecent forKey:@"Recent"];
+    if ( [inboxOld count] > 0 )
+        [inbox setObject:inboxOld forKey:@"Old"];
+    
+    nInboxUnreadCount = [inboxNew count];
+    
+    return inbox;    
+}
+
+- (NSUInteger)getInboxUnreadCount
+{
+    return nInboxUnreadCount;
+}
 
 - (NSArray*)getUniqueInvites
 {

@@ -46,6 +46,7 @@ enum EMeetupCommentType
     NSMutableArray      *messages;
     NSArray             *comments;
     NSUInteger          nInboxLoadingStage;
+    NSUInteger          nInboxUnreadCount;
 }
 
 + (id)sharedInstance;
@@ -57,7 +58,6 @@ enum EMeetupCommentType
 - (NSArray*) getPersonsByIds:(NSArray*)strFbIds;
 - (NSArray*) getCircles;
 - (NSArray*) getMeetups;
-- (NSArray*) getInbox;
 
 -(NSArray*)searchForUserName:(NSString*)searchStr;
 
@@ -73,7 +73,9 @@ enum EMeetupCommentType
 
 // Inbox data, loading in background
 - (void)reloadInbox:(InboxViewController*)controller;
+- (NSMutableDictionary*) getInbox:(InboxViewController*)controller;
 - (Boolean)isInboxLoaded;
+- (NSUInteger)getInboxUnreadCount;
 
 // Inbox utils
 - (void) updateConversationDate:(NSDate*)date thread:(NSString*)strThread;
