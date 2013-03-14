@@ -9,14 +9,16 @@
 #import "Meetup.h"
 #import "GlobalVariables.h"
 #import "FSVenue.h"
+#import "LocationManager.h"
 
 @implementation Meetup
 
-@synthesize strId,strOwnerId,strOwnerName,strSubject,dateTime,privacy,location,strVenue,strAddress,meetupData;
+@synthesize strId,strOwnerId,strOwnerName,strSubject,dateTime,privacy,meetupType,location,strVenue,strAddress,meetupData;
 
 -(id) init
 {
     if (self = [super init]) {
+        meetupType = TYPE_THREAD;
         meetupData = nil;
         strAddress = @"";
     }
@@ -33,6 +35,7 @@
         meetupData = [[PFObject alloc] initWithClassName:@"Meetup"];
         
         // Id, fromStr, fromId
+        [meetupData setObject:[NSNumber numberWithInt:meetupType] forKey:@"type"];
         strId = [[NSString alloc] initWithFormat:@"%d_%@", [timestamp integerValue], strOwnerId];
         [meetupData setObject:strId forKey:@"meetupId"];
         [meetupData setObject:strOwnerId forKey:@"userFromId"];
@@ -60,6 +63,7 @@
 {
     meetupData = data;
     
+    meetupType = [[meetupData objectForKey:@"type"] integerValue];
     strId = [meetupData objectForKey:@"meetupId"];
     strOwnerId = [meetupData objectForKey:@"userFromId"];
     strOwnerName = [meetupData objectForKey:@"userFromName"];
@@ -244,6 +248,14 @@ static UIViewController* tempController = nil;
             self.strAddress = [self.strAddress stringByAppendingString:venue.country];
         }
     }
+}
+
+-(void)populateWithCoords{
+    PFGeoPoint* ptLocation = [locManager getPosition];
+    if ( ! ptLocation )
+        return;
+    self.location = ptLocation;
+    self.strVenue = [[NSString alloc] initWithFormat:@"Lat: %f.3, lon: %f.3", ptLocation.latitude, ptLocation.longitude];
 }
 
 @end

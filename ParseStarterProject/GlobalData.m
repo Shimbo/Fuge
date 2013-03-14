@@ -54,13 +54,19 @@ static GlobalData *sharedInstance = nil;
     {
         case COMMENT_CREATED:
             [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
-            [strComment appendString:@" created the meetup: "];
+            if (meetup.meetupType == TYPE_MEETUP)
+                [strComment appendString:@" created the meetup: "];
+            else
+                [strComment appendString:@" created the thread: "];
             [strComment appendString:meetup.strSubject];
             [comment setObject:[trueNum stringValue] forKey:@"system"];
             break;
         case COMMENT_SAVED:
             [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
-            [strComment appendString:@" changed meetup details."];
+            if (meetup.meetupType == TYPE_MEETUP)
+                [strComment appendString:@" changed meetup details."];
+            else
+                [strComment appendString:@" changed thread details."];
             [comment setObject:[trueNum stringValue] forKey:@"system"];
             break;
         case COMMENT_JOINED:
@@ -601,6 +607,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [invite setObject:meetup.strId forKey:@"meetupId"];
     [invite setObject:meetup.meetupData forKey:@"meetupData"];
     [invite setObject:[[NSNumber alloc] initWithDouble:[meetup.dateTime timeIntervalSince1970]] forKey:@"meetupTimestamp"];
+    [invite setObject:[NSNumber numberWithInt:meetup.meetupType] forKey:@"type"];
     
     [invite setObject:strCurrentUserId forKey:@"idUserFrom"];
     [invite setObject:strCurrentUserName forKey:@"nameUserFrom"];

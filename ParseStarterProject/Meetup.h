@@ -15,8 +15,8 @@
 
 enum EMeetupType
 {
-    TYPE_MEETUP     = 0,
-    TYPE_THREAD     = 1
+    TYPE_THREAD     = 0,
+    TYPE_MEETUP     = 1
 };
 
 enum EMeetupPrivacy
@@ -29,6 +29,8 @@ enum EMeetupPrivacy
 
 @interface Meetup : NSObject <EKEventEditViewDelegate, UIAlertViewDelegate>
 {
+    NSUInteger  meetupType;
+    
     NSString    *strId;
     NSString    *strOwnerId;
     NSString    *strOwnerName;
@@ -52,6 +54,7 @@ enum EMeetupPrivacy
 @property (nonatomic, copy) NSString *strVenue;
 @property (nonatomic, copy) NSString *strAddress;
 @property (nonatomic, assign) NSUInteger privacy;
+@property (nonatomic, assign) NSUInteger meetupType;
 
 @property (nonatomic, copy) PFObject *meetupData;
 
@@ -64,4 +67,5 @@ enum EMeetupPrivacy
 
 
 -(void)populateWithVenue:(FSVenue*)venue;
+-(void)populateWithCoords;
 @end

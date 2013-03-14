@@ -22,6 +22,7 @@
     UINavigationController *venueNavViewController;
     Meetup* _meetup;
     Person* invitee;
+    NSUInteger meetupType;
 }
 
 @property (nonatomic,strong)FSVenue* selectedVenue;
@@ -30,5 +31,6 @@
 
 -(void) setMeetup:(Meetup*)m;
 -(void) setInvitee:(Person*)i;
+-(void) setType:(NSUInteger)t;
 
 @end

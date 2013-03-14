@@ -109,15 +109,21 @@
 }
 
 - (void)newThreadClicked{
-    MeetupInviteViewController *invite = [[MeetupInviteViewController alloc] initWithNibName:@"MeetupInviteViewController" bundle:nil];
+    /*MeetupInviteViewController *invite = [[MeetupInviteViewController alloc] initWithNibName:@"MeetupInviteViewController" bundle:nil];
     UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:invite];
     [self.navigationController presentViewController:navigation
-                                            animated:YES completion:nil];
+                                            animated:YES completion:nil];*/
+    NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
+    [newMeetupViewController setType:TYPE_THREAD];
+    UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:newMeetupViewController];
+    [self.navigationController presentViewController:navigation animated:YES completion:nil];
+
 }
 
 
 - (void)newMeetupClicked{
     NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
+    [newMeetupViewController setType:TYPE_MEETUP];
     UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:newMeetupViewController];
     [self.navigationController presentViewController:navigation animated:YES completion:nil];
 }

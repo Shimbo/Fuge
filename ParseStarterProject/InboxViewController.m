@@ -83,7 +83,11 @@
                 item.type = INBOX_ITEM_INVITE;
                 item.fromId = [pObject objectForKey:@"idUserFrom"];
                 item.toId = [pObject objectForKey:@"idUserTo"];
-                item.subject = [[NSString alloc] initWithFormat:@"From: %@", [pObject objectForKey:@"nameUserFrom"]];
+                NSUInteger meetupType = [[pObject objectForKey:@"type"] integerValue];
+                if ( meetupType == TYPE_MEETUP )
+                    item.subject = [[NSString alloc] initWithFormat:@"%@ invited to:", [pObject objectForKey:@"nameUserFrom"]];
+                else
+                    item.subject = [[NSString alloc] initWithFormat:@"%@ suggested:", [pObject objectForKey:@"nameUserFrom"]];
                 item.message = @"Loading...";
                 item.data = object;
                 
@@ -113,6 +117,8 @@
                 item.data = pObject;
                 item.dateTime = pObject.createdAt;
                 [tempArray addObject:item];
+                
+                // TODO: add fetch to message owner!
             }
         }
     }
@@ -243,7 +249,8 @@
             Meetup* meetup = [[Meetup alloc] init];
             [meetup unpack:meetupData];
             [meetupController setMeetup:meetup];
-            [meetupController setInvite:item.data];
+            if ( ! item.misc )  // Already responded invites/etc
+                [meetupController setInvite:item.data];
             self.navigationItem.leftItemsSupplementBackButton = true;
             UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:meetupController];
             [self.navigationController presentViewController:navigation animated:YES completion:nil];

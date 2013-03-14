@@ -11,12 +11,12 @@
 
 #import "TestFlightSDK/TestFlight.h"
 
+#import "LocationManager.h"
+
 
 @implementation ParseStarterProjectAppDelegate
 
 @synthesize window;
-
-@synthesize locationManager;
 
 #pragma mark - UIApplicationDelegate
 
@@ -80,11 +80,7 @@
     }
     
     // Location data
-    locationManager = [[CLLocationManager alloc] init];
-    locationManager.delegate = self;
-    locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
-    locationManager.distanceFilter = 100.0f;
-    [locationManager startUpdatingLocation];
+    [locManager startUpdating];
     
     // Retrieving initial data
     
@@ -203,34 +199,6 @@
      See also applicationDidEnterBackground:.
      */
 }
-
-
-#pragma mark -
-#pragma mark Location Stuff
-
-
-- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
-    
-    if (newLocation.horizontalAccuracy < 0) return;
-    
-    NSTimeInterval locationAge = -[newLocation.timestamp timeIntervalSinceNow];
-    if (locationAge > 5.0)
-    {        
-    }
-    
-    CLLocationCoordinate2D coord = newLocation.coordinate;
-    
-    PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:coord.latitude
-                                                  longitude:coord.longitude];
-    [[PFUser currentUser] setObject:geoPoint forKey:@"location"];
-    
-    [locationManager stopUpdatingLocation];
-    
-    NSLog(@"Location updated");
-}
-
-
-
 
 
 @end

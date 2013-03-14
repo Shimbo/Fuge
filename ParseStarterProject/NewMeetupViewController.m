@@ -12,6 +12,8 @@
 #import "FSVenue.h"
 #import "GlobalData.h"
 #import "MeetupInviteViewController.h"
+#import "LocationManager.h"
+
 @implementation NewMeetupViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -28,6 +30,7 @@
 -(void) setMeetup:(Meetup*)m
 {
     _meetup = m;
+    meetupType = m.meetupType;
 }
 
 -(void) setInvitee:(Person*)i
@@ -35,10 +38,21 @@
     invitee = i;
 }
 
+-(void) setType:(NSUInteger)t
+{
+    meetupType = t;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.title = @"Meetup";
+    
+    // Title
+    if ( meetupType == TYPE_MEETUP )
+        self.title = @"Meetup";
+    else
+        self.title = @"Thread";
+    
     // Navigation
     [self.navigationController setNavigationBarHidden:false animated:false];
     [self.navigationItem setHidesBackButton:false animated:false];
@@ -78,10 +92,16 @@
     }
     else
     {
-        [dateTime setDate:dateDefault];
+        if ( meetupType == TYPE_MEETUP )
+            [dateTime setDate:dateDefault];
+        else
+            [dateTime setDate:dateMax];
         if ( invitee )
             [notifySwitch setOn:TRUE];
     }
+    
+    if ( meetupType == TYPE_THREAD )
+        dateTime.hidden = TRUE;
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -127,9 +147,9 @@
         return NO;
     }
     
-    if ( ! self.selectedVenue && ! _meetup )
+    if ( ! self.selectedVenue && ! _meetup && ! [locManager getPosition] )
     {
-        UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Not yet!" message:@"Please, select a venue for the meetup using the big and noticeable button!" delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
+        UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Not yet!" message:@"We were unable to retrieve your current location, please, select a venue for the meetup." delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
         [errorAlert show];
         return NO;
     }
@@ -139,12 +159,17 @@
 
 
 -(void)populateMeetupWithData:(Meetup*)meetup{
+    meetup.meetupType = meetupType;
     meetup.strOwnerId = (NSString *) [[PFUser currentUser] objectForKey:@"fbId"];
     meetup.strOwnerName = (NSString *) [[PFUser currentUser] objectForKey:@"fbName"];
     meetup.strSubject = subject.text;
     meetup.privacy = notifySwitch.isOn;
     meetup.dateTime = [dateTime date];
-    [meetup populateWithVenue:self.selectedVenue];
+    
+    if ( self.selectedVenue )
+        [meetup populateWithVenue:self.selectedVenue];
+    else
+        [meetup populateWithCoords];
 }
 
 -(void)save{

@@ -12,6 +12,20 @@
 #import <EventKitUI/EventKitUI.h>
 #import <MapKit/MapKit.h>
 
+enum EMeetupButtons
+{
+    MB_JOIN         = 0,
+    MB_SUBSCRIBE    = 1,
+    MB_DECLINE      = 2,
+    MB_LEAVE        = 3,
+    MB_CALENDAR     = 4,
+    MB_INVITE       = 5,
+    MB_CANCEL       = 6,
+    MB_EDIT         = 7,
+    
+    MB_TOTAL_COUNT  = 8
+};
+
 @interface MeetupViewController : UIViewController <UITextViewDelegate, MKMapViewDelegate>
 {
     Meetup* meetup;
@@ -23,6 +37,7 @@
     IBOutlet UILabel *labelLocation;
     
     id delegate;
+    NSMutableArray*    buttons;
 }
 
 -(void) setMeetup:(Meetup*)m;
