@@ -36,7 +36,8 @@ static GlobalData *sharedInstance = nil;
     if (self) {
         circles = [[NSMutableDictionary alloc] init];
         meetups = [[NSMutableArray alloc] init];
-        messages = [[NSMutableArray alloc] init];
+        messages = nil;
+        comments = nil;
         nInboxLoadingStage = 0;
         nInboxUnreadCount = 0;
     }
@@ -81,9 +82,9 @@ static GlobalData *sharedInstance = nil;
     }
     
     [comment setObject:strCurrentUserId forKey:@"userId"];
-    [comment setObject:meetup.strOwnerId forKey:@"userId"];
     [comment setObject:strCurrentUserName forKey:@"userName"];
     [comment setObject:meetup.strId forKey:@"meetupId"];
+    [comment setObject:meetup.meetupData forKey:@"meetupData"];
     [comment setObject:strComment forKey:@"comment"];
     //comment.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
     //[comment.ACL setPublicReadAccess:true];
@@ -407,8 +408,9 @@ NSInteger sortByName(id num1, id num2, void *context)
     NSMutableArray* inboxData = [[NSMutableArray alloc] init];
     [inboxData addObjectsFromArray:[self getUniqueInvites]];
     [inboxData addObjectsFromArray:[self getUniqueMessages]];
+    [inboxData addObjectsFromArray:[self getUniqueThreads]];
     
-    // Creating temporary overal array
+    // Creating temporary array for all items
     NSMutableArray* tempArray = [[NSMutableArray alloc] init];
     for ( id object in inboxData )
     {
@@ -428,22 +430,16 @@ NSInteger sortByName(id num1, id num2, void *context)
                 item.type = INBOX_ITEM_INVITE;
                 item.fromId = [pObject objectForKey:@"idUserFrom"];
                 item.toId = [pObject objectForKey:@"idUserTo"];
+                item.message = [pObject objectForKey:@"meetupSubject"];
+                item.data = object;
+                item.dateTime = pObject.createdAt;
+                
                 NSUInteger meetupType = [[pObject objectForKey:@"type"] integerValue];
                 if ( meetupType == TYPE_MEETUP )
                     item.subject = [[NSString alloc] initWithFormat:@"%@ invited to:", [pObject objectForKey:@"nameUserFrom"]];
                 else
                     item.subject = [[NSString alloc] initWithFormat:@"%@ suggested:", [pObject objectForKey:@"nameUserFrom"]];
-                item.message = @"Loading...";
-                item.data = object;
                 
-                PFObject *meetupData = [pObject objectForKey:@"meetupData"];
-                [meetupData fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-                    item.message = [meetupData objectForKey:@"subject"];
-                    [[controller tableView] reloadData];
-                    // TODO: probably we should reload not the whole table but only this cell? How?
-                }];
-                
-                item.dateTime = pObject.createdAt;
                 [tempArray addObject:item];
             }
             if ( [[pObject className] compare:@"Message"] == NSOrderedSame )
@@ -462,8 +458,18 @@ NSInteger sortByName(id num1, id num2, void *context)
                 item.data = pObject;
                 item.dateTime = pObject.createdAt;
                 [tempArray addObject:item];
-                
-                // TODO: add fetch to message owner!
+            }
+            if ( [[pObject className] compare:@"Comment"] == NSOrderedSame )
+            {
+                item.type = INBOX_ITEM_COMMENT;
+                item.fromId = [pObject objectForKey:@"userId"];
+                item.toId = [pObject objectForKey:@"userId"];
+                item.subject = [pObject objectForKey:@"meetupSubject"];
+                item.message = [pObject objectForKey:@"comment"];
+                item.misc = nil;
+                item.data = pObject;
+                item.dateTime = pObject.createdAt;
+                [tempArray addObject:item];
             }
         }
     }
@@ -671,41 +677,99 @@ NSInteger sortByName(id num1, id num2, void *context)
     }];
 }
 
+- (void)addMessage:(PFObject*)message
+{
+    [messages addObject:message];
+}
+
+- (NSArray*)getUniqueThreads
+{
+    NSMutableArray *threadsUnique = [[NSMutableArray alloc] init];
+    
+    for (PFObject *comment in comments)
+    {
+        // Looking for already created thread
+        Boolean bSuchThreadAlreadyAdded = false;
+        for (PFObject *commentOld in threadsUnique)
+            if ( [[comment objectForKey:@"meetupId"] compare:[commentOld objectForKey:@"meetupId"]] == NSOrderedSame )
+            {
+                // Replacing with an older unread:
+                // checking date, if it's > than last read, but < than current, replace
+                
+                Boolean bExchange = false;
+                
+                Boolean bOwnMessage = ( [[comment objectForKey:@"userId"] compare:strCurrentUserId] == NSOrderedSame );
+                Boolean bOldOwnMessage = ( [[commentOld objectForKey:@"userId"] compare:strCurrentUserId] == NSOrderedSame );
+                
+                NSDate* lastReadDate = [self getConversationDate:[comment objectForKey:@"meetupId"]];
+                
+                Boolean bOldBeforeThanReadDate = false;
+                Boolean bNewLaterThanReadDate = true;
+                Boolean bNewIsBeforeOld = false;
+                if ( commentOld.createdAt && comment.createdAt )
+                {
+                    bNewIsBeforeOld = ( [ comment.createdAt compare:commentOld.createdAt ] == NSOrderedAscending );
+                    if ( lastReadDate )
+                    {
+                        bOldBeforeThanReadDate = [commentOld.createdAt compare:lastReadDate] != NSOrderedDescending;
+                        bNewLaterThanReadDate = [comment.createdAt compare:lastReadDate] == NSOrderedDescending;
+                    }
+                }
+                
+                // New message is not older, but old message is already read
+                if ( ! bNewIsBeforeOld && bOldBeforeThanReadDate )
+                    bExchange = true;
+                
+                // New message is older but still unread
+                if ( bNewIsBeforeOld && bNewLaterThanReadDate && ! bOwnMessage )
+                    bExchange = true;
+                
+                // User own messages is later than old unread
+                if ( ! bNewIsBeforeOld && bOwnMessage )
+                    bExchange = true;
+                
+                // New message is after own users message
+                if ( ! bNewIsBeforeOld && bOldOwnMessage )
+                    bExchange = true;
+                
+                if ( bExchange)
+                    [threadsUnique removeObject:commentOld];
+                else
+                    bSuchThreadAlreadyAdded = true;
+                break;
+            }
+        
+        // Adding object
+        if ( ! bSuchThreadAlreadyAdded )
+            [threadsUnique addObject:comment];
+    }
+    
+    return threadsUnique;
+}
+
 - (void)loadComments
 {
     // Query
-    /*PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Comment"];
-    [messagesQuery whereKey:@"idUserTo" equalTo:[[PFUser currentUser] objectForKey:@"fbId"]];
+    PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Comment"];
+    NSArray* subscriptions = [[PFUser currentUser] objectForKey:@"subscriptions"];
+    [messagesQuery whereKey:@"meetupId" containedIn:subscriptions];
     
     // TODO: add here later another query limitation by date (like 10 last days) to not push server too hard. It will be like pages, loading every 10 previous days or so.
     
     // Loading
-    [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects1, NSError *error) {
+    [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
-        PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Message"];
-        [messagesQuery whereKey:@"idUserFrom" equalTo:[[PFUser currentUser] objectForKey:@"fbId"]];
+        // Comments
+        comments = [[NSMutableArray alloc] initWithArray:objects];
         
-        [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects2, NSError *error) {
-            
-            // Merging results
-            NSMutableSet *set = [NSMutableSet setWithArray:objects1];
-            [set addObjectsFromArray:objects2];
-            
-            // Actuall messages
-            messages = [[NSMutableArray alloc] initWithArray:[set allObjects]];
-            
-            // Recalc what to show in inbox
-            //[self updateUniqueMessages];
-            
-            // Loading stage complete
-            nInboxLoadingStage++;
-        }];
-    }];*/
+        // Loading stage complete
+        nInboxLoadingStage++;
+    }];
 }
 
-- (void)addMessage:(PFObject*)message
+- (void)addComment:(PFObject*)comment
 {
-    [messages addObject:message];
+    [comments addObject:comment];
 }
 
 
@@ -721,6 +785,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [invite setObject:meetup.meetupData forKey:@"meetupData"];
     [invite setObject:[[NSNumber alloc] initWithDouble:[meetup.dateTime timeIntervalSince1970]] forKey:@"meetupTimestamp"];
     [invite setObject:[NSNumber numberWithInt:meetup.meetupType] forKey:@"type"];
+    [invite setObject:meetup.strSubject forKey:@"meetupSubject"];
     
     [invite setObject:strCurrentUserId forKey:@"idUserFrom"];
     [invite setObject:strCurrentUserName forKey:@"nameUserFrom"];

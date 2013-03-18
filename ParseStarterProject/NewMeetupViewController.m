@@ -58,7 +58,6 @@
     [self.navigationItem setHidesBackButton:false animated:false];
     [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelButtonDown)]];
     
-    //UIBarButtonItem *invite = [[UIBarButtonItem alloc] initWithTitle:@"Invite" style:UIBarButtonItemStylePlain target:self action:@selector(invite)];
     UIBarButtonItem *button = nil;
     if (_meetup) {
         button = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(save)];
@@ -96,7 +95,7 @@
             [dateTime setDate:dateDefault];
         else
             [dateTime setDate:dateMax];
-        if ( invitee )
+        if ( invitee )  // Private meetup created from user profile, turn on privacy
             [notifySwitch setOn:TRUE];
     }
     
@@ -114,30 +113,11 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
-
-/*- (void)viewDidUnload {
-    dateTime = nil;
-    privacy = nil;
-    subject = nil;
-    notifySwitch = nil;
-    location = nil;
-    [super viewDidUnload];
-}*/
 
 - (void)cancelButtonDown {
     [self dismissModalViewControllerAnimated:YES];
-    //[self.navigationController setNavigationBarHidden:false animated:true];
-    //[self.navigationController popViewControllerAnimated:YES];
 }
-
-/*-(void)invite{
-    if (!inviteController)
-        inviteController = [[MeetupInviteViewController alloc]init];
-    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:inviteController];
-    [self presentViewController:nav animated:YES completion:nil];
-}*/
 
 -(BOOL)validateForm{
     if ( subject.text.length == 0 )
@@ -155,8 +135,6 @@
     }
     return YES;
 }
-
-
 
 -(void)populateMeetupWithData:(Meetup*)meetup{
     meetup.meetupType = meetupType;

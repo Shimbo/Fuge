@@ -242,7 +242,7 @@ double animatedDistance;
     [message setObject:personThis.strId forKey:@"idUserTo"];
     [message setObject:messageNew.text forKey:@"text"];
     [message setObject:[PFUser currentUser] forKey:@"objUserFrom"];
-//    [message setObject:personThis.object forKey:@"objUserTo"]; // TODO
+    [message setObject:personThis.personData forKey:@"objUserTo"];
     [message setObject:[[PFUser currentUser] objectForKey:@"fbName"] forKey:@"nameUserFrom"];
     [message setObject:personThis.strName forKey:@"nameUserTo"];
     // TODO: it's bad approach, use the name from PFUser, load PFUsers for all messages

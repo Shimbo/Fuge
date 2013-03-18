@@ -30,8 +30,14 @@
 {
     NSNumber* timestamp = [[NSNumber alloc] initWithDouble:[dateTime timeIntervalSince1970]];
     
+    // For the first save we can't do it in the background because following objects
+    // could use objectId of this meetup. Saving in background will make these objects
+    // to use wrong id as it creates on server.
+    Boolean bFirstSave = false;
+    
     if ( ! meetupData )
     {
+        bFirstSave = true;
         meetupData = [[PFObject alloc] initWithClassName:@"Meetup"];
         
         // Id, fromStr, fromId
@@ -56,7 +62,12 @@
     [meetupData setObject:strAddress forKey:@"address"];
     
     // Save
-    [meetupData saveInBackground];
+    if ( bFirstSave )
+        [meetupData save];
+    else
+        [meetupData saveInBackground];
+    
+    // TODO: add animation for save not in background
 }
 
 -(void) unpack:(PFObject*)data

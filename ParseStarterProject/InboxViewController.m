@@ -123,7 +123,7 @@
     inboxCell.subject.text = item.subject;
     inboxCell.message.text = item.message;
     inboxCell.misc.text = item.misc;
-    if ( [item.fromId compare:[[PFUser currentUser] objectForKey:@"fbId"]] == NSOrderedSame )
+    if ( [item.fromId compare:strCurrentUserId] == NSOrderedSame )
         [inboxCell.mainImage loadImageFromURL:[Person imageURLWithId:item.toId]];
     else
         [inboxCell.mainImage loadImageFromURL:[Person imageURLWithId:item.fromId]];
@@ -143,18 +143,19 @@
     InboxViewItem* item = [items objectAtIndex:nRow];
     
     // Another switch depending on item type
-    if ( item.type == INBOX_ITEM_INVITE )
+    if ( item.type == INBOX_ITEM_INVITE || item.type == INBOX_ITEM_COMMENT )
     {
         PFObject *meetupData = [item.data objectForKey:@"meetupData"];
         NSError* error;
         [meetupData fetchIfNeeded:&error];
+        
         if ( ! error )
         {
             MeetupViewController *meetupController = [[MeetupViewController alloc] initWithNibName:@"MeetupView" bundle:nil];
             Meetup* meetup = [[Meetup alloc] init];
             [meetup unpack:meetupData];
             [meetupController setMeetup:meetup];
-            if ( ! item.misc )  // Already responded invites/etc
+            if ( ! item.misc && item.type == INBOX_ITEM_INVITE )  // Already responded invites/etc
                 [meetupController setInvite:item.data];
             self.navigationItem.leftItemsSupplementBackButton = true;
             UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:meetupController];
@@ -163,13 +164,24 @@
     }
     else if ( item.type == INBOX_ITEM_MESSAGE )
     {
-        // TODO: what if person is unknown and not in our global data? We should load him/her!
-        NSString* strId;
-        if ( [item.fromId compare:[[PFUser currentUser] objectForKey:@"fbId"]] == NSOrderedSame )
-            strId = item.toId;
+        // Retrieving person data
+        PFUser* personData;
+        if ( [item.fromId compare:strCurrentUserId] == NSOrderedSame )
+            personData = [item.data objectForKey:@"objUserTo"];
         else
-            strId = item.fromId;
+            personData = [item.data objectForKey:@"objUserFrom"];
+        NSError* error;
+        [personData fetchIfNeeded:&error];
+        
+        // Trying to get this person if in one of our circles
+        NSString* strId = [personData objectForKey:@"fbId"];
         Person* person = [globalData getPersonById:strId];
+        
+        // Creating person if not
+        if ( ! person )
+            person = [[Person alloc] init:personData circle:CIRCLE_RANDOM];
+        
+        // Opening profile
         if ( person )
         {
             UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];

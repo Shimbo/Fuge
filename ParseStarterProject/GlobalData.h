@@ -44,7 +44,7 @@ enum EMeetupCommentType
     NSArray             *newUsers;
     NSArray             *invites;
     NSMutableArray      *messages;
-    NSArray             *comments;
+    NSMutableArray      *comments;
     NSUInteger          nInboxLoadingStage;
     NSUInteger          nInboxUnreadCount;
 }
@@ -67,6 +67,8 @@ enum EMeetupCommentType
 - (void)addMeetup:(Meetup*)meetup;
 // New message created in user profile window
 - (void)addMessage:(PFObject*)message;
+// New comment created in meetup window
+- (void)addComment:(PFObject*)comment;
 
 // Global data, loading in foreground
 - (void)reload:(MapViewController*)controller;
