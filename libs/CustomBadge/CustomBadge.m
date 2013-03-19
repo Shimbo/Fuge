@@ -135,18 +135,12 @@
 	return [[self alloc] initWithString:badgeString withStringColor:stringColor withInsetColor:insetColor withBadgeFrame:badgeFrameYesNo withBadgeFrameColor:frameColor];
 }
 
-+(CustomBadge*)soundtrackerCustomBadge{
-    CustomBadge *b = [CustomBadge customBadgeWithString:@"0" 
-                                        withStringColor:[UIColor whiteColor] 
-                                         withInsetColor:[UIColor colorWithRed:0
-                                                                        green:0 
-                                                                         blue:0
-                                                                        alpha:0.4]
-                                         withBadgeFrame:YES 
-                                    withBadgeFrameColor:[UIColor colorWithRed:0
-                                                                        green:0 
-                                                                         blue:0
-                                                                        alpha:0.4]];
++(CustomBadge*)secondCircleCustomBadge{
+    CustomBadge *b = [CustomBadge customBadgeWithString:@"0"
+                                        withStringColor:[UIColor whiteColor]
+                                         withInsetColor:[UIColor redColor]
+                                         withBadgeFrame:YES
+                                    withBadgeFrameColor:[UIColor lightGrayColor]];
     b.hidden = YES;
     return b;
 }

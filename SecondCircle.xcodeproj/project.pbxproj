@@ -34,6 +34,8 @@
 		4706D11116C11CA600CAF9AF /* reveal_menu_icon_portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 4706D10F16C11CA600CAF9AF /* reveal_menu_icon_portrait.png */; };
 		4706D11216C11CA600CAF9AF /* reveal_menu_icon_portrait@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4706D11016C11CA600CAF9AF /* reveal_menu_icon_portrait@2x.png */; };
 		470F329716F860920015E7DC /* CustomBadge.m in Sources */ = {isa = PBXBuildFile; fileRef = 470F329616F860920015E7DC /* CustomBadge.m */; };
+		470F329B16F8B4E20015E7DC /* reveal_menu_button_portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 470F329916F8B4E20015E7DC /* reveal_menu_button_portrait.png */; };
+		470F329C16F8B4E20015E7DC /* reveal_menu_button_portrait@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 470F329A16F8B4E20015E7DC /* reveal_menu_button_portrait@2x.png */; };
 		471EAC5C16C0D419009F88F9 /* Foursquare2.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5216C0D3E0009F88F9 /* Foursquare2.m */; };
 		471EAC5D16C0D42C009F88F9 /* FSRequester.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5416C0D3E0009F88F9 /* FSRequester.m */; };
 		471EAC5E16C0D42F009F88F9 /* FSTargetCallback.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5616C0D3E0009F88F9 /* FSTargetCallback.m */; };
@@ -146,6 +148,8 @@
 		4706D11316C12A1600CAF9AF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		470F329516F860920015E7DC /* CustomBadge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomBadge.h; sourceTree = "<group>"; };
 		470F329616F860920015E7DC /* CustomBadge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomBadge.m; sourceTree = "<group>"; };
+		470F329916F8B4E20015E7DC /* reveal_menu_button_portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = reveal_menu_button_portrait.png; sourceTree = "<group>"; };
+		470F329A16F8B4E20015E7DC /* reveal_menu_button_portrait@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reveal_menu_button_portrait@2x.png"; sourceTree = "<group>"; };
 		471EAC5116C0D3E0009F88F9 /* Foursquare2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Foursquare2.h; sourceTree = "<group>"; };
 		471EAC5216C0D3E0009F88F9 /* Foursquare2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Foursquare2.m; sourceTree = "<group>"; };
 		471EAC5316C0D3E0009F88F9 /* FSRequester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FSRequester.h; sourceTree = "<group>"; };
@@ -367,6 +371,8 @@
 		4706D0F616C10D0600CAF9AF /* PKRevealController */ = {
 			isa = PBXGroup;
 			children = (
+				470F329916F8B4E20015E7DC /* reveal_menu_button_portrait.png */,
+				470F329A16F8B4E20015E7DC /* reveal_menu_button_portrait@2x.png */,
 				4706D10F16C11CA600CAF9AF /* reveal_menu_icon_portrait.png */,
 				4706D11016C11CA600CAF9AF /* reveal_menu_icon_portrait@2x.png */,
 				4706D0F716C10D0600CAF9AF /* PKRevealController.h */,
@@ -628,8 +634,11 @@
 				4C1C438416C9B126008BA9CA /* InboxViewController.xib in Resources */,
 				4C1C438916C9BF64008BA9CA /* InboxCell.xib in Resources */,
 				47BDBC9316EA268F008B12CF /* MeetupInviteViewController.xib in Resources */,
-				47BDBC9516EA389C008B12CF /* PersonInviteCell.xib in Resources */,
-				4CAE597816F8A53200A69CA0 /* StatsViewController.xib in Resources */,
+				47BDBC9516EA389C008B12CF /* PersonInviteCell.xib in 
+				4CAE597816F8A53200A69CA0 /* StatsViewController.xib in 
+				470F329B16F8B4E20015E7DC /* reveal_menu_button_portrait.png in Resources */,
+				470F329C16F8B4E20015E7DC /* reveal_menu_button_portrait@2x.png in Resources */,
+>>>>>>> added unread badge in navigation button
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

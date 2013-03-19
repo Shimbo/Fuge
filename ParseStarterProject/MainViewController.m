@@ -8,6 +8,8 @@
 
 #import "MainViewController.h"
 #import "ParseStarterProjectAppDelegate.h"
+#import "CustomBadge.h"
+#import "GlobalData.h"
 
 @implementation MainViewController
 
@@ -16,16 +18,42 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(unreadDidUpdate)
+                                                    name:kInboxUnreadCountDidUpdate
+                                                  object:nil];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter]removeObserver:self];
+}
+
+-(void)unreadDidUpdate{
+    [_unreadBadge setNumber:[globalData getInboxUnreadCount]];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    UIImage *revealImagePortrait = [UIImage imageNamed:@"reveal_menu_icon_portrait.png"];
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:revealImagePortrait landscapeImagePhone:nil style:UIBarButtonItemStylePlain target:self action:@selector(showLeftView:)];
+    
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    [button setBackgroundImage:[UIImage imageNamed:@"reveal_menu_button_portrait.png"]
+                      forState:UIControlStateNormal];
+    [button addTarget:self action:@selector(showLeftView:) forControlEvents:UIControlEventTouchUpInside];
+    [button sizeToFit];
+    _unreadBadge = [CustomBadge secondCircleCustomBadge];
+    _unreadBadge.center = CGPointMake(45, 5);
+    [_unreadBadge setNumber:0];
+    [button addSubview:_unreadBadge];
+    
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
 }
+
+
 
 - (void)showLeftView:(id)sender
 {
@@ -39,5 +67,6 @@
         [delegate.revealController showViewController:delegate.revealController.leftViewController];
     }
 }
+
 
 @end

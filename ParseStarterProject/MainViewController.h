@@ -8,6 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MainViewController : UIViewController
+
+@class CustomBadge;
+@interface MainViewController : UIViewController{
+    CustomBadge *_unreadBadge;
+}
 
 @end
