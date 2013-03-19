@@ -42,9 +42,8 @@
     // Saving recent
     NSMutableArray* arrayRecentIds = [[NSMutableArray alloc] init];
     [arrayRecentIds addObjectsFromArray:[[self selectedPersons] valueForKeyPath:@"strId"]];
-    [[PFUser currentUser] addUniqueObjectsFromArray:arrayRecentIds forKey:@"recentInvites"];
-    [[PFUser currentUser] saveEventually];
-        
+    [globalData addRecentInvites:arrayRecentIds];
+    
     [self dismissModalViewControllerAnimated:YES];
 }
 
@@ -67,8 +66,7 @@
     self.searchDisplayController.searchBar.delegate = searcher;
     
     // This code works! Use it for recent users!
-    NSArray* arrayRecentsIds = [[PFUser currentUser] objectForKey:@"recentInvites"];
-    NSArray *recentPersons = [globalData getPersonsByIds:arrayRecentsIds];
+    NSArray *recentPersons = [globalData getRecentPersons];
     NSLog(@"%@",recentPersons);
 }
 

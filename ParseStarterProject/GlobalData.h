@@ -86,6 +86,12 @@ enum EMeetupCommentType
 - (void) unsubscribeToThread:(NSString*)strThread;
 - (Boolean) isSubscribedToThread:(NSString*)strThread;
 
+// Misc
+- (void) addRecentInvites:(NSArray*)recentInvites;
+- (void) addRecentVenue:(FSVenue*)recentVenue;
+- (NSArray*) getRecentPersons;
+- (NSArray*) getRecentVenues;
+
 // Invites
 // One of two last parameters should be nil
 - (void)createInvite:(Meetup*)meetup objectTo:(Person*)recipient stringTo:(NSString*)strRecipient;

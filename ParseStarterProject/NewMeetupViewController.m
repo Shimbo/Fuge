@@ -145,7 +145,10 @@
     meetup.dateTime = [dateTime date];
     
     if ( self.selectedVenue )
+    {
         [meetup populateWithVenue:self.selectedVenue];
+        [globalData addRecentVenue:self.selectedVenue];
+    }
     else
         [meetup populateWithCoords];
 }

@@ -977,4 +977,38 @@ NSInteger sortByName(id num1, id num2, void *context)
     return false;
 }
 
+- (void) addRecentInvites:(NSArray*)recentInvites
+{
+    [[PFUser currentUser] addUniqueObjectsFromArray:recentInvites forKey:@"recentInvites"];
+    [[PFUser currentUser] saveEventually];
+}
+
+- (void) addRecentVenue:(FSVenue*)recentVenue
+{
+    NSMutableArray* venues = [[PFUser currentUser] objectForKey:@"recentVenues"];
+    if ( ! venues )
+        venues = [[NSMutableArray alloc] init];
+    
+    // Check if already added
+    for ( NSDictionary* venue in venues )
+        if ([recentVenue.venueId compare:[venue objectForKey:@"id"]] == NSOrderedSame)
+            return;
+    
+    [venues addObject:recentVenue.fsVenue];
+    
+    [[PFUser currentUser] setObject:venues forKey:@"recentVenues"];
+    [[PFUser currentUser] saveEventually];
+}
+
+- (NSArray*) getRecentPersons
+{
+    NSArray* arrayRecentsIds = [[PFUser currentUser] objectForKey:@"recentInvites"];
+    return [globalData getPersonsByIds:arrayRecentsIds];
+}
+
+- (NSArray*) getRecentVenues
+{
+    return [[PFUser currentUser] objectForKey:@"recentVenues"];
+}
+
 @end

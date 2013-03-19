@@ -14,7 +14,7 @@
 }
 
 @property(nonatomic,strong)NSString *name;
-@property(nonatomic,strong)NSNumber *venueId;
+@property(nonatomic,strong)NSString *venueId;
 
 @property(nonatomic,strong)NSNumber *lat;
 @property(nonatomic,strong)NSNumber *lon;
