@@ -15,12 +15,21 @@
 #import "MeetupInviteSearch.h"
 
 @implementation MeetupInviteViewController
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        selected = [NSMutableDictionary dictionaryWithCapacity:10];
+    }
+    return self;
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         meetup = nil;
+        selected = [NSMutableDictionary dictionaryWithCapacity:10];
     }
     return self;
 }
@@ -54,7 +63,7 @@
     UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done)];
     [self.navigationItem setRightBarButtonItem:done];
     
-    selected = [NSMutableDictionary dictionaryWithCapacity:10];
+    
     UINib *nib = [UINib nibWithNibName:@"PersonInviteCell" bundle:nil];
     [self.tableView registerNib:nib forCellReuseIdentifier:@"PersonCellIdent"];
     [self.searchDisplayController.searchResultsTableView registerNib:nib forCellReuseIdentifier:@"PersonCellIdent"];
