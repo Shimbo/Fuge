@@ -13,6 +13,9 @@
 @class MapViewController;
 @class InboxViewController;
 
+
+static NSString *const kInboxUnreadCountDidUpdate = @"kInboxUnreadCountDidChange";
+
 #define globalData [GlobalData sharedInstance]
 #define strCurrentUserId [[PFUser currentUser] objectForKey:@"fbId"]
 #define strCurrentUserName [[PFUser currentUser] objectForKey:@"fbName"]

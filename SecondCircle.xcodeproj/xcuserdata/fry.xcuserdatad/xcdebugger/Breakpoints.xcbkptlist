@@ -8,11 +8,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "ParseStarterProject/LeftMenuController.m"
-         timestampString = "384886178.927233"
+         timestampString = "385395037.055436"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "58"
-         endingLineNumber = "58"
+         startingLineNumber = "76"
+         endingLineNumber = "76"
          landmarkName = "-showViewController:"
          landmarkType = "5">
       </FileBreakpoint>

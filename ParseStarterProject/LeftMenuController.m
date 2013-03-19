@@ -12,8 +12,14 @@
 #import "ProfileViewController.h"
 #import <Parse/Parse.h>
 #import "RootViewController.h"
+<<<<<<< HEAD
 #import "StatsViewController.h"
 #import "GlobalData.h"
+=======
+#import "CustomBadge.h"
+#import "GlobalData.h"
+
+>>>>>>> added bedge to left menu
 
 @implementation LeftMenuController
 - (id)init
@@ -25,9 +31,17 @@
     return self;
 }
 
+
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [_inboxBadge setNumber:[globalData getInboxUnreadCount]];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+<<<<<<< HEAD
     NSArray* items = @[@"Inbox",@"Cycles",@"Map",@"User Profile",@"Logout"];
     NSArray* selectors = @[@"showInbox",@"showCicles",@"showMap",@"showUser",@"logout"];
     _items = [[NSMutableArray alloc] initWithArray:items];
@@ -38,6 +52,19 @@
         [_items addObject:@"Stats"];
         [_selectors addObject:@"showStats"];
     }
+=======
+    _items = @[@"Inbox",@"Cycles",@"Map",@"User Profile",@"Logout"];
+    _selectors = @[@"showInbox",@"showCicles",@"showMap",@"showUser",@"logout"];
+    _inboxBadge = [CustomBadge customBadgeWithString:@"0"
+                                     withStringColor:[UIColor whiteColor]
+                                      withInsetColor:[UIColor redColor]
+                                      withBadgeFrame:YES
+                                 withBadgeFrameColor:[UIColor lightGrayColor]];
+}
+
+-(void)inboxUnreadCountDidUpdate{
+    [_inboxBadge setNumber:[globalData getInboxUnreadCount]];
+>>>>>>> added bedge to left menu
 }
 
 -(void)showInbox{
@@ -103,6 +130,11 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:ident];
     if (!cell) {
         cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ident];
+        if (indexPath.row == 0) {
+            [cell insertSubview:_inboxBadge atIndex:100];
+            _inboxBadge.center = CGPointMake(240, 22);
+            [_inboxBadge setNumber:[globalData getInboxUnreadCount]];
+        }
     }
     cell.textLabel.text = _items[indexPath.row];
     return cell;

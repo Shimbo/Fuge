@@ -10,11 +10,14 @@
 
 #import "ParseStarterProjectAppDelegate.h"
 @class MapViewController;
+
+@class CustomBadge;
 @interface LeftMenuController : UIViewController<UIAlertViewDelegate>{
     NSMutableArray *_items;
     NSMutableArray *_selectors;
     RootViewController *_rootViewController;
     MapViewController *_mapViewController;
+    CustomBadge *_inboxBadge;
 }
 
 @property(nonatomic,weak)ParseStarterProjectAppDelegate *appDelegate;

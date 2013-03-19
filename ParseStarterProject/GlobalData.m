@@ -518,6 +518,9 @@ NSInteger sortByName(id num1, id num2, void *context)
     if ( [inboxOld count] > 0 )
         [inbox setObject:inboxOld forKey:@"Old"];
     
+    
+    [[NSNotificationCenter defaultCenter]postNotificationName:kInboxUnreadCountDidUpdate
+                                                       object:nil];
     nInboxUnreadCount = [inboxNew count];
     
     return inbox;    
