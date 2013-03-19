@@ -50,6 +50,8 @@ enum EMeetupCommentType
     NSMutableArray      *comments;
     NSUInteger          nInboxLoadingStage;
     NSUInteger          nInboxUnreadCount;
+    NSMutableArray*     newFriendsFb;
+    NSMutableArray*     newFriends2O;
 }
 
 + (id)sharedInstance;

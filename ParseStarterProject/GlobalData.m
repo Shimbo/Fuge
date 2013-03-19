@@ -40,6 +40,8 @@ static GlobalData *sharedInstance = nil;
         comments = nil;
         nInboxLoadingStage = 0;
         nInboxUnreadCount = 0;
+        newFriendsFb = nil;
+        newFriends2O = nil;
     }
     
     return self;
@@ -224,6 +226,10 @@ NSInteger sortByName(id num1, id num2, void *context)
     // Create a list of friends' Facebook IDs
     for (NSDictionary *friendObject in friendObjects)
         [friendIds addObject:[friendObject objectForKey:@"id"]];
+    
+    // Storing old friends lists (to calculate new friends later in this call)
+    NSArray* oldFriendsFb = [[[PFUser currentUser] objectForKey:@"fbFriends"] copy];
+    NSArray* oldFriends2O = [[[PFUser currentUser] objectForKey:@"fbFriends2O"] copy];
             
     // Saving user FB friends
     [[PFUser currentUser] addUniqueObjectsFromArray:friendIds forKey:@"fbFriends"];
@@ -247,6 +253,12 @@ NSInteger sortByName(id num1, id num2, void *context)
         // Notification for that user if the friend is new
         [pushManager sendPushNewUser:PUSH_NEW_FBFRIEND idTo:[friendUser objectForKey:@"fbId"]];
     }
+    
+    // Creating new friends list
+    newFriendsFb = [[[PFUser currentUser] objectForKey:@"fbFriends"] mutableCopy];
+    newFriends2O = [[[PFUser currentUser] objectForKey:@"fbFriends2O"] mutableCopy];
+    [newFriendsFb removeObjectsInArray:oldFriendsFb];
+    [newFriends2O removeObjectsInArray:oldFriends2O];
 }
 
 - (void) load2OFriends
@@ -411,6 +423,8 @@ NSInteger sortByName(id num1, id num2, void *context)
     [inboxData addObjectsFromArray:[self getUniqueInvites]];
     [inboxData addObjectsFromArray:[self getUniqueMessages]];
     [inboxData addObjectsFromArray:[self getUniqueThreads]];
+    [inboxData addObjectsFromArray:[self getPersonsByIds:newFriendsFb]];
+    [inboxData addObjectsFromArray:[self getPersonsByIds:newFriends2O]];
     
     // Creating temporary array for all items
     NSMutableArray* tempArray = [[NSMutableArray alloc] init];
@@ -474,6 +488,20 @@ NSInteger sortByName(id num1, id num2, void *context)
                 [tempArray addObject:item];
             }
         }
+        else if ( [object isKindOfClass:[Person class]] )
+        {
+            Person* pObject = object;
+            
+            item.type = INBOX_ITEM_NEWUSER;
+            item.fromId = pObject.strId;
+            item.toId = pObject.strId;
+            item.subject = [[NSString alloc] initWithFormat:@"New %@ joined the app!", pObject.strCircle];
+            item.message = pObject.strName;
+            item.misc = nil;
+            item.data = pObject;
+            item.dateTime = nil;
+            [tempArray addObject:item];
+        }
     }
     
     // Creating arrays
@@ -487,7 +515,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     for ( InboxViewItem* item in tempArray )
     {
         // Invites always in new
-        if ( item.type == INBOX_ITEM_INVITE )
+        if ( item.type == INBOX_ITEM_INVITE || item.type == INBOX_ITEM_NEWUSER )
         {
             [inboxNew addObject:item];
             continue;
@@ -843,7 +871,6 @@ NSInteger sortByName(id num1, id num2, void *context)
                                      forKey:@"fbBirthday"];
             [[PFUser currentUser] setObject:[result objectForKey:@"gender"]
                                      forKey:@"fbGender"];
-            [[PFUser currentUser] save];
         }
         else {
             NSLog(@"Uh oh. An error occurred: %@", error);
@@ -875,7 +902,7 @@ NSInteger sortByName(id num1, id num2, void *context)
                 [globalVariables pushToFriendsSent];
                 
                 // Save user data
-                [[PFUser currentUser] save];
+                [[PFUser currentUser] saveEventually];
                 
                 // Reload table
                 [controller reloadFinished];

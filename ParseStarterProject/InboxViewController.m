@@ -189,6 +189,18 @@
             [userProfileController setPerson:person];
         }
     }
+    else if ( item.type == INBOX_ITEM_NEWUSER )
+    {
+        Person* person = item.data;
+        
+        // Opening profile
+        if ( person )
+        {
+            UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
+            [self.navigationController pushViewController:userProfileController animated:YES];
+            [userProfileController setPerson:person];
+        }
+    }
     
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 }

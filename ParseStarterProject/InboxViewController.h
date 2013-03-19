@@ -13,7 +13,8 @@ enum EInboxItemType
 {
     INBOX_ITEM_INVITE   = 0,
     INBOX_ITEM_MESSAGE  = 1,
-    INBOX_ITEM_COMMENT  = 2
+    INBOX_ITEM_COMMENT  = 2,
+    INBOX_ITEM_NEWUSER  = 3
 };
 
 @class AsyncImageView;
