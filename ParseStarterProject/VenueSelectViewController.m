@@ -150,11 +150,22 @@
     [self reloadTable];
 }
 
-//-(void)sortByDistance{
-//    [v sortUsingComparator:^NSComparisonResult(NSDictionary* obj1, NSDictionary* obj2) {
-//        return [obj1[@"dist"] compare:obj2[@"dist"]];
-//    }];
-//}
+-(void)sortByDistance:(NSMutableArray*)v{
+    [v sortUsingComparator:^NSComparisonResult(FSVenue* obj1, FSVenue* obj2) {
+        if (obj1.dist < obj2.dist) {
+            return NSOrderedAscending;
+        }else if (obj1.dist > obj2.dist) {
+            return NSOrderedDescending;
+        }
+        return NSOrderedSame;
+    }];
+}
+
+-(void)sortByName{
+    //    [v sortUsingComparator:^NSComparisonResult(FSVenue* obj1, FSVenue* obj2) {
+    //        return [obj1.name localizedCaseInsensitiveCompare:obj2.name];
+    //    }];
+}
 
 
 -(NSArray*)convertToObjects:(NSArray*)venues{
@@ -187,9 +198,8 @@
         [v addObject:venue];
         
     }
-    [v sortUsingComparator:^NSComparisonResult(FSVenue* obj1, FSVenue* obj2) {
-        return [obj1.name localizedCaseInsensitiveCompare:obj2.name];
-    }];
+    [self sortByDistance:v];
+
     return v;
 }
 
