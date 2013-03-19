@@ -12,6 +12,8 @@
 #import "ProfileViewController.h"
 #import <Parse/Parse.h>
 #import "RootViewController.h"
+#import "StatsViewController.h"
+#import "GlobalData.h"
 
 @implementation LeftMenuController
 - (id)init
@@ -26,9 +28,16 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    _items = @[@"Inbox",@"Cycles",@"Map",@"User Profile",@"Logout"];
-    _selectors = @[@"showInbox",@"showCicles",@"showMap",@"showUser",@"logout"];
+    NSArray* items = @[@"Inbox",@"Cycles",@"Map",@"User Profile",@"Logout"];
+    NSArray* selectors = @[@"showInbox",@"showCicles",@"showMap",@"showUser",@"logout"];
+    _items = [[NSMutableArray alloc] initWithArray:items];
+    _selectors = [[NSMutableArray alloc] initWithArray:selectors];
     
+    if ( [globalData isUserAdmin])
+    {
+        [_items addObject:@"Stats"];
+        [_selectors addObject:@"showStats"];
+    }
 }
 
 -(void)showInbox{
@@ -64,6 +73,11 @@
 -(void)logout{
     UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Logout" message:@"Are you sure you want to logout? " delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
     [alert show];
+}
+
+-(void)showStats{
+    StatsViewController *statsViewController = [[StatsViewController alloc] initWithNibName:@"StatsViewController" bundle:nil];
+    [self showViewController:statsViewController];
 }
 
 

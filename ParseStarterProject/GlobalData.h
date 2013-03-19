@@ -91,6 +91,7 @@ enum EMeetupCommentType
 - (void) addRecentVenue:(FSVenue*)recentVenue;
 - (NSArray*) getRecentPersons;
 - (NSArray*) getRecentVenues;
+- (Boolean) isUserAdmin;
 
 // Invites
 // One of two last parameters should be nil

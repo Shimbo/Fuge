@@ -1011,4 +1011,11 @@ NSInteger sortByName(id num1, id num2, void *context)
     return [[PFUser currentUser] objectForKey:@"recentVenues"];
 }
 
+- (Boolean) isUserAdmin
+{
+    if ([[PFUser currentUser] objectForKey:@"admin"])
+        return true;
+    return false;
+}
+
 @end

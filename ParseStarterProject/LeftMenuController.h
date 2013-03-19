@@ -11,8 +11,8 @@
 #import "ParseStarterProjectAppDelegate.h"
 @class MapViewController;
 @interface LeftMenuController : UIViewController<UIAlertViewDelegate>{
-    NSArray *_items;
-    NSArray *_selectors;
+    NSMutableArray *_items;
+    NSMutableArray *_selectors;
     RootViewController *_rootViewController;
     MapViewController *_mapViewController;
 }
