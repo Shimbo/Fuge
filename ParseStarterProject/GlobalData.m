@@ -83,6 +83,8 @@ static GlobalData *sharedInstance = nil;
     
     [comment setObject:strCurrentUserId forKey:@"userId"];
     [comment setObject:strCurrentUserName forKey:@"userName"];
+    [comment setObject:[PFUser currentUser] forKey:@"userData"];
+    [comment setObject:meetup.strSubject forKey:@"meetupSubject"];
     [comment setObject:meetup.strId forKey:@"meetupId"];
     [comment setObject:meetup.meetupData forKey:@"meetupData"];
     [comment setObject:strComment forKey:@"comment"];
