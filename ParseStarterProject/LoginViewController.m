@@ -78,6 +78,7 @@
             // Showing profile (TODO: check if user was created, then skip this step)
             //[self.navigationController popViewControllerAnimated:false];
             ProfileViewController *profileViewController = [[ProfileViewController alloc] initWithNibName:@"ProfileView" bundle:nil];
+            profileViewController.navigationItem.hidesBackButton = YES;
             [self.navigationController pushViewController:profileViewController animated:YES];
             ParseStarterProjectAppDelegate *delegate = AppDelegate;
             [delegate userDidLogin];
