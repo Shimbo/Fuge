@@ -69,8 +69,13 @@
         [actualButtons addObject:editBtn];
     
     [self.navigationItem setRightBarButtonItems:actualButtons];
-    
-    //[self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelButtonDown)]];
+    if([[self.navigationController viewControllers] objectAtIndex:0] == self){
+        [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc]
+                                                   initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+                                                   target:self
+                                                   action:@selector(cancelButtonDown)]];
+    }
+
 }
 
 - (void)cancelButtonDown {
