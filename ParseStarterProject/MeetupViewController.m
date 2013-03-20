@@ -319,6 +319,11 @@
         // Make new comment editable now
         newComment.editable = true;
     }];
+    
+}
+
+-(void)hideKeyBoard{
+    [newComment resignFirstResponder];
 }
 
 - (void)didReceiveMemoryWarning
@@ -478,5 +483,7 @@ double animatedDistance;
     [self subscribeClicked];
 }
 
-
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+    [newComment resignFirstResponder];
+}
 @end

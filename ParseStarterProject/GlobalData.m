@@ -48,7 +48,7 @@ static GlobalData *sharedInstance = nil;
     return self;
 }
 
--(void)createCommentForMeetup:(Meetup*)meetup commentType:(NSUInteger)type commentText:(NSString*)text
+-(void)createCommentForMeetup:(Meetup*)meetup commentType:(CommentType)type commentText:(NSString*)text
 {
     // Creating comment about meetup creation in db
     PFObject* comment = [[PFObject alloc] initWithClassName:@"Comment"];

@@ -20,20 +20,20 @@ static NSString *const kInboxUnreadCountDidUpdate = @"kInboxUnreadCountDidChange
 #define strCurrentUserId [[PFUser currentUser] objectForKey:@"fbId"]
 #define strCurrentUserName [[PFUser currentUser] objectForKey:@"fbName"]
 
-enum EInviteStatus
+typedef enum EInviteStatus
 {
     INVITE_NEW      = 0,
     INVITE_DECLINED = 1,
     INVITE_ACCEPTED = 2
-};
+}InviteStatus;
 
-enum EMeetupCommentType
+typedef  enum EMeetupCommentType
 {
     COMMENT_PLAIN   = 0,
     COMMENT_CREATED = 1,
     COMMENT_SAVED   = 2,
     COMMENT_JOINED  = 3
-};
+}CommentType;
 
 #define INBOX_LOADED    3   // Number of stages in loading
 
@@ -68,7 +68,7 @@ enum EMeetupCommentType
 
 -(NSArray*)searchForUserName:(NSString*)searchStr;
 
--(void)createCommentForMeetup:(Meetup*)meetup commentType:(NSUInteger)type commentText:(NSString*)text;
+-(void)createCommentForMeetup:(Meetup*)meetup commentType:(CommentType)type commentText:(NSString*)text;
 
 // New meetup created during the session
 - (void)addMeetup:(Meetup*)meetup;

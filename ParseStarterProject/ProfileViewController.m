@@ -220,4 +220,9 @@
     buttonRoles = nil;
     [super viewDidUnload];
 }
+
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+    [areaEdit resignFirstResponder];
+}
+
 @end

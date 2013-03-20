@@ -103,6 +103,10 @@
         dateTime.hidden = TRUE;
 }
 
+-(void)hideKeyBoard{
+    [subject resignFirstResponder];
+}
+
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     if (self.selectedVenue) {
@@ -200,6 +204,10 @@
 {
     [subject resignFirstResponder];
     return true;
+}
+
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+    [subject resignFirstResponder];
 }
 
 @end

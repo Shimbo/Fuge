@@ -310,4 +310,8 @@ double animatedDistance;
     [errorAlert show];
 }
 
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+    [messageNew resignFirstResponder];
+}
+
 @end
