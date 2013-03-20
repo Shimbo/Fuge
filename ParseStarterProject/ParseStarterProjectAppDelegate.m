@@ -192,7 +192,7 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     if ( bFirstActivation )
         bFirstActivation = false;
-    else
+    else if ( [[PFUser currentUser] isAuthenticated])
         [globalData reload:nil];    // TODO: show loading screen here
 }
 

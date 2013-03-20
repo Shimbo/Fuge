@@ -95,6 +95,9 @@ static GlobalData *sharedInstance = nil;
     
     [comment saveInBackground];
     
+    // Add comment to the list of threads
+    [self addComment:comment];
+    
     // TODO: Send to everybody around (using public/2ndO filter, send checkbox and geo-query) push about the meetup
     
     // Subscription
