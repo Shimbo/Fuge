@@ -11,7 +11,7 @@
 #import "VenueCell.h"
 #import "NewMeetupViewController.h"
 #import "FSVenue.h"
-
+#import "GlobalData.h"
 
 
 
@@ -46,6 +46,7 @@
                                     action:@selector(close)];
     
     self.tableView.tableHeaderView = self.headerView;
+    _recentVenues = [globalData getRecentVenues];
 }
 
 -(void)updateLocation{
@@ -88,6 +89,7 @@
     [self setMapCenter:newLocation.coordinate.latitude
                    lon:newLocation.coordinate.longitude];
     _location = newLocation.coordinate;
+    [self reloadDistanceForRecentStations];
     [self reload];
     [_locationManager stopUpdatingLocation];
     _locationManager = nil;
@@ -167,60 +169,40 @@
     //    }];
 }
 
+-(void)reloadDistanceForRecentStations{
+    CLLocation *curLoc = self.mapView.userLocation.location;
+    for (FSVenue *venue in _recentVenues) {
+        CLLocation *l = [[CLLocation alloc]initWithLatitude:venue.coordinate.latitude
+                                                  longitude:venue.coordinate.longitude];
+        venue.dist = [curLoc distanceFromLocation:l]/1000.0;
+    }
+    [self.tableView reloadData];
+}
 
 -(NSArray*)convertToObjects:(NSArray*)venues{
     NSMutableArray *v = [NSMutableArray arrayWithCapacity:venues.count];
     CLLocation *curLoc = self.mapView.userLocation.location;
     for (NSDictionary *dic in venues) {
-        FSVenue *venue = [[FSVenue alloc]init];
+        FSVenue *venue = [[FSVenue alloc]initWithDictionary:dic];
         NSDictionary *location = dic[@"location"];
         CLLocation *l = [[CLLocation alloc]initWithLatitude:[location[@"lat"]doubleValue]
                                                   longitude:[location[@"lng"] doubleValue]];
-        [venue setCoordinate:CLLocationCoordinate2DMake([location[@"lat"] doubleValue],
-                                                      [location[@"lng"] doubleValue])];
         venue.dist = [curLoc distanceFromLocation:l]/1000.0;
-//        NSLog(@"%f- %d",venue.dist,[location[@"distance"] intValue]);
-        venue.name = dic[@"name"];
-        venue.venueId = dic[@"id"];
-        
-
-        venue.lon = location[@"lng"];
-        venue.lat = location[@"lat"];
-        
-        venue.city = location[@"city"];
-        venue.state = location[@"state"];
-        venue.country = location[@"country"];
-        venue.cc = location[@"cc"];
-        venue.postalCode = location[@"postalCode"];
-        venue.address = location[@"address"];
-        venue.fsVenue = dic;
-        
         [v addObject:venue];
-        
     }
     [self sortByDistance:v];
-
     return v;
+}
+
+-(NSArray*)removeRecentVenues:(NSArray*)venues{
+    return [venues filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT(venueId in %@)",
+                                               [_recentVenues valueForKeyPath:@"venueId"]]];
 }
 
 -(void)reload{
     self.refreshButton.hidden = YES;
     self.mapView.userInteractionEnabled = NO;
     [self.activityIndicator startAnimating];
-//    [Foursquare2 searchVenuesNearByLatitude:@(_location.latitude)
-//                                  longitude:@(_location.longitude)
-//                                 accuracyLL:nil
-//                                   altitude:nil
-//                                accuracyAlt:nil
-//                                      query:nil
-//                                      limit:nil
-//                                     intent:intentBrowse
-//                                     radius:@(500)
-//                                   callback:^(BOOL success, id result) {
-//                                       NSArray *a = [self convertToObjects:result[@"response"][@"venues"]];
-//                                       self.venuesForTable = a;
-//                                       [self didUpdate];
-//                                   }];
     CGFloat offset = 20;
     CGPoint swPoint = CGPointMake(self.mapView.bounds.origin.x+offset, _mapView.bounds.origin.y+ _mapView.bounds.size.height-offset);
     CGPoint nePoint = CGPointMake((self.mapView.bounds.origin.x + _mapView.bounds.size.width-offset), (_mapView.bounds.origin.y+2.5*offset));
@@ -242,6 +224,7 @@
                                           callback:^(BOOL success, id result) {
                                               if (success) {
                                                   NSArray *a = [self convertToObjects:result[@"response"][@"venues"]];
+                                                  a = [self removeRecentVenues:a];
                                                   self.venuesForTable = a;
                                                   
                                               }
@@ -295,22 +278,45 @@
 
 #pragma mark Table Delegate
 
--(NSArray*)getVenuesForTable:(UITableView*)tableView{
+-(NSArray*)getVenuesForTable:(UITableView*)tableView section:(NSUInteger)section{
     if (self.searchDisplayController.searchResultsTableView == tableView) {
         return self.venuesForSearch;
     }else{
-        return self.venuesForTable;
+        if (section == 0) {
+            return _recentVenues;
+        }else
+            return self.venuesForTable;
     }
 }
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    if (tableView == self.searchDisplayController.searchResultsTableView) {
+        return 1;
+    }else
+        return 2;
+    
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
+    if (tableView == self.tableView) {
+        if (_recentVenues.count && section == 0) {
+            return @"Recent Venues";
+        }
+        if (self.venuesForTable && section == 1) {
+            return @"Nearby Venues";
+        }
+    }
+    return nil;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return [self getVenuesForTable:tableView].count;
+    return [self getVenuesForTable:tableView section:section].count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     static NSString *ident = @"VenueCell";
     VenueCell *cell = [tableView dequeueReusableCellWithIdentifier:ident];
-    FSVenue *venue = [self getVenuesForTable:tableView][indexPath.row];
+    FSVenue *venue = [self getVenuesForTable:tableView section:indexPath.section][indexPath.row];
     cell.name.text = venue.name;
     cell.distance.text = [NSString stringWithFormat:@"%0.1fkm",venue.dist];
     cell.address.text = venue.address;
@@ -322,7 +328,7 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    FSVenue *venue = [self getVenuesForTable:tableView][indexPath.row];
+    FSVenue *venue = [self getVenuesForTable:tableView section:0][indexPath.row];
     [self.searchDisplayController setActive:NO animated:YES];
     [self userDidSelectVenue:venue];
     self.venuesForSearch = nil;

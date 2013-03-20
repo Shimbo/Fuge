@@ -1048,7 +1048,13 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 - (NSArray*) getRecentVenues
 {
-    return [[PFUser currentUser] objectForKey:@"recentVenues"];
+    NSArray *venuesDic = [[PFUser currentUser] objectForKey:@"recentVenues"];
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:venuesDic.count];
+    for (NSDictionary *dic  in venuesDic) {
+        FSVenue *venue = [[FSVenue alloc]initWithDictionary:dic];
+        [result addObject:venue];
+    }
+    return result;
 }
 
 - (Boolean) isUserAdmin

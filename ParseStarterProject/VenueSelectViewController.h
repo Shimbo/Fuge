@@ -15,6 +15,7 @@
     BOOL initilized;
     CLLocationCoordinate2D _location;
     CLLocationManager* _locationManager;
+    NSArray *_recentVenues;
 }
 
 @property (strong, nonatomic) IBOutlet UIView *headerView;

@@ -12,6 +12,7 @@
 @interface FSVenue : NSObject<MKAnnotation>{
     CLLocationCoordinate2D _coordinate;
 }
+- (id)initWithDictionary:(NSDictionary*)dic;
 
 @property(nonatomic,strong)NSString *name;
 @property(nonatomic,strong)NSString *venueId;
