@@ -42,7 +42,7 @@
     self.tableView.rowHeight = ROW_HEIGHT;
     
     // Reload button
-    UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Calendar-Day"] style:UIBarButtonItemStyleBordered  target:self action:@selector(reloadClicked)];
+    UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithTitle:@"Reload" style:UIBarButtonItemStyleBordered target:self action:@selector(reloadClicked)];
     [self.navigationItem setRightBarButtonItem:reloadBtn];
 
 }
@@ -75,13 +75,10 @@
     {
         [TestFlight passCheckpoint:@"Inbox loaded from data"];
         
-
-
         [[self tableView] reloadData];
         
         [self.activityIndicator stopAnimating];
         self.navigationController.view.userInteractionEnabled = YES;
-        //[self.navigationController popViewControllerAnimated:TRUE];
     }
 }
 
@@ -164,9 +161,11 @@
             [meetupController setMeetup:meetup];
             if ( ! item.misc && item.type == INBOX_ITEM_INVITE )  // Already responded invites/etc
                 [meetupController setInvite:item.data];
-            self.navigationItem.leftItemsSupplementBackButton = true;
-            UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:meetupController];
-            [self.navigationController presentViewController:navigation animated:YES completion:nil];
+            [self.navigationController pushViewController:meetupController animated:YES];
+            
+            //self.navigationItem.leftItemsSupplementBackButton = true;
+            //UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:meetupController];
+            //[self.navigationController presentViewController:navigation animated:YES completion:nil];
         }
     }
     else if ( item.type == INBOX_ITEM_MESSAGE )

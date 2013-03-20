@@ -193,7 +193,7 @@
     if ( bFirstActivation )
         bFirstActivation = false;
     else if ( [[PFUser currentUser] isAuthenticated])
-        [globalData reload:nil];    // TODO: show loading screen here, always open on loading screen
+        [globalData reloadInbox:nil];    // TODO: show loading screen here, always open on loading screen
 }
 
 

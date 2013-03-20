@@ -450,8 +450,13 @@ NSInteger sortByName(id num1, id num2, void *context)
     nInboxLoadingStage++;
     
     if ( [self isInboxLoaded] )
+    {
         if ( controller )
             [controller reloadData];
+        
+        // TODO: this call is an overkill, but don't know how to update new count other way, now we're calculating it with all other stuff upon load
+        [self getInbox:controller];
+    }
 }
 
 - (NSMutableDictionary*) getInbox:(InboxViewController*)controller
@@ -583,19 +588,19 @@ NSInteger sortByName(id num1, id num2, void *context)
     
     if ( [inboxNew count] > 0 )
         [inbox setObject:inboxNew forKey:@"New"];
+    nInboxUnreadCount = [inboxNew count];
     if ( [inboxRecent count] > 0 )
         [inbox setObject:inboxRecent forKey:@"Recent"];
     if ( [inboxOld count] > 0 )
         [inbox setObject:inboxOld forKey:@"Old"];
     
-    
-    [self setInboxUnreadCount:[inboxNew count]];
+    [self updateInboxUnreadCount];
     
     return inbox;    
 }
 
--(void)setInboxUnreadCount:(NSUInteger)count{
-    nInboxUnreadCount = count;
+-(void)updateInboxUnreadCount
+{
     [[NSNotificationCenter defaultCenter]postNotificationName:kInboxUnreadCountDidUpdate
                                                        object:nil];
 }

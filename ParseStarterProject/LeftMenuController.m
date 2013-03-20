@@ -37,9 +37,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    NSArray* items = @[@"Inbox",@"Cycles",@"Map",@"User Profile",@"Logout"];
-    NSArray* selectors = @[@"showInbox",@"showCicles",@"showMap",@"showUser",@"logout"];
+    
+    NSArray* items = @[@"Inbox",@"Map",@"Circles",@"User Profile",@"Logout"];
+    NSArray* selectors = @[@"showInbox",@"showMap",@"showCicles",@"showUser",@"logout"];
     _items = [[NSMutableArray alloc] initWithArray:items];
     _selectors = [[NSMutableArray alloc] initWithArray:selectors];
     

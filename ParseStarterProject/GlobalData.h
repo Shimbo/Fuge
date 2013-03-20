@@ -85,7 +85,7 @@ typedef  enum EMeetupCommentType
 - (NSMutableDictionary*) getInbox:(InboxViewController*)controller;
 - (Boolean)isInboxLoaded;
 
--(void)setInboxUnreadCount:(NSUInteger)count;
+-(void)updateInboxUnreadCount;
 - (NSUInteger)getInboxUnreadCount;
 
 // Inbox utils
