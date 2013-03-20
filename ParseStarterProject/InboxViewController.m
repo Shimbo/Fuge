@@ -19,8 +19,6 @@
 
 @implementation InboxViewController
 
-@synthesize activityIndicator;
-
 #define ROW_HEIGHT 60
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -42,6 +40,11 @@
     self.tableView.tableFooterView = [[UIView alloc]init];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     self.tableView.rowHeight = ROW_HEIGHT;
+    
+    // Reload button
+    UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Calendar-Day"] style:UIBarButtonItemStyleBordered  target:self action:@selector(reloadClicked)];
+    [self.navigationItem setRightBarButtonItem:reloadBtn];
+
 }
 
 - (void) viewDidAppear:(BOOL)animated
@@ -51,32 +54,39 @@
     // Loading
     [TestFlight passCheckpoint:@"Inbox appeared"];
     [self reloadData];
-    
-    //activityIndicator.center = self.view.center;
 }
 
+- (void) reloadClicked
+{
+    [globalData reloadInbox:self];
+    [self reloadData];
+}
 
 - (void) reloadData {
-    //[activityIndicator startAnimating];
-    //self.navigationController.view.userInteractionEnabled = NO;
     
     inbox = [globalData getInbox:self];
     
-    [TestFlight passCheckpoint:@"Inbox loaded from data"];
-    
-    // Some animation
-    self.tableView.alpha = 0;
-    [[self tableView] reloadData];
-    [UIView animateWithDuration:0.3 animations:^{
-        self.tableView.alpha = 1;
-    }];
-    
-    //[activityIndicator stopAnimating];
-    //self.navigationController.view.userInteractionEnabled = YES;
-    //[self.navigationController popViewControllerAnimated:TRUE];
+    if ( ! inbox )
+    {
+        [self.activityIndicator startAnimating];
+        self.navigationController.view.userInteractionEnabled = NO;
+    }
+    else
+    {
+        [TestFlight passCheckpoint:@"Inbox loaded from data"];
+        
+        // Some animation
+        self.tableView.alpha = 0;
+        [[self tableView] reloadData];
+        [UIView animateWithDuration:0.3 animations:^{
+            self.tableView.alpha = 1;
+        }];
+        
+        [self.activityIndicator stopAnimating];
+        self.navigationController.view.userInteractionEnabled = YES;
+        //[self.navigationController popViewControllerAnimated:TRUE];
+    }
 }
-
-
 
 
 #pragma mark -

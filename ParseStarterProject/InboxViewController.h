@@ -34,16 +34,15 @@ enum EInboxItemType
 @interface InboxViewController : MainViewController {
     
     NSMutableDictionary *inbox;
-    UIActivityIndicatorView* activityIndicator;
 }
 
 @property (nonatomic,retain) IBOutlet UITableView *tableView;
+@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
 - (void) reloadData;
-//- (void) reloadFinished;
 
 - (void) dismissMeetup;
 
-@property (nonatomic, retain) UIActivityIndicatorView *activityIndicator;
+//@property (nonatomic, retain) UIActivityIndicatorView *activityIndicator;
 
 @end

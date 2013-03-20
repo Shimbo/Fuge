@@ -21,12 +21,9 @@
 
 #import "TestFlightSDK/TestFlight.h"
 
-#define ROW_HEIGHT 60
-
 @implementation RootViewController
 
-@synthesize initialized;
-@synthesize activityIndicator;
+#define ROW_HEIGHT  60
 
 #pragma mark -
 #pragma mark Buttons
@@ -47,36 +44,19 @@
 
 
 #pragma mark -
-#pragma mark Data reload
-
-
-
-
-#pragma mark -
-#pragma mark View loadi
+#pragma mark View loading
 
 
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    activityIndicator.center = self.view.center;
 }
 
 - (void) viewDidLoad {
     [super viewDidLoad];
     
-    // Activity indicator
-    activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    activityIndicator.hidesWhenStopped = YES;
-    NSLog(@"%f",self.view.frame.size.height);
-    activityIndicator.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:activityIndicator];
-    
     // Navigation bar
     [self.navigationItem setHidesBackButton:true animated:false];
-    /*self.navigationItem.rightBarButtonItems = @[
-                [[UIBarButtonItem alloc] initWithTitle:@"New meet-up" style:UIBarButtonItemStyleBordered target:self action:@selector(newMeetupClicked)],
-                [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterClicked)]];*/
     
     // Table view
     UINib *nib = [UINib nibWithNibName:@"PersonCell" bundle:nil];
@@ -84,9 +64,6 @@
     self.tableView.tableFooterView = [[UIView alloc]init];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     self.tableView.rowHeight = ROW_HEIGHT;
-    
-    // Data reloading
-
 }
 
 
