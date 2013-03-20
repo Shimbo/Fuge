@@ -60,4 +60,8 @@
     return @"";
 }
 
+-(NSString*)description{
+    return [NSString stringWithFormat:@"%@ :%d persons",[Circle getCircleName:self.idCircle],persons.count];
+}
+
 @end

@@ -52,12 +52,14 @@ enum EMeetupCommentType
     NSUInteger          nInboxUnreadCount;
     NSMutableArray*     newFriendsFb;
     NSMutableArray*     newFriends2O;
+    
+    NSMutableDictionary *_circleByNumber;
 }
 
 + (id)sharedInstance;
 
 // Retrievers
-- (Circle*) getCircle:(NSUInteger)circle;
+- (Circle*) getCircle:(CircleType)circle;
 - (Circle*) getCircleByNumber:(NSUInteger)num;
 - (Person*) getPersonById:(NSString*)strFbId;
 - (NSArray*) getPersonsByIds:(NSArray*)strFbIds;

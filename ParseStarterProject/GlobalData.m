@@ -36,6 +36,7 @@ static GlobalData *sharedInstance = nil;
     if (self) {
         circles = [[NSMutableDictionary alloc] init];
         meetups = [[NSMutableArray alloc] init];
+        _circleByNumber = [NSMutableDictionary dictionaryWithCapacity:5];
         messages = nil;
         comments = nil;
         nInboxLoadingStage = 0;
@@ -122,13 +123,14 @@ static GlobalData *sharedInstance = nil;
     return [circles allValues];
 }
 
-- (Circle*)getCircle:(NSUInteger)circle
+- (Circle*)getCircle:(CircleType)circle
 {
     Circle* result = [circles objectForKey:[Circle getCircleName:circle]];
     if ( result == nil )
     {
         result = [[Circle alloc] init:circle];
         [circles setObject:result forKey:[Circle getCircleName:circle]];
+        _circleByNumber[@(result.idCircle-1)] = result;
     }
     
     return result;
@@ -146,24 +148,30 @@ NSInteger sortByName(id num1, id num2, void *context)
         return NSOrderedSame;
 }
 
+
 - (Circle*)getCircleByNumber:(NSUInteger)num
 {
-    NSArray* values = [circles allValues];
-    NSArray* sortedValues = [values sortedArrayUsingFunction:sortByName context:nil];
+    if (!_circleByNumber[@(num)]) {
+        NSArray* values = [circles allValues];
+        for (Circle *circle in values) {
+            _circleByNumber[@(circle.idCircle-1)] = circle;
+        }
+    }
+    return _circleByNumber[@(num)];
     
-    int n = 0;
-    for (Circle *circle in sortedValues)
-    {
-        if ( n == num )
-            return circle;
-        n++;
+    //it's bad to sort circles each time.
+    /*
+    NSArray* sortedValues = [values sortedArrayUsingFunction:sortByName context:nil];
+    if (sortedValues.count > num) {
+        return sortedValues[num];
     }
     return nil;
+     */
 }
 
 - (NSArray*) getPersonsByIds:(NSArray*)strFbIds
 {
-    NSMutableArray *result = [NSMutableArray arrayWithCapacity:20];
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:strFbIds.count];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"strId IN %@",strFbIds];
     for ( Circle* circle in [circles allValues] )
         [result addObjectsFromArray:[circle.getPersons filteredArrayUsingPredicate:predicate]];

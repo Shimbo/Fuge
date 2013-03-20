@@ -1,20 +1,20 @@
 
 #include "Person.h"
 
-enum ECircle
+typedef enum ECircle
 {
     CIRCLE_FB       = 1,
     CIRCLE_2O       = 2,
     CIRCLE_RANDOM   = 3,
     CIRCLE_FBOTHERS = 4
-};
+} CircleType;
 
 @interface Circle : NSObject {
-    NSUInteger      idCircle;
+    CircleType      idCircle;
 	NSMutableArray  *persons;
 }
 
-@property (nonatomic) NSUInteger idCircle;
+@property (nonatomic) CircleType idCircle;
 
 - (id)init:(NSUInteger)circle;
 
