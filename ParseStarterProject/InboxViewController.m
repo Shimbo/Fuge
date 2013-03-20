@@ -75,12 +75,9 @@
     {
         [TestFlight passCheckpoint:@"Inbox loaded from data"];
         
-        // Some animation
-        self.tableView.alpha = 0;
+
+
         [[self tableView] reloadData];
-        [UIView animateWithDuration:0.3 animations:^{
-            self.tableView.alpha = 1;
-        }];
         
         [self.activityIndicator stopAnimating];
         self.navigationController.view.userInteractionEnabled = YES;
