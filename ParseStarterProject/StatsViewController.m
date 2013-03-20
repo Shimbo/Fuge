@@ -29,9 +29,9 @@
     NSMutableString* stats = [[NSMutableString alloc] init];
     
     // Counters
-    PFQuery *query = [PFQuery queryWithClassName:@"User"];
-    NSNumber *userCount = [[NSNumber alloc] initWithInt:[query countObjects]];
-    query = [PFQuery queryWithClassName:@"Message"];
+    PFQuery *userQuery = [PFUser query];
+    NSNumber *userCount = [[NSNumber alloc] initWithInt:[userQuery countObjects]];
+    PFQuery *query = [PFQuery queryWithClassName:@"Message"];
     NSNumber *msgCount = [[NSNumber alloc] initWithInt:[query countObjects]];
     query = [PFQuery queryWithClassName:@"Meetup"];
     NSNumber *meetupCount = [[NSNumber alloc] initWithInt:[query countObjects]];

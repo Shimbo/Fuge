@@ -8,6 +8,7 @@
 
 #import "LocationManager.h"
 #import <Parse/Parse.h>
+#import "GlobalData.h"
 
 @implementation LocationManager
 
@@ -58,7 +59,8 @@ static LocationManager *sharedInstance = nil;
     
     geoPoint = [PFGeoPoint geoPointWithLatitude:coord.latitude
                                                   longitude:coord.longitude];
-    [[PFUser currentUser] setObject:geoPoint forKey:@"location"];
+    
+    [globalData setUserPosition:geoPoint];
     
     //[locationManager stopUpdatingLocation];
     

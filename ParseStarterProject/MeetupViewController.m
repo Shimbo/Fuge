@@ -69,18 +69,19 @@
         [actualButtons addObject:editBtn];
     
     [self.navigationItem setRightBarButtonItems:actualButtons];
-    if([[self.navigationController viewControllers] objectAtIndex:0] == self){
+    
+    // We fixed it by chenging the whole mechanics
+    /*if([[self.navigationController viewControllers] objectAtIndex:0] == self){
         [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc]
                                                    initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
                                                    target:self
                                                    action:@selector(cancelButtonDown)]];
-    }
-
+    }*/
 }
 
-- (void)cancelButtonDown {
+/*- (void)cancelButtonDown {
     [self dismissViewControllerAnimated:YES completion:nil];
-}
+}*/
 
 - (void)declineClicked
 {

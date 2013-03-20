@@ -241,7 +241,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     // Storing old friends lists (to calculate new friends later in this call)
     NSArray* oldFriendsFb = [[[PFUser currentUser] objectForKey:@"fbFriends"] copy];
     NSArray* oldFriends2O = [[[PFUser currentUser] objectForKey:@"fbFriends2O"] copy];
-            
+    
     // Saving user FB friends
     [[PFUser currentUser] addUniqueObjectsFromArray:friendIds forKey:@"fbFriends"];
     
@@ -266,10 +266,13 @@ NSInteger sortByName(id num1, id num2, void *context)
     }
     
     // Creating new friends list
-    newFriendsFb = [[[PFUser currentUser] objectForKey:@"fbFriends"] mutableCopy];
-    newFriends2O = [[[PFUser currentUser] objectForKey:@"fbFriends2O"] mutableCopy];
-    [newFriendsFb removeObjectsInArray:oldFriendsFb];
-    [newFriends2O removeObjectsInArray:oldFriends2O];
+    if ( oldFriendsFb )
+    {
+        newFriendsFb = [[[PFUser currentUser] objectForKey:@"fbFriends"] mutableCopy];
+        newFriends2O = [[[PFUser currentUser] objectForKey:@"fbFriends2O"] mutableCopy];
+        [newFriendsFb removeObjectsInArray:oldFriendsFb];
+        [newFriends2O removeObjectsInArray:oldFriends2O];
+    }
 }
 
 - (void) load2OFriends
@@ -293,9 +296,13 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 - (void) loadRandom
 {
+    PFGeoPoint* ptUser = [[PFUser currentUser] objectForKey:@"location"];
+    if ( ! ptUser )
+        return;
+    
     // Query
     PFQuery *friendAnyQuery = [PFUser query];
-    [friendAnyQuery whereKey:@"location" nearGeoPoint:[[PFUser currentUser] objectForKey:@"location"] withinKilometers:RANDOM_PERSON_KILOMETERS];
+    [friendAnyQuery whereKey:@"location" nearGeoPoint:ptUser withinKilometers:RANDOM_PERSON_KILOMETERS];
     [friendAnyQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
     NSArray *friendAnyUsers = [friendAnyQuery findObjects];
     
@@ -384,10 +391,14 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 - (void)loadMeetups
 {
+    PFGeoPoint* ptUser = [[PFUser currentUser] objectForKey:@"location"];
+    if ( ! ptUser )
+        return;
+    
     PFQuery *meetupAnyQuery = [PFQuery queryWithClassName:@"Meetup"];
     
     // Location filter
-    [meetupAnyQuery whereKey:@"location" nearGeoPoint:[[PFUser currentUser] objectForKey:@"location"] withinKilometers:RANDOM_EVENT_KILOMETERS];
+    [meetupAnyQuery whereKey:@"location" nearGeoPoint:ptUser withinKilometers:RANDOM_EVENT_KILOMETERS];
     
     // Date-time filter
     NSNumber* timestampNow = [[NSNumber alloc] initWithDouble:[[NSDate date] timeIntervalSince1970]];
@@ -1063,6 +1074,12 @@ NSInteger sortByName(id num1, id num2, void *context)
     if ([[PFUser currentUser] objectForKey:@"admin"])
         return true;
     return false;
+}
+
+- (void) setUserPosition:(PFGeoPoint*)geoPoint
+{
+    if ( [[PFUser currentUser] isAuthenticated] )
+        [[PFUser currentUser] setObject:geoPoint forKey:@"location"];
 }
 
 @end

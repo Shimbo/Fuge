@@ -8,12 +8,14 @@
 
 #import <Parse/Parse.h>
 
-#include "Person.h"
+//#include "Person.h"
 #include "LoginViewController.h"
 #include "ProfileViewController.h"
 #include "GlobalVariables.h"
 #import "PushManager.h"
 #import "ParseStarterProjectAppDelegate.h"
+#import "LocationManager.h"
+#import "GlobalData.h"
 
 @implementation LoginViewController
 
@@ -51,6 +53,7 @@
             } else {
                 NSLog(@"Uh oh. An error occurred: %@", error);
             }
+            return;
         }
         else
         {
@@ -69,6 +72,12 @@
             [pushManager initChannelsFirstTime];
         }
         
+        // Waiting for location data
+        while ( ! [locManager getPosition] )
+            sleep(100);
+        [globalData setUserPosition:[locManager getPosition]];
+        
+        // Continue to next window
         [activityIndicator stopAnimating];
         [activityIndicator removeFromSuperview];
         self.view.userInteractionEnabled = YES;

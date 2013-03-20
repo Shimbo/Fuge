@@ -101,6 +101,7 @@ typedef  enum EMeetupCommentType
 - (NSArray*) getRecentPersons;
 - (NSArray*) getRecentVenues;
 - (Boolean) isUserAdmin;
+- (void) setUserPosition:(PFGeoPoint*)geoPoint;
 
 // Invites
 // One of two last parameters should be nil
