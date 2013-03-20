@@ -96,6 +96,9 @@ static GlobalData *sharedInstance = nil;
     
     [comment saveInBackground];
     
+    // Add comment to the list of threads
+    [self addComment:comment];
+    
     // TODO: Send to everybody around (using public/2ndO filter, send checkbox and geo-query) push about the meetup
     
     // Subscription
@@ -423,9 +426,40 @@ NSInteger sortByName(id num1, id num2, void *context)
 #pragma mark -
 #pragma mark Inbox
 
+- (void)reloadInbox:(InboxViewController*)controller
+{
+    nInboxLoadingStage = 0;
+    
+    // Invites
+    [self loadInvites:controller];
+    
+    // Unread PMs
+    [self loadMessages:controller];
+    
+    // Unread comments
+    [self loadComments:controller];
+}
+
+- (Boolean)isInboxLoaded
+{
+    return ( nInboxLoadingStage == INBOX_LOADED );
+}
+
+- (void) incrementLoadingStage:(InboxViewController*)controller
+{
+    nInboxLoadingStage++;
+    
+    if ( [self isInboxLoaded] )
+        if ( controller )
+            [controller reloadData];
+}
 
 - (NSMutableDictionary*) getInbox:(InboxViewController*)controller
 {
+    // Still loading
+    if ( ! [self isInboxLoaded] )
+        return nil;
+    
     // Gathering data
     NSMutableArray* inboxData = [[NSMutableArray alloc] init];
     [inboxData addObjectsFromArray:[self getUniqueInvites]];
@@ -576,7 +610,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     return invites;
 }
 
-- (void)loadInvites
+- (void)loadInvites:(InboxViewController*)controller
 {
     // Query
     PFQuery *invitesQuery = [PFQuery queryWithClassName:@"Invite"];
@@ -591,29 +625,14 @@ NSInteger sortByName(id num1, id num2, void *context)
     [invitesQuery whereKey:@"status" equalTo:inviteStatus];
     
     // Loading
-    [invitesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects1, NSError *error) {
+    [invitesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
-        /*PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Message"];
-        [messagesQuery whereKey:@"idUserFrom" equalTo:[[PFUser currentUser] objectForKey:@"fbId"]];
-        
-        [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects2, NSError *error) {*/
+        // Actuall messages
+        invites = [[NSMutableArray alloc] initWithArray:objects];
             
-            // Merging results
-            NSMutableSet *set = [NSMutableSet setWithArray:objects1];
-            //[set addObjectsFromArray:objects2];
-            
-            // Actuall messages
-            invites = [[NSMutableArray alloc] initWithArray:[set allObjects]];
-            
-            // Recalc what to show in inbox
-            //[self updateUniqueMessages];
-            
-            // Loading stage complete
-            nInboxLoadingStage++;
-        //}];
+        // Loading stage complete
+        [self incrementLoadingStage:controller];
     }];
-    
-    nInboxLoadingStage++;
 }
 
 - (NSArray*)getUniqueMessages
@@ -656,9 +675,6 @@ NSInteger sortByName(id num1, id num2, void *context)
                     }
                 }
                 
-                //NSLog([message objectForKey:@"text"]);
-                //NSLog([messageOld objectForKey:@"text"]);
-                
                 // New message is not older, but old message is already read
                 if ( ! bNewIsBeforeOld && bOldBeforeThanReadDate )
                     bExchange = true;
@@ -690,7 +706,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     return messagesUnique;
 }
 
-- (void)loadMessages
+- (void)loadMessages:(InboxViewController*)controller
 {
     // Query
     PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Message"];
@@ -713,11 +729,8 @@ NSInteger sortByName(id num1, id num2, void *context)
             // Actuall messages
             messages = [[NSMutableArray alloc] initWithArray:[set allObjects]];
             
-            // Recalc what to show in inbox
-            //[self updateUniqueMessages];
-            
             // Loading stage complete
-            nInboxLoadingStage++;
+            [self incrementLoadingStage:controller];
         }];
     }];
 }
@@ -792,7 +805,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     return threadsUnique;
 }
 
-- (void)loadComments
+- (void)loadComments:(InboxViewController*)controller
 {
     // Query
     PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Comment"];
@@ -808,7 +821,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         comments = [[NSMutableArray alloc] initWithArray:objects];
         
         // Loading stage complete
-        nInboxLoadingStage++;
+        [self incrementLoadingStage:controller];
     }];
 }
 
@@ -883,6 +896,7 @@ NSInteger sortByName(id num1, id num2, void *context)
                                      forKey:@"fbBirthday"];
             [[PFUser currentUser] setObject:[result objectForKey:@"gender"]
                                      forKey:@"fbGender"];
+            [[PFUser currentUser] save];
         }
         else {
             NSLog(@"Uh oh. An error occurred: %@", error);
@@ -917,7 +931,8 @@ NSInteger sortByName(id num1, id num2, void *context)
                 [[PFUser currentUser] saveEventually];
                 
                 // Reload table
-                [controller reloadFinished];
+                if ( controller )
+                    [controller reloadFinished];
                 
                 // Start background loading for inbox
                 [self reloadInbox:nil];
@@ -928,29 +943,6 @@ NSInteger sortByName(id num1, id num2, void *context)
             }
         }];
     }];
-}
-
-- (void)reloadInbox:(InboxViewController*)controller
-{
-    nInboxLoadingStage = 0;
-    
-    // Invites
-    [self loadInvites];
-    
-    // Unread PMs
-    [self loadMessages];
-    
-    // Unread comments
-    [self loadComments];
-    
-    // During initial load controller could be nil as we're loading from main view
-    //if ( controller )
-    //    [controller reloadFinished];
-}
-
-- (Boolean)isInboxLoaded
-{
-    return ( nInboxLoadingStage == INBOX_LOADED );
 }
 
 

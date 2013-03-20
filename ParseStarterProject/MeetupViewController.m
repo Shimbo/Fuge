@@ -27,6 +27,7 @@
         buttons = [[NSMutableArray alloc] init];
         for ( int n = 0; n < MB_TOTAL_COUNT; n++ )
             [buttons addObject:[NSNumber numberWithInt:0]];
+        newComment.editable = false;
     }
     return self;
 }
@@ -69,7 +70,7 @@
     
     [self.navigationItem setRightBarButtonItems:actualButtons];
     
-    [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelButtonDown)]];
+    //[self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelButtonDown)]];
 }
 
 - (void)cancelButtonDown {
@@ -309,6 +310,9 @@
         // Last read message date
         if ( [commentsList count] > 0 )
             [globalData updateConversationDate:((PFObject*)commentsList[0]).createdAt thread:meetup.strId];
+        
+        // Make new comment editable now
+        newComment.editable = true;
     }];
 }
 

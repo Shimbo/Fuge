@@ -26,6 +26,7 @@
 
     self.imageCache = [[NSCache alloc]init];
     [self.imageCache setCountLimit:90];
+    bFirstActivation = true;
         
 #ifndef RELEASE
     [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
@@ -189,6 +190,10 @@
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
+    if ( bFirstActivation )
+        bFirstActivation = false;
+    else if ( [[PFUser currentUser] isAuthenticated])
+        [globalData reload:nil];    // TODO: show loading screen here, always open on loading screen
 }
 
 

@@ -10,5 +10,6 @@
 
 @interface StatsViewController : MainViewController
 @property (strong, nonatomic) IBOutlet UITextView *statsText;
+@property (strong, nonatomic) IBOutlet UITextView *statsNumbers;
 
 @end

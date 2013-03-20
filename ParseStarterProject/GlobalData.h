@@ -35,7 +35,7 @@ enum EMeetupCommentType
     COMMENT_JOINED  = 3
 };
 
-#define INBOX_LOADED    4   // Number of stages in loading
+#define INBOX_LOADED    3   // Number of stages in loading
 
 @interface GlobalData : NSObject
 {

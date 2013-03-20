@@ -24,6 +24,7 @@
 }
 
 @property (nonatomic, strong) UIBarButtonItem *buttonProfile;
+@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
 -(void) setPerson:(Person*)person;
 

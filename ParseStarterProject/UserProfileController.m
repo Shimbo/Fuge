@@ -144,6 +144,7 @@ NSInteger sort(id message1, id message2, void *context)
     labelCircle = nil;
     addButton = nil;
     ignoreButton = nil;
+    [self setActivityIndicator:nil];
     [super viewDidUnload];
 }
 
@@ -245,28 +246,38 @@ double animatedDistance;
     [message setObject:personThis.personData forKey:@"objUserTo"];
     [message setObject:[[PFUser currentUser] objectForKey:@"fbName"] forKey:@"nameUserFrom"];
     [message setObject:personThis.strName forKey:@"nameUserTo"];
+
     // TODO: it's bad approach, use the name from PFUser, load PFUsers for all messages
-    [message saveInBackground];
+    [self.activityIndicator startAnimating];
+    messageNew.editable = false;
     
-    // Adding to inbox
-    [globalData addMessage:message];
-    
-    // Creating push
-    [pushManager sendPushNewMessage:PUSH_NEW_MESSAGE idTo:personThis.strId];
-    
-    // Updating history
-    NSMutableString* stringHistory = [[NSMutableString alloc] initWithFormat:@""];
-    [stringHistory appendString:@"    You: "];
-    [stringHistory appendString:messageNew.text];
-    [stringHistory appendString:@"\n"];
-    [stringHistory appendString:messageHistory.text];
-    [messageHistory setText:stringHistory];
-    
-    NSRange range;
-    range.location = range.length = 0;
-    [messageHistory scrollRangeToVisible:range];
-    
-    [messageNew setText:@""];
+    [message saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        
+        // Adding to inbox
+        [globalData addMessage:message];
+        
+        // Creating push
+        [pushManager sendPushNewMessage:PUSH_NEW_MESSAGE idTo:personThis.strId];
+        
+        // Updating history
+        NSMutableString* stringHistory = [[NSMutableString alloc] initWithFormat:@""];
+        [stringHistory appendString:@"    You: "];
+        [stringHistory appendString:messageNew.text];
+        [stringHistory appendString:@"\n"];
+        [stringHistory appendString:messageHistory.text];
+        [messageHistory setText:stringHistory];
+        
+        // Scrolling
+        NSRange range;
+        range.location = range.length = 0;
+        [messageHistory scrollRangeToVisible:range];
+        
+        // Emptying message
+        [messageNew setText:@""];
+        messageNew.editable = true;
+        
+        [self.activityIndicator stopAnimating];
+    }];
 }
 
 
