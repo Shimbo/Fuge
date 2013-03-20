@@ -73,7 +73,7 @@
 }
 
 - (void)cancelButtonDown {
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)declineClicked

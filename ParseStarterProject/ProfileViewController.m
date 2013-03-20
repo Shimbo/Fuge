@@ -58,7 +58,7 @@
 - (IBAction)donePressed:(UIButton *)sender {
     
     [self save];
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 

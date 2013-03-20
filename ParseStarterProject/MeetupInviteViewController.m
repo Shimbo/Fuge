@@ -53,7 +53,7 @@
     [arrayRecentIds addObjectsFromArray:[[self selectedPersons] valueForKeyPath:@"strId"]];
     [globalData addRecentInvites:arrayRecentIds];
     
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)viewDidLoad

@@ -104,7 +104,7 @@ static UIViewController* tempController = nil;
     
     if ( tempController )
     {
-        [tempController presentModalViewController:eventView animated:YES];
+        [tempController presentViewController:eventView animated:YES completion:nil];
     }
     
     eventView.editViewDelegate = self;
@@ -136,7 +136,8 @@ static UIViewController* tempController = nil;
             break;
     }
     // Dismiss the modal view controller
-    [controller dismissModalViewControllerAnimated:YES];
+    [controller dismissViewControllerAnimated:YES
+                                   completion:nil];
 }
 
 
