@@ -47,7 +47,7 @@
     
     UIBarButtonItem *cancelBtn = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleBordered target:self action:@selector(cancelClicked)];
     UIBarButtonItem *editBtn = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(editClicked)];
-    UIBarButtonItem *calendarBtn = [[UIBarButtonItem alloc] initWithTitle:@"Add to calendar" style:UIBarButtonItemStyleBordered target:self action:@selector(calendarClicked)];
+    UIBarButtonItem *calendarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Calendar-Day"] style:UIBarButtonItemStyleBordered  target:self action:@selector(calendarClicked)];
     
     NSMutableArray* actualButtons = [[NSMutableArray alloc] init];
     if ( [buttons[MB_JOIN] integerValue] != 0 )
@@ -68,6 +68,12 @@
         [actualButtons addObject:editBtn];
     
     [self.navigationItem setRightBarButtonItems:actualButtons];
+    
+    [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelButtonDown)]];
+}
+
+- (void)cancelButtonDown {
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)declineClicked

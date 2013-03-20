@@ -33,6 +33,8 @@
 		4706D10E16C11BA200CAF9AF /* RootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4706D10D16C11BA200CAF9AF /* RootViewController.xib */; };
 		4706D11116C11CA600CAF9AF /* reveal_menu_icon_portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 4706D10F16C11CA600CAF9AF /* reveal_menu_icon_portrait.png */; };
 		4706D11216C11CA600CAF9AF /* reveal_menu_icon_portrait@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4706D11016C11CA600CAF9AF /* reveal_menu_icon_portrait@2x.png */; };
+		470E5D2716F99EB90090A19F /* Calendar-Day.png in Resources */ = {isa = PBXBuildFile; fileRef = 470E5D2516F99EB90090A19F /* Calendar-Day.png */; };
+		470E5D2816F99EB90090A19F /* Calendar-Day@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 470E5D2616F99EB90090A19F /* Calendar-Day@2x.png */; };
 		471EAC5C16C0D419009F88F9 /* Foursquare2.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5216C0D3E0009F88F9 /* Foursquare2.m */; };
 		471EAC5D16C0D42C009F88F9 /* FSRequester.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5416C0D3E0009F88F9 /* FSRequester.m */; };
 		471EAC5E16C0D42F009F88F9 /* FSTargetCallback.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5616C0D3E0009F88F9 /* FSTargetCallback.m */; };
@@ -146,6 +148,8 @@
 		4706D10F16C11CA600CAF9AF /* reveal_menu_icon_portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = reveal_menu_icon_portrait.png; sourceTree = "<group>"; };
 		4706D11016C11CA600CAF9AF /* reveal_menu_icon_portrait@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reveal_menu_icon_portrait@2x.png"; sourceTree = "<group>"; };
 		4706D11316C12A1600CAF9AF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		470E5D2516F99EB90090A19F /* Calendar-Day.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Calendar-Day.png"; sourceTree = "<group>"; };
+		470E5D2616F99EB90090A19F /* Calendar-Day@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Calendar-Day@2x.png"; sourceTree = "<group>"; };
 		471EAC5116C0D3E0009F88F9 /* Foursquare2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Foursquare2.h; sourceTree = "<group>"; };
 		471EAC5216C0D3E0009F88F9 /* Foursquare2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Foursquare2.m; sourceTree = "<group>"; };
 		471EAC5316C0D3E0009F88F9 /* FSRequester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FSRequester.h; sourceTree = "<group>"; };
@@ -352,6 +356,7 @@
 		09ABC07813A1D52D009C3FCF /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				470E5D2416F99EB90090A19F /* icons */,
 				C4C51B541613CE0800959FDC /* Default.png */,
 				C4C51B561613CE0800959FDC /* Default@2x.png */,
 				C4C51B551613CE0800959FDC /* Default-568h@2x.png */,
@@ -385,6 +390,15 @@
 			name = PKRevealController;
 			path = libs/PKRevealController;
 			sourceTree = "<group>";
+		};
+		470E5D2416F99EB90090A19F /* icons */ = {
+			isa = PBXGroup;
+			children = (
+				470E5D2516F99EB90090A19F /* Calendar-Day.png */,
+				470E5D2616F99EB90090A19F /* Calendar-Day@2x.png */,
+			);
+			path = icons;
+			sourceTree = SOURCE_ROOT;
 		};
 		47534D8516A6F8DC008CC823 /* Foursquare2 */ = {
 			isa = PBXGroup;
@@ -638,6 +652,8 @@
 				4CAE597816F8A53200A69CA0 /* StatsViewController.xib in Resources */,
 				47C0A11716F8D3080081E4F7 /* reveal_menu_button_portrait.png in Resources */,
 				47C0A11816F8D3080081E4F7 /* reveal_menu_button_portrait@2x.png in Resources */,
+				470E5D2716F99EB90090A19F /* Calendar-Day.png in Resources */,
+				470E5D2816F99EB90090A19F /* Calendar-Day@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
