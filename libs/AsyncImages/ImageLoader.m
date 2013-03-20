@@ -34,6 +34,12 @@
     return [_imageCache objectForKey:url];
 }
 
+-(void)setImage:(UIImage*)image url:(NSString*)url {
+    [_imageCache setObject:image
+                    forKey:url
+                      cost:1];
+}
+
 -(void)loadImageWithUrl:(NSString*)url
                 handler:(ImageHandler)handler{
     

@@ -35,6 +35,7 @@
 		4706D11216C11CA600CAF9AF /* reveal_menu_icon_portrait@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4706D11016C11CA600CAF9AF /* reveal_menu_icon_portrait@2x.png */; };
 		470E5D2716F99EB90090A19F /* Calendar-Day.png in Resources */ = {isa = PBXBuildFile; fileRef = 470E5D2516F99EB90090A19F /* Calendar-Day.png */; };
 		470E5D2816F99EB90090A19F /* Calendar-Day@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 470E5D2616F99EB90090A19F /* Calendar-Day@2x.png */; };
+		470E5D2B16F9A5E40090A19F /* AsyncAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 470E5D2A16F9A5E40090A19F /* AsyncAnnotationView.m */; };
 		471EAC5C16C0D419009F88F9 /* Foursquare2.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5216C0D3E0009F88F9 /* Foursquare2.m */; };
 		471EAC5D16C0D42C009F88F9 /* FSRequester.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5416C0D3E0009F88F9 /* FSRequester.m */; };
 		471EAC5E16C0D42F009F88F9 /* FSTargetCallback.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5616C0D3E0009F88F9 /* FSTargetCallback.m */; };
@@ -150,6 +151,8 @@
 		4706D11316C12A1600CAF9AF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		470E5D2516F99EB90090A19F /* Calendar-Day.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Calendar-Day.png"; sourceTree = "<group>"; };
 		470E5D2616F99EB90090A19F /* Calendar-Day@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Calendar-Day@2x.png"; sourceTree = "<group>"; };
+		470E5D2916F9A5E40090A19F /* AsyncAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncAnnotationView.h; sourceTree = "<group>"; };
+		470E5D2A16F9A5E40090A19F /* AsyncAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncAnnotationView.m; sourceTree = "<group>"; };
 		471EAC5116C0D3E0009F88F9 /* Foursquare2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Foursquare2.h; sourceTree = "<group>"; };
 		471EAC5216C0D3E0009F88F9 /* Foursquare2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Foursquare2.m; sourceTree = "<group>"; };
 		471EAC5316C0D3E0009F88F9 /* FSRequester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FSRequester.h; sourceTree = "<group>"; };
@@ -504,6 +507,8 @@
 				47BDBC9716EA3947008B12CF /* PersonInviteCell.m */,
 				4CAE597416F8A53200A69CA0 /* StatsViewController.h */,
 				4CAE597516F8A53200A69CA0 /* StatsViewController.m */,
+				470E5D2916F9A5E40090A19F /* AsyncAnnotationView.h */,
+				470E5D2A16F9A5E40090A19F /* AsyncAnnotationView.m */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -706,6 +711,7 @@
 				4CA463F116F1DF7600F354FC /* LocationManager.m in Sources */,
 				4CAE597716F8A53200A69CA0 /* StatsViewController.m in Sources */,
 				479A7E0216F8C58F00E97576 /* CustomBadge.m in Sources */,
+				470E5D2B16F9A5E40090A19F /* AsyncAnnotationView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -73,38 +73,7 @@
 }
 
 
--(AsyncImageView*)initAsyncViewForFullscreenWithFrame:(CGRect)frame{
-    self = [super initWithFrame:frame];
-    if (self != nil) {
-        self.backgroundColor = [UIColor clearColor];
-        isRounded = YES;
-        cornerRadius = 4.0;
-        shadowed = NO;
-        spinny.center = CGPointMake(self.bounds.size.width / 2, self.bounds.size.height / 2);
-        [spinny startAnimating];
-        [self addSubview:spinny];
-        self.clipsToBounds = YES;
 
-        
-        CALayer *layer = self.layer;
-        layer.masksToBounds = NO;
-        layer.shadowColor = [UIColor blackColor].CGColor;
-        layer.shadowRadius = 5;
-        layer.shadowOpacity = 0.9;
-        layer.shadowOffset = CGSizeMake(0, 0);
-
-        if (!imageView){
-            imageView = [[UIImageView alloc] initWithFrame:self.bounds];
-            imageView.contentMode      = UIViewContentModeScaleAspectFit;
-            imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-            [self insertSubview:imageView atIndex:0];
-            imageView.clipsToBounds = YES;
-            imageView.layer.cornerRadius = 4.0;
-            imageView.layer.masksToBounds = YES;
-        }
-    }
-    return self;
-}
 
 
 
@@ -225,9 +194,7 @@
 
 
 
-- (UIView *)attachmentView{
-    return self;
-}
+
 
 
 @end

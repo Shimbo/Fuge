@@ -22,6 +22,8 @@
 #import "ImageLoader.h"
 #import "NewMeetupViewController.h"
 #import "MeetupInviteViewController.h"
+#import "AsyncAnnotationView.h"
+
 
 @implementation MapViewController
 
@@ -223,41 +225,33 @@
     if (annotation != mapView.userLocation)
     {
         static NSString *defaultPinID = @"secondcircle.pin";
-        pinView = (MKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:defaultPinID];
+        static NSString *defaultPersonImage = @"person.image";
+        
+        NSString *identifier = defaultPinID;
+        BOOL isPerson = NO;
+        if ([annotation isMemberOfClass:[PersonAnnotation class]]) {
+            isPerson = YES;
+            identifier = defaultPersonImage;
+        }
+        pinView = (MKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:identifier];
 
         if ( pinView == nil ){
-            pinView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:defaultPinID];
+            if (isPerson) {
+                pinView = (MKPinAnnotationView*)
+                [[AsyncAnnotationView alloc]initWithAnnotation:annotation
+                                                      reuseIdentifier:identifier];
+            }else{
+                pinView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation
+                                                          reuseIdentifier:defaultPinID];
+            }
         }
         
-        if ( [annotation isMemberOfClass:[PersonAnnotation class]] )
-        {
-            pinView.pinColor = ((PersonAnnotation*) annotation).color;
-            //UIImage *image = ((PersonAnnotation*) annotation).person.image;
-            //UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
-            //[pinView addSubview:imageView];
-            
-            ImageLoader *loader = [[ImageLoader alloc]init];
-            pinView.image = nil;
-            pinView.animatesDrop = NO;
-            if (!pinView.image) {
-                [loader loadImageWithUrl:((PersonAnnotation*) annotation).person.imageURL
-                                 handler:^(UIImage *image) {
-                                     if (pinView.image == nil) {
-                                         pinView.image = [UIImage imageWithCGImage:image.CGImage
-                                                                             scale:2 orientation:image.imageOrientation];
-                                     }
-                                     
-                                 }];
-            }
-
-
-//            pinView.image = ((PersonAnnotation*) annotation).person.image;
-        }
-        if ( [annotation isMemberOfClass:[MeetupAnnotation class]] )
-        {
+        if ( isPerson ){
+            AsyncAnnotationView *pin = (AsyncAnnotationView*)pinView;
+            [pin loadImageWithURL:((PersonAnnotation*) annotation).person.imageURL];
+        } else{
             pinView.pinColor = ((MeetupAnnotation*) annotation).color;
-            //pinView.image = nil;
-            pinView.animatesDrop = YES;
+            pinView.animatesDrop = NO;
         }
         
         UIButton *btnView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];

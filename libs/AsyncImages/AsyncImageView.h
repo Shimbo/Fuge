@@ -48,7 +48,6 @@
 
 - (void)addImageToImageView:(UIImage *)image animated:(BOOL)animated;
 
--(AsyncImageView*)initAsyncViewForFullscreenWithFrame:(CGRect)frame;
 
 
 @end

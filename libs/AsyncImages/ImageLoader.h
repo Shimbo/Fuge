@@ -17,6 +17,7 @@ typedef void (^ImageHandler)(UIImage *image);
 
 
 -(UIImage*)getImage:(NSString*)url;
+-(void)setImage:(UIImage*)image url:(NSString*)url;
 -(void)loadImageWithUrl:(NSString*)url
                 handler:(ImageHandler)handler;
 -(void)cancel;
