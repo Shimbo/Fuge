@@ -555,11 +555,15 @@ NSInteger sortByName(id num1, id num2, void *context)
         [inbox setObject:inboxOld forKey:@"Old"];
     
     
-    [[NSNotificationCenter defaultCenter]postNotificationName:kInboxUnreadCountDidUpdate
-                                                       object:nil];
-    nInboxUnreadCount = [inboxNew count];
+    [self setInboxUnreadCount:[inboxNew count]];
     
     return inbox;    
+}
+
+-(void)setInboxUnreadCount:(NSUInteger)count{
+    nInboxUnreadCount = count;
+    [[NSNotificationCenter defaultCenter]postNotificationName:kInboxUnreadCountDidUpdate
+                                                       object:nil];
 }
 
 - (NSUInteger)getInboxUnreadCount
