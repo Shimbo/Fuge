@@ -7,6 +7,7 @@
 
     UIWindow *window;
 	UINavigationController *navigationController;
+    Boolean bFirstActivation;
 }
 
 //@property (nonatomic, strong) IBOutlet RootViewController *viewController;

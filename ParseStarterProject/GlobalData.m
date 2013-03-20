@@ -871,6 +871,7 @@ NSInteger sortByName(id num1, id num2, void *context)
                                      forKey:@"fbBirthday"];
             [[PFUser currentUser] setObject:[result objectForKey:@"gender"]
                                      forKey:@"fbGender"];
+            [[PFUser currentUser] save];
         }
         else {
             NSLog(@"Uh oh. An error occurred: %@", error);
@@ -905,7 +906,8 @@ NSInteger sortByName(id num1, id num2, void *context)
                 [[PFUser currentUser] saveEventually];
                 
                 // Reload table
-                [controller reloadFinished];
+                if ( controller )
+                    [controller reloadFinished];
                 
                 // Start background loading for inbox
                 [self reloadInbox:nil];
