@@ -592,7 +592,10 @@ NSInteger sortByName(id num1, id num2, void *context)
         // Invites always in new
         if ( item.type == INBOX_ITEM_INVITE || item.type == INBOX_ITEM_NEWUSER )
         {
-            [inboxNew addObject:item];
+            if ( item.misc )
+                [inboxRecent addObject:item];
+            else
+                [inboxNew addObject:item];
             continue;
         }
         

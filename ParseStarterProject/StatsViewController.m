@@ -30,7 +30,15 @@
     
     // Counters
     PFQuery *userQuery = [PFUser query];
+    userQuery.limit = 1000;
     NSNumber *userCount = [[NSNumber alloc] initWithInt:[userQuery countObjects]];
+    /*NSArray* users = [userQuery findObjects];
+    NSNumber *fbfriends =
+    for ( PFUser* user in users )
+    {
+        
+    }*/
+    
     PFQuery *query = [PFQuery queryWithClassName:@"Message"];
     NSNumber *msgCount = [[NSNumber alloc] initWithInt:[query countObjects]];
     query = [PFQuery queryWithClassName:@"Meetup"];

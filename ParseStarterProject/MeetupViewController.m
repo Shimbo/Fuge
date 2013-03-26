@@ -90,7 +90,8 @@
     NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_DECLINED];
     [invite setObject:inviteStatus forKey:@"status"];
     [invite saveInBackground];
-    [self dismissViewControllerAnimated:TRUE completion:nil];
+    //[self dismissViewControllerAnimated:TRUE completion:nil];
+    [self.navigationController popViewControllerAnimated:TRUE];
 }
 
 - (void)joinClicked
@@ -122,7 +123,8 @@
         NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_ACCEPTED];
         [invite setObject:inviteStatus forKey:@"status"];
         [invite saveInBackground];
-        [self dismissViewControllerAnimated:TRUE completion:nil];
+        //[self dismissViewControllerAnimated:TRUE completion:nil];
+        [self.navigationController popViewControllerAnimated:TRUE];
     }
     else
     {
@@ -179,7 +181,8 @@
         NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_ACCEPTED];
         [invite setObject:inviteStatus forKey:@"status"];
         [invite saveInBackground];
-        [self dismissViewControllerAnimated:TRUE completion:nil];
+        //[self dismissViewControllerAnimated:TRUE completion:nil];
+        [self.navigationController popViewControllerAnimated:TRUE];
     }
     else
         [self updateButtons];
@@ -190,7 +193,8 @@
     [globalData unsubscribeToThread:meetup.strId];
     
     if ( invite )
-        [self dismissViewControllerAnimated:TRUE completion:nil];
+        //[self dismissViewControllerAnimated:TRUE completion:nil];
+        [self.navigationController popViewControllerAnimated:TRUE];
     else
         [self updateButtons];
 }
@@ -254,7 +258,8 @@
             }
             else    // Attending already
             {
-                buttons[MB_SUBSCRIBE] = buttonOn;
+                if ( meetup.meetupType == TYPE_THREAD )
+                    buttons[MB_SUBSCRIBE] = buttonOn;
                 buttons[MB_INVITE] = buttonOn;
                 
                 if ( meetup.meetupType == TYPE_MEETUP )
