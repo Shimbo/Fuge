@@ -44,7 +44,7 @@
     [Parse setApplicationId:@"VMhSG8IQ9xibufk8lAPpclIwdXVfYD44OpKmsHdn"
                   clientKey:@"u2kJ1jWBjN9qY3ARlJuEyNkvUA9EjOMv1R4w5sDX"];
     
-    [PFFacebookUtils initializeWithApplicationId:@"157314481074430"];
+    [PFFacebookUtils initializeFacebook];
     
     // Location data
     [locManager startUpdating];

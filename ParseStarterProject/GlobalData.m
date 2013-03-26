@@ -509,7 +509,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         if ( [object isKindOfClass:[PFObject class]] )
         {
             PFObject* pObject = object;
-            if ( [[pObject className] compare:@"Invite"] == NSOrderedSame )
+            if ( [pObject.parseClassName compare:@"Invite"] == NSOrderedSame )
             {
                 // Already accepted or declined invite
                 if ( [[pObject objectForKey:@"status"] integerValue] == INVITE_ACCEPTED )
@@ -533,7 +533,7 @@ NSInteger sortByName(id num1, id num2, void *context)
                 
                 [tempArray addObject:item];
             }
-            if ( [[pObject className] compare:@"Message"] == NSOrderedSame )
+            if ( [pObject.parseClassName compare:@"Message"] == NSOrderedSame )
             {
                 item.type = INBOX_ITEM_MESSAGE;
                 item.fromId = [pObject objectForKey:@"idUserFrom"];
@@ -550,7 +550,7 @@ NSInteger sortByName(id num1, id num2, void *context)
                 item.dateTime = pObject.createdAt;
                 [tempArray addObject:item];
             }
-            if ( [[pObject className] compare:@"Comment"] == NSOrderedSame )
+            if ( [pObject.parseClassName compare:@"Comment"] == NSOrderedSame )
             {
                 item.type = INBOX_ITEM_COMMENT;
                 item.fromId = [pObject objectForKey:@"userId"];
@@ -663,9 +663,30 @@ NSInteger sortByName(id num1, id num2, void *context)
     // Loading
     [invitesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
-        // Actuall messages
-        invites = [[NSMutableArray alloc] initWithArray:objects];
-            
+        // Creating list of unique invites (only 1 per meetup)
+        NSMutableArray* uniqueInvites = [NSMutableArray arrayWithCapacity:30];
+        for ( PFObject* inviteNew in objects )
+        {
+            Boolean bFound = false;
+            for ( PFObject* inviteOld in uniqueInvites )
+            {
+                if ( [[inviteNew objectForKey:@"meetupId"] compare:[inviteOld objectForKey:@"meetupId"]] == NSOrderedSame )
+                {
+                    bFound = true;
+                    
+                    // Saving as duplicate
+                    NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_DUPLICATE];
+                    [inviteNew setObject:inviteStatus forKey:@"status"];
+                    [inviteNew saveInBackground];
+                    
+                    break;
+                }
+            }
+            if ( ! bFound )
+                [uniqueInvites addObject:inviteNew];
+        }
+        invites = uniqueInvites;
+        
         // Loading stage complete
         [self incrementLoadingStage:controller];
     }];
@@ -919,8 +940,8 @@ NSInteger sortByName(id num1, id num2, void *context)
     [meetups removeAllObjects];
     
     // Current user data
-    PF_FBRequest *request = [PF_FBRequest requestForMe];
-    [request startWithCompletionHandler:^(PF_FBRequestConnection *connection,
+    FBRequest *request = [FBRequest requestForMe];
+    [request startWithCompletionHandler:^(FBRequestConnection *connection,
                                           id result, NSError *error) {
         if (!error) {
             // Store the current user's Facebook ID on the user
@@ -939,8 +960,8 @@ NSInteger sortByName(id num1, id num2, void *context)
         }
         
         // FB friendlist
-        PF_FBRequest *request2 = [PF_FBRequest requestForMyFriends];
-        [request2 startWithCompletionHandler:^(PF_FBRequestConnection *connection,
+        FBRequest *request2 = [FBRequest requestForMyFriends];
+        [request2 startWithCompletionHandler:^(FBRequestConnection *connection,
                                                id result, NSError *error)
         {
             if (!error)

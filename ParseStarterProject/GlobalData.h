@@ -24,7 +24,8 @@ typedef enum EInviteStatus
 {
     INVITE_NEW      = 0,
     INVITE_DECLINED = 1,
-    INVITE_ACCEPTED = 2
+    INVITE_ACCEPTED = 2,
+    INVITE_DUPLICATE = 3
 }InviteStatus;
 
 typedef  enum EMeetupCommentType
