@@ -50,8 +50,8 @@ typedef  enum EMeetupCommentType
     NSMutableArray      *comments;
     NSUInteger          nInboxLoadingStage;
     NSUInteger          nInboxUnreadCount;
-    NSMutableArray*     newFriendsFb;
-    NSMutableArray*     newFriends2O;
+    NSMutableArray      *newFriendsFb;
+    NSMutableArray      *newFriends2O;
     
     NSMutableDictionary *_circleByNumber;
 }
@@ -102,6 +102,7 @@ typedef  enum EMeetupCommentType
 - (NSArray*) getRecentVenues;
 - (Boolean) isUserAdmin;
 - (void) setUserPosition:(PFGeoPoint*)geoPoint;
+- (void) removeUserFromNew:(NSString*)strUser;
 
 // Invites
 // One of two last parameters should be nil

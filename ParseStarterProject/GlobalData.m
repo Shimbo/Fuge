@@ -265,6 +265,11 @@ NSInteger sortByName(id num1, id num2, void *context)
         [pushManager sendPushNewUser:PUSH_NEW_FBFRIEND idTo:[friendUser objectForKey:@"fbId"]];
     }
     
+    // Excluding FB friends from 2O friends
+    NSMutableArray* temp2O = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
+    [temp2O removeObjectsInArray:friendIds];   // To exclude FB friends from 2O
+    [[PFUser currentUser] setObject:temp2O forKey:@"fbFriends2O"];
+    
     // Creating new friends list
     if ( oldFriendsFb )
     {
@@ -272,6 +277,18 @@ NSInteger sortByName(id num1, id num2, void *context)
         newFriends2O = [[[PFUser currentUser] objectForKey:@"fbFriends2O"] mutableCopy];
         [newFriendsFb removeObjectsInArray:oldFriendsFb];
         [newFriends2O removeObjectsInArray:oldFriends2O];
+        
+        // Removing people not using the app
+        NSMutableArray *filteredItemsFb = [NSMutableArray array];
+        NSMutableArray *filteredItems2O = [NSMutableArray array];
+        for (NSString *friendUser in newFriendsFb)
+            if ( [self getPersonById:friendUser] )
+                [filteredItemsFb addObject:friendUser];
+        for (NSString *friendUser in newFriends2O)
+            if ( [self getPersonById:friendUser] )
+                [filteredItems2O addObject:friendUser];
+        newFriendsFb = filteredItemsFb;
+        newFriends2O = filteredItems2O;
     }
 }
 
@@ -1080,6 +1097,12 @@ NSInteger sortByName(id num1, id num2, void *context)
 {
     if ( [[PFUser currentUser] isAuthenticated] )
         [[PFUser currentUser] setObject:geoPoint forKey:@"location"];
+}
+
+- (void) removeUserFromNew:(NSString*)strUser
+{
+    [newFriendsFb removeObject:strUser];
+    [newFriends2O removeObject:strUser];
 }
 
 @end

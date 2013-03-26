@@ -199,6 +199,9 @@
     {
         Person* person = item.data;
         
+        // Removing from new
+        [globalData removeUserFromNew:person.strId];
+        
         // Opening profile
         if ( person )
         {
