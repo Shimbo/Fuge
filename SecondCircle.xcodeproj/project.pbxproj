@@ -52,7 +52,6 @@
 		47A5ED2A16C7C2CD00084ED9 /* PersonCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47A5ED2916C7C2CD00084ED9 /* PersonCell.xib */; };
 		47BDBC9216EA268F008B12CF /* MeetupInviteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 47BDBC9016EA268F008B12CF /* MeetupInviteViewController.m */; };
 		47BDBC9316EA268F008B12CF /* MeetupInviteViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47BDBC9116EA268F008B12CF /* MeetupInviteViewController.xib */; };
-		47BDBC9516EA389C008B12CF /* PersonInviteCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47BDBC9416EA389C008B12CF /* PersonInviteCell.xib */; };
 		47BDBC9816EA3948008B12CF /* PersonInviteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 47BDBC9716EA3947008B12CF /* PersonInviteCell.m */; };
 		47BDBC9C16EA3EF4008B12CF /* MeetupInviteSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = 47BDBC9B16EA3EF3008B12CF /* MeetupInviteSearch.m */; };
 		47C0A11716F8D3080081E4F7 /* reveal_menu_button_portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 47C0A11516F8D3080081E4F7 /* reveal_menu_button_portrait.png */; };
@@ -180,7 +179,6 @@
 		47BDBC8F16EA268F008B12CF /* MeetupInviteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetupInviteViewController.h; sourceTree = "<group>"; };
 		47BDBC9016EA268F008B12CF /* MeetupInviteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetupInviteViewController.m; sourceTree = "<group>"; };
 		47BDBC9116EA268F008B12CF /* MeetupInviteViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MeetupInviteViewController.xib; sourceTree = "<group>"; };
-		47BDBC9416EA389C008B12CF /* PersonInviteCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PersonInviteCell.xib; sourceTree = "<group>"; };
 		47BDBC9616EA3947008B12CF /* PersonInviteCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersonInviteCell.h; sourceTree = "<group>"; };
 		47BDBC9716EA3947008B12CF /* PersonInviteCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersonInviteCell.m; sourceTree = "<group>"; };
 		47BDBC9A16EA3EF2008B12CF /* MeetupInviteSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetupInviteSearch.h; sourceTree = "<group>"; };
@@ -535,7 +533,6 @@
 				4706D10716C1188300CAF9AF /* RightViewController.xib */,
 				4706D10216C10DBF00CAF9AF /* LeftMenuController.xib */,
 				4C1C438216C9B125008BA9CA /* InboxViewController.xib */,
-				47BDBC9416EA389C008B12CF /* PersonInviteCell.xib */,
 				47BDBC9116EA268F008B12CF /* MeetupInviteViewController.xib */,
 				4CAE597616F8A53200A69CA0 /* StatsViewController.xib */,
 			);
@@ -657,7 +654,6 @@
 				4C1C438416C9B126008BA9CA /* InboxViewController.xib in Resources */,
 				4C1C438916C9BF64008BA9CA /* InboxCell.xib in Resources */,
 				47BDBC9316EA268F008B12CF /* MeetupInviteViewController.xib in Resources */,
-				47BDBC9516EA389C008B12CF /* PersonInviteCell.xib in Resources */,
 				4CAE597816F8A53200A69CA0 /* StatsViewController.xib in Resources */,
 				47C0A11716F8D3080081E4F7 /* reveal_menu_button_portrait.png in Resources */,
 				47C0A11816F8D3080081E4F7 /* reveal_menu_button_portrait@2x.png in Resources */,
@@ -806,15 +802,16 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libs\"";
 				INFOPLIST_FILE = "ParseStarterProject/SecondCircle-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/ParseStarterProject/TestFlightSDK\"",
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = SecondCircle;
-				PROVISIONING_PROFILE = "B843999F-5EB3-4CF9-ACF0-97D32E5351CF";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "B843999F-5EB3-4CF9-ACF0-97D32E5351CF";
+				PROVISIONING_PROFILE = "F5446DDE-3C09-4BA9-A1BD-E3282102958D";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "F5446DDE-3C09-4BA9-A1BD-E3282102958D";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
 				WRAPPER_EXTENSION = app;
 			};
@@ -838,15 +835,16 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libs\"";
 				INFOPLIST_FILE = "ParseStarterProject/SecondCircle-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/ParseStarterProject/TestFlightSDK\"",
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = SecondCircle;
-				PROVISIONING_PROFILE = "B843999F-5EB3-4CF9-ACF0-97D32E5351CF";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "B843999F-5EB3-4CF9-ACF0-97D32E5351CF";
+				PROVISIONING_PROFILE = "F5446DDE-3C09-4BA9-A1BD-E3282102958D";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "F5446DDE-3C09-4BA9-A1BD-E3282102958D";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
 				WRAPPER_EXTENSION = app;
