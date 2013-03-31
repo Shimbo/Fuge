@@ -137,9 +137,6 @@
     
     // Ask to add to calendar
     [meetup addToCalendar:self shouldAlert:true];
-    
-    // Auto subscribe
-    [self subscribeClicked];
 }
 
 - (void)editClicked
@@ -483,10 +480,7 @@ double animatedDistance;
     [stringComments appendString:@"\n"];
     [comments setText:stringComments];
     
-    [newComment setText:@""];
-    
-    // Auto subscription
-    [self subscribeClicked];
+    [newComment setText:@""];    
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{

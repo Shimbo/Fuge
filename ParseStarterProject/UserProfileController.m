@@ -12,6 +12,7 @@
 #import "AsyncImageView.h"
 #import "GlobalData.h"
 #import "NewMeetupViewController.h"
+#include "Message.h"
 
 @implementation UserProfileController
 @synthesize buttonProfile;
@@ -47,70 +48,35 @@
     // Dispose of any resources that can be recreated.
 }
 
-NSInteger sort(id message1, id message2, void *context)
+-(void) callback:(NSArray*)messages
 {
-//    NSString* strDate1 = [message1 objectForKey:@"createdAt"];
-//    NSString* strDate2 = [message2 objectForKey:@"createdAt"];
+    NSMutableString* stringHistory = [[NSMutableString alloc] initWithFormat:@""];
     
-//    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-//    [dateFormatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
-    PFObject* mes1 = message1;
-    PFObject* mes2 = message2;
-    NSDate *date1 = mes1.createdAt;//[dateFormatter dateFromString:strDate1 ];
-    NSDate *date2 = mes2.createdAt;//[dateFormatter dateFromString:strDate2 ];
-
-    if ([date2 compare:date1] == NSOrderedDescending)
-        return NSOrderedDescending;
+    for ( int n = 0; n < messages.count; n++ )
+    {
+        PFObject* message = messages[n];
+        NSString* strText = [message objectForKey:@"text"];
+        if ( [ personThis.strId compare:[ message objectForKey:@"idUserFrom"] ] == NSOrderedSame )
+        {
+            [stringHistory appendString:@"    "];
+            [stringHistory appendString:personThis.strName];
+            [stringHistory appendString:@": "];
+        }
+        else
+            [stringHistory appendString:@"    You: "];
+        [stringHistory appendString:strText];
+        if ( n != messages.count - 1 )
+            [stringHistory appendString:@"\n"];
+    }
     
-    return NSOrderedAscending;    
+    [messageHistory setText:stringHistory];
 }
 
 -(void) setPerson:(Person*)person
 {
     personThis = person;
     
-    PFQuery *messageQuery1 = [PFQuery queryWithClassName:@"Message"];
-    [messageQuery1 whereKey:@"idUserFrom" equalTo:[ [PFUser currentUser] objectForKey:@"fbId"] ];
-    [messageQuery1 whereKey:@"idUserTo" equalTo:personThis.strId ];
-    
-    PFQuery *messageQuery2 = [PFQuery queryWithClassName:@"Message"];
-    [messageQuery2 whereKey:@"idUserFrom" equalTo:personThis.strId ];
-    [messageQuery2 whereKey:@"idUserTo" equalTo:[ [PFUser currentUser] objectForKey:@"fbId"] ];
-    
-    [messageQuery1 findObjectsInBackgroundWithBlock:^(NSArray *messages1, NSError* error) {
-        [messageQuery2 findObjectsInBackgroundWithBlock:^(NSArray *messages2, NSError* error) {
-        
-            NSMutableString* stringHistory = [[NSMutableString alloc] initWithFormat:@""];
-            
-            NSMutableSet *set = [NSMutableSet setWithArray:messages1];
-            [set addObjectsFromArray:messages2];
-            NSArray *array = [set allObjects];
-            NSArray *sortedArray = [array sortedArrayUsingFunction:sort context:NULL];
-            
-            for ( int n = 0; n < sortedArray.count; n++ ) //NSDictionary *message in array)
-            {
-                PFObject* message = sortedArray[n];
-                NSString* strText = [message objectForKey:@"text"];
-                if ( [ person.strId compare:[ message objectForKey:@"idUserFrom"] ] == NSOrderedSame )
-                {
-                    [stringHistory appendString:@"    "];
-                    [stringHistory appendString:person.strName];
-                    [stringHistory appendString:@": "];
-                }
-                else
-                    [stringHistory appendString:@"    You: "];
-                [stringHistory appendString:strText];
-                if ( n != sortedArray.count - 1 )
-                    [stringHistory appendString:@"\n"];
-            }
-            
-            [messageHistory setText:stringHistory];
-            
-            // Last read message date
-            if ( [sortedArray count] > 0 )
-                [globalData updateConversationDate:((PFObject*)sortedArray[0]).createdAt thread:personThis.strId];
-        }];
-    }];
+    [globalData loadThread:person target:self selector:@selector(callback:)];
     
     [profileImage loadImageFromURL:person.largeImageURL];
     
@@ -123,10 +89,6 @@ NSInteger sort(id message1, id message2, void *context)
         addButton.hidden = NO;
     else
         addButton.hidden = YES;
-    
-    // Run network request asynchronously
-
-
 }
 
 
@@ -220,6 +182,31 @@ double animatedDistance;
     return YES;
 }
 
+- (void) callbackMessageSave:(NSNumber *)result error:(NSError *)error
+{
+    // Creating push
+    [pushManager sendPushNewMessage:PUSH_NEW_MESSAGE idTo:personThis.strId];
+    
+    // Updating history
+    NSMutableString* stringHistory = [[NSMutableString alloc] initWithFormat:@""];
+    [stringHistory appendString:@"    You: "];
+    [stringHistory appendString:messageNew.text];
+    [stringHistory appendString:@"\n"];
+    [stringHistory appendString:messageHistory.text];
+    [messageHistory setText:stringHistory];
+    
+    // Scrolling
+    NSRange range;
+    range.location = range.length = 0;
+    [messageHistory scrollRangeToVisible:range];
+    
+    // Emptying message
+    [messageNew setText:@""];
+    messageNew.editable = true;
+    
+    [self.activityIndicator stopAnimating];
+}
+
 - (void) textViewDidEndEditing:(UITextView *)textView
 {
     CGRect viewFrame = self.view.frame;
@@ -236,48 +223,23 @@ double animatedDistance;
     if ( [messageNew.text compare:@""] == NSOrderedSame )
         return;
     
-    // Adding message
-    PFObject* message = [[PFObject alloc] initWithClassName:@"Message"];
-    NSString* stringFrom = (NSString *) [[PFUser currentUser] objectForKey:@"fbId"];
-    [message setObject:stringFrom forKey:@"idUserFrom"];
-    [message setObject:personThis.strId forKey:@"idUserTo"];
-    [message setObject:messageNew.text forKey:@"text"];
-    [message setObject:[PFUser currentUser] forKey:@"objUserFrom"];
-    [message setObject:personThis.personData forKey:@"objUserTo"];
-    [message setObject:[[PFUser currentUser] objectForKey:@"fbName"] forKey:@"nameUserFrom"];
-    [message setObject:personThis.strName forKey:@"nameUserTo"];
-
-    // TODO: it's bad approach, use the name from PFUser, load PFUsers for all messages
+    // Adding message with callback on save
+    Message* newMessage = [[Message alloc] init];
+    newMessage.strUserFrom = strCurrentUserId;
+    newMessage.strUserTo = personThis.strId;
+    newMessage.strText = messageNew.text;
+    newMessage.objUserFrom = [PFUser currentUser];
+    newMessage.objUserTo = personThis.personData;
+    newMessage.strNameUserFrom = strCurrentUserName;
+    newMessage.strNameUserTo = personThis.strName;
+    [newMessage save:self selector:@selector(callbackMessageSave:error:)];
+    
+    // Adding to inbox
+    [globalData addMessage:newMessage];
+    
+    // Start animating
     [self.activityIndicator startAnimating];
     messageNew.editable = false;
-    
-    [message saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        
-        // Adding to inbox
-        [globalData addMessage:message];
-        
-        // Creating push
-        [pushManager sendPushNewMessage:PUSH_NEW_MESSAGE idTo:personThis.strId];
-        
-        // Updating history
-        NSMutableString* stringHistory = [[NSMutableString alloc] initWithFormat:@""];
-        [stringHistory appendString:@"    You: "];
-        [stringHistory appendString:messageNew.text];
-        [stringHistory appendString:@"\n"];
-        [stringHistory appendString:messageHistory.text];
-        [messageHistory setText:stringHistory];
-        
-        // Scrolling
-        NSRange range;
-        range.location = range.length = 0;
-        [messageHistory scrollRangeToVisible:range];
-        
-        // Emptying message
-        [messageNew setText:@""];
-        messageNew.editable = true;
-        
-        [self.activityIndicator stopAnimating];
-    }];
 }
 
 

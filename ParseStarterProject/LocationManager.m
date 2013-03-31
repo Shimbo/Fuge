@@ -34,7 +34,7 @@ static LocationManager *sharedInstance = nil;
         geoPoint = nil;
         locationManager = [[CLLocationManager alloc] init];
         locationManager.delegate = self;
-        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
+        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
         locationManager.distanceFilter = 100.0f;
     }
     

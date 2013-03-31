@@ -83,6 +83,9 @@
 		4C27C96F1691862B00B2A905 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 4C27C96B1691862A00B2A905 /* README.md */; };
 		4C27C9701691862B00B2A905 /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = 4C27C96C1691862A00B2A905 /* release_notes.md */; };
 		4C27C9731692ACBE00B2A905 /* GlobalVariables.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C27C9721692ACBD00B2A905 /* GlobalVariables.m */; };
+		4C33446F1708640400422689 /* InboxData.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C33446E1708640400422689 /* InboxData.m */; };
+		4C3344711708732600422689 /* MessageData.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C3344701708732600422689 /* MessageData.m */; };
+		4C334475170873A400422689 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C334474170873A400422689 /* Message.m */; };
 		4C4228E716C46B62008EBA67 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C4228E516C46B62008EBA67 /* EventKit.framework */; };
 		4C4228E816C46B62008EBA67 /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C4228E616C46B62008EBA67 /* EventKitUI.framework */; };
 		4C68CA791701F26100C2AD24 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C68CA781701F26100C2AD24 /* FacebookSDK.framework */; };
@@ -228,6 +231,10 @@
 		4C27C96D1691862A00B2A905 /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
 		4C27C9711692ACBD00B2A905 /* GlobalVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalVariables.h; sourceTree = "<group>"; };
 		4C27C9721692ACBD00B2A905 /* GlobalVariables.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlobalVariables.m; sourceTree = "<group>"; };
+		4C33446E1708640400422689 /* InboxData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxData.m; sourceTree = "<group>"; };
+		4C3344701708732600422689 /* MessageData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageData.m; sourceTree = "<group>"; };
+		4C334473170873A300422689 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
+		4C334474170873A400422689 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
 		4C4228E516C46B62008EBA67 /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
 		4C4228E616C46B62008EBA67 /* EventKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKitUI.framework; path = System/Library/Frameworks/EventKitUI.framework; sourceTree = SDKROOT; };
 		4C68CA781701F26100C2AD24 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
@@ -558,12 +565,16 @@
 				4C27C9721692ACBD00B2A905 /* GlobalVariables.m */,
 				4C188D291698CDE9004CF42D /* GlobalData.h */,
 				4C188D2A1698CDE9004CF42D /* GlobalData.m */,
+				4C33446E1708640400422689 /* InboxData.m */,
+				4C3344701708732600422689 /* MessageData.m */,
 				4C08DDCF163C88580093C851 /* Circle.h */,
 				4C08DDD0163C88580093C851 /* Circle.m */,
 				4C08DDD1163C88580093C851 /* Person.h */,
 				4C08DDD2163C88580093C851 /* Person.m */,
 				4C7E3FDC169A09D10065484F /* Meetup.h */,
 				4C7E3FDD169A09D20065484F /* Meetup.m */,
+				4C334473170873A300422689 /* Message.h */,
+				4C334474170873A400422689 /* Message.m */,
 				4CE307FB16BF424600F427DE /* PushManager.h */,
 				4CE307FC16BF424600F427DE /* PushManager.m */,
 				4CA463EF16F1DF7600F354FC /* LocationManager.h */,
@@ -712,6 +723,9 @@
 				4CAE597716F8A53200A69CA0 /* StatsViewController.m in Sources */,
 				479A7E0216F8C58F00E97576 /* CustomBadge.m in Sources */,
 				470E5D2B16F9A5E40090A19F /* AsyncAnnotationView.m in Sources */,
+				4C33446F1708640400422689 /* InboxData.m in Sources */,
+				4C3344711708732600422689 /* MessageData.m in Sources */,
+				4C334475170873A400422689 /* Message.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

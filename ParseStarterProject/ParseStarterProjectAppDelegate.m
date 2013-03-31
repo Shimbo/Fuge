@@ -66,10 +66,10 @@
     else
     {
         [self createNewMainNavigation];
-        NSError* error;
-        [[PFUser currentUser] refresh:&error];
-        if ( error )
-            NSLog(@"Uh oh. An error occurred: %@", error);
+        //NSError* error;
+        //[[PFUser currentUser] refresh:&error];
+        //if ( error )
+        //    NSLog(@"Uh oh. An error occurred: %@", error);
     }
     
     // Retrieving initial data

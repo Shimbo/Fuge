@@ -171,13 +171,14 @@
     else if ( item.type == INBOX_ITEM_MESSAGE )
     {
         // Retrieving person data
+        Message* message = item.data;
+        [message fetchUserIfNeeded];
+        
         PFUser* personData;
-        if ( [item.fromId compare:strCurrentUserId] == NSOrderedSame )
-            personData = [item.data objectForKey:@"objUserTo"];
+        if ( [message.strUserFrom compare:strCurrentUserId] == NSOrderedSame )
+            personData = message.objUserTo;
         else
-            personData = [item.data objectForKey:@"objUserFrom"];
-        NSError* error;
-        [personData fetchIfNeeded:&error];
+            personData = message.objUserFrom;
         
         // Trying to get this person if in one of our circles
         NSString* strId = [personData objectForKey:@"fbId"];
