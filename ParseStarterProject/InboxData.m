@@ -349,23 +349,50 @@
     return nInboxUnreadCount;
 }
 
-- (void) updateConversationDate:(NSDate*)date thread:(NSString*)strThread
+- (void) updateConversation:(NSDate*)date count:(NSUInteger)msgCount thread:(NSString*)strThread
 {
-    NSMutableDictionary* conversations = [[PFUser currentUser] objectForKey:@"datesMessages"];
+    NSMutableDictionary* conversations;
+    
+    // Date
+    if ( date )
+    {
+        conversations = [[PFUser currentUser] objectForKey:@"messageDates"];
+        if ( ! conversations )
+            conversations = [[NSMutableDictionary alloc] init];
+        [conversations setValue:date forKey:strThread];
+        [[PFUser currentUser] setObject:conversations forKey:@"messageDates"];
+    }
+    
+    // Count
+    conversations = [[PFUser currentUser] objectForKey:@"messageCounts"];
     if ( ! conversations )
         conversations = [[NSMutableDictionary alloc] init];
-    [conversations setValue:date forKey:strThread];
-    [[PFUser currentUser] setObject:conversations forKey:@"datesMessages"];
+    [conversations setValue:[[NSNumber alloc] initWithInt:msgCount] forKey:strThread];
+    [[PFUser currentUser] setObject:conversations forKey:@"messageCounts"];
+    
+    // Save
     [[PFUser currentUser] saveEventually];
 }
 
 - (NSDate*) getConversationDate:(NSString*)strThread
 {
-    NSMutableDictionary* conversations = [[PFUser currentUser] objectForKey:@"datesMessages"];
+    NSMutableDictionary* conversations = [[PFUser currentUser] objectForKey:@"messageDates"];
     if ( ! conversations )
         return nil;
     return [conversations valueForKey:strThread];
 }
+
+- (NSUInteger) getConversationCount:(NSString*)strThread
+{
+    NSMutableDictionary* conversations = [[PFUser currentUser] objectForKey:@"messageCounts"];
+    if ( ! conversations )
+        return 0;
+    NSNumber* num = [conversations valueForKey:strThread];
+    if ( ! num )
+        return 0;
+    return [num intValue];
+}
+
 
 
 @end

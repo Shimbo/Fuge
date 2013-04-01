@@ -81,6 +81,8 @@ static GlobalData *sharedInstance = nil;
             break;
         case COMMENT_PLAIN:
             [strComment appendString:text];
+            meetup.numComments++;
+            [globalData updateConversation:nil count:meetup.numComments thread:meetup.strId];
             break;
     }
     
@@ -426,13 +428,14 @@ NSInteger sortByName(id num1, id num2, void *context)
         return;
     
     PFQuery *meetupAnyQuery = [PFQuery queryWithClassName:@"Meetup"];
+    meetupAnyQuery.limit = 100;
     
     // Location filter
     [meetupAnyQuery whereKey:@"location" nearGeoPoint:ptUser withinKilometers:RANDOM_EVENT_KILOMETERS];
     
     // Date-time filter
-    NSNumber* timestampNow = [[NSNumber alloc] initWithDouble:[[NSDate date] timeIntervalSince1970]];
-    [meetupAnyQuery whereKey:@"meetupTimestamp" greaterThan:timestampNow];
+    NSDate* dateHide = [NSDate date];
+    [meetupAnyQuery whereKey:@"meetupDateExp" greaterThan:dateHide];
     
     // Privacy filter
     NSNumber* privacyTypePrivate = [[NSNumber alloc] initWithInt:MEETUP_PRIVATE];
@@ -443,13 +446,13 @@ NSInteger sortByName(id num1, id num2, void *context)
     for (PFObject *meetupData in meetupsData)
         [self addMeetupWithData:meetupData];
     
-    // Query for private events that user was subscribed to
+    // Query for events that user was subscribed to (to show also private and remote events/threads)
     NSArray* subscriptions = [[PFUser currentUser] objectForKey:@"subscriptions"];
     if ( subscriptions && subscriptions.count > 0 )
     {
         meetupAnyQuery = [PFQuery queryWithClassName:@"Meetup"];
-        [meetupAnyQuery whereKey:@"meetupTimestamp" greaterThan:timestampNow];
-        [meetupAnyQuery whereKey:@"privacy" equalTo:privacyTypePrivate];
+        meetupAnyQuery.limit = 1000;
+        [meetupAnyQuery whereKey:@"meetupDateExp" greaterThan:dateHide];
         [meetupAnyQuery whereKey:@"meetupId" containedIn:subscriptions];
         meetupsData = [meetupAnyQuery findObjects];
         for (PFObject *meetupData in meetupsData)
@@ -582,6 +585,50 @@ NSInteger sortByName(id num1, id num2, void *context)
 #pragma mark -
 #pragma mark Misc
 
+- (void) attendMeetup:(NSString*)strMeetup
+{
+    NSMutableArray* attending = [[PFUser currentUser] objectForKey:@"attending"];
+    if ( ! attending )
+        attending = [[NSMutableArray alloc] init];
+    
+    // Check if already attending
+    for (NSString* str in attending)
+        if ( [str compare:strMeetup] == NSOrderedSame )
+            return;
+    
+    // Attend
+    [attending addObject:strMeetup];
+    [[PFUser currentUser] setObject:attending forKey:@"attending"];
+    [[PFUser currentUser] saveEventually];
+}
+
+- (void) unattendMeetup:(NSString*)strMeetup
+{
+    NSMutableArray* attending = [[PFUser currentUser] objectForKey:@"attending"];
+    if ( ! attending )
+        attending = [[NSMutableArray alloc] init];
+    for (NSString* str in attending)
+    {
+        if ( [str compare:strMeetup] == NSOrderedSame )
+        {
+            [attending removeObject:str];
+            break;
+        }
+    }
+    [[PFUser currentUser] setObject:attending forKey:@"attending"];
+    [[PFUser currentUser] saveEventually];
+}
+
+- (Boolean) isAttendingMeetup:(NSString*)strMeetup
+{
+    NSMutableArray* attending = [[PFUser currentUser] objectForKey:@"attending"];
+    if ( ! attending )
+        return false;
+    for (NSString* str in attending)
+        if ( [str compare:strMeetup] == NSOrderedSame )
+            return true;
+    return false;
+}
 
 - (void) subscribeToThread:(NSString*)strThread
 {

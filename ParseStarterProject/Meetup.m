@@ -7,19 +7,21 @@
 //
 
 #import "Meetup.h"
+#import "GlobalData.h"
 #import "GlobalVariables.h"
 #import "FSVenue.h"
 #import "LocationManager.h"
 
 @implementation Meetup
 
-@synthesize strId,strOwnerId,strOwnerName,strSubject,dateTime,privacy,meetupType,location,strVenue,strAddress,meetupData;
+@synthesize strId,strOwnerId,strOwnerName,strSubject,dateTime,privacy,meetupType,location,strVenue,strAddress,meetupData,numComments,numAttendees,dateTimeExp,durationSeconds;
 
 -(id) init
 {
     if (self = [super init]) {
         meetupType = TYPE_THREAD;
         meetupData = nil;
+        durationSeconds = 3600;
         strAddress = @"";
     }
     
@@ -56,10 +58,10 @@
     [meetupData setObject:strSubject forKey:@"subject"];
     [meetupData setObject:[NSNumber numberWithInt:privacy] forKey:@"privacy"];
     [meetupData setObject:dateTime forKey:@"meetupDate"];
-    [meetupData setObject:timestamp forKey:@"meetupTimestamp"];
     [meetupData setObject:location forKey:@"location"];
     [meetupData setObject:strVenue forKey:@"venue"];
     [meetupData setObject:strAddress forKey:@"address"];
+    [meetupData setObject:[NSNumber numberWithInt:durationSeconds] forKey:@"duration"];
     
     // Save
     if ( bFirstSave )
@@ -81,12 +83,43 @@
     strSubject = [meetupData objectForKey:@"subject"];
     privacy = [[meetupData objectForKey:@"privacy"] integerValue];
     dateTime = [meetupData objectForKey:@"meetupDate"];
+    dateTimeExp = [meetupData objectForKey:@"meetupDateExp"];
     location = [meetupData objectForKey:@"location"];
     strVenue = [meetupData objectForKey:@"venue"];
     strAddress = [meetupData objectForKey:@"address"];
+    numComments = [[meetupData objectForKey:@"numComments"] integerValue];
+    numAttendees = [[meetupData objectForKey:@"numAttendees"] integerValue];
+    durationSeconds = [[meetupData objectForKey:@"duration"] integerValue];
 }
 
+-(NSUInteger)getUnreadMessagesCount
+{
+    NSUInteger nOldCount = [globalData getConversationCount:strId];
+    return numComments - nOldCount;
+}
 
+-(Boolean)hasPassed
+{
+    return [dateTime compare:[NSDate dateWithTimeIntervalSinceNow:durationSeconds]] == NSOrderedAscending;
+}
+
+-(float)getTimerTill
+{
+    NSTimeInterval meetupInterval = [dateTime timeIntervalSinceNow];
+    
+    if ( meetupInterval < 3600*12 && meetupInterval > - (float) durationSeconds )
+    {
+        float fTimer = 1.0 - ( (float) ( meetupInterval ) ) / (3600.0f*12.0f);
+        if ( fTimer > 1.0 )
+            fTimer = 1.0f;
+        if ( fTimer < 0.0 )
+            fTimer = 0.0f;
+        
+        return fTimer;
+    }
+    
+    return 0.0f;
+}
 
 static UIViewController* tempController = nil;
 

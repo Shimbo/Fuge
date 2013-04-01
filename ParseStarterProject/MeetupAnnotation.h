@@ -27,6 +27,4 @@
 @property (nonatomic, retain) Meetup* meetup;
 @property (nonatomic, copy) NSString *strId;
 
-- (void) setMeetup:(Meetup*)m;
-
 @end

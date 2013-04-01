@@ -38,7 +38,7 @@
     return self;
 }
 
-- (void)addPersonAnnotations:(NSInteger)circleNumber limit:(NSInteger)l
+- (NSUInteger)addPersonAnnotations:(NSInteger)circleNumber limit:(NSInteger)l
 {
     //NSString* strCircle = [Circle getCircleName:circleNumber];
     NSUInteger color;
@@ -57,7 +57,7 @@
     
     Circle* circle = [globalData getCircle:circleNumber];
     if ( ! circle )
-        return;
+        return 0;
     
     int n = 0;
     for (Person* person in [circle getPersons] )
@@ -67,16 +67,20 @@
         ann.subtitle = [[NSString alloc] initWithFormat:@"%@, %@", person.strRole, person.strArea ];
         ann.coordinate = person.getLocation;
         ann.color = color;
-        [ann setPerson:person];
+        
+        ann.person = person;
+        
         [mapView addAnnotation:ann];
         
         n++;
         if ( n >= l )
-            return;
+            return n;
     }
+    
+    return n;
 }
 
-- (void)addMeetupAnnotations:(NSInteger)l
+- (NSUInteger)addMeetupAnnotations:(NSInteger)l
 {
     int n = 0;
     
@@ -101,13 +105,31 @@
         coord.longitude = meetup.location.longitude;
         ann.coordinate = coord;
         
-        [ann setMeetup:meetup];
+        ann.meetup = meetup;
+        
+        // Useful!!!
+        NSUInteger unreadComments = [meetup getUnreadMessagesCount]; // if > 0 show messages count
+        Boolean passed = [meetup hasPassed]; // grey?
+        Boolean attorsubsc; // orange or just blue?
+        if ( meetup.meetupType == TYPE_MEETUP )
+            attorsubsc = [globalData isAttendingMeetup:meetup.strId];
+        else
+            attorsubsc = [globalData isSubscribedToThread:meetup.strId];
+        Boolean private = (meetup.privacy == MEETUP_PRIVATE); // lock or normal icon
+        Boolean typeMeetup = (meetup.meetupType == TYPE_MEETUP); // meetup or thread
+        if ( typeMeetup && ! passed ) // Show timer from 0 to 1 where 1 is max, 0 is min
+        {
+            float fTimer = [meetup getTimerTill];
+            // show timer
+        }
+        
         [mapView addAnnotation:ann];
         
         n++;
         if ( n >= l )
-            return;
+            return n;
     }
+    return n;
 }
 
 - (void)newThreadClicked{
@@ -205,11 +227,16 @@
     [mapView removeAnnotations:pins];
     
     // Persons and meetups adding
-    //TODO: return count of added to use single limit for persons, move limits to config
-    [self addPersonAnnotations:1 limit:20];
-    [self addPersonAnnotations:2 limit:20];
-    [self addPersonAnnotations:3 limit:20];
-    [self addMeetupAnnotations:20];
+    NSUInteger nLimit = MAX_ANNOTATIONS_ON_THE_MAP;
+    nLimit -= [self addPersonAnnotations:1 limit:nLimit];
+    nLimit -= [self addPersonAnnotations:2 limit:nLimit];
+    nLimit -= [self addPersonAnnotations:3 limit:nLimit];
+    nLimit -= [self addMeetupAnnotations:nLimit];
+    
+    if ( nLimit == 0 )
+    {
+        // TODO: show message at the bottom: "Zoom closier to see more."
+    }
 }
 
 - (void) viewDidAppear:(BOOL)animated

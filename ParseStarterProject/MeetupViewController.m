@@ -100,10 +100,9 @@
     PFObject* attendee = [[PFObject alloc] initWithClassName:@"Attendee"];
     NSString* strUserId = (NSString *) [[PFUser currentUser] objectForKey:@"fbId"];
     NSString* strUserName = (NSString *) [[PFUser currentUser] objectForKey:@"fbName"];
-    NSString* strMeetupId = meetup.strId;
     [attendee setObject:strUserId forKey:@"userId"];
     [attendee setObject:strUserName forKey:@"userName"];
-    [attendee setObject:strMeetupId forKey:@"meetupId"];
+    [attendee setObject:meetup.strId forKey:@"meetupId"];
     [attendee setObject:meetup.meetupData forKey:@"meetupData"];
     [attendee saveInBackground];
     
@@ -115,6 +114,9 @@
     [stringComments appendString:comments.text];
     [stringComments appendString:@"    You joined the event!\n"];
     [comments setText:stringComments];
+    
+    // Add to attending list
+    [globalData attendMeetup:meetup.strId];
     
     // TODO: push notification
     
@@ -159,6 +161,11 @@
 {
     UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Under construction!" message:@"Leaving meetups is not implemented yet." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil,nil];
     [message show];
+    
+    // TODO:
+    // Remove from attending list
+    //[globalData unattendMeetup:meetup.strId];
+
     return;
 }
 
@@ -166,6 +173,11 @@
 {
     UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Under construction!" message:@"Canceling meetups is not implemented yet." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil,nil];
     [message show];
+    
+    // TODO:
+    // Remove from attending list
+    //[globalData unattendMeetup:meetup.strId];
+    
     return;
 }
 
@@ -317,8 +329,8 @@
         [comments setText:stringComments];
         
         // Last read message date
-        if ( [commentsList count] > 0 )
-            [globalData updateConversationDate:((PFObject*)commentsList[0]).createdAt thread:meetup.strId];
+        if ( meetup.numComments > 0 )
+            [globalData updateConversation:((PFObject*)commentsList[0]).createdAt count:meetup.numComments thread:meetup.strId];
         
         // Make new comment editable now
         newComment.editable = true;

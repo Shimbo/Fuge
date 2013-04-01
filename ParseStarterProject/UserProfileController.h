@@ -21,6 +21,8 @@
     
     IBOutlet UIButton *addButton;
     IBOutlet UIButton *ignoreButton;
+    
+    NSUInteger  messagesCount;
 }
 
 @property (nonatomic, strong) UIBarButtonItem *buttonProfile;

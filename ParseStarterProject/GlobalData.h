@@ -87,6 +87,9 @@ typedef  enum EMeetupCommentType
 - (Boolean) isUserAdmin;
 - (void) setUserPosition:(PFGeoPoint*)geoPoint;
 - (void) removeUserFromNew:(NSString*)strUser;
+- (void) attendMeetup:(NSString*)strMeetup;
+- (void) unattendMeetup:(NSString*)strMeetup;
+- (Boolean) isAttendingMeetup:(NSString*)strThread;
 - (void) subscribeToThread:(NSString*)strThread;
 - (void) unsubscribeToThread:(NSString*)strThread;
 - (Boolean) isSubscribedToThread:(NSString*)strThread;
@@ -107,8 +110,9 @@ typedef  enum EMeetupCommentType
     // Inbox utils
 - (void)updateInboxUnreadCount;
 - (NSUInteger)getInboxUnreadCount;
-- (void) updateConversationDate:(NSDate*)date thread:(NSString*)strThread;
+- (void) updateConversation:(NSDate*)date count:(NSUInteger)msgCount thread:(NSString*)strThread;
 - (NSDate*) getConversationDate:(NSString*)strThread;
+- (NSUInteger) getConversationCount:(NSString*)strThread;
 @end
 
 @interface GlobalData (Messages)

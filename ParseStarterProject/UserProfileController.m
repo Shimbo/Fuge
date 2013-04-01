@@ -23,6 +23,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         self.title = NSLocalizedString(@"Messages", @"Messages");
+        messagesCount = 0;
     }
     return self;
 }
@@ -70,6 +71,7 @@
     }
     
     [messageHistory setText:stringHistory];
+    messagesCount = messages.count;
 }
 
 -(void) setPerson:(Person*)person
@@ -203,6 +205,10 @@ double animatedDistance;
     // Emptying message
     [messageNew setText:@""];
     messageNew.editable = true;
+    
+    // Updating conversation
+    messagesCount++;
+    [globalData updateConversation:nil count:messagesCount thread:personThis.strId];
     
     [self.activityIndicator stopAnimating];
 }

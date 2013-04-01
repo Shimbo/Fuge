@@ -182,6 +182,9 @@
     [globalData addMeetup:_meetup];
     [globalData createCommentForMeetup:_meetup commentType:COMMENT_CREATED commentText:nil];
     
+    // Add to attending list
+    [globalData attendMeetup:_meetup.strId];
+    
     // Invites
     MeetupInviteViewController *inviteController = [[MeetupInviteViewController alloc]init];
     if ( invitee ) // Add invitee if this window was ivoked from user profile

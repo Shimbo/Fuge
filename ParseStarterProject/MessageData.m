@@ -166,7 +166,7 @@ NSInteger sort(id message1, id message2, void *context)
             
             // Last read message date
             if ( [sortedArray count] > 0 )
-                [globalData updateConversationDate:((PFObject*)sortedArray[0]).createdAt thread:person.strId];
+                [globalData updateConversation:((PFObject*)sortedArray[0]).createdAt count:[sortedArray count] thread:person.strId];
         }];
     }];
 }

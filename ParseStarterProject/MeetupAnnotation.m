@@ -12,9 +12,4 @@
 
 @synthesize coordinate,title,subtitle,color,meetup,strId;
 
-- (void) setMeetup:(Meetup*)m
-{
-    meetup = m;
-}
-
 @end

@@ -22,8 +22,7 @@ enum EMeetupType
 enum EMeetupPrivacy
 {
     MEETUP_PUBLIC   = 0,
-    MEETUP_2O       = 1,
-    MEETUP_PRIVATE  = 2
+    MEETUP_PRIVATE  = 1
 };
 @class FSVenue;
 
@@ -38,8 +37,14 @@ enum EMeetupPrivacy
     NSString    *strVenue;
     NSString    *strAddress;
     NSDate      *dateTime;
+    NSDate      *dateTimeExp;
     PFGeoPoint  *location;
     NSUInteger  privacy;
+    
+    NSUInteger  durationSeconds;
+    
+    NSUInteger  numComments;
+    NSUInteger  numAttendees;
     
     // Write only during save method and loading
     PFObject*   meetupData;
@@ -50,11 +55,15 @@ enum EMeetupPrivacy
 @property (nonatomic, copy) NSString *strOwnerName;
 @property (nonatomic, copy) NSString *strSubject;
 @property (nonatomic, copy) NSDate *dateTime;
+@property (nonatomic, copy) NSDate *dateTimeExp;
 @property (nonatomic, copy) PFGeoPoint *location;
 @property (nonatomic, copy) NSString *strVenue;
 @property (nonatomic, copy) NSString *strAddress;
 @property (nonatomic, assign) NSUInteger privacy;
 @property (nonatomic, assign) NSUInteger meetupType;
+@property (nonatomic, assign) NSUInteger numComments;
+@property (nonatomic, assign) NSUInteger numAttendees;
+@property (nonatomic, assign) NSUInteger durationSeconds;
 
 @property (nonatomic, copy) PFObject *meetupData;
 
@@ -65,7 +74,11 @@ enum EMeetupPrivacy
 -(Boolean) addedToCalendar;
 -(void) addToCalendar:(UIViewController*)controller shouldAlert:(Boolean)alert;
 
-
 -(void)populateWithVenue:(FSVenue*)venue;
 -(void)populateWithCoords;
+
+-(NSUInteger)getUnreadMessagesCount;
+-(Boolean)hasPassed;
+-(float)getTimerTill;
+
 @end

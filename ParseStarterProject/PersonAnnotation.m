@@ -12,9 +12,4 @@
 
 @synthesize coordinate,title,subtitle,color,person;
 
-- (void) setPerson:(Person *)p
-{
-    person = p;
-}
-
 @end

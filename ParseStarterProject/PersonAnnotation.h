@@ -25,6 +25,4 @@
 @property (nonatomic, assign) NSUInteger color;
 @property (nonatomic, retain) Person* person;
 
-- (void) setPerson:(Person *)p;
-
 @end

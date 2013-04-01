@@ -11,8 +11,9 @@
 
 #define globalVariables [GlobalVariables sharedInstance]
 
-#define RANDOM_PERSON_KILOMETERS    50000
-#define RANDOM_EVENT_KILOMETERS    50000
+#define RANDOM_PERSON_KILOMETERS    50
+#define RANDOM_EVENT_KILOMETERS     50
+#define MAX_ANNOTATIONS_ON_THE_MAP  200
 
 @interface GlobalVariables : NSObject
 {
