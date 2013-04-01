@@ -53,7 +53,7 @@ static GlobalData *sharedInstance = nil;
     // Creating comment about meetup creation in db
     PFObject* comment = [[PFObject alloc] initWithClassName:@"Comment"];
     NSMutableString* strComment = [[NSMutableString alloc] initWithFormat:@""];
-    NSNumber* trueNum = [[NSNumber alloc] initWithBool:true];
+    NSNumber* trueNum = [[NSNumber alloc] initWithInt:1];
     
     switch (type)
     {

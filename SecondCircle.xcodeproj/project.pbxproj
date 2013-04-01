@@ -100,6 +100,7 @@
 		4CA463F116F1DF7600F354FC /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CA463F016F1DF7600F354FC /* LocationManager.m */; };
 		4CAE597716F8A53200A69CA0 /* StatsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CAE597516F8A53200A69CA0 /* StatsViewController.m */; };
 		4CAE597816F8A53200A69CA0 /* StatsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CAE597616F8A53200A69CA0 /* StatsViewController.xib */; };
+		4CBAA0DD17099F44003C091F /* PersonInviteCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CBAA0DC17099F44003C091F /* PersonInviteCell.xib */; };
 		4CE307FD16BF424600F427DE /* PushManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CE307FC16BF424600F427DE /* PushManager.m */; };
 		4CFE78C8166BBA7900E1BF72 /* FilterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CFE78C6166BBA7900E1BF72 /* FilterViewController.m */; };
 		4CFE78C9166BBA7900E1BF72 /* FilterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CFE78C7166BBA7900E1BF72 /* FilterView.xib */; };
@@ -256,6 +257,7 @@
 		4CAE597416F8A53200A69CA0 /* StatsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatsViewController.h; sourceTree = "<group>"; };
 		4CAE597516F8A53200A69CA0 /* StatsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatsViewController.m; sourceTree = "<group>"; };
 		4CAE597616F8A53200A69CA0 /* StatsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StatsViewController.xib; sourceTree = "<group>"; };
+		4CBAA0DC17099F44003C091F /* PersonInviteCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PersonInviteCell.xib; sourceTree = "<group>"; };
 		4CE307FB16BF424600F427DE /* PushManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushManager.h; sourceTree = "<group>"; };
 		4CE307FC16BF424600F427DE /* PushManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushManager.m; sourceTree = "<group>"; };
 		4CFE78C5166BBA7900E1BF72 /* FilterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterViewController.h; sourceTree = "<group>"; };
@@ -525,6 +527,7 @@
 		4C1C437F16C9998D008BA9CA /* XIB */ = {
 			isa = PBXGroup;
 			children = (
+				4CBAA0DC17099F44003C091F /* PersonInviteCell.xib */,
 				4C188D211698C51A004CF42D /* MapView.xib */,
 				4706D10D16C11BA200CAF9AF /* RootViewController.xib */,
 				47A5ED2916C7C2CD00084ED9 /* PersonCell.xib */,
@@ -670,6 +673,7 @@
 				47C0A11816F8D3080081E4F7 /* reveal_menu_button_portrait@2x.png in Resources */,
 				470E5D2716F99EB90090A19F /* Calendar-Day.png in Resources */,
 				470E5D2816F99EB90090A19F /* Calendar-Day@2x.png in Resources */,
+				4CBAA0DD17099F44003C091F /* PersonInviteCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -104,6 +104,7 @@
     [attendee setObject:strUserId forKey:@"userId"];
     [attendee setObject:strUserName forKey:@"userName"];
     [attendee setObject:strMeetupId forKey:@"meetupId"];
+    [attendee setObject:meetup.meetupData forKey:@"meetupData"];
     [attendee saveInBackground];
     
     // Creating comment about joining in db

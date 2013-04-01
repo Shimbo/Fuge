@@ -68,7 +68,7 @@
     if ( [strUserFrom compare:strCurrentUserId] == NSOrderedSame )
         [objUserTo fetchIfNeeded:&error];
     else
-        [objUserTo fetchIfNeeded:&error];
+        [objUserFrom fetchIfNeeded:&error];
 }
 
 @end

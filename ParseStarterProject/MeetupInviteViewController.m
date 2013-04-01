@@ -40,7 +40,7 @@
     if ( meetup )
     {
         // Adding to calendar here
-        if ( bNewMeetup )
+        if ( bNewMeetup && meetup.meetupType == TYPE_MEETUP )
             [meetup addToCalendar:self shouldAlert:YES];
         
         for ( Person* person in [self selectedPersons])
