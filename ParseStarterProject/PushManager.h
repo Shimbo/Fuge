@@ -26,10 +26,12 @@ enum EPushType
 + (id)sharedInstance;
 
 - (void)sendPushNewUser:(NSInteger)pushType idTo:(NSString*)strTo;
-- (void)sendPushNewMessage:(NSInteger)pushType idTo:(NSString*)strTo;
+// All other pushes are cloud-based
+//- (void)sendPushNewMessage:(NSInteger)pushType idTo:(NSString*)strTo;
 
 - (void)initChannelsFirstTime;
 - (void)addChannel:(NSString*)strChannel;
+- (void)removeChannel:(NSString*)strChannel;
 
 @end
 

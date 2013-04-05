@@ -22,7 +22,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         meetup = nil;
-        invite = nil;
+        invite = false;
         self.navigationItem.leftItemsSupplementBackButton = true;
         buttons = [[NSMutableArray alloc] init];
         for ( int n = 0; n < MB_TOTAL_COUNT; n++ )
@@ -85,11 +85,9 @@
 
 - (void)declineClicked
 {
-    if ( ! invite )
-        return;
-    NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_DECLINED];
-    [invite setObject:inviteStatus forKey:@"status"];
-    [invite saveInBackground];
+    // Update invite
+    [globalData updateInvite:meetup.strId attending:INVITE_DECLINED];
+    
     //[self dismissViewControllerAnimated:TRUE completion:nil];
     [self.navigationController popViewControllerAnimated:TRUE];
 }
@@ -103,6 +101,7 @@
     [attendee setObject:strUserId forKey:@"userId"];
     [attendee setObject:strUserName forKey:@"userName"];
     [attendee setObject:meetup.strId forKey:@"meetupId"];
+    [attendee setObject:meetup.strSubject forKey:@"meetupSubject"];
     [attendee setObject:meetup.meetupData forKey:@"meetupData"];
     [attendee saveInBackground];
     
@@ -118,14 +117,12 @@
     // Add to attending list
     [globalData attendMeetup:meetup.strId];
     
-    // TODO: push notification
+    // Update invite
+    [globalData updateInvite:meetup.strId attending:INVITE_ACCEPTED];
     
-    // Accepting invite if it was
+    // If it was opened from invite
     if ( invite )
     {
-        NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_ACCEPTED];
-        [invite setObject:inviteStatus forKey:@"status"];
-        [invite saveInBackground];
         //[self dismissViewControllerAnimated:TRUE completion:nil];
         [self.navigationController popViewControllerAnimated:TRUE];
     }
@@ -183,17 +180,15 @@
 
 - (void)subscribeClicked
 {
+    // Subscribing
     [globalData subscribeToThread:meetup.strId];
     
-    // Accepting invite and closing window if it was
+    // Update invite
+    [globalData updateInvite:meetup.strId attending:INVITE_ACCEPTED];
+    
+    // Closing window if there was invite
     if ( invite )
-    {
-        NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_ACCEPTED];
-        [invite setObject:inviteStatus forKey:@"status"];
-        [invite saveInBackground];
-        //[self dismissViewControllerAnimated:TRUE completion:nil];
         [self.navigationController popViewControllerAnimated:TRUE];
-    }
     else
         [self updateButtons];
 }
@@ -353,9 +348,9 @@
     meetup = m;
 }
 
--(void) setInvite:(PFObject*)i
+- (void) setInvite
 {
-    invite = i;
+    invite = true;
 }
 
 - (void)viewDidUnload {

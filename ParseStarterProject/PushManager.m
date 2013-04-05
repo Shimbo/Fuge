@@ -46,7 +46,7 @@ static PushManager *sharedInstance = nil;
         return;
     
     NSString* strName = [[PFUser currentUser] objectForKey:@"fbName"];
-    NSString* strPush = @"Wrong push!";
+    NSString* strPush = @"Wrong push! Error codename: Cleopatra.";
     switch (pushType)
     {
         case PUSH_NEW_FBFRIEND:
@@ -63,7 +63,7 @@ static PushManager *sharedInstance = nil;
     [dicNewUserPushesSent setObject:@"Sent" forKey:strTo];
 }
 
-- (void)sendPushNewMessage:(NSInteger)pushType idTo:(NSString*)strTo
+/*- (void)sendPushNewMessage:(NSInteger)pushType idTo:(NSString*)strTo
 {
     NSString* strFrom = [[PFUser currentUser] objectForKey:@"fbName"];
     NSString* strPush = @"Wrong push!";
@@ -75,23 +75,34 @@ static PushManager *sharedInstance = nil;
     }
     NSString* strChannel = [[NSString alloc] initWithFormat:@"fb%@", strTo];
     [PFPush sendPushMessageToChannelInBackground:strChannel withMessage:strPush];
-}
+}*/
 
 - (void)initChannelsFirstTime
 {
     NSString* strUserChannel =[[NSString alloc] initWithFormat:@"fb%@", [[PFUser currentUser] objectForKey:@"fbId"]];
     [[PFInstallation currentInstallation] addUniqueObject:strUserChannel forKey:@"channels"];
     [[PFInstallation currentInstallation] addUniqueObject:@"" forKey:@"channels"];
-    [[PFInstallation currentInstallation] saveEventually];
+    [[PFInstallation currentInstallation] saveInBackground];
     [PFPush subscribeToChannelInBackground:@"" target:self selector:@selector(subscribeFinished:error:)];
     [PFPush subscribeToChannelInBackground:strUserChannel target:self selector:@selector(subscribeFinished:error:)];
 }
 
 - (void)addChannel:(NSString*)strChannel
 {
-    [[PFInstallation currentInstallation] addUniqueObject:strChannel forKey:@"channels"];
-    [[PFInstallation currentInstallation] saveEventually];
+    PFInstallation* currentInstallation = [PFInstallation currentInstallation];
+    NSMutableArray* channels = [currentInstallation objectForKey:@"channels"];
+    [currentInstallation addUniqueObject:strChannel forKey:@"channels"];
+    //[channels addObject:strChannel];
+    //[currentInstallation setObject:channels forKey:@"channels"];
+    [currentInstallation saveInBackground];
     [PFPush subscribeToChannelInBackground:strChannel target:self selector:@selector(subscribeFinished:error:)];
+}
+
+- (void)removeChannel:(NSString*)strChannel
+{
+    [[PFInstallation currentInstallation] removeObject:strChannel forKey:@"channels"];
+    [[PFInstallation currentInstallation] saveEventually];
+    [PFPush unsubscribeFromChannelInBackground:strChannel];
 }
 
 - (void)subscribeFinished:(NSNumber *)result error:(NSError *)error {

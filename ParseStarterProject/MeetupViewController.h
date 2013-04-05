@@ -29,7 +29,6 @@ enum EMeetupButtons
 @interface MeetupViewController : UIViewController <UITextViewDelegate, MKMapViewDelegate>
 {
     Meetup* meetup;
-    PFObject* invite;
     IBOutlet UITextView *comments;
     IBOutlet UITextView *newComment;
     IBOutlet MKMapView *mapView;
@@ -38,10 +37,11 @@ enum EMeetupButtons
     
     id delegate;
     NSMutableArray*    buttons;
+    Boolean invite;
 }
 
 -(void) setMeetup:(Meetup*)m;
--(void) setInvite:(PFObject*)i;
+-(void) setInvite;
 
 @property (nonatomic,strong) id delegate;
 

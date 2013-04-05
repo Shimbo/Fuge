@@ -738,6 +738,9 @@ NSInteger sortByName(id num1, id num2, void *context)
     [subscriptions addObject:strThread];
     [[PFUser currentUser] setObject:subscriptions forKey:@"subscriptions"];
     [[PFUser currentUser] saveEventually];
+    
+    // Pushes
+    [pushManager addChannel:strThread];
 }
 
 - (void) unsubscribeToThread:(NSString*)strThread
@@ -755,6 +758,9 @@ NSInteger sortByName(id num1, id num2, void *context)
     }
     [[PFUser currentUser] setObject:subscriptions forKey:@"subscriptions"];
     [[PFUser currentUser] saveEventually];
+    
+    // Pushes
+    [pushManager removeChannel:strThread];
 }
 
 - (Boolean) isSubscribedToThread:(NSString *)strThread
