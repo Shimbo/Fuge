@@ -78,7 +78,6 @@
     [deltaCompsMax setDay:7];
     NSDate* dateMax = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsMax toDate:[NSDate date] options:0];
     
-    
     [dateTime setMinimumDate:dateMin];
     [dateTime setMaximumDate:dateMax];
     

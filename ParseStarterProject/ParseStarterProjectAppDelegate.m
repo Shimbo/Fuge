@@ -32,12 +32,11 @@
     [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
 #endif
     @try {
-        [TestFlight takeOff:@"f8d7037b262277589cd287681817220a_MTUyNzAwMjAxMi0xMS0wNyAyMToxMDo0Ni43OTY5OTc"];
+        [TestFlight takeOff:@"d42a1f02-bb75-4c1e-896e-e0e4f41daf17"];
     }
     @catch (NSException *exception) {
         NSLog(@"----%@",exception);
     }
-
     
     [TestFlight passCheckpoint:@"Initialization started"];
     

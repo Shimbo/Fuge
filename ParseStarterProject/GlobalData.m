@@ -54,6 +54,7 @@ static GlobalData *sharedInstance = nil;
     PFObject* comment = [[PFObject alloc] initWithClassName:@"Comment"];
     NSMutableString* strComment = [[NSMutableString alloc] initWithFormat:@""];
     NSNumber* trueNum = [[NSNumber alloc] initWithInt:1];
+    NSNumber* typeNum = [[NSNumber alloc] initWithInt:meetup.meetupType];
     
     switch (type)
     {
@@ -64,7 +65,7 @@ static GlobalData *sharedInstance = nil;
             else
                 [strComment appendString:@" created the thread: "];
             [strComment appendString:meetup.strSubject];
-            [comment setObject:[trueNum stringValue] forKey:@"system"];
+            [comment setObject:trueNum forKey:@"system"];
             break;
         case COMMENT_SAVED:
             [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
@@ -72,12 +73,12 @@ static GlobalData *sharedInstance = nil;
                 [strComment appendString:@" changed meetup details."];
             else
                 [strComment appendString:@" changed thread details."];
-            [comment setObject:[trueNum stringValue] forKey:@"system"];
+            [comment setObject:trueNum forKey:@"system"];
             break;
         case COMMENT_JOINED:
             [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
             [strComment appendString:@" joined the event."];
-            [comment setObject:[trueNum stringValue] forKey:@"system"];
+            [comment setObject:trueNum forKey:@"system"];
             break;
         case COMMENT_PLAIN:
             [strComment appendString:text];
@@ -93,6 +94,7 @@ static GlobalData *sharedInstance = nil;
     [comment setObject:meetup.strId forKey:@"meetupId"];
     [comment setObject:meetup.meetupData forKey:@"meetupData"];
     [comment setObject:strComment forKey:@"comment"];
+    [comment setObject:typeNum forKey:@"type"];
     //comment.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
     //[comment.ACL setPublicReadAccess:true];
     
@@ -397,6 +399,11 @@ NSInteger sortByName(id num1, id num2, void *context)
     if ( meetup )
         return meetup;
     
+    // Expiration check
+    NSDate* dateTimeExp = [meetupData objectForKey:@"meetupDateExp"];
+    if ( [dateTimeExp compare:[NSDate date]] == NSOrderedAscending )
+        return nil;
+    
     meetup = [[Meetup alloc] init];
     [meetup unpack:meetupData];
     
@@ -419,6 +426,78 @@ NSInteger sortByName(id num1, id num2, void *context)
     [meetups addObject:meetup];
     
     return meetup;
+}
+
+// Under construction!
+- (void)loadFBMeetups
+{
+    return;
+    
+    //    FBRequest *request = [FBRequest requestForMe];
+    //    [request startWithCompletionHandler:^(FBRequestConnection *connection,
+    //                                          id result, NSError *error) {
+    
+    // Facebook events
+    //    [self.facebook authorize:[NSArray arrayWithObjects:@"user_events",
+    //                              @"friends_events",  nil]];
+    
+    //NSArray *permissions = [[NSArray alloc] initWithObjects: @"user_events", nil];
+    //[FBSession openActiveSessionWithReadPermissions:permissions allowLoginUI:YES completionHandler:nil];
+    //NSLog(@"permissions::%@",FBSession.activeSession.permissions);
+    
+    /*FBRequest *friendRequest = [FBRequest requestForGraphPath:@"me/friends?fields=name,picture,birthday,location"];
+     [ friendRequest startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+     NSArray *data = [result objectForKey:@"data"];
+     for (FBGraphObject<FBGraphUser> *friend in data) {
+     NSLog(@"%@:%@", [friend name],[friend birthday]);
+     }}];*/
+    
+    // pic_small,pic_big,
+    
+    //name,description,eid,
+    //location
+    // id,latitude,longitude,located_in
+    
+    NSString* fql1 = [NSString stringWithFormat:
+                      @"SELECT venue from event WHERE eid in (SELECT eid FROM event_member WHERE uid = me())"];
+    NSString* fql2 = [NSString stringWithFormat:
+                      @"SELECT name FROM page WHERE page_id IN (SELECT venue.id FROM #event_info)"];
+    NSString* fqlStr = [NSString stringWithFormat:
+                        @"{\"event_info\":\"%@\",\"event_venue\":\"%@\"}",fql1,fql2];
+    NSDictionary* params = [NSDictionary dictionaryWithObject:fqlStr forKey:@"queries"];
+    
+    
+    //FBRequest *fql = [FBRequest requestForGraphPath:@"fql.multiquery"];
+    FBRequest *fql = [FBRequest requestWithGraphPath:@"fql.query" parameters:params HTTPMethod:@"POST"];
+    
+    [fql startWithCompletionHandler:^(FBRequestConnection *connection,
+                                      id result,
+                                      NSError *error) {
+        if (result) {
+            NSLog(@"result:%@", result);
+        }
+        if (error) {
+            NSLog(@"error:%@", error);
+        }
+    }];
+    
+    FBRequest *request = [FBRequest requestForGraphPath:@"me/events"];
+    [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        
+        NSArray* events = [result objectForKey:@"data"];
+        
+        /*        for ( FBGraphObject* event in events )
+         {
+         NSLog(@"%@", [event objectForKey:@"id"] );
+         NSDictionary* venue = [event objectForKey:@"venue"];
+         if ( venue )
+         NSLog(@"%d", [[venue objectForKey:@"latitude"] integerValue] );
+         }*/
+        
+    }];
+    
+    //[self.facebook requestWithGraphPath:@"me/events" andDelegate:friendsVC];
+
 }
 
 - (void)loadMeetups
@@ -455,9 +534,20 @@ NSInteger sortByName(id num1, id num2, void *context)
         [meetupAnyQuery whereKey:@"meetupDateExp" greaterThan:dateHide];
         [meetupAnyQuery whereKey:@"meetupId" containedIn:subscriptions];
         meetupsData = [meetupAnyQuery findObjects];
+        
+        // Later we're updating subscription removing deleted and expired objects
+        NSMutableArray* newSubscriptions = [[NSMutableArray alloc] initWithCapacity:meetupsData.count];
         for (PFObject *meetupData in meetupsData)
-            [self addMeetupWithData:meetupData];
-    }
+        {
+            Meetup* result = [self addMeetupWithData:meetupData];
+            NSString* strMeetupId = [meetupData objectForKey:@"meetupId"];
+            if ( ! result )
+                [self unsubscribeToThread:strMeetupId];
+            else
+                [newSubscriptions addObject:strMeetupId];
+        }
+        [[PFUser currentUser] setObject:newSubscriptions forKey:@"subscriptions"];
+    }    
 }
 
 
@@ -554,6 +644,9 @@ NSInteger sortByName(id num1, id num2, void *context)
                 
                 // Meetups
                 [self loadMeetups];
+                
+                // FB Meetups
+                [self loadFBMeetups];
                 
                 // Pushes sent for new users, turn it off
                 [globalVariables pushToFriendsSent];

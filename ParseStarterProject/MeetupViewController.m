@@ -311,9 +311,9 @@
         NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
         for (NSDictionary *comment in commentsList)
         {
-            NSString* strSystem = [comment objectForKey:@"system"];
+            NSNumber* nSystem = [comment objectForKey:@"system"];
             NSString* strUserName = [comment objectForKey:@"userName"];
-            if ( ! strSystem || [strSystem compare:@""] == NSOrderedSame )   // Not system comment
+            if ( ! nSystem )   // Not system comment
             {
                 [stringComments appendString:@"    "];
                 [stringComments appendString:strUserName];
