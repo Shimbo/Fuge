@@ -8,8 +8,12 @@
 
 #import <MapKit/MapKit.h>
 @class ImageLoader;
+@class CustomBadge;
 @interface AsyncAnnotationView : MKAnnotationView{
     ImageLoader *_imageLoader;
+    CustomBadge *_badge;
+    UIImage *_back;
+    UIImage *_personImage;
 }
 
 -(void)loadImageWithURL:(NSString*)url;

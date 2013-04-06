@@ -64,7 +64,11 @@
     {
         PersonAnnotation *ann = [[PersonAnnotation alloc] init];
         ann.title = person.strName;
-        ann.subtitle = [[NSString alloc] initWithFormat:@"%@, %@", person.strRole, person.strArea ];
+        ann.subtitle = [[NSString alloc] initWithFormat:
+                        @"%@%@ %@",
+                        person.strRole,
+                        person.strArea.length?@",":@"",
+                        person.strArea ];
         ann.coordinate = person.getLocation;
         ann.color = color;
         

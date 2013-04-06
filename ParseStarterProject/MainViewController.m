@@ -48,6 +48,7 @@
     _unreadBadge = [CustomBadge secondCircleCustomBadge];
     _unreadBadge.center = CGPointMake(45, 5);
     [_unreadBadge setNumber:[globalData getInboxUnreadCount]];
+    _unreadBadge.userInteractionEnabled = NO;
     [button addSubview:_unreadBadge];
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];

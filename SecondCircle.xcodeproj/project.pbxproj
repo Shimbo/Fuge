@@ -56,6 +56,7 @@
 		47BDBC9C16EA3EF4008B12CF /* MeetupInviteSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = 47BDBC9B16EA3EF3008B12CF /* MeetupInviteSearch.m */; };
 		47C0A11716F8D3080081E4F7 /* reveal_menu_button_portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 47C0A11516F8D3080081E4F7 /* reveal_menu_button_portrait.png */; };
 		47C0A11816F8D3080081E4F7 /* reveal_menu_button_portrait@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 47C0A11616F8D3080081E4F7 /* reveal_menu_button_portrait@2x.png */; };
+		47D7CE3A170EB1FA00988F6A /* pinPerson@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 47D7CE39170EB1FA00988F6A /* pinPerson@2x.png */; };
 		4998650515BF305000803E05 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4998650415BF305000803E05 /* StoreKit.framework */; };
 		4C05731A166ACC7500EF6FAD /* LoginView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C057319166ACC7500EF6FAD /* LoginView.xib */; };
 		4C057320166ACED200EF6FAD /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C05731E166ACED200EF6FAD /* LoginViewController.m */; };
@@ -189,6 +190,7 @@
 		47BDBC9B16EA3EF3008B12CF /* MeetupInviteSearch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetupInviteSearch.m; sourceTree = "<group>"; };
 		47C0A11516F8D3080081E4F7 /* reveal_menu_button_portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = reveal_menu_button_portrait.png; sourceTree = "<group>"; };
 		47C0A11616F8D3080081E4F7 /* reveal_menu_button_portrait@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reveal_menu_button_portrait@2x.png"; sourceTree = "<group>"; };
+		47D7CE39170EB1FA00988F6A /* pinPerson@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pinPerson@2x.png"; sourceTree = "<group>"; };
 		4998650415BF305000803E05 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		4C057319166ACC7500EF6FAD /* LoginView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginView.xib; sourceTree = "<group>"; };
 		4C05731E166ACED200EF6FAD /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
@@ -408,6 +410,7 @@
 		470E5D2416F99EB90090A19F /* icons */ = {
 			isa = PBXGroup;
 			children = (
+				47D7CE39170EB1FA00988F6A /* pinPerson@2x.png */,
 				470E5D2516F99EB90090A19F /* Calendar-Day.png */,
 				470E5D2616F99EB90090A19F /* Calendar-Day@2x.png */,
 			);
@@ -674,6 +677,7 @@
 				470E5D2716F99EB90090A19F /* Calendar-Day.png in Resources */,
 				470E5D2816F99EB90090A19F /* Calendar-Day@2x.png in Resources */,
 				4CBAA0DD17099F44003C091F /* PersonInviteCell.xib in Resources */,
+				47D7CE3A170EB1FA00988F6A /* pinPerson@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -806,8 +810,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -827,8 +831,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = SecondCircle;
-				PROVISIONING_PROFILE = "F5446DDE-3C09-4BA9-A1BD-E3282102958D";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "F5446DDE-3C09-4BA9-A1BD-E3282102958D";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
 				WRAPPER_EXTENSION = app;
@@ -840,7 +844,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -860,7 +864,7 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = SecondCircle;
-				PROVISIONING_PROFILE = "F5446DDE-3C09-4BA9-A1BD-E3282102958D";
+				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "F5446DDE-3C09-4BA9-A1BD-E3282102958D";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;

@@ -328,7 +328,8 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    FSVenue *venue = [self getVenuesForTable:tableView section:0][indexPath.row];
+    FSVenue *venue = [self getVenuesForTable:tableView
+                                     section:indexPath.section][indexPath.row];
     [self.searchDisplayController setActive:NO animated:YES];
     [self userDidSelectVenue:venue];
     self.venuesForSearch = nil;

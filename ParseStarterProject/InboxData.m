@@ -346,6 +346,7 @@
 
 - (NSUInteger)getInboxUnreadCount
 {
+    return 1;
     return nInboxUnreadCount;
 }
 
