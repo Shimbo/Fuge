@@ -113,6 +113,8 @@ typedef  enum EMeetupCommentType
 - (void) updateConversation:(NSDate*)date count:(NSUInteger)msgCount thread:(NSString*)strThread;
 - (NSDate*) getConversationDate:(NSString*)strThread;
 - (NSUInteger) getConversationCount:(NSString*)strThread;
+- (PFObject*)getInviteForMeetup:(NSString*)strId;
+- (void) updateInvite:(NSString*)strId attending:(NSUInteger)status;
 @end
 
 @interface GlobalData (Messages)

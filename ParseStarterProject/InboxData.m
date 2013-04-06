@@ -144,18 +144,15 @@
         }
         
         // Messages
-        NSDictionary* conversation = [[PFUser currentUser] objectForKey:@"datesMessages"];
-        if ( conversation )
-        {
-            NSDate* lastDate = [conversation objectForKey:item.fromId];
-            if ( [item.dateTime compare:lastDate] == NSOrderedDescending )
-            {
-                [inboxNew addObject:item];
-                continue;
-            }
-        }
+        Boolean bNew = false;
         
-        if ( [item.dateTime compare:dateRecent] == NSOrderedDescending )
+        NSDate* lastDate = [self getConversationDate:item.fromId];
+        if ( lastDate && ([item.dateTime compare:lastDate] == NSOrderedDescending ) )
+            bNew = true;
+        
+        if ( bNew )
+            [inboxNew addObject:item];
+        else if ( [item.dateTime compare:dateRecent] == NSOrderedDescending )
             [inboxRecent addObject:item];
         else
             [inboxOld addObject:item];
@@ -394,6 +391,24 @@
     return [num intValue];
 }
 
+-(PFObject*)getInviteForMeetup:(NSString*)strId
+{
+    for (PFObject* invite in [self getUniqueInvites])
+        if ( [strId compare:[invite objectForKey:@"meetupId"]] == NSOrderedSame )
+            return invite;
+    return nil;
+}
+
+- (void) updateInvite:(NSString*)strId attending:(NSUInteger)status
+{
+    PFObject* invite = [self getInviteForMeetup:strId];
+    if ( ! invite )
+        return;
+    
+    NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:status];
+    [invite setObject:inviteStatus forKey:@"status"];
+    [invite saveInBackground];
+}
 
 
 @end

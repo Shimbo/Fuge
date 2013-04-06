@@ -158,9 +158,10 @@
             MeetupViewController *meetupController = [[MeetupViewController alloc] initWithNibName:@"MeetupView" bundle:nil];
             Meetup* meetup = [[Meetup alloc] init];
             [meetup unpack:meetupData];
+            [globalData addMeetup:meetup];
             [meetupController setMeetup:meetup];
-            if ( ! item.misc && item.type == INBOX_ITEM_INVITE )  // Already responded invites/etc
-                [meetupController setInvite:item.data];
+            if ( ! item.misc && item.type == INBOX_ITEM_INVITE )  // Already responded
+                [meetupController setInvite];
             [self.navigationController pushViewController:meetupController animated:YES];
             
             //self.navigationItem.leftItemsSupplementBackButton = true;

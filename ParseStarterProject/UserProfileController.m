@@ -186,8 +186,8 @@ double animatedDistance;
 
 - (void) callbackMessageSave:(NSNumber *)result error:(NSError *)error
 {
-    // Creating push
-    [pushManager sendPushNewMessage:PUSH_NEW_MESSAGE idTo:personThis.strId];
+    // Creating push - update, now moved to cloud
+    //[pushManager sendPushNewMessage:PUSH_NEW_MESSAGE idTo:personThis.strId];
     
     // Updating history
     NSMutableString* stringHistory = [[NSMutableString alloc] initWithFormat:@""];
