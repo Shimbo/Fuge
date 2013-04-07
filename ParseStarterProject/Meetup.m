@@ -100,7 +100,9 @@
 
 -(Boolean)hasPassed
 {
-    return [dateTime compare:[NSDate dateWithTimeIntervalSinceNow:durationSeconds]] == NSOrderedAscending;
+    NSDate* currentTime = [NSDate date];
+    NSDate* meetupEnd = [dateTime dateByAddingTimeInterval:durationSeconds];
+    return [currentTime compare:meetupEnd] == NSOrderedDescending;
 }
 
 -(float)getTimerTill
