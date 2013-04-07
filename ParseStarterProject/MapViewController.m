@@ -42,19 +42,7 @@
 - (NSUInteger)addPersonAnnotations:(NSInteger)circleNumber limit:(NSInteger)l
 {
     //NSString* strCircle = [Circle getCircleName:circleNumber];
-    NSUInteger color;
-    switch (circleNumber)
-    {
-        case 1:
-            color = MKPinAnnotationColorGreen;
-            break;
-        case 2:
-            color = MKPinAnnotationColorRed;
-            break;
-        case 3:
-            color = MKPinAnnotationColorPurple;
-            break;
-    }
+
     
     Circle* circle = [globalData getCircle:circleNumber];
     if ( ! circle )
@@ -63,20 +51,8 @@
     int n = 0;
     for (Person* person in [circle getPersons] )
     {
-        PersonAnnotation *ann = [[PersonAnnotation alloc] init];
-        ann.title = person.strName;
-        ann.subtitle = [[NSString alloc] initWithFormat:
-                        @"%@%@ %@",
-                        person.strRole,
-                        person.strArea.length?@",":@"",
-                        person.strArea ];
-        ann.coordinate = person.getLocation;
-        ann.color = color;
-        
-        ann.person = person;
-        
+        PersonAnnotation *ann = [[PersonAnnotation alloc] initWithPerson:person];
         [mapView addAnnotation:ann];
-        
         n++;
         if ( n >= l )
             return n;
@@ -251,15 +227,14 @@
         
         if ( isPerson ){
             PersonAnnotationView *pin = (PersonAnnotationView*)pinView;
-            [pin loadImageWithURL:((PersonAnnotation*) annotation).person.imageURL];
+            [pin prepareForAnnotation:(PersonAnnotation*)annotation];
         } else if(isMeetup){
             MeetupAnnotationView *pin = (MeetupAnnotationView*)pinView;
-            MeetupAnnotation *mAnn = (MeetupAnnotation*)annotation;
-            [pin prepareForAnnotation:mAnn];
+            [pin prepareForAnnotation:(MeetupAnnotation*)annotation];
         }
         
         UIButton *btnView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
-        pinView.rightCalloutAccessoryView=btnView;
+        pinView.rightCalloutAccessoryView = btnView;
         pinView.canShowCallout = YES;
         
     }

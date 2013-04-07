@@ -12,6 +12,7 @@
 #import "UIImage+Circled.h"
 #import <QuartzCore/QuartzCore.h>
 #import "MainStyle.h"
+#import "PersonAnnotation.h"
 
 @implementation PersonAnnotationView
 
@@ -40,6 +41,9 @@
     return self;
 }
 
+-(void)prepareForAnnotation:(PersonAnnotation*)annotation{
+    [self loadImageWithURL:annotation.person.imageURL];
+}
 
 
 -(void)drawRect:(CGRect)rect{

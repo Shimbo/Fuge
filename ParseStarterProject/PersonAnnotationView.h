@@ -7,6 +7,9 @@
 //
 
 #import <MapKit/MapKit.h>
+
+
+@class PersonAnnotation;
 @class ImageLoader;
 @class CustomBadge;
 @interface PersonAnnotationView : MKAnnotationView{
@@ -17,4 +20,6 @@
 }
 
 -(void)loadImageWithURL:(NSString*)url;
+
+-(void)prepareForAnnotation:(PersonAnnotation*)annotation;
 @end

@@ -8,21 +8,19 @@
 
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
-#import "Person.h"
 
+@class Person;
 @interface PersonAnnotation : NSObject <MKAnnotation>
 {
     CLLocationCoordinate2D coordinate;
     NSString *title;
     NSString *subtitle;
-    NSUInteger color;
-    Person* person;
 }
+- (id)initWithPerson:(Person*)person;
 
 @property (nonatomic, assign) CLLocationCoordinate2D coordinate;
-@property (nonatomic, copy) NSString *title;
-@property (nonatomic, copy) NSString *subtitle;
-@property (nonatomic, assign) NSUInteger color;
-@property (nonatomic, retain) Person* person;
+@property (nonatomic, strong) NSString *title;
+@property (nonatomic, strong) NSString *subtitle;
+@property (nonatomic, strong) Person* person;
 
 @end

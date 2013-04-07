@@ -43,6 +43,7 @@
 -(NSString*)imageURL;
 -(NSString*)largeImageURL;
 
+
 +(NSString*)imageURLWithId:(NSString*)fbId;
 +(NSString*)largeImageURLWithId:(NSString*)fbId;
 
