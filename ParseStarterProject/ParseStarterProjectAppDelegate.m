@@ -51,6 +51,34 @@
     // Location data
     [locManager startUpdating];
     
+    // Versions
+    // TODO: move to loader
+    // TODO 2: call AppStore
+    // TODO 3: UIAlertViewDelegate
+    // TODO 4: actually, just show a label (where news should be) and button Update.
+    
+    // Checking version information
+    PFQuery *systemQuery = [PFQuery queryWithClassName:@"System"];
+    PFObject* system = [systemQuery getFirstObject];
+    float minVersion = [[system objectForKey:@"minVersion"] floatValue];
+    float curVersion = [[system objectForKey:@"curVersion"] floatValue];
+    float thisVersion = [[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"] floatValue];
+    if ( thisVersion < minVersion )
+    {
+        UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"New version is out!" message:@"You're running old version of the application. Please, update first." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil,nil];
+        [message show];
+        //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms://itunes.com/apps/cut-the-rope"]];
+        return NO;
+    }
+    if ( thisVersion < curVersion )
+    {
+        UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"New version is out!" message:@"You're running old version of the application. We recommend you updating the application." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:@"Later",nil];
+        [message show];
+        //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms://itunes.com/apps/cut-the-rope"]];
+        return NO;
+    }
+    
+    
     PFACL *defaultACL = [PFACL ACL];
     // If you would like all objects to be private by default, remove this line.
     [defaultACL setPublicReadAccess:YES];

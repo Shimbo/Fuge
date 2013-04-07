@@ -16,6 +16,8 @@
     NSString *strArea;
     NSString *strCircle;
     
+    NSUInteger  numUnreadMessages;
+    
     CLLocationCoordinate2D location;
     
     NSUInteger idCircle;
@@ -33,6 +35,7 @@
 @property (nonatomic, retain) NSString *strArea;
 @property (nonatomic, retain) NSString *strCircle;
 @property (nonatomic) NSUInteger idCircle;
+@property (nonatomic, assign) NSUInteger numUnreadMessages;
 
 @property (nonatomic, copy) PFUser *personData;
 

@@ -6,7 +6,7 @@
 
 @implementation Person
 
-@synthesize strId, strName, strAge, strGender, strDistance, strRole, strArea, strCircle, idCircle, personData;
+@synthesize strId, strName, strAge, strGender, strDistance, strRole, strArea, strCircle, idCircle, personData,numUnreadMessages;
 
 + (void)initialize {
 	if (self == [Person class]) {
@@ -62,6 +62,8 @@
                                            options:0];
         NSInteger age = [ageComponents year];
         strAge = [NSString stringWithFormat:@"%d y/o", age];
+        
+        numUnreadMessages = 0;
 	}
 	return self;
 }
@@ -71,6 +73,7 @@
     if (self = [super init]) {
         
         personData = nil;
+        numUnreadMessages = 0;
         strCircle = [Circle getPersonType:nCircle];
         idCircle = nCircle;
     }
