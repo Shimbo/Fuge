@@ -24,7 +24,7 @@
 #import "MeetupInviteViewController.h"
 #import "PersonAnnotationView.h"
 #import "MeetupAnnotationView.h"
-
+#import "ThreadAnnotationView.h"
 
 @implementation MapViewController
 
@@ -67,8 +67,14 @@
     
     for (Meetup *meetup in [globalData getMeetups])
     {
-        MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
-        [mapView addAnnotation:ann];
+        if (meetup.meetupType == TYPE_MEETUP) {
+            MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
+            [mapView addAnnotation:ann];
+        }else{
+            ThreadAnnotation *ann = [[ThreadAnnotation alloc] initWithMeetup:meetup];
+            [mapView addAnnotation:ann];
+        }
+        
         n++;
         if ( n >= l )
             return n;
@@ -198,18 +204,22 @@
     if (annotation != mapView.userLocation)
     {
         static NSString *personPin = @"person.pin";
-//        static NSString *chatPin = @"chat.pin";
+        static NSString *threadPin = @"thread.pin";
         static NSString *meetupPin = @"meetup.pin";
         
         NSString *identifier = nil;
         BOOL isPerson = NO;
         BOOL isMeetup = NO;
+        BOOL isThread = NO;
         if ([annotation isMemberOfClass:[PersonAnnotation class]]) {
             isPerson = YES;
             identifier = personPin;
         }else if([annotation isMemberOfClass:[MeetupAnnotation class]]){
             isMeetup = YES;
             identifier = meetupPin;
+        }else if ([annotation isMemberOfClass:[ThreadAnnotation class]]){
+            isThread = YES;
+            identifier = threadPin;
         }
         pinView = (MKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:identifier];
 
@@ -222,6 +232,10 @@
                 pinView = (MKPinAnnotationView*)
                 [[MeetupAnnotationView alloc] initWithAnnotation:annotation
                                                 reuseIdentifier:identifier];
+            } else if (isThread){
+                pinView = (MKPinAnnotationView*)
+                [[ThreadAnnotationView alloc] initWithAnnotation:annotation
+                                                 reuseIdentifier:identifier];
             }
         }
         
@@ -231,6 +245,9 @@
         } else if(isMeetup){
             MeetupAnnotationView *pin = (MeetupAnnotationView*)pinView;
             [pin prepareForAnnotation:(MeetupAnnotation*)annotation];
+        }else{
+            ThreadAnnotationView *pin = (ThreadAnnotationView*)pinView;
+            [pin prepareForAnnotation:(ThreadAnnotation*)annotation];
         }
         
         UIButton *btnView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
@@ -253,12 +270,15 @@
             [self.navigationController pushViewController:userProfileController animated:YES];
             [userProfileController setPerson:((PersonAnnotation*) view.annotation).person];
         }
-        if ( [view.annotation isMemberOfClass:[MeetupAnnotation class]] )
+        if ( [view.annotation isMemberOfClass:[MeetupAnnotation class]]||
+            [view.annotation isMemberOfClass:[ThreadAnnotation class]])
         {
             MeetupViewController *meetupController = [[MeetupViewController alloc] initWithNibName:@"MeetupView" bundle:nil];
             [meetupController setMeetup:((MeetupAnnotation*) view.annotation).meetup];
             [self.navigationController pushViewController:meetupController animated:YES];
         }
+        
+        
     }
 }
 

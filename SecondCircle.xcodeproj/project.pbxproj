@@ -68,6 +68,15 @@
 		47B203F6171018D200B756FA /* mask25.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B203F4171018D200B756FA /* mask25.png */; };
 		47B203F7171018D200B756FA /* mask25@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B203F5171018D200B756FA /* mask25@2x.png */; };
 		47B203FA1710196200B756FA /* MainStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 47B203F91710196200B756FA /* MainStyle.m */; };
+		47B204031711861B00B756FA /* ThreadAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 47B204021711861A00B756FA /* ThreadAnnotationView.m */; };
+		47B2040A1711897D00B756FA /* threadPinBlue.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B204041711897C00B756FA /* threadPinBlue.png */; };
+		47B2040B1711897D00B756FA /* threadPinBlue@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B204051711897C00B756FA /* threadPinBlue@2x.png */; };
+		47B2040C1711897D00B756FA /* threadPinGray.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B204061711897D00B756FA /* threadPinGray.png */; };
+		47B2040D1711897D00B756FA /* threadPinGray@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B204071711897D00B756FA /* threadPinGray@2x.png */; };
+		47B2040E1711897D00B756FA /* threadPinOrange.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B204081711897D00B756FA /* threadPinOrange.png */; };
+		47B2040F1711897D00B756FA /* threadPinOrange@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B204091711897D00B756FA /* threadPinOrange@2x.png */; };
+		47B2041217118A0700B756FA /* threadIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B2041017118A0700B756FA /* threadIcon.png */; };
+		47B2041317118A0700B756FA /* threadIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B2041117118A0700B756FA /* threadIcon@2x.png */; };
 		47BDBC9216EA268F008B12CF /* MeetupInviteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 47BDBC9016EA268F008B12CF /* MeetupInviteViewController.m */; };
 		47BDBC9316EA268F008B12CF /* MeetupInviteViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47BDBC9116EA268F008B12CF /* MeetupInviteViewController.xib */; };
 		47BDBC9816EA3948008B12CF /* PersonInviteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 47BDBC9716EA3947008B12CF /* PersonInviteCell.m */; };
@@ -220,6 +229,16 @@
 		47B203F5171018D200B756FA /* mask25@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mask25@2x.png"; sourceTree = "<group>"; };
 		47B203F81710196200B756FA /* MainStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainStyle.h; sourceTree = "<group>"; };
 		47B203F91710196200B756FA /* MainStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainStyle.m; sourceTree = "<group>"; };
+		47B204011711861A00B756FA /* ThreadAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadAnnotationView.h; sourceTree = "<group>"; };
+		47B204021711861A00B756FA /* ThreadAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThreadAnnotationView.m; sourceTree = "<group>"; };
+		47B204041711897C00B756FA /* threadPinBlue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = threadPinBlue.png; sourceTree = "<group>"; };
+		47B204051711897C00B756FA /* threadPinBlue@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "threadPinBlue@2x.png"; sourceTree = "<group>"; };
+		47B204061711897D00B756FA /* threadPinGray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = threadPinGray.png; sourceTree = "<group>"; };
+		47B204071711897D00B756FA /* threadPinGray@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "threadPinGray@2x.png"; sourceTree = "<group>"; };
+		47B204081711897D00B756FA /* threadPinOrange.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = threadPinOrange.png; sourceTree = "<group>"; };
+		47B204091711897D00B756FA /* threadPinOrange@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "threadPinOrange@2x.png"; sourceTree = "<group>"; };
+		47B2041017118A0700B756FA /* threadIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = threadIcon.png; sourceTree = "<group>"; };
+		47B2041117118A0700B756FA /* threadIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "threadIcon@2x.png"; sourceTree = "<group>"; };
 		47BDBC8F16EA268F008B12CF /* MeetupInviteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetupInviteViewController.h; sourceTree = "<group>"; };
 		47BDBC9016EA268F008B12CF /* MeetupInviteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetupInviteViewController.m; sourceTree = "<group>"; };
 		47BDBC9116EA268F008B12CF /* MeetupInviteViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MeetupInviteViewController.xib; sourceTree = "<group>"; };
@@ -450,6 +469,14 @@
 		470E5D2416F99EB90090A19F /* icons */ = {
 			isa = PBXGroup;
 			children = (
+				47B2041017118A0700B756FA /* threadIcon.png */,
+				47B2041117118A0700B756FA /* threadIcon@2x.png */,
+				47B204041711897C00B756FA /* threadPinBlue.png */,
+				47B204051711897C00B756FA /* threadPinBlue@2x.png */,
+				47B204061711897D00B756FA /* threadPinGray.png */,
+				47B204071711897D00B756FA /* threadPinGray@2x.png */,
+				47B204081711897D00B756FA /* threadPinOrange.png */,
+				47B204091711897D00B756FA /* threadPinOrange@2x.png */,
 				47B203F4171018D200B756FA /* mask25.png */,
 				47B203F5171018D200B756FA /* mask25@2x.png */,
 				47B203EC171010D700B756FA /* iconPrivate.png */,
@@ -534,13 +561,27 @@
 			name = helpers;
 			sourceTree = "<group>";
 		};
-		4C08DDCD163C88480093C851 /* UI */ = {
+		47B203FD171183E800B756FA /* Map Annotations */ = {
 			isa = PBXGroup;
 			children = (
 				4C188D261698CB7E004CF42D /* PersonAnnotation.h */,
 				4C188D271698CB7E004CF42D /* PersonAnnotation.m */,
 				4C7E3FD9169A09880065484F /* MeetupAnnotation.h */,
 				4C7E3FDA169A09880065484F /* MeetupAnnotation.m */,
+				470E5D2916F9A5E40090A19F /* PersonAnnotationView.h */,
+				470E5D2A16F9A5E40090A19F /* PersonAnnotationView.m */,
+				47B203DD171008AB00B756FA /* MeetupAnnotationView.h */,
+				47B203DE171008AB00B756FA /* MeetupAnnotationView.m */,
+				47B204011711861A00B756FA /* ThreadAnnotationView.h */,
+				47B204021711861A00B756FA /* ThreadAnnotationView.m */,
+			);
+			name = "Map Annotations";
+			sourceTree = "<group>";
+		};
+		4C08DDCD163C88480093C851 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				47B203FD171183E800B756FA /* Map Annotations */,
 				4C188D1F1698C51A004CF42D /* MapViewController.h */,
 				4C188D201698C51A004CF42D /* MapViewController.m */,
 				4C08DDD5163C88640093C851 /* RootViewController.h */,
@@ -585,10 +626,6 @@
 				47BDBC9716EA3947008B12CF /* PersonInviteCell.m */,
 				4CAE597416F8A53200A69CA0 /* StatsViewController.h */,
 				4CAE597516F8A53200A69CA0 /* StatsViewController.m */,
-				470E5D2916F9A5E40090A19F /* PersonAnnotationView.h */,
-				470E5D2A16F9A5E40090A19F /* PersonAnnotationView.m */,
-				47B203DD171008AB00B756FA /* MeetupAnnotationView.h */,
-				47B203DE171008AB00B756FA /* MeetupAnnotationView.m */,
 				47B203F81710196200B756FA /* MainStyle.h */,
 				47B203F91710196200B756FA /* MainStyle.m */,
 			);
@@ -761,6 +798,14 @@
 				47B203F3171010D700B756FA /* iconPublic@2x.png in Resources */,
 				47B203F6171018D200B756FA /* mask25.png in Resources */,
 				47B203F7171018D200B756FA /* mask25@2x.png in Resources */,
+				47B2040A1711897D00B756FA /* threadPinBlue.png in Resources */,
+				47B2040B1711897D00B756FA /* threadPinBlue@2x.png in Resources */,
+				47B2040C1711897D00B756FA /* threadPinGray.png in Resources */,
+				47B2040D1711897D00B756FA /* threadPinGray@2x.png in Resources */,
+				47B2040E1711897D00B756FA /* threadPinOrange.png in Resources */,
+				47B2040F1711897D00B756FA /* threadPinOrange@2x.png in Resources */,
+				47B2041217118A0700B756FA /* threadIcon.png in Resources */,
+				47B2041317118A0700B756FA /* threadIcon@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -820,6 +865,7 @@
 				47B203D5170FFDCC00B756FA /* UIImage+Circled.m in Sources */,
 				47B203DF171008AB00B756FA /* MeetupAnnotationView.m in Sources */,
 				47B203FA1710196200B756FA /* MainStyle.m in Sources */,
+				47B204031711861B00B756FA /* ThreadAnnotationView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

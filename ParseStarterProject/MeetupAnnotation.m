@@ -70,3 +70,10 @@
     return self.meetup.getUnreadMessagesCount;
 }
 @end
+
+
+
+
+@implementation ThreadAnnotation
+
+@end

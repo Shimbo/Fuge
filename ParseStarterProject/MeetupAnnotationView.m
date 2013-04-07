@@ -21,6 +21,7 @@
         self.frame = CGRectMake(0, 0, 82, 60);
         self.opaque = NO;
         _time = 0.4;
+        
         [self setPinPrivacy:PinPublic];
         [self setNeedsDisplay];
     }
@@ -28,20 +29,16 @@
 }
 
 -(void)updateBadgeForColor:(PinColor)color{
-    _timerColor = nil;
     UIColor *badgeColor = nil;
     switch (color) {
         case PinBlue:
             badgeColor = [MainStyle blueColor];
-            _timerColor = [MainStyle lightBlueColor];
             break;
         case PinOrange:
             badgeColor = [MainStyle orangeColor];
-            _timerColor = [MainStyle yellowColor];
             break;
         case PinGray:
             badgeColor = [MainStyle grayColor];
-            _timerColor = [UIColor clearColor];
             break;
     }
     _badge = [CustomBadge badgeWithWhiteBackgroundAndTextColor:badgeColor];
@@ -49,6 +46,20 @@
 }
 
 
+-(void)updateTimerForColor:(PinColor)color{
+    _timerColor = nil;
+    switch (color) {
+        case PinBlue:
+            _timerColor = [MainStyle lightBlueColor];
+            break;
+        case PinOrange:
+            _timerColor = [MainStyle yellowColor];
+            break;
+        case PinGray:
+            _timerColor = [UIColor clearColor];
+            break;
+    }
+}
 
 -(void)updateBackForColor:(PinColor)color{
     switch (color) {
@@ -70,6 +81,7 @@
 -(void)setPinColor:(PinColor)color{
     [self updateBadgeForColor:color];
     [self updateBackForColor:color];
+    [self updateTimerForColor:color];
 //    [self setNeedsDisplay];
 }
 
@@ -122,7 +134,14 @@
 
 
 
-
+-(void)drawBadgeInContext:(CGContextRef)context{
+    CGContextSaveGState(context);
+    CGContextTranslateCTM(context,
+                          _badge.frame.origin.x+_badge.frame.size.width/2.0,
+                          _badge.frame.origin.y+_badge.frame.size.height/2.0);
+    [_badge.layer renderInContext:context];
+    CGContextRestoreGState(context);
+}
 
 
 -(void)drawRect:(CGRect)rect{
@@ -134,12 +153,7 @@
     [_icon drawInRect:iconRect];
     
     CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSaveGState(context);
-    CGContextTranslateCTM(context,
-                          _badge.frame.origin.x+_badge.frame.size.width/2.0,
-                          _badge.frame.origin.y+_badge.frame.size.height/2.0);
-    [_badge.layer renderInContext:context];
-    CGContextRestoreGState(context);
+    [self drawBadgeInContext:context];
     [self drawTimeInContext:context];
 }
 

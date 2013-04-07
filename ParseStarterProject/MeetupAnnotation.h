@@ -43,3 +43,11 @@ typedef enum kPinPrivacy{
 
 
 @end
+
+
+
+
+
+@interface ThreadAnnotation : MeetupAnnotation
+
+@end
