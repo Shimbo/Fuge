@@ -28,6 +28,8 @@
 {
     NSMutableArray *messagesUnique = [[NSMutableArray alloc] init];
     
+    NSMutableDictionary* unreadCounts = [[NSMutableDictionary alloc] initWithCapacity:30];
+    
     for (Message *message in messages)
     {
         // Looking for already created thread
@@ -80,16 +82,36 @@
                 if ( ! bNewIsBeforeOld && bOldOwnMessage )
                     bExchange = true;
                 
+                // Exchanging
                 if ( bExchange)
                     [messagesUnique removeObject:messageOld];
                 else
                     bSuchUserAlreadyAdded = true;
+                
+                // Updating new messages count
+                if ( bNewLaterThanReadDate && ! bOwnMessage )
+                {
+                    NSNumber* count = [unreadCounts objectForKey:message.strUserFrom];
+                    if ( ! count )
+                        count = [NSNumber numberWithInt:1];
+                    else
+                        count = [NSNumber numberWithInt:[count integerValue]+1];
+                    [unreadCounts setObject:count forKey:message.strUserFrom];
+                }
+                
                 break;
             }
         
         // Adding object
         if ( ! bSuchUserAlreadyAdded )
             [messagesUnique addObject:message];
+    }
+    
+    for ( NSString* user in [unreadCounts allKeys] )
+    {
+        NSNumber* count = [unreadCounts objectForKey:user];
+        Person* person = [globalData getPersonById:user];
+        person.numUnreadMessages = [count integerValue];
     }
     
     return messagesUnique;

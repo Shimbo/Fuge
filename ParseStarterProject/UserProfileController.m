@@ -91,6 +91,8 @@
         addButton.hidden = NO;
     else
         addButton.hidden = YES;
+    
+    person.numUnreadMessages = 0;
 }
 
 
