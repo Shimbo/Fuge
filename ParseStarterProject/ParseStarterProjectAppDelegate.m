@@ -26,6 +26,9 @@
 
     self.imageCache = [[NSCache alloc]init];
     [self.imageCache setCountLimit:90];
+    
+    self.circledImageCache = [[NSCache alloc]init];
+    [self.circledImageCache setCountLimit:90];
     bFirstActivation = true;
         
 #ifndef RELEASE
@@ -123,6 +126,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.imageCache removeAllObjects];
+            [self.circledImageCache removeAllObjects];
             NSLog(@"cleaned");
         });
     });

@@ -14,8 +14,19 @@
     NSURLConnection *connection;
     NSMutableData *data;
     NSString *__weak _urlString;
-    NSCache *_imageCache;
     ImageHandler _handler;
+}
+
+- (id)initForCircleImages
+{
+    self = [super init];
+    if (self) {
+        ParseStarterProjectAppDelegate *dlgt = (ParseStarterProjectAppDelegate*)[[UIApplication sharedApplication]delegate];
+        _imageCache = dlgt.circledImageCache;
+        self.maxImageSize = 400000;
+        self.maxSize = CGSizeMake(200, 200);
+    }
+    return self;
 }
 
 - (id)init

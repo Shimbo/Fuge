@@ -145,6 +145,27 @@
     return b;
 }
 
++(CustomBadge*)badgeWithWhiteTextAndBackground:(UIColor*)color{
+    CustomBadge *b = [CustomBadge customBadgeWithString:@"0"
+                                        withStringColor:[UIColor whiteColor]
+                                         withInsetColor:color
+                                         withBadgeFrame:YES
+                                    withBadgeFrameColor:[UIColor whiteColor]];
+    b.hidden = YES;
+    return b;
+}
+
++(CustomBadge*)badgeWithWhiteBackgroundAndTextColor:(UIColor*)color{
+    CustomBadge *b = [CustomBadge customBadgeWithString:@"0"
+                                        withStringColor:color
+                                         withInsetColor:[UIColor whiteColor]
+                                         withBadgeFrame:YES
+                                    withBadgeFrameColor:color];
+    b.hidden = YES;
+    return b;
+}
+
+
 -(NSString*)accessibilityLabel{
     return badgeText;
 }

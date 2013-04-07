@@ -22,7 +22,8 @@
 #import "ImageLoader.h"
 #import "NewMeetupViewController.h"
 #import "MeetupInviteViewController.h"
-#import "AsyncAnnotationView.h"
+#import "PersonAnnotationView.h"
+#import "MeetupAnnotationView.h"
 
 
 @implementation MapViewController
@@ -90,45 +91,8 @@
     
     for (Meetup *meetup in [globalData getMeetups])
     {
-        MeetupAnnotation *ann = [[MeetupAnnotation alloc] init];
-        
-        NSString* strPrivacy = nil;
-        NSUInteger color;
-        switch ( meetup.privacy )
-        {
-            case 0: strPrivacy = @"Public"; color = MKPinAnnotationColorGreen; break;
-            case 1: strPrivacy = @"Private"; color = MKPinAnnotationColorRed; break;
-        }
-        ann.title = meetup.strSubject;
-        ann.subtitle = [[NSString alloc] initWithFormat:@"Organizer: %@", meetup.strOwnerName ];
-        ann.strId = meetup.strId;
-        ann.color = color;
-        
-        CLLocationCoordinate2D coord;
-        coord.latitude = meetup.location.latitude;
-        coord.longitude = meetup.location.longitude;
-        ann.coordinate = coord;
-        
-        ann.meetup = meetup;
-        
-        // Useful!!!
-        NSUInteger unreadComments = [meetup getUnreadMessagesCount]; // if > 0 show messages count
-        Boolean passed = [meetup hasPassed]; // grey?
-        Boolean attorsubsc; // orange or just blue?
-        if ( meetup.meetupType == TYPE_MEETUP )
-            attorsubsc = [globalData isAttendingMeetup:meetup.strId];
-        else
-            attorsubsc = [globalData isSubscribedToThread:meetup.strId];
-        Boolean private = (meetup.privacy == MEETUP_PRIVATE); // lock or normal icon
-        Boolean typeMeetup = (meetup.meetupType == TYPE_MEETUP); // meetup or thread
-        if ( typeMeetup && ! passed ) // Show timer from 0 to 1 where 1 is max, 0 is min
-        {
-            float fTimer = [meetup getTimerTill];
-            // show timer
-        }
-        
+        MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
         [mapView addAnnotation:ann];
-        
         n++;
         if ( n >= l )
             return n;
@@ -181,6 +145,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    srand((unsigned)time(0));
     if (!self.initialized) {
         [TestFlight passCheckpoint:@"List loading started"];
         [self reloadData];
@@ -248,41 +213,49 @@
     [self reloadMapAnnotations];
 }
 
-#define kAsyncTag 321
+
+
 
 -(MKAnnotationView *)mapView:(MKMapView *)mV viewForAnnotation:(id <MKAnnotation>)annotation
 {
     MKPinAnnotationView *pinView = nil;
     if (annotation != mapView.userLocation)
     {
-        static NSString *defaultPinID = @"secondcircle.pin";
-        static NSString *defaultPersonImage = @"person.image";
+        static NSString *personPin = @"person.pin";
+//        static NSString *chatPin = @"chat.pin";
+        static NSString *meetupPin = @"meetup.pin";
         
-        NSString *identifier = defaultPinID;
+        NSString *identifier = nil;
         BOOL isPerson = NO;
+        BOOL isMeetup = NO;
         if ([annotation isMemberOfClass:[PersonAnnotation class]]) {
             isPerson = YES;
-            identifier = defaultPersonImage;
+            identifier = personPin;
+        }else if([annotation isMemberOfClass:[MeetupAnnotation class]]){
+            isMeetup = YES;
+            identifier = meetupPin;
         }
         pinView = (MKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:identifier];
 
         if ( pinView == nil ){
             if (isPerson) {
                 pinView = (MKPinAnnotationView*)
-                [[AsyncAnnotationView alloc]initWithAnnotation:annotation
-                                                      reuseIdentifier:identifier];
-            }else{
-                pinView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation
-                                                          reuseIdentifier:defaultPinID];
+                [[PersonAnnotationView alloc]initWithAnnotation:annotation
+                                                reuseIdentifier:identifier];
+            }else if(isMeetup){
+                pinView = (MKPinAnnotationView*)
+                [[MeetupAnnotationView alloc] initWithAnnotation:annotation
+                                                reuseIdentifier:identifier];
             }
         }
         
         if ( isPerson ){
-            AsyncAnnotationView *pin = (AsyncAnnotationView*)pinView;
+            PersonAnnotationView *pin = (PersonAnnotationView*)pinView;
             [pin loadImageWithURL:((PersonAnnotation*) annotation).person.imageURL];
-        } else{
-            pinView.pinColor = ((MeetupAnnotation*) annotation).color;
-            pinView.animatesDrop = NO;
+        } else if(isMeetup){
+            MeetupAnnotationView *pin = (MeetupAnnotationView*)pinView;
+            MeetupAnnotation *mAnn = (MeetupAnnotation*)annotation;
+            [pin prepareForAnnotation:mAnn];
         }
         
         UIButton *btnView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];

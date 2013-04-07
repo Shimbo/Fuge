@@ -9,7 +9,7 @@
 #import <MapKit/MapKit.h>
 @class ImageLoader;
 @class CustomBadge;
-@interface AsyncAnnotationView : MKAnnotationView{
+@interface PersonAnnotationView : MKAnnotationView{
     ImageLoader *_imageLoader;
     CustomBadge *_badge;
     UIImage *_back;

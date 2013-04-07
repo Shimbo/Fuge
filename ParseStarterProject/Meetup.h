@@ -13,22 +13,22 @@
 #import <EventKit/EventKit.h>
 #import <EventKitUI/EventKitUI.h>
 
-enum EMeetupType
+typedef enum kEMeetupType
 {
     TYPE_THREAD     = 0,
     TYPE_MEETUP     = 1
-};
+}EMeetupType;
 
-enum EMeetupPrivacy
+typedef enum kEMeetupPrivacy
 {
     MEETUP_PUBLIC   = 0,
     MEETUP_PRIVATE  = 1
-};
+}EMeetupPrivacy;
 @class FSVenue;
 
 @interface Meetup : NSObject <EKEventEditViewDelegate, UIAlertViewDelegate>
 {
-    NSUInteger  meetupType;
+    EMeetupType  meetupType;
     
     NSString    *strId;
     NSString    *strOwnerId;
@@ -39,7 +39,7 @@ enum EMeetupPrivacy
     NSDate      *dateTime;
     NSDate      *dateTimeExp;
     PFGeoPoint  *location;
-    NSUInteger  privacy;
+    EMeetupPrivacy  privacy;
     
     NSUInteger  durationSeconds;
     
@@ -59,8 +59,8 @@ enum EMeetupPrivacy
 @property (nonatomic, copy) PFGeoPoint *location;
 @property (nonatomic, copy) NSString *strVenue;
 @property (nonatomic, copy) NSString *strAddress;
-@property (nonatomic, assign) NSUInteger privacy;
-@property (nonatomic, assign) NSUInteger meetupType;
+@property (nonatomic, assign) EMeetupPrivacy privacy;
+@property (nonatomic, assign) EMeetupType meetupType;
 @property (nonatomic, assign) NSUInteger numComments;
 @property (nonatomic, assign) NSUInteger numAttendees;
 @property (nonatomic, assign) NSUInteger durationSeconds;

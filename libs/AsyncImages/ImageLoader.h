@@ -12,9 +12,10 @@ typedef void (^ImageHandler)(UIImage *image);
 
 @interface ImageLoader : NSObject
 
+@property (nonatomic,strong) NSCache *imageCache;
 @property (nonatomic) NSUInteger maxImageSize;
 @property (nonatomic) CGSize maxSize;
-
+- (id)initForCircleImages;
 
 -(UIImage*)getImage:(NSString*)url;
 -(void)setImage:(UIImage*)image url:(NSString*)url;

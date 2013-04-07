@@ -17,6 +17,7 @@
 @property (nonatomic, retain) PKRevealController *revealController;
 
 @property (nonatomic, retain) NSCache *imageCache;
+@property (nonatomic, retain) NSCache *circledImageCache;
 
 //- (NSArray *)displayList;
 @property (nonatomic, retain, readonly) RootViewController *rootViewController;

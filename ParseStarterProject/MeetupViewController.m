@@ -12,6 +12,7 @@
 #import "GlobalData.h"
 #import "MeetupAnnotation.h"
 #import "MeetupInviteViewController.h"
+#import "MeetupAnnotationView.h"
 
 @implementation MeetupViewController
 
@@ -224,21 +225,7 @@
     mapView.showsUserLocation = TRUE;
     [mapView setDelegate:self];
     [mapView setRegion:reg animated:true];
-    MeetupAnnotation *ann = [[MeetupAnnotation alloc] init];
-    NSUInteger color;
-    switch (meetup.privacy)
-    {
-        case 0: color = MKPinAnnotationColorGreen; break;
-        case 1: color = MKPinAnnotationColorPurple; break;
-        case 2: color = MKPinAnnotationColorRed; break;
-    }
-    ann.title = meetup.strVenue;
-    ann.subtitle = meetup.strAddress;
-    ann.color = color;
-    CLLocationCoordinate2D coord;
-    coord.latitude = meetup.location.latitude;
-    coord.longitude = meetup.location.longitude;
-    ann.coordinate = coord;
+    MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
     [mapView addAnnotation:ann];
     
     NSNumber* buttonOn = [NSNumber numberWithInt:1];
@@ -365,22 +352,20 @@
 
 
 
--(MKAnnotationView *)mapView:(MKMapView *)mV viewForAnnotation:(id <MKAnnotation>)annotation
+-(MKAnnotationView *)mapView:(MKMapView *)mV viewForAnnotation:(id<MKAnnotation>)annotation
 {
-    MKPinAnnotationView *pinView = nil;
+    MeetupAnnotationView *pinView = nil;
     if (annotation != mapView.userLocation)
     {
         static NSString *defaultPinID = @"secondcircle.pin";
-        pinView = (MKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:defaultPinID];
+        pinView = (MeetupAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:defaultPinID];
         
         if ( pinView == nil ){
-            pinView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:defaultPinID];
+            pinView = [[MeetupAnnotationView alloc] initWithAnnotation:annotation
+                                                       reuseIdentifier:defaultPinID];
         }
-        
-        pinView.pinColor = ((MeetupAnnotation*) annotation).color;
-        
+        [pinView prepareForAnnotation:(MeetupAnnotation*)annotation];
         pinView.canShowCallout = YES;
-        pinView.animatesDrop = YES;
     }
     else {
         [mapView.userLocation setTitle:@"I am here"];

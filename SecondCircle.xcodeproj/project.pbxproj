@@ -35,7 +35,7 @@
 		4706D11216C11CA600CAF9AF /* reveal_menu_icon_portrait@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4706D11016C11CA600CAF9AF /* reveal_menu_icon_portrait@2x.png */; };
 		470E5D2716F99EB90090A19F /* Calendar-Day.png in Resources */ = {isa = PBXBuildFile; fileRef = 470E5D2516F99EB90090A19F /* Calendar-Day.png */; };
 		470E5D2816F99EB90090A19F /* Calendar-Day@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 470E5D2616F99EB90090A19F /* Calendar-Day@2x.png */; };
-		470E5D2B16F9A5E40090A19F /* AsyncAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 470E5D2A16F9A5E40090A19F /* AsyncAnnotationView.m */; };
+		470E5D2B16F9A5E40090A19F /* PersonAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 470E5D2A16F9A5E40090A19F /* PersonAnnotationView.m */; };
 		471EAC5C16C0D419009F88F9 /* Foursquare2.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5216C0D3E0009F88F9 /* Foursquare2.m */; };
 		471EAC5D16C0D42C009F88F9 /* FSRequester.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5416C0D3E0009F88F9 /* FSRequester.m */; };
 		471EAC5E16C0D42F009F88F9 /* FSTargetCallback.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5616C0D3E0009F88F9 /* FSTargetCallback.m */; };
@@ -50,6 +50,24 @@
 		47A1AC6C16A7DDB9004B4CFA /* VenueCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 47A1AC6B16A7DDB9004B4CFA /* VenueCell.m */; };
 		47A1AC6E16A7DDD3004B4CFA /* VenueCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47A1AC6D16A7DDD3004B4CFA /* VenueCell.xib */; };
 		47A5ED2A16C7C2CD00084ED9 /* PersonCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47A5ED2916C7C2CD00084ED9 /* PersonCell.xib */; };
+		47B203D5170FFDCC00B756FA /* UIImage+Circled.m in Sources */ = {isa = PBXBuildFile; fileRef = 47B203D4170FFDCC00B756FA /* UIImage+Circled.m */; };
+		47B203D7170FFF4B00B756FA /* pinPerson.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B203D6170FFF4B00B756FA /* pinPerson.png */; };
+		47B203DA170FFF5100B756FA /* mask35.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B203D8170FFF5100B756FA /* mask35.png */; };
+		47B203DB170FFF5100B756FA /* mask35@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B203D9170FFF5100B756FA /* mask35@2x.png */; };
+		47B203DF171008AB00B756FA /* MeetupAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 47B203DE171008AB00B756FA /* MeetupAnnotationView.m */; };
+		47B203E617100C7300B756FA /* meetPinBlue.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B203E017100C7300B756FA /* meetPinBlue.png */; };
+		47B203E717100C7300B756FA /* meetPinBlue@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B203E117100C7300B756FA /* meetPinBlue@2x.png */; };
+		47B203E817100C7300B756FA /* meetPinGray.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B203E217100C7300B756FA /* meetPinGray.png */; };
+		47B203E917100C7300B756FA /* meetPinGray@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B203E317100C7300B756FA /* meetPinGray@2x.png */; };
+		47B203EA17100C7300B756FA /* meetPinOrange.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B203E417100C7300B756FA /* meetPinOrange.png */; };
+		47B203EB17100C7300B756FA /* meetPinOrange@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B203E517100C7300B756FA /* meetPinOrange@2x.png */; };
+		47B203F0171010D700B756FA /* iconPrivate.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B203EC171010D700B756FA /* iconPrivate.png */; };
+		47B203F1171010D700B756FA /* iconPrivate@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B203ED171010D700B756FA /* iconPrivate@2x.png */; };
+		47B203F2171010D700B756FA /* iconPublic.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B203EE171010D700B756FA /* iconPublic.png */; };
+		47B203F3171010D700B756FA /* iconPublic@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B203EF171010D700B756FA /* iconPublic@2x.png */; };
+		47B203F6171018D200B756FA /* mask25.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B203F4171018D200B756FA /* mask25.png */; };
+		47B203F7171018D200B756FA /* mask25@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 47B203F5171018D200B756FA /* mask25@2x.png */; };
+		47B203FA1710196200B756FA /* MainStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 47B203F91710196200B756FA /* MainStyle.m */; };
 		47BDBC9216EA268F008B12CF /* MeetupInviteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 47BDBC9016EA268F008B12CF /* MeetupInviteViewController.m */; };
 		47BDBC9316EA268F008B12CF /* MeetupInviteViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47BDBC9116EA268F008B12CF /* MeetupInviteViewController.xib */; };
 		47BDBC9816EA3948008B12CF /* PersonInviteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 47BDBC9716EA3947008B12CF /* PersonInviteCell.m */; };
@@ -156,8 +174,8 @@
 		4706D11316C12A1600CAF9AF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		470E5D2516F99EB90090A19F /* Calendar-Day.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Calendar-Day.png"; sourceTree = "<group>"; };
 		470E5D2616F99EB90090A19F /* Calendar-Day@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Calendar-Day@2x.png"; sourceTree = "<group>"; };
-		470E5D2916F9A5E40090A19F /* AsyncAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncAnnotationView.h; sourceTree = "<group>"; };
-		470E5D2A16F9A5E40090A19F /* AsyncAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncAnnotationView.m; sourceTree = "<group>"; };
+		470E5D2916F9A5E40090A19F /* PersonAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersonAnnotationView.h; sourceTree = "<group>"; };
+		470E5D2A16F9A5E40090A19F /* PersonAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersonAnnotationView.m; sourceTree = "<group>"; };
 		471EAC5116C0D3E0009F88F9 /* Foursquare2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Foursquare2.h; sourceTree = "<group>"; };
 		471EAC5216C0D3E0009F88F9 /* Foursquare2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Foursquare2.m; sourceTree = "<group>"; };
 		471EAC5316C0D3E0009F88F9 /* FSRequester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FSRequester.h; sourceTree = "<group>"; };
@@ -181,6 +199,27 @@
 		47A1AC6B16A7DDB9004B4CFA /* VenueCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VenueCell.m; sourceTree = "<group>"; };
 		47A1AC6D16A7DDD3004B4CFA /* VenueCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VenueCell.xib; sourceTree = "<group>"; };
 		47A5ED2916C7C2CD00084ED9 /* PersonCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PersonCell.xib; sourceTree = "<group>"; };
+		47B203D3170FFDCC00B756FA /* UIImage+Circled.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Circled.h"; sourceTree = "<group>"; };
+		47B203D4170FFDCC00B756FA /* UIImage+Circled.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Circled.m"; sourceTree = "<group>"; };
+		47B203D6170FFF4B00B756FA /* pinPerson.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pinPerson.png; sourceTree = "<group>"; };
+		47B203D8170FFF5100B756FA /* mask35.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mask35.png; sourceTree = "<group>"; };
+		47B203D9170FFF5100B756FA /* mask35@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mask35@2x.png"; sourceTree = "<group>"; };
+		47B203DD171008AB00B756FA /* MeetupAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetupAnnotationView.h; sourceTree = "<group>"; };
+		47B203DE171008AB00B756FA /* MeetupAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetupAnnotationView.m; sourceTree = "<group>"; };
+		47B203E017100C7300B756FA /* meetPinBlue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = meetPinBlue.png; sourceTree = "<group>"; };
+		47B203E117100C7300B756FA /* meetPinBlue@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "meetPinBlue@2x.png"; sourceTree = "<group>"; };
+		47B203E217100C7300B756FA /* meetPinGray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = meetPinGray.png; sourceTree = "<group>"; };
+		47B203E317100C7300B756FA /* meetPinGray@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "meetPinGray@2x.png"; sourceTree = "<group>"; };
+		47B203E417100C7300B756FA /* meetPinOrange.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = meetPinOrange.png; sourceTree = "<group>"; };
+		47B203E517100C7300B756FA /* meetPinOrange@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "meetPinOrange@2x.png"; sourceTree = "<group>"; };
+		47B203EC171010D700B756FA /* iconPrivate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconPrivate.png; sourceTree = "<group>"; };
+		47B203ED171010D700B756FA /* iconPrivate@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconPrivate@2x.png"; sourceTree = "<group>"; };
+		47B203EE171010D700B756FA /* iconPublic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconPublic.png; sourceTree = "<group>"; };
+		47B203EF171010D700B756FA /* iconPublic@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconPublic@2x.png"; sourceTree = "<group>"; };
+		47B203F4171018D200B756FA /* mask25.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mask25.png; sourceTree = "<group>"; };
+		47B203F5171018D200B756FA /* mask25@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mask25@2x.png"; sourceTree = "<group>"; };
+		47B203F81710196200B756FA /* MainStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainStyle.h; sourceTree = "<group>"; };
+		47B203F91710196200B756FA /* MainStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainStyle.m; sourceTree = "<group>"; };
 		47BDBC8F16EA268F008B12CF /* MeetupInviteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetupInviteViewController.h; sourceTree = "<group>"; };
 		47BDBC9016EA268F008B12CF /* MeetupInviteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetupInviteViewController.m; sourceTree = "<group>"; };
 		47BDBC9116EA268F008B12CF /* MeetupInviteViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MeetupInviteViewController.xib; sourceTree = "<group>"; };
@@ -359,6 +398,7 @@
 		09ABC07713A1D52D009C3FCF /* ParseStarterProject */ = {
 			isa = PBXGroup;
 			children = (
+				47B203DC1710046E00B756FA /* helpers */,
 				09ABC08013A1D52D009C3FCF /* ParseStarterProjectAppDelegate.h */,
 				09ABC08113A1D52D009C3FCF /* ParseStarterProjectAppDelegate.m */,
 				4C7E3FE4169A1F260065484F /* Data */,
@@ -410,6 +450,21 @@
 		470E5D2416F99EB90090A19F /* icons */ = {
 			isa = PBXGroup;
 			children = (
+				47B203F4171018D200B756FA /* mask25.png */,
+				47B203F5171018D200B756FA /* mask25@2x.png */,
+				47B203EC171010D700B756FA /* iconPrivate.png */,
+				47B203ED171010D700B756FA /* iconPrivate@2x.png */,
+				47B203EE171010D700B756FA /* iconPublic.png */,
+				47B203EF171010D700B756FA /* iconPublic@2x.png */,
+				47B203E017100C7300B756FA /* meetPinBlue.png */,
+				47B203E117100C7300B756FA /* meetPinBlue@2x.png */,
+				47B203E217100C7300B756FA /* meetPinGray.png */,
+				47B203E317100C7300B756FA /* meetPinGray@2x.png */,
+				47B203E417100C7300B756FA /* meetPinOrange.png */,
+				47B203E517100C7300B756FA /* meetPinOrange@2x.png */,
+				47B203D8170FFF5100B756FA /* mask35.png */,
+				47B203D9170FFF5100B756FA /* mask35@2x.png */,
+				47B203D6170FFF4B00B756FA /* pinPerson.png */,
 				47D7CE39170EB1FA00988F6A /* pinPerson@2x.png */,
 				470E5D2516F99EB90090A19F /* Calendar-Day.png */,
 				470E5D2616F99EB90090A19F /* Calendar-Day@2x.png */,
@@ -470,6 +525,15 @@
 			path = libs/AsyncImages;
 			sourceTree = "<group>";
 		};
+		47B203DC1710046E00B756FA /* helpers */ = {
+			isa = PBXGroup;
+			children = (
+				47B203D3170FFDCC00B756FA /* UIImage+Circled.h */,
+				47B203D4170FFDCC00B756FA /* UIImage+Circled.m */,
+			);
+			name = helpers;
+			sourceTree = "<group>";
+		};
 		4C08DDCD163C88480093C851 /* UI */ = {
 			isa = PBXGroup;
 			children = (
@@ -521,8 +585,12 @@
 				47BDBC9716EA3947008B12CF /* PersonInviteCell.m */,
 				4CAE597416F8A53200A69CA0 /* StatsViewController.h */,
 				4CAE597516F8A53200A69CA0 /* StatsViewController.m */,
-				470E5D2916F9A5E40090A19F /* AsyncAnnotationView.h */,
-				470E5D2A16F9A5E40090A19F /* AsyncAnnotationView.m */,
+				470E5D2916F9A5E40090A19F /* PersonAnnotationView.h */,
+				470E5D2A16F9A5E40090A19F /* PersonAnnotationView.m */,
+				47B203DD171008AB00B756FA /* MeetupAnnotationView.h */,
+				47B203DE171008AB00B756FA /* MeetupAnnotationView.m */,
+				47B203F81710196200B756FA /* MainStyle.h */,
+				47B203F91710196200B756FA /* MainStyle.m */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -678,6 +746,21 @@
 				470E5D2816F99EB90090A19F /* Calendar-Day@2x.png in Resources */,
 				4CBAA0DD17099F44003C091F /* PersonInviteCell.xib in Resources */,
 				47D7CE3A170EB1FA00988F6A /* pinPerson@2x.png in Resources */,
+				47B203D7170FFF4B00B756FA /* pinPerson.png in Resources */,
+				47B203DA170FFF5100B756FA /* mask35.png in Resources */,
+				47B203DB170FFF5100B756FA /* mask35@2x.png in Resources */,
+				47B203E617100C7300B756FA /* meetPinBlue.png in Resources */,
+				47B203E717100C7300B756FA /* meetPinBlue@2x.png in Resources */,
+				47B203E817100C7300B756FA /* meetPinGray.png in Resources */,
+				47B203E917100C7300B756FA /* meetPinGray@2x.png in Resources */,
+				47B203EA17100C7300B756FA /* meetPinOrange.png in Resources */,
+				47B203EB17100C7300B756FA /* meetPinOrange@2x.png in Resources */,
+				47B203F0171010D700B756FA /* iconPrivate.png in Resources */,
+				47B203F1171010D700B756FA /* iconPrivate@2x.png in Resources */,
+				47B203F2171010D700B756FA /* iconPublic.png in Resources */,
+				47B203F3171010D700B756FA /* iconPublic@2x.png in Resources */,
+				47B203F6171018D200B756FA /* mask25.png in Resources */,
+				47B203F7171018D200B756FA /* mask25@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -730,10 +813,13 @@
 				4CA463F116F1DF7600F354FC /* LocationManager.m in Sources */,
 				4CAE597716F8A53200A69CA0 /* StatsViewController.m in Sources */,
 				479A7E0216F8C58F00E97576 /* CustomBadge.m in Sources */,
-				470E5D2B16F9A5E40090A19F /* AsyncAnnotationView.m in Sources */,
+				470E5D2B16F9A5E40090A19F /* PersonAnnotationView.m in Sources */,
 				4C33446F1708640400422689 /* InboxData.m in Sources */,
 				4C3344711708732600422689 /* MessageData.m in Sources */,
 				4C334475170873A400422689 /* Message.m in Sources */,
+				47B203D5170FFDCC00B756FA /* UIImage+Circled.m in Sources */,
+				47B203DF171008AB00B756FA /* MeetupAnnotationView.m in Sources */,
+				47B203FA1710196200B756FA /* MainStyle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

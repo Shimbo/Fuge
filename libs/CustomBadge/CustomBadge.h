@@ -43,6 +43,10 @@
 
 
 +(CustomBadge*)secondCircleCustomBadge;
+
++(CustomBadge*)badgeWithWhiteTextAndBackground:(UIColor*)color;
++(CustomBadge*)badgeWithWhiteBackgroundAndTextColor:(UIColor*)color;
+
 + (CustomBadge*) customBadgeWithString:(NSString *)badgeString;
 + (CustomBadge*) customBadgeWithString:(NSString *)badgeString withStringColor:(UIColor*)stringColor withInsetColor:(UIColor*)insetColor withBadgeFrame:(BOOL)badgeFrameYesNo withBadgeFrameColor:(UIColor*)frameColor;
 
