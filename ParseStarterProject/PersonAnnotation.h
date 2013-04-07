@@ -21,6 +21,8 @@
 @property (nonatomic, assign) CLLocationCoordinate2D coordinate;
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong) NSString *subtitle;
+@property (nonatomic, readonly) NSString *imageURL;
+@property (nonatomic, readonly) NSUInteger numUnreadCount;
 @property (nonatomic, strong) Person* person;
 
 @end

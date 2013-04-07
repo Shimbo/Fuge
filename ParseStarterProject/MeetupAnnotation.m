@@ -66,7 +66,7 @@
     return self;
 }
 
--(NSUInteger)getUnreadMessagesCount{
+-(NSUInteger)numUnreadCount{
     return self.meetup.getUnreadMessagesCount;
 }
 @end

@@ -29,4 +29,12 @@
     return self;
 }
 
+-(NSUInteger)numUnreadCount{
+    return _person.numUnreadMessages;
+}
+
+-(NSString*)imageURL{
+    return _person.imageURL;
+}
+
 @end

@@ -109,7 +109,7 @@
     [self setPinColor:ann.pinColor];
     [self setPinPrivacy:ann.pinPrivacy];
     [self setTime:ann.time];
-    [self setUnreaCount:ann.unreadMessagesCount];
+    [self setUnreaCount:ann.numUnreadCount];
     [self setNeedsDisplay];
 }
 

@@ -33,7 +33,6 @@
         self.frame = CGRectMake(0, 0, 80, 50);
         self.opaque = NO;
         _badge = [CustomBadge badgeWithWhiteTextAndBackground:[MainStyle orangeColor]];
-        [_badge setNumber:99];
         _badge.center = CGPointMake(8, 0);
         _back = [UIImage imageNamed:@"pinPerson.png"];
         [self setNeedsDisplay];
@@ -42,7 +41,9 @@
 }
 
 -(void)prepareForAnnotation:(PersonAnnotation*)annotation{
-    [self loadImageWithURL:annotation.person.imageURL];
+    [self loadImageWithURL:annotation.imageURL];
+    [_badge setNumber:annotation.numUnreadCount];
+    [self setNeedsDisplay];
 }
 
 
