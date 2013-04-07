@@ -343,7 +343,6 @@
 
 - (NSUInteger)getInboxUnreadCount
 {
-    return 1;
     return nInboxUnreadCount;
 }
 
@@ -369,7 +368,7 @@
     [[PFUser currentUser] setObject:conversations forKey:@"messageCounts"];
     
     // Save
-    [[PFUser currentUser] saveEventually];
+    [[PFUser currentUser] saveInBackground]; // TODO: here was Eventually
 }
 
 - (NSDate*) getConversationDate:(NSString*)strThread

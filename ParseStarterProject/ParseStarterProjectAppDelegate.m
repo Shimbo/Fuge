@@ -75,7 +75,7 @@
         UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"New version is out!" message:@"You're running old version of the application. We recommend you updating the application." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:@"Later",nil];
         [message show];
         //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms://itunes.com/apps/cut-the-rope"]];
-        return NO;
+        //return NO;
     }
     
     

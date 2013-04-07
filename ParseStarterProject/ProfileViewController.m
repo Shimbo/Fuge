@@ -41,7 +41,7 @@
     [[PFUser currentUser] setObject:boolDiscovery forKey:@"profileDiscoverable"];
     [[PFUser currentUser] setObject:labelRoles.text forKey:@"profileRole"];
     [[PFUser currentUser] setObject:areaEdit.text forKey:@"profileArea"];
-    [[PFUser currentUser] saveEventually];
+    [[PFUser currentUser] saveInBackground]; // TODO: here was Eventually
 }
 
 - (void)viewDidDisappear:(BOOL)animated

@@ -90,18 +90,18 @@ static PushManager *sharedInstance = nil;
 - (void)addChannel:(NSString*)strChannel
 {
     PFInstallation* currentInstallation = [PFInstallation currentInstallation];
-    NSMutableArray* channels = [currentInstallation objectForKey:@"channels"];
     [currentInstallation addUniqueObject:strChannel forKey:@"channels"];
-    //[channels addObject:strChannel];
-    //[currentInstallation setObject:channels forKey:@"channels"];
-    [currentInstallation saveInBackground];
+    [currentInstallation saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (error)
+            NSLog(@"Sync Error:%@", error);
+    }]; // TODO: here was Eventually
     [PFPush subscribeToChannelInBackground:strChannel target:self selector:@selector(subscribeFinished:error:)];
 }
 
 - (void)removeChannel:(NSString*)strChannel
 {
     [[PFInstallation currentInstallation] removeObject:strChannel forKey:@"channels"];
-    [[PFInstallation currentInstallation] saveEventually];
+    [[PFInstallation currentInstallation] saveInBackground]; // TODO: here was Eventually
     [PFPush unsubscribeFromChannelInBackground:strChannel];
 }
 

@@ -652,7 +652,7 @@ NSInteger sortByName(id num1, id num2, void *context)
                 [globalVariables pushToFriendsSent];
                 
                 // Save user data
-                [[PFUser currentUser] saveEventually];
+                [[PFUser currentUser] saveInBackground]; // // TODO: here was Eventually - ?
                 
                 // Reload table
                 if ( controller )
@@ -692,7 +692,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     // Attend
     [attending addObject:strMeetup];
     [[PFUser currentUser] setObject:attending forKey:@"attending"];
-    [[PFUser currentUser] saveEventually];
+    [[PFUser currentUser] saveInBackground]; // TODO: here was Eventually
 }
 
 - (void) unattendMeetup:(NSString*)strMeetup
@@ -709,7 +709,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         }
     }
     [[PFUser currentUser] setObject:attending forKey:@"attending"];
-    [[PFUser currentUser] saveEventually];
+    [[PFUser currentUser] saveInBackground]; // TODO: here was Eventually
 }
 
 - (Boolean) isAttendingMeetup:(NSString*)strMeetup
@@ -737,10 +737,11 @@ NSInteger sortByName(id num1, id num2, void *context)
     // Subscribe
     [subscriptions addObject:strThread];
     [[PFUser currentUser] setObject:subscriptions forKey:@"subscriptions"];
-    [[PFUser currentUser] saveEventually];
+    [[PFUser currentUser] saveInBackground]; // TODO: here was Eventually
     
     // Pushes
-    [pushManager addChannel:strThread];
+    NSString* strChannel = [[NSString alloc] initWithFormat:@"mt%@", strThread];
+    [pushManager addChannel:strChannel];
 }
 
 - (void) unsubscribeToThread:(NSString*)strThread
@@ -757,7 +758,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         }
     }
     [[PFUser currentUser] setObject:subscriptions forKey:@"subscriptions"];
-    [[PFUser currentUser] saveEventually];
+    [[PFUser currentUser] saveInBackground]; // TODO: here was Eventually
     
     // Pushes
     [pushManager removeChannel:strThread];
@@ -777,7 +778,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 - (void) addRecentInvites:(NSArray*)recentInvites
 {
     [[PFUser currentUser] addUniqueObjectsFromArray:recentInvites forKey:@"recentInvites"];
-    [[PFUser currentUser] saveEventually];
+    [[PFUser currentUser] saveInBackground]; // TODO: here was Eventually
 }
 
 - (void) addRecentVenue:(FSVenue*)recentVenue
@@ -794,7 +795,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [venues addObject:recentVenue.fsVenue];
     
     [[PFUser currentUser] setObject:venues forKey:@"recentVenues"];
-    [[PFUser currentUser] saveEventually];
+    [[PFUser currentUser] saveInBackground]; // TODO: here was Eventually
 }
 
 - (NSArray*) getRecentPersons
