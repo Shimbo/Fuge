@@ -107,6 +107,7 @@
             [messagesUnique addObject:message];
     }
     
+    // Unread counts
     for ( NSString* user in [unreadCounts allKeys] )
     {
         NSNumber* count = [unreadCounts objectForKey:user];
@@ -117,64 +118,69 @@
     return messagesUnique;
 }
 
+NSInteger sort(id message1, id message2, void *context)
+{
+    PFObject* mes1 = message1;
+    PFObject* mes2 = message2;
+    NSDate *date1 = mes1.createdAt;
+    NSDate *date2 = mes2.createdAt;
+    if ([date2 compare:date1] == NSOrderedDescending)
+        return NSOrderedDescending;
+    return NSOrderedAscending;
+}
+
 - (void)loadMessages:(InboxViewController*)controller
 {
     // Query
     PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Message"];
-    [messagesQuery whereKey:@"idUserTo" equalTo:[[PFUser currentUser] objectForKey:@"fbId"]];
+    [messagesQuery whereKey:@"idUserTo" equalTo:strCurrentUserId];
+    [messagesQuery orderByAscending:@"createdAt"];
+    messagesQuery.limit = 200;
     
     // Loading
-    [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects1, NSError *error) {
+    [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *messages1, NSError *error) {
         
         PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Message"];
-        [messagesQuery whereKey:@"idUserFrom" equalTo:[[PFUser currentUser] objectForKey:@"fbId"]];
+        [messagesQuery whereKey:@"idUserFrom" equalTo:strCurrentUserId];
+        [messagesQuery orderByAscending:@"createdAt"];
+        messagesQuery.limit = 200;
         
-        [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects2, NSError *error) {
+        [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *messages2, NSError *error) {
             
-            // Merging results
-            NSMutableSet *set = [NSMutableSet setWithArray:objects1];
-            [set addObjectsFromArray:objects2];
+            // Merging and sorting results
+            NSMutableSet *set = [NSMutableSet setWithArray:messages1];
+            [set addObjectsFromArray:messages2];
+            NSArray *array = [set allObjects];
+            NSArray *sortedArray = [array sortedArrayUsingFunction:sort context:NULL];
             
             // Creating array
             messages = [[NSMutableArray alloc] init];
             
             // Loading it with data
-            for ( PFObject* messageData in [set allObjects] )
+            for ( PFObject* messageData in sortedArray )
                 [self addMessageWithData:messageData];
             
             // Loading stage complete
             [self incrementLoadingStage:controller];
         }];
     }];
-}
-
-NSInteger sort(id message1, id message2, void *context)
-{
-    //    NSString* strDate1 = [message1 objectForKey:@"createdAt"];
-    //    NSString* strDate2 = [message2 objectForKey:@"createdAt"];
     
-    //    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    //    [dateFormatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
-    PFObject* mes1 = message1;
-    PFObject* mes2 = message2;
-    NSDate *date1 = mes1.createdAt;//[dateFormatter dateFromString:strDate1 ];
-    NSDate *date2 = mes2.createdAt;//[dateFormatter dateFromString:strDate2 ];
-    
-    if ([date2 compare:date1] == NSOrderedDescending)
-        return NSOrderedDescending;
-    
-    return NSOrderedAscending;
+    // TODO: add check for paging and paging itself if result count == limit in any of two queries
 }
 
 - (void)loadThread:(Person*)person target:(id)target selector:(SEL)callback
 {
     PFQuery *messageQuery1 = [PFQuery queryWithClassName:@"Message"];
+    messageQuery1.limit = 1000;
     [messageQuery1 whereKey:@"idUserFrom" equalTo:strCurrentUserId ];
     [messageQuery1 whereKey:@"idUserTo" equalTo:person.strId ];
+    [messageQuery1 orderByAscending:@"createdAt"];
     
     PFQuery *messageQuery2 = [PFQuery queryWithClassName:@"Message"];
+    messageQuery2.limit = 1000;
     [messageQuery2 whereKey:@"idUserFrom" equalTo:person.strId ];
     [messageQuery2 whereKey:@"idUserTo" equalTo:strCurrentUserId ];
+    [messageQuery2 orderByAscending:@"createdAt"];
     
     [messageQuery1 findObjectsInBackgroundWithBlock:^(NSArray *messages1, NSError* error) {
         [messageQuery2 findObjectsInBackgroundWithBlock:^(NSArray *messages2, NSError* error) {
