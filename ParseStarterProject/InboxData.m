@@ -79,7 +79,7 @@
             {
                 item.type = INBOX_ITEM_COMMENT;
                 item.fromId = [pObject objectForKey:@"userId"];
-                item.toId = [pObject objectForKey:@"userId"];
+                item.toId = [pObject objectForKey:@"meetupId"];
                 item.subject = [pObject objectForKey:@"meetupSubject"];
                 item.message = [pObject objectForKey:@"comment"];
                 item.misc = nil;
@@ -318,6 +318,7 @@
     PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Comment"];
     NSArray* subscriptions = [[PFUser currentUser] objectForKey:@"subscriptions"];
     [messagesQuery whereKey:@"meetupId" containedIn:subscriptions];
+    [messagesQuery whereKey:@"system" notEqualTo:[NSNumber numberWithInt:1]];
     
     // TODO: add here later another query limitation by date (like 10 last days) to not push server too hard. It will be like pages, loading every 10 previous days or so.
     

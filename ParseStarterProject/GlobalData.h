@@ -66,6 +66,7 @@ typedef  enum EMeetupCommentType
 - (NSArray*) getPersonsByIds:(NSArray*)strFbIds;
 - (NSArray*) getCircles;
 - (NSArray*) getMeetups;
+- (Meetup*) getMeetupById:(NSString*)strId;
 
 -(NSArray*)searchForUserName:(NSString*)searchStr;
 
