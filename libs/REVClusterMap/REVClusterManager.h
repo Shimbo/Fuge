@@ -16,8 +16,7 @@
 @interface REVClusterManager : NSObject 
 
 + (NSArray *) clusterAnnotationsForMapView:(MKMapView *)mapView
-                            forAnnotations:(NSArray *)pins
-                                 zoomLevel:(NSUInteger)zoomLevel;
+                            forAnnotations:(NSArray *)pins;
 
 
 @end

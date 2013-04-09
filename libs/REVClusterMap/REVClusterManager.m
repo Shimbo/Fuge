@@ -23,20 +23,15 @@
 
 + (NSArray *) clusterAnnotationsForMapView:(MKMapView *)mapView
                             forAnnotations:(NSArray *)pins
-                                 zoomLevel:(NSUInteger)zoomLevel
 {
 
-    NSArray *visibleAnnotations = pins;
     
 
-    if( zoomLevel == 19 )
-    {
-        return visibleAnnotations;
-    }
+
     
 
     NSMutableArray* clusteredBlocks = [NSMutableArray arrayWithCapacity:40];
-    for (REVClusterPin *pin in visibleAnnotations)
+    for (REVClusterPin *pin in pins)
     {
         CGPoint p1 = [mapView convertCoordinate:pin.coordinate
                                          toPointToView:mapView];

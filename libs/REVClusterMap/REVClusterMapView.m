@@ -194,12 +194,17 @@
     
     if( [self mapViewDidZoom] )
     {
-        [super removeAnnotations:self.annotations];
+        NSMutableArray *arr = [self.annotations mutableCopy];
+        [arr removeObject:self.userLocation];
+        [super removeAnnotations:arr];
         self.showsUserLocation = self.showsUserLocation;
-        NSArray *add = [REVClusterManager clusterAnnotationsForMapView:self
-                                                        forAnnotations:annotationsCopy
-                                                            zoomLevel:zoomLevel];
-        [super addAnnotations:add];
+        if( zoomLevel == 19 ){
+            [super addAnnotations:annotationsCopy];
+        }else{
+            NSArray *add = [REVClusterManager clusterAnnotationsForMapView:self
+                                                        forAnnotations:annotationsCopy];
+            [super addAnnotations:add];
+        }
     }
     
 
@@ -230,8 +235,7 @@
 {
     [annotationsCopy addObjectsFromArray:annotations];
     NSArray *add = [REVClusterManager clusterAnnotationsForMapView:self
-                                                    forAnnotations:annotationsCopy
-                                                         zoomLevel:zoomLevel];
+                                                    forAnnotations:annotationsCopy];
     
     [super addAnnotations:add];
 }
