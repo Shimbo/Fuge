@@ -18,4 +18,5 @@
 /** Specifies the receiver‚Äôs delegate object. */
 @property(nonatomic,assign) id<MKMapViewDelegate> delegate;
 
+-(void)cleanUpAnnotations;
 @end

@@ -227,8 +227,9 @@
 }
 
 -(void)removeAnnotations:(NSArray *)annotations{
-    [annotationsCopy removeObjectsInArray:annotations];
-    [super removeAnnotations:annotations];
+    [NSException raise:@"Use cleanUpAnnotations" format:nil];
+//    [annotationsCopy removeObjectsInArray:annotations];
+//    [super removeAnnotations:annotations];
 }
 
 - (void) addAnnotations:(NSArray *)annotations
@@ -240,7 +241,12 @@
     [super addAnnotations:add];
 }
 
-
+-(void)cleanUpAnnotations{
+    [annotationsCopy removeAllObjects];
+    NSMutableArray *arr = [self.annotations mutableCopy];
+    [arr removeObject:self.userLocation];
+    [super removeAnnotations:arr];
+}
 
 
 

@@ -53,13 +53,14 @@
     [arrayRecentIds addObjectsFromArray:[[self selectedPersons] valueForKeyPath:@"strId"]];
     [globalData addRecentInvites:arrayRecentIds];
     
-    [self dismissViewControllerAnimated:NO completion:nil];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.title = @"Invite";
+    self.navigationItem.hidesBackButton = YES;
     UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done)];
     [self.navigationItem setRightBarButtonItem:done];
     
@@ -73,6 +74,7 @@
     self.searchDisplayController.searchResultsDelegate = searcher;
     self.searchDisplayController.searchResultsDataSource = searcher;
     self.searchDisplayController.searchBar.delegate = searcher;
+    
     
     // This code works! Use it for recent users!
     _recentPersons = [globalData getRecentPersons];

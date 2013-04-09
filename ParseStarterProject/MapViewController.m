@@ -171,12 +171,8 @@
 }
 
 -(void)reloadMapAnnotations{
-    id userLocation = [mapView userLocation];
-    NSMutableArray *pins = [[NSMutableArray alloc] initWithArray:[mapView annotations]];
-    if ( userLocation != nil ) {
-        [pins removeObject:userLocation]; // avoid removing user location off the map
-    }
-    [mapView removeAnnotations:pins];
+    [mapView cleanUpAnnotations];
+
     
     // Persons and meetups adding
     NSUInteger nLimit = MAX_ANNOTATIONS_ON_THE_MAP;
