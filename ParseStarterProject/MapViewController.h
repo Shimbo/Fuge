@@ -14,6 +14,9 @@
 @interface MapViewController : MainViewController <MKMapViewDelegate>
 {
     IBOutlet REVClusterMapView *mapView;
+    NSMutableArray *_personsAnnotations;
+    NSMutableArray *_meetupAnnotations;
+    NSMutableArray *_threadAnnotations;
 }
 
 @property (nonatomic, retain) IBOutlet REVClusterMapView *mapView;

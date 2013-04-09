@@ -227,7 +227,7 @@
 }
 
 -(void)removeAnnotations:(NSArray *)annotations{
-    [NSException raise:@"Use cleanUpAnnotations" format:nil];
+    [NSException raise:@"REVClusterMapView: Use cleanUpAnnotations instead of removeAnnotations:" format:nil];
 //    [annotationsCopy removeObjectsInArray:annotations];
 //    [super removeAnnotations:annotations];
 }

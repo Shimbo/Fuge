@@ -68,6 +68,23 @@
 -(NSUInteger)numUnreadCount{
     return self.meetup.getUnreadMessagesCount;
 }
+
+-(void)addPerson:(Person*)person{
+    if (!self.attendedPersons) {
+        self.attendedPersons = [NSMutableArray arrayWithCapacity:2];
+    }
+    
+    if ([self.meetup.strOwnerId isEqualToString:person.strId]) {
+        if (self.attendedPersons.count) {
+            [self.attendedPersons insertObject:person atIndex:0];
+            return;
+        }
+    }
+    
+    [self.attendedPersons addObject:person];
+    
+
+}
 @end
 
 

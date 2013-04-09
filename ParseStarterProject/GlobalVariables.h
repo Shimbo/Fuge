@@ -16,6 +16,10 @@
 #define RANDOM_EVENT_KILOMETERS     50000
 #define MAX_ANNOTATIONS_ON_THE_MAP  200
 
+#define TIME_FOR_JOIN_PERSON_AND_MEETUP  0.95 //in %
+#define DISTANCE_FOR_JOIN_PERSON_AND_MEETUP  100 //in meters
+
+
 @interface GlobalVariables : NSObject
 {
     Boolean bNewUser;

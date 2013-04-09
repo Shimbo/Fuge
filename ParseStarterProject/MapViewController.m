@@ -38,7 +38,7 @@
     return self;
 }
 
-- (NSUInteger)addPersonAnnotations:(NSInteger)circleNumber limit:(NSInteger)l
+- (NSUInteger)loadPersonAnnotations:(CircleType)circleNumber limit:(NSInteger)l
 {
     //NSString* strCircle = [Circle getCircleName:circleNumber];
 
@@ -48,38 +48,34 @@
         return 0;
     
     int n = 0;
-    NSMutableArray *annotations = [NSMutableArray arrayWithCapacity:30];
     for (Person* person in [circle getPersons] )
     {
         PersonAnnotation *ann = [[PersonAnnotation alloc] initWithPerson:person];
-        [annotations addObject:ann];
+        [_personsAnnotations addObject:ann];
         n++;
         if ( n >= l )
             break;
     }
-    [mapView addAnnotations:annotations];
     return n;
 }
 
-- (NSUInteger)addMeetupAnnotations:(NSInteger)l
+- (NSUInteger)loadMeetupAndThreadAnnotations:(NSInteger)l
 {
     int n = 0;
-    NSMutableArray *annotations = [NSMutableArray arrayWithCapacity:30];
     for (Meetup *meetup in [globalData getMeetups])
     {
         if (meetup.meetupType == TYPE_MEETUP) {
             MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
-            [annotations addObject:ann];
+            [_meetupAnnotations addObject:ann];
         }else{
             ThreadAnnotation *ann = [[ThreadAnnotation alloc] initWithMeetup:meetup];
-            [annotations addObject:ann];
+            [_threadAnnotations addObject:ann];
         }
         
         n++;
         if ( n >= l )
             break;
     }
-    [mapView addAnnotations:annotations];
     return n;
 }
 
@@ -170,17 +166,65 @@
     [TestFlight passCheckpoint:@"Map"];
 }
 
+-(BOOL)isPerson:(PersonAnnotation*)per
+   nearbyMeetup:(MeetupAnnotation*)meet{
+    CLLocation *loc1 = [[CLLocation alloc]initWithLatitude:per.coordinate.latitude longitude:per.coordinate.longitude];
+    CLLocation *loc2 = [[CLLocation alloc]initWithLatitude:meet.coordinate.latitude longitude:meet.coordinate.longitude];
+    if ([loc1 distanceFromLocation:loc2] < DISTANCE_FOR_JOIN_PERSON_AND_MEETUP) {
+        return YES;
+    }
+    return NO;
+}
+
+-(BOOL)isMeetupWillStartSoon:(MeetupAnnotation*)meet{
+    if (meet.time > TIME_FOR_JOIN_PERSON_AND_MEETUP) {
+        return YES;
+    }
+    return NO;
+}
+
+-(void)joinPersonsAndMeetups{
+    NSMutableArray *personsAnnotationForRemove = [NSMutableArray arrayWithCapacity:4];
+    for (PersonAnnotation* per in _personsAnnotations) {
+        BOOL added = NO;
+        for (MeetupAnnotation* meet in _meetupAnnotations) {
+            if ([self isMeetupWillStartSoon:meet]&&
+                [self isPerson:per nearbyMeetup:meet]) {
+                [meet addPerson:per.person];
+                [personsAnnotationForRemove addObject:per];
+                added = YES;
+                break;
+            }
+        }
+        
+        if (added)
+            break;
+    }
+    [_personsAnnotations removeObjectsInArray:personsAnnotationForRemove];
+}
+
+
 -(void)reloadMapAnnotations{
+    _personsAnnotations = [NSMutableArray arrayWithCapacity:20];
+    _meetupAnnotations = [NSMutableArray arrayWithCapacity:50];
+    _threadAnnotations = [NSMutableArray arrayWithCapacity:20];
     [mapView cleanUpAnnotations];
 
     
     // Persons and meetups adding
     NSUInteger nLimit = MAX_ANNOTATIONS_ON_THE_MAP;
-    nLimit -= [self addPersonAnnotations:1 limit:nLimit];
-    nLimit -= [self addPersonAnnotations:2 limit:nLimit];
-    nLimit -= [self addPersonAnnotations:3 limit:nLimit];
-    nLimit -= [self addMeetupAnnotations:nLimit];
+    nLimit -= [self loadPersonAnnotations:CIRCLE_FB limit:nLimit];
+    nLimit -= [self loadPersonAnnotations:CIRCLE_2O limit:nLimit];
+    nLimit -= [self loadPersonAnnotations:CIRCLE_RANDOM limit:nLimit];
+    nLimit -= [self loadMeetupAndThreadAnnotations:nLimit];
     
+    [self joinPersonsAndMeetups];
+    
+    NSMutableArray *array = [_personsAnnotations mutableCopy];
+    [array addObjectsFromArray:_meetupAnnotations];
+    [array addObjectsFromArray:_threadAnnotations];
+    [mapView addAnnotations:array];
+
     if ( nLimit == 0 )
     {
         // TODO: show message at the bottom: "Zoom closier to see more."

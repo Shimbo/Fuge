@@ -22,6 +22,7 @@ typedef enum kPinPrivacy{
     PinPublic
 }PinPrivacy;
 
+@class Person;
 @interface MeetupAnnotation : REVClusterPin <MKAnnotation>
 {
 
@@ -31,12 +32,14 @@ typedef enum kPinPrivacy{
 
 @property (nonatomic, assign) CLLocationCoordinate2D coordinate;
 @property (nonatomic, strong) Meetup* meetup;
+@property (nonatomic,strong) NSMutableArray *attendedPersons;
 @property (nonatomic, strong) NSString *strId;
 @property (nonatomic, assign) PinPrivacy pinPrivacy;
 @property (nonatomic, assign) PinColor pinColor;
 @property (nonatomic, assign) CGFloat time;
 @property (nonatomic, readonly)NSUInteger numUnreadCount;
 
+-(void)addPerson:(Person*)person;
 
 @end
 
