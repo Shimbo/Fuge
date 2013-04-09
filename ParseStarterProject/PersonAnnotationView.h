@@ -7,16 +7,16 @@
 //
 
 #import <MapKit/MapKit.h>
-
+#import "SCAnnotationView.h"
 
 @class PersonAnnotation;
 @class ImageLoader;
 @class CustomBadge;
-@interface PersonAnnotationView : MKAnnotationView{
+@interface PersonAnnotationView : SCAnnotationView{
     ImageLoader *_imageLoader;
     CustomBadge *_badge;
-    UIImage *_back;
-    UIImage *_personImage;
+    UIImageView *_back;
+    UIImageView *_personImage;
 }
 
 -(void)loadImageWithURL:(NSString*)url;

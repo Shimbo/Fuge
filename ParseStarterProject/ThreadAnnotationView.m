@@ -18,38 +18,19 @@
     self = [super initWithAnnotation: annotation reuseIdentifier: reuseIdentifier];
     if (self != nil)
     {
-        self.frame = CGRectMake(0, 0, 80, 62);
+        self.frame = CGRectMake(0, 0, 46, 58);
         self.opaque = NO;
-        _icon = [UIImage imageNamed:@"threadIcon.png"];
+        
+        _back = [[UIImageView alloc]initWithFrame:self.bounds];
+        [self addSubview:_back];
+        
+        _icon = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"threadIcon.png"]];
+        _icon.center = CGPointMake(23, 24);
+        [self addSubview:_icon];
         
     }
     return self;
 }
-
--(void)drawBadgeInContext:(CGContextRef)context{
-    CGContextSaveGState(context);
-    CGContextTranslateCTM(context,
-                          _badge.frame.origin.x+_badge.frame.size.width/2.0,
-                          _badge.frame.origin.y+_badge.frame.size.height/2.0);
-    [_badge.layer renderInContext:context];
-    CGContextRestoreGState(context);
-}
-
-
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    [_back drawInRect:CGRectMake(16, 5, _back.size.width, _back.size.height)];
-    CGRect iconRect =CGRectMake(self.frame.size.width/2-_icon.size.width/2,
-                                self.frame.size.height/2-_icon.size.height/2-3,
-                                _icon.size.width, _icon.size.height);
-    [_icon drawInRect:iconRect];
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    [self drawBadgeInContext:context];
-    // Drawing code
-}
-
 
 -(void)updateBadgeForColor:(PinColor)color{
     UIColor *badgeColor = nil;
@@ -65,43 +46,43 @@
             break;
     }
     _badge = [CustomBadge badgeWithWhiteBackgroundAndTextColor:badgeColor];
-    _badge.center = CGPointMake(8, 0);
+    _badge.center = CGPointMake(6, 8);
+    [self addSubview:_badge];
 }
 
 
 
 -(void)updateBackForColor:(PinColor)color{
+    UIImage *im = nil;
     switch (color) {
         case PinBlue:
-            _back = [UIImage imageNamed:@"threadPinBlue.png"];
+            im = [UIImage imageNamed:@"threadPinBlue.png"];
             break;
         case PinOrange:
-            _back = [UIImage imageNamed:@"threadPinOrange.png"];
+            im = [UIImage imageNamed:@"threadPinOrange.png"];
             break;
         case PinGray:
-            _back = [UIImage imageNamed:@"threadPinGray.png"];
+            im = [UIImage imageNamed:@"threadPinGray.png"];
             break;
         default:
             NSLog(@"Color Error");
             break;
     }
+    _back.image = im;
 }
 
 -(void)setPinColor:(PinColor)color{
     [self updateBadgeForColor:color];
     [self updateBackForColor:color];
-    //    [self setNeedsDisplay];
 }
 
 -(void)setUnreaCount:(NSUInteger)count{
     [_badge setNumber:count];
-    //    [self setNeedsDisplay];
 }
 
 -(void)prepareForAnnotation:(ThreadAnnotation*)ann{
     [self setPinColor:ann.pinColor];
     [self setUnreaCount:ann.numUnreadCount];
-    
 }
 
 @end

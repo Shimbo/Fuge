@@ -483,10 +483,10 @@ NSInteger sortByName(id num1, id num2, void *context)
     
     FBRequest *request = [FBRequest requestForGraphPath:@"me/events"];
     [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-        
+        /*
         NSArray* events = [result objectForKey:@"data"];
         
-        /*        for ( FBGraphObject* event in events )
+                for ( FBGraphObject* event in events )
          {
          NSLog(@"%@", [event objectForKey:@"id"] );
          NSDictionary* venue = [event objectForKey:@"venue"];

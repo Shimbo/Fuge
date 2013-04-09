@@ -10,7 +10,6 @@
 #import "GlobalData.h"
 @implementation MeetupAnnotation
 
-@synthesize coordinate,title,subtitle,strId;
 
 - (id)initWithMeetup:(Meetup*)meetup
 {

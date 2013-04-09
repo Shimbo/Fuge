@@ -166,7 +166,7 @@
     if ( [inboxOld count] > 0 )
         [inbox setObject:inboxOld forKey:@"Old"];
     
-    [self updateInboxUnreadCount];
+    [self postInboxUnreadCountDidUpdate];
     
     return inbox;
 }
@@ -335,7 +335,9 @@
 #pragma mark -
 #pragma mark Misc
 
--(void)updateInboxUnreadCount
+//-(void)
+
+-(void)postInboxUnreadCountDidUpdate
 {
     [[NSNotificationCenter defaultCenter]postNotificationName:kInboxUnreadCountDidUpdate
                                                        object:nil];

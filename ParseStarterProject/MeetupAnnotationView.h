@@ -8,15 +8,15 @@
 
 #import <MapKit/MapKit.h>
 #import "MeetupAnnotation.h"
-
+#import "SCAnnotationView.h"
 
 @class CustomBadge;
-@interface MeetupAnnotationView : MKAnnotationView{
+@class TimerView;
+@interface MeetupAnnotationView : SCAnnotationView{
     CustomBadge *_badge;
-    UIImage *_back;
-    UIImage *_icon;
-    UIColor *_timerColor;
-    CGFloat _time;
+    UIImageView *_back;
+    UIImageView *_icon;
+    TimerView *_timerView;
 }
 
 /*

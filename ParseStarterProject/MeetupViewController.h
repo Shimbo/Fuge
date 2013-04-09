@@ -38,6 +38,7 @@ enum EMeetupButtons
     id delegate;
     NSMutableArray*    buttons;
     Boolean invite;
+    id currentAnnotation;
 }
 
 -(void) setMeetup:(Meetup*)m;

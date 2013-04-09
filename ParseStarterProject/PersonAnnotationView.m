@@ -16,26 +16,24 @@
 
 @implementation PersonAnnotationView
 
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-    }
-    return self;
-}
-
 - (id) initWithAnnotation: (id <MKAnnotation>) annotation reuseIdentifier: (NSString *) reuseIdentifier
 {
     self = [super initWithAnnotation: annotation reuseIdentifier: reuseIdentifier];
     if (self != nil)
     {
-        self.frame = CGRectMake(0, 0, 80, 50);
+        self.frame = CGRectMake(0, 0, 35, 35);
         self.opaque = NO;
+            
+        _back = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"pinPerson.png"]];
+        [self addSubview:_back];
+        
+        _personImage = [[UIImageView alloc]initWithFrame:CGRectMake(6.5, 6.5, 35, 35)];
+        [self addSubview:_personImage];
+        
         _badge = [CustomBadge badgeWithWhiteTextAndBackground:[MainStyle orangeColor]];
-        _badge.center = CGPointMake(8, 0);
-        _back = [UIImage imageNamed:@"pinPerson.png"];
-        [self setNeedsDisplay];
+        _badge.center = CGPointMake(6, 6);
+        [self addSubview:_badge];
+        
     }
     return self;
 }
@@ -43,22 +41,8 @@
 -(void)prepareForAnnotation:(PersonAnnotation*)annotation{
     [self loadImageWithURL:annotation.imageURL];
     [_badge setNumber:annotation.numUnreadCount];
-    [self setNeedsDisplay];
 }
 
-
--(void)drawRect:(CGRect)rect{
-    [super drawRect:rect];
-    [_back drawInRect:CGRectMake(16, 2, _back.size.width, _back.size.height)];
-    [_personImage drawInRect:CGRectMake(22.5, 8, 35, 35)];
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSaveGState(context);
-    CGContextTranslateCTM(context,
-                          _badge.frame.origin.x+_badge.frame.size.width/2.0,
-                          _badge.frame.origin.y+_badge.frame.size.height/2.0);
-    [_badge.layer renderInContext:context];
-    CGContextRestoreGState(context);
-}
 
 -(void)loadImageWithURL:(NSString*)url{
     if (!_imageLoader) {
@@ -67,11 +51,10 @@
     [_imageLoader cancel];
     UIImage *im = [_imageLoader getImage:url];
     if (im) {
-        _personImage = im;
-        [self setNeedsDisplay];
+        _personImage.image = im;
         return;
     }
-    _personImage = nil;
+    _personImage.image = nil;
     [_imageLoader loadImageWithUrl:url handler:^(UIImage *image) {
         
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
@@ -81,9 +64,9 @@
                                                scale:2
                                          orientation:roundedImage.imageOrientation];
             [_imageLoader setImage:roundedImage url:url];
-            _personImage = roundedImage;
+            
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self setNeedsDisplay];
+                _personImage.image = roundedImage;
             });
         });
     }];

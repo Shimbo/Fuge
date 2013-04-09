@@ -12,7 +12,7 @@
 #import "GlobalData.h"
 #import "MeetupAnnotation.h"
 #import "MeetupInviteViewController.h"
-#import "MeetupAnnotationView.h"
+#import "SCAnnotationView.h"
 
 @implementation MeetupViewController
 
@@ -135,7 +135,7 @@
         buttons[MB_CALENDAR] = [NSNumber numberWithInt:1];
         [self updateButtons];
     }
-    
+    [self reloadAnnotation];
     // Ask to add to calendar
     [meetup addToCalendar:self shouldAlert:true];
 }
@@ -187,6 +187,7 @@
     // Update invite
     [globalData updateInvite:meetup.strId attending:INVITE_ACCEPTED];
     
+    [self reloadAnnotation];
     // Closing window if there was invite
     if ( invite )
         [self.navigationController popViewControllerAnimated:TRUE];
@@ -197,7 +198,7 @@
 - (void)unsubscribeClicked
 {
     [globalData unsubscribeToThread:meetup.strId];
-    
+    [self reloadAnnotation];
     if ( invite )
         //[self dismissViewControllerAnimated:TRUE completion:nil];
         [self.navigationController popViewControllerAnimated:TRUE];
@@ -213,6 +214,22 @@
     [self presentViewController:nav animated:YES completion:nil];
 }
 
+-(void)reloadAnnotation{
+    if (currentAnnotation) {
+        [mapView removeAnnotation:currentAnnotation];
+    }
+    if (meetup.meetupType == TYPE_MEETUP) {
+        MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
+        [mapView addAnnotation:ann];
+        currentAnnotation = ann;
+    }else{
+        ThreadAnnotation *ann = [[ThreadAnnotation alloc] initWithMeetup:meetup];
+        [mapView addAnnotation:ann];
+        currentAnnotation = ann;
+    }
+
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -225,8 +242,7 @@
     mapView.showsUserLocation = TRUE;
     [mapView setDelegate:self];
     [mapView setRegion:reg animated:true];
-    MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
-    [mapView addAnnotation:ann];
+
     
     NSNumber* buttonOn = [NSNumber numberWithInt:1];
     
@@ -317,7 +333,7 @@
         // Make new comment editable now
         newComment.editable = true;
     }];
-    
+    [self reloadAnnotation];
 }
 
 -(void)hideKeyBoard{
@@ -354,16 +370,10 @@
 
 -(MKAnnotationView *)mapView:(MKMapView *)mV viewForAnnotation:(id<MKAnnotation>)annotation
 {
-    MeetupAnnotationView *pinView = nil;
+    SCAnnotationView *pinView = nil;
     if (annotation != mapView.userLocation)
     {
-        static NSString *defaultPinID = @"secondcircle.pin";
-        pinView = (MeetupAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:defaultPinID];
-        
-        if ( pinView == nil ){
-            pinView = [[MeetupAnnotationView alloc] initWithAnnotation:annotation
-                                                       reuseIdentifier:defaultPinID];
-        }
+        pinView = [SCAnnotationView constructAnnotationViewForAnnotation:annotation forMap:mV];
         [pinView prepareForAnnotation:(MeetupAnnotation*)annotation];
         pinView.canShowCallout = YES;
     }

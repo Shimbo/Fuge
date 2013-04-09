@@ -11,7 +11,6 @@
 
 @implementation PersonAnnotation
 
-@synthesize coordinate,title,subtitle;
 
 - (id)initWithPerson:(Person*)person
 {

@@ -108,7 +108,7 @@ typedef  enum EMeetupCommentType
 - (Boolean)isInboxLoaded;
 - (void) incrementLoadingStage:(InboxViewController*)controller;
     // Inbox utils
-- (void)updateInboxUnreadCount;
+- (void)postInboxUnreadCountDidUpdate;
 - (NSUInteger)getInboxUnreadCount;
 - (void) updateConversation:(NSDate*)date count:(NSUInteger)msgCount thread:(NSString*)strThread;
 - (NSDate*) getConversationDate:(NSString*)strThread;

@@ -9,13 +9,14 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
 #import "MainViewController.h"
+#import "REVClusterMapView.h"
 
 @interface MapViewController : MainViewController <MKMapViewDelegate>
 {
-    IBOutlet MKMapView *mapView;
+    IBOutlet REVClusterMapView *mapView;
 }
 
-@property (nonatomic, retain) IBOutlet MKMapView *mapView;
+@property (nonatomic, retain) IBOutlet REVClusterMapView *mapView;
 
 - (void) reloadData;
 - (void) reloadFinished;

@@ -7,13 +7,14 @@
 //
 
 #import <MapKit/MapKit.h>
+#import "SCAnnotationView.h"
 
 @class ThreadAnnotation;
 @class CustomBadge;
-@interface ThreadAnnotationView : MKAnnotationView{
+@interface ThreadAnnotationView : SCAnnotationView{
     CustomBadge *_badge;
-    UIImage *_back;
-    UIImage *_icon;
+    UIImageView *_back;
+    UIImageView *_icon;
 }
 
 -(void)prepareForAnnotation:(ThreadAnnotation*)ann;

@@ -22,9 +22,8 @@
 #import "ImageLoader.h"
 #import "NewMeetupViewController.h"
 #import "MeetupInviteViewController.h"
-#import "PersonAnnotationView.h"
-#import "MeetupAnnotationView.h"
-#import "ThreadAnnotationView.h"
+#import "SCAnnotationView.h"
+#import "REVClusterAnnotationView.h"
 
 @implementation MapViewController
 
@@ -49,36 +48,38 @@
         return 0;
     
     int n = 0;
+    NSMutableArray *annotations = [NSMutableArray arrayWithCapacity:30];
     for (Person* person in [circle getPersons] )
     {
         PersonAnnotation *ann = [[PersonAnnotation alloc] initWithPerson:person];
-        [mapView addAnnotation:ann];
+        [annotations addObject:ann];
         n++;
         if ( n >= l )
-            return n;
+            break;
     }
-    
+    [mapView addAnnotations:annotations];
     return n;
 }
 
 - (NSUInteger)addMeetupAnnotations:(NSInteger)l
 {
     int n = 0;
-    
+    NSMutableArray *annotations = [NSMutableArray arrayWithCapacity:30];
     for (Meetup *meetup in [globalData getMeetups])
     {
         if (meetup.meetupType == TYPE_MEETUP) {
             MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
-            [mapView addAnnotation:ann];
+            [annotations addObject:ann];
         }else{
             ThreadAnnotation *ann = [[ThreadAnnotation alloc] initWithMeetup:meetup];
-            [mapView addAnnotation:ann];
+            [annotations addObject:ann];
         }
         
         n++;
         if ( n >= l )
-            return n;
+            break;
     }
+    [mapView addAnnotations:annotations];
     return n;
 }
 
@@ -200,68 +201,47 @@
 
 -(MKAnnotationView *)mapView:(MKMapView *)mV viewForAnnotation:(id <MKAnnotation>)annotation
 {
-    MKPinAnnotationView *pinView = nil;
+    
+    REVClusterPin *pin = (REVClusterPin *)annotation;
     if (annotation != mapView.userLocation)
     {
-        static NSString *personPin = @"person.pin";
-        static NSString *threadPin = @"thread.pin";
-        static NSString *meetupPin = @"meetup.pin";
-        
-        NSString *identifier = nil;
-        BOOL isPerson = NO;
-        BOOL isMeetup = NO;
-        BOOL isThread = NO;
-        if ([annotation isMemberOfClass:[PersonAnnotation class]]) {
-            isPerson = YES;
-            identifier = personPin;
-        }else if([annotation isMemberOfClass:[MeetupAnnotation class]]){
-            isMeetup = YES;
-            identifier = meetupPin;
-        }else if ([annotation isMemberOfClass:[ThreadAnnotation class]]){
-            isThread = YES;
-            identifier = threadPin;
-        }
-        pinView = (MKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:identifier];
-
-        if ( pinView == nil ){
-            if (isPerson) {
-                pinView = (MKPinAnnotationView*)
-                [[PersonAnnotationView alloc]initWithAnnotation:annotation
-                                                reuseIdentifier:identifier];
-            }else if(isMeetup){
-                pinView = (MKPinAnnotationView*)
-                [[MeetupAnnotationView alloc] initWithAnnotation:annotation
-                                                reuseIdentifier:identifier];
-            } else if (isThread){
-                pinView = (MKPinAnnotationView*)
-                [[ThreadAnnotationView alloc] initWithAnnotation:annotation
-                                                 reuseIdentifier:identifier];
-            }
-        }
-        
-        if ( isPerson ){
-            PersonAnnotationView *pin = (PersonAnnotationView*)pinView;
-            [pin prepareForAnnotation:(PersonAnnotation*)annotation];
-        } else if(isMeetup){
-            MeetupAnnotationView *pin = (MeetupAnnotationView*)pinView;
-            [pin prepareForAnnotation:(MeetupAnnotation*)annotation];
+        if( [pin nodeCount] > 0 ){
+            pin.title = @"___";
+            REVClusterAnnotationView *annView;
+            annView = (REVClusterAnnotationView*)
+            [mapView dequeueReusableAnnotationViewWithIdentifier:@"cluster"];
+            
+            if( !annView )
+                annView = (REVClusterAnnotationView*)
+                [[REVClusterAnnotationView alloc] initWithAnnotation:annotation
+                                                      reuseIdentifier:@"cluster"] ;
+            
+            
+            [annView setClusterNum:[pin nodeCount]];
+            
+            annView.canShowCallout = NO;
+            return annView;
         }else{
-            ThreadAnnotationView *pin = (ThreadAnnotationView*)pinView;
-            [pin prepareForAnnotation:(ThreadAnnotation*)annotation];
+            SCAnnotationView *pinView;
+            pinView = [SCAnnotationView constructAnnotationViewForAnnotation:annotation
+                                                                      forMap:mV];
+            [pinView prepareForAnnotation:annotation];
+            
+            UIButton *btnView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+            pinView.rightCalloutAccessoryView = btnView;
+            pinView.canShowCallout = YES;
+            return pinView;
         }
-        
-        UIButton *btnView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
-        pinView.rightCalloutAccessoryView = btnView;
-        pinView.canShowCallout = YES;
+
         
     }
     else {
         [mapView.userLocation setTitle:@"I am here"];
     }
-    return pinView;
+    return nil;
 }
 
-- (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView*)view calloutAccessoryControlTapped:(UIControl *)control {
+- (void)mapView:(MKMapView *)mV annotationView:(MKAnnotationView*)view calloutAccessoryControlTapped:(UIControl *)control {
     
     if ([(UIButton*)control buttonType] == UIButtonTypeDetailDisclosure){
         if ( [view.annotation isMemberOfClass:[PersonAnnotation class]] )
@@ -270,6 +250,7 @@
             [self.navigationController pushViewController:userProfileController animated:YES];
             [userProfileController setPerson:((PersonAnnotation*) view.annotation).person];
         }
+        
         if ( [view.annotation isMemberOfClass:[MeetupAnnotation class]]||
             [view.annotation isMemberOfClass:[ThreadAnnotation class]])
         {
@@ -277,11 +258,28 @@
             [meetupController setMeetup:((MeetupAnnotation*) view.annotation).meetup];
             [self.navigationController pushViewController:meetupController animated:YES];
         }
+
         
         
     }
 }
 
+- (void)mapView:(MKMapView *)mv didSelectAnnotationView:(MKAnnotationView *)view
+{
+    
+    if ([view isKindOfClass:[REVClusterAnnotationView class]]) {
+        CLLocationCoordinate2D centerCoordinate = [(REVClusterPin *)view.annotation coordinate];
+        
+        MKCoordinateSpan newSpan =
+        MKCoordinateSpanMake(mapView.region.span.latitudeDelta/2.0,
+                             mapView.region.span.longitudeDelta/2.0);
+        
+        //mapView.region = MKCoordinateRegionMake(centerCoordinate, newSpan);
+        
+        [mapView setRegion:MKCoordinateRegionMake(centerCoordinate, newSpan)
+                  animated:YES];
+    }
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

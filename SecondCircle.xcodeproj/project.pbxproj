@@ -44,6 +44,13 @@
 		471EAC6116C0D43A009F88F9 /* poweredByFoursquare_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = 471EAC5A16C0D3E0009F88F9 /* poweredByFoursquare_gray.png */; };
 		471EAC6216C0D43A009F88F9 /* poweredByFoursquare_gray@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 471EAC5B16C0D3E0009F88F9 /* poweredByFoursquare_gray@2x.png */; };
 		476D1E2316A8273600077458 /* FSVenue.m in Sources */ = {isa = PBXBuildFile; fileRef = 476D1E2216A8273600077458 /* FSVenue.m */; };
+		477353241713F6CE004CA0D8 /* SCAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 477353231713F6CE004CA0D8 /* SCAnnotationView.m */; };
+		4773533117140853004CA0D8 /* REVAnnotationsCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 4773532717140853004CA0D8 /* REVAnnotationsCollection.m */; };
+		4773533217140853004CA0D8 /* REVClusterBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 4773532917140853004CA0D8 /* REVClusterBlock.m */; };
+		4773533317140853004CA0D8 /* REVClusterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4773532B17140853004CA0D8 /* REVClusterManager.m */; };
+		4773533417140853004CA0D8 /* REVClusterMapView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4773532E17140853004CA0D8 /* REVClusterMapView.m */; };
+		4773533517140853004CA0D8 /* REVClusterPin.m in Sources */ = {isa = PBXBuildFile; fileRef = 4773533017140853004CA0D8 /* REVClusterPin.m */; };
+		4773533817140A9C004CA0D8 /* REVClusterAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4773533717140A0A004CA0D8 /* REVClusterAnnotationView.m */; };
 		479A7E0216F8C58F00E97576 /* CustomBadge.m in Sources */ = {isa = PBXBuildFile; fileRef = 479A7E0116F8C58F00E97576 /* CustomBadge.m */; };
 		47A1AC6716A7DBD2004B4CFA /* AsyncImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 47A1AC6416A7DBD2004B4CFA /* AsyncImageView.m */; };
 		47A1AC6816A7DBD2004B4CFA /* ImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 47A1AC6616A7DBD2004B4CFA /* ImageLoader.m */; };
@@ -198,6 +205,21 @@
 		471EAC5B16C0D3E0009F88F9 /* poweredByFoursquare_gray@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "poweredByFoursquare_gray@2x.png"; sourceTree = "<group>"; };
 		476D1E2116A8273500077458 /* FSVenue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSVenue.h; sourceTree = "<group>"; };
 		476D1E2216A8273600077458 /* FSVenue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSVenue.m; sourceTree = "<group>"; };
+		477353221713F6CE004CA0D8 /* SCAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCAnnotationView.h; sourceTree = "<group>"; };
+		477353231713F6CE004CA0D8 /* SCAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCAnnotationView.m; sourceTree = "<group>"; };
+		4773532617140853004CA0D8 /* REVAnnotationsCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REVAnnotationsCollection.h; sourceTree = "<group>"; };
+		4773532717140853004CA0D8 /* REVAnnotationsCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = REVAnnotationsCollection.m; sourceTree = "<group>"; };
+		4773532817140853004CA0D8 /* REVClusterBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REVClusterBlock.h; sourceTree = "<group>"; };
+		4773532917140853004CA0D8 /* REVClusterBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = REVClusterBlock.m; sourceTree = "<group>"; };
+		4773532A17140853004CA0D8 /* REVClusterManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REVClusterManager.h; sourceTree = "<group>"; };
+		4773532B17140853004CA0D8 /* REVClusterManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = REVClusterManager.m; sourceTree = "<group>"; };
+		4773532C17140853004CA0D8 /* REVClusterMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REVClusterMap.h; sourceTree = "<group>"; };
+		4773532D17140853004CA0D8 /* REVClusterMapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REVClusterMapView.h; sourceTree = "<group>"; };
+		4773532E17140853004CA0D8 /* REVClusterMapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = REVClusterMapView.m; sourceTree = "<group>"; };
+		4773532F17140853004CA0D8 /* REVClusterPin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REVClusterPin.h; sourceTree = "<group>"; };
+		4773533017140853004CA0D8 /* REVClusterPin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = REVClusterPin.m; sourceTree = "<group>"; };
+		4773533617140A0A004CA0D8 /* REVClusterAnnotationView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = REVClusterAnnotationView.h; path = ../libs/REVClusterMap/REVClusterAnnotationView.h; sourceTree = "<group>"; };
+		4773533717140A0A004CA0D8 /* REVClusterAnnotationView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = REVClusterAnnotationView.m; path = ../libs/REVClusterMap/REVClusterAnnotationView.m; sourceTree = "<group>"; };
 		479A7E0016F8C58F00E97576 /* CustomBadge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomBadge.h; sourceTree = "<group>"; };
 		479A7E0116F8C58F00E97576 /* CustomBadge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomBadge.m; sourceTree = "<group>"; };
 		47A1AC6316A7DBD2004B4CFA /* AsyncImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncImageView.h; sourceTree = "<group>"; };
@@ -530,6 +552,25 @@
 			name = libs;
 			sourceTree = "<group>";
 		};
+		4773532517140853004CA0D8 /* REVClusterMap */ = {
+			isa = PBXGroup;
+			children = (
+				4773532617140853004CA0D8 /* REVAnnotationsCollection.h */,
+				4773532717140853004CA0D8 /* REVAnnotationsCollection.m */,
+				4773532817140853004CA0D8 /* REVClusterBlock.h */,
+				4773532917140853004CA0D8 /* REVClusterBlock.m */,
+				4773532A17140853004CA0D8 /* REVClusterManager.h */,
+				4773532B17140853004CA0D8 /* REVClusterManager.m */,
+				4773532C17140853004CA0D8 /* REVClusterMap.h */,
+				4773532D17140853004CA0D8 /* REVClusterMapView.h */,
+				4773532E17140853004CA0D8 /* REVClusterMapView.m */,
+				4773532F17140853004CA0D8 /* REVClusterPin.h */,
+				4773533017140853004CA0D8 /* REVClusterPin.m */,
+			);
+			name = REVClusterMap;
+			path = libs/REVClusterMap;
+			sourceTree = SOURCE_ROOT;
+		};
 		479A7DFF16F8C58F00E97576 /* CustomBadge */ = {
 			isa = PBXGroup;
 			children = (
@@ -564,8 +605,11 @@
 		47B203FD171183E800B756FA /* Map Annotations */ = {
 			isa = PBXGroup;
 			children = (
+				4773532517140853004CA0D8 /* REVClusterMap */,
 				4C188D261698CB7E004CF42D /* PersonAnnotation.h */,
 				4C188D271698CB7E004CF42D /* PersonAnnotation.m */,
+				4773533617140A0A004CA0D8 /* REVClusterAnnotationView.h */,
+				4773533717140A0A004CA0D8 /* REVClusterAnnotationView.m */,
 				4C7E3FD9169A09880065484F /* MeetupAnnotation.h */,
 				4C7E3FDA169A09880065484F /* MeetupAnnotation.m */,
 				470E5D2916F9A5E40090A19F /* PersonAnnotationView.h */,
@@ -574,6 +618,8 @@
 				47B203DE171008AB00B756FA /* MeetupAnnotationView.m */,
 				47B204011711861A00B756FA /* ThreadAnnotationView.h */,
 				47B204021711861A00B756FA /* ThreadAnnotationView.m */,
+				477353221713F6CE004CA0D8 /* SCAnnotationView.h */,
+				477353231713F6CE004CA0D8 /* SCAnnotationView.m */,
 			);
 			name = "Map Annotations";
 			sourceTree = "<group>";
@@ -866,6 +912,13 @@
 				47B203DF171008AB00B756FA /* MeetupAnnotationView.m in Sources */,
 				47B203FA1710196200B756FA /* MainStyle.m in Sources */,
 				47B204031711861B00B756FA /* ThreadAnnotationView.m in Sources */,
+				477353241713F6CE004CA0D8 /* SCAnnotationView.m in Sources */,
+				4773533117140853004CA0D8 /* REVAnnotationsCollection.m in Sources */,
+				4773533217140853004CA0D8 /* REVClusterBlock.m in Sources */,
+				4773533317140853004CA0D8 /* REVClusterManager.m in Sources */,
+				4773533417140853004CA0D8 /* REVClusterMapView.m in Sources */,
+				4773533517140853004CA0D8 /* REVClusterPin.m in Sources */,
+				4773533817140A9C004CA0D8 /* REVClusterAnnotationView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
