@@ -507,7 +507,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         return;
     
     PFQuery *meetupAnyQuery = [PFQuery queryWithClassName:@"Meetup"];
-    meetupAnyQuery.limit = 100;
+    meetupAnyQuery.limit = 1000;
     
     // Location filter
     [meetupAnyQuery whereKey:@"location" nearGeoPoint:ptUser withinKilometers:RANDOM_EVENT_KILOMETERS];
@@ -519,6 +519,9 @@ NSInteger sortByName(id num1, id num2, void *context)
     // Privacy filter
     NSNumber* privacyTypePrivate = [[NSNumber alloc] initWithInt:MEETUP_PRIVATE];
     [meetupAnyQuery whereKey:@"privacy" notEqualTo:privacyTypePrivate];
+    
+    // Ascending order by creation date
+    [meetupAnyQuery orderByAscending:@"createdAt"];
     
     // Query for public/2O meetups
     NSArray *meetupsData = [meetupAnyQuery findObjects];

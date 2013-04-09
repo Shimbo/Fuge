@@ -127,7 +127,7 @@
     inboxCell.subject.text = item.subject;
     inboxCell.message.text = item.message;
     inboxCell.misc.text = item.misc;
-    if ( [item.fromId compare:strCurrentUserId] == NSOrderedSame )
+    if ( [item.fromId compare:strCurrentUserId] == NSOrderedSame || item.type == INBOX_ITEM_INVITE || item.type == INBOX_ITEM_COMMENT )
         [inboxCell.mainImage loadImageFromURL:[Person imageURLWithId:item.toId]];
     else
         [inboxCell.mainImage loadImageFromURL:[Person imageURLWithId:item.fromId]];
@@ -149,16 +149,32 @@
     // Another switch depending on item type
     if ( item.type == INBOX_ITEM_INVITE || item.type == INBOX_ITEM_COMMENT )
     {
-        PFObject *meetupData = [item.data objectForKey:@"meetupData"];
-        NSError* error;
-        [meetupData fetchIfNeeded:&error];
+        Meetup* meetup = [globalData getMeetupById:[item.data objectForKey:@"meetupId"]];
         
-        if ( ! error )
+        // Fetching if needed
+        if ( ! meetup )
+        {
+            PFObject *meetupData = [item.data objectForKey:@"meetupData"];
+            NSError* error;
+            [meetupData fetchIfNeeded:&error];
+            
+            // TODO: add loading
+            if ( ! error )
+            {
+                meetup = [[Meetup alloc] init];
+                [meetup unpack:meetupData];
+                [globalData addMeetup:meetup];
+            }
+            else
+            {
+                // TODO: propper error handling here and nearby (show alert)
+            }
+        }
+        
+        // Loading window
+        if ( meetup )
         {
             MeetupViewController *meetupController = [[MeetupViewController alloc] initWithNibName:@"MeetupView" bundle:nil];
-            Meetup* meetup = [[Meetup alloc] init];
-            [meetup unpack:meetupData];
-            [globalData addMeetup:meetup];
             [meetupController setMeetup:meetup];
             if ( ! item.misc && item.type == INBOX_ITEM_INVITE )  // Already responded
                 [meetupController setInvite];

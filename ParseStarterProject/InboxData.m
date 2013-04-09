@@ -29,6 +29,17 @@
     [self loadComments:controller];
 }
 
+NSInteger sort2(id item1, id item2, void *context)
+{
+    InboxViewItem* i1 = item1;
+    InboxViewItem* i2 = item2;
+    NSDate *date1 = i1.dateTime;
+    NSDate *date2 = i2.dateTime;
+    if ([date2 compare:date1] == NSOrderedDescending)
+        return NSOrderedDescending;
+    return NSOrderedAscending;
+}
+
 - (NSMutableDictionary*) getInbox:(InboxViewController*)controller
 {
     // Still loading
@@ -78,7 +89,7 @@
             else if ( [pObject.parseClassName compare:@"Comment"] == NSOrderedSame )
             {
                 item.type = INBOX_ITEM_COMMENT;
-                item.fromId = [pObject objectForKey:@"userId"];
+                item.fromId = [pObject objectForKey:@"meetupId"]; // we're doing it vice versa so "from" will always store our conversation origin
                 item.toId = [pObject objectForKey:@"userId"];
                 item.subject = [pObject objectForKey:@"meetupSubject"];
                 item.message = [pObject objectForKey:@"comment"];
@@ -123,6 +134,9 @@
         }
     }
     
+    // Sorting
+    NSArray *sortedArray = [tempArray sortedArrayUsingFunction:sort2 context:NULL];
+    
     // Creating arrays
     NSMutableDictionary* inbox = [[NSMutableDictionary alloc] init];
     NSMutableArray* inboxNew = [[NSMutableArray alloc] init];
@@ -131,7 +145,7 @@
     
     // Parsing data
     NSDate* dateRecent = [[NSDate alloc] initWithTimeIntervalSinceNow:-24*60*60*7];
-    for ( InboxViewItem* item in tempArray )
+    for ( InboxViewItem* item in sortedArray )
     {
         // Invites always in new
         if ( item.type == INBOX_ITEM_INVITE || item.type == INBOX_ITEM_NEWUSER )
@@ -318,6 +332,9 @@
     PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Comment"];
     NSArray* subscriptions = [[PFUser currentUser] objectForKey:@"subscriptions"];
     [messagesQuery whereKey:@"meetupId" containedIn:subscriptions];
+    messagesQuery.limit = 1000;
+    [messagesQuery orderByAscending:@"createdAt"];
+    //[messagesQuery whereKey:@"system" notEqualTo:[NSNumber numberWithInt:1]];
     
     // TODO: add here later another query limitation by date (like 10 last days) to not push server too hard. It will be like pages, loading every 10 previous days or so.
     

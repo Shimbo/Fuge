@@ -327,8 +327,8 @@
         [comments setText:stringComments];
         
         // Last read message date
-        if ( meetup.numComments > 0 )
-            [globalData updateConversation:((PFObject*)commentsList[0]).createdAt count:meetup.numComments thread:meetup.strId];
+        if ( commentsList.count > 1 )
+            [globalData updateConversation:((PFObject*)commentsList[commentsList.count-1]).createdAt count:meetup.numComments thread:meetup.strId];
         
         // Make new comment editable now
         newComment.editable = true;
