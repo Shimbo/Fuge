@@ -282,6 +282,14 @@ NSInteger sortByName(id num1, id num2, void *context)
     Person* person = [self getPersonById:strId];
     if ( person )
     {
+        // Changing from random to friend
+        if ( person.idCircle == CIRCLE_RANDOM )
+        {
+            [[globalData getCircle:person.idCircle] removePerson:person];
+            [[globalData getCircle:circleUser] addPerson:person];
+            [person changeCircle:circleUser];
+        }
+        // Updating location
         [person updateLocation:[user objectForKey:@"location"]];
         return;
     }

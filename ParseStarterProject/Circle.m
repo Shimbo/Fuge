@@ -18,6 +18,10 @@
 	[persons addObject:person];
 }
 
+- (void)removePerson:(Person *)person{
+    [persons removeObject:person];
+}
+
 - (id)addPersonWithData:(PFUser*)data {
 	Person *person = [[Person alloc] init:data circle:idCircle];
 	[persons addObject:person];

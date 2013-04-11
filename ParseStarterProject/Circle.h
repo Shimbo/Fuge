@@ -19,6 +19,7 @@ typedef enum ECircle
 - (id)init:(NSUInteger)circle;
 
 - (void)addPerson:(Person *)person;
+- (void)removePerson:(Person *)person;
 - (id)addPersonWithData:(PFUser*)data;
 
 - (NSMutableArray*) getPersons;

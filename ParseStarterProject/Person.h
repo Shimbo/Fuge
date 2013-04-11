@@ -44,6 +44,7 @@
 - (id)initEmpty:(NSUInteger)nCircle;
 
 - (void)updateLocation:(PFGeoPoint*)ptNewLocation;
+- (void)changeCircle:(NSUInteger)nCircle;
 
 -(NSString*)imageURL;
 -(NSString*)largeImageURL;

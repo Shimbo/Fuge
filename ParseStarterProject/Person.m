@@ -74,6 +74,12 @@
     location = locationFriend.coordinate;
 }
 
+- (void)changeCircle:(NSUInteger)nCircle
+{
+    strCircle = [Circle getPersonType:nCircle];
+    idCircle = nCircle;
+}
+
 - (id)initEmpty:(NSUInteger)nCircle{
     
     if (self = [super init]) {
