@@ -33,16 +33,24 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(reloadFinished)
+                                                name:kLoadingMapComplete
+                                                object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(reloadFinished)
+                                                name:kLoadingCirclesComplete
+                                                object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(viewOpened)
+                                                name:kAppRestored
+                                                object:nil];
     }
     return self;
 }
 
 - (NSUInteger)loadPersonAnnotations:(CircleType)circleNumber limit:(NSInteger)l
 {
-    //NSString* strCircle = [Circle getCircleName:circleNumber];
-
-    
     Circle* circle = [globalData getCircle:circleNumber];
     if ( ! circle )
         return 0;
@@ -80,10 +88,6 @@
 }
 
 - (void)newThreadClicked{
-    /*MeetupInviteViewController *invite = [[MeetupInviteViewController alloc] initWithNibName:@"MeetupInviteViewController" bundle:nil];
-    UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:invite];
-    [self.navigationController presentViewController:navigation
-                                            animated:YES completion:nil];*/
     NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
     [newMeetupViewController setType:TYPE_THREAD];
     UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:newMeetupViewController];
@@ -99,46 +103,63 @@
     [self.navigationController presentViewController:navigation animated:YES completion:nil];
 }
 
+- (IBAction)reloadTap:(id)sender {
+    // UI
+    [self.activityIndicator startAnimating];
+    _reloadButton.hidden = TRUE;
+    self.navigationController.view.userInteractionEnabled = NO;
+    
+    // Reload data
+    // Crappy sure there's some easier way!
+    CGPoint nePoint = CGPointMake(mapView.bounds.origin.x + mapView.bounds.size.width, mapView.bounds.origin.y);
+    CGPoint swPoint = CGPointMake(mapView.bounds.origin.x, mapView.bounds.origin.y + mapView.bounds.size.height);
+    CLLocationCoordinate2D neCoord;
+    neCoord = [mapView convertPoint:nePoint toCoordinateFromView:mapView];
+    CLLocationCoordinate2D swCoord;
+    swCoord = [mapView convertPoint:swPoint toCoordinateFromView:mapView];    
+    PFGeoPoint* northEast = [PFGeoPoint geoPointWithLatitude:neCoord.latitude longitude:neCoord.longitude];
+    PFGeoPoint* southWest = [PFGeoPoint geoPointWithLatitude:swCoord.latitude longitude:swCoord.longitude];
+
+    [globalData reloadMapInfoInBackground:southWest toNorthEast:northEast];
+}
+
 - (void) reloadFinished
 {
-    self.initialized = YES;
-
-    [self reloadMapAnnotations];
-    [TestFlight passCheckpoint:@"List loading ended"];
+    // UI
+    if ( [globalData areCirclesLoaded] && [globalData isMapLoaded] )
+    {
+        _reloadButton.hidden = FALSE;
+        self.navigationController.view.userInteractionEnabled = YES;
+        [self.activityIndicator stopAnimating];
+    }
     
-    [self.activityIndicator stopAnimating];
-    self.navigationController.view.userInteractionEnabled = YES;
+    // Refresh map
+    [self reloadMapAnnotations];
 }
 
-- (void) actualReload
+- (void) viewOpened
 {
-    [globalData reload:self];
-}
-
-- (void) reloadData {
-    [self.activityIndicator startAnimating];
-    self.navigationController.view.userInteractionEnabled = NO;
-    [self performSelectorOnMainThread:@selector(actualReload) withObject:nil waitUntilDone:NO];
+    // Data updating
+    if ( ! [globalData isMapLoaded] )
+    {
+        [self.activityIndicator startAnimating];
+        _reloadButton.hidden = TRUE;
+    }
+    else
+        [self reloadFinished];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    srand((unsigned)time(0));
-    if (!self.initialized) {
-        [TestFlight passCheckpoint:@"List loading started"];
-        [self reloadData];
-    }else{
-        [TestFlight passCheckpoint:@"List restored"];
-    }
-    //self.title = NSLocalizedString(@"Map", @"Map");
     
-    mapView.showsUserLocation = TRUE;
-    
+    // Misc
     [mapView setMapType:MKMapTypeStandard];
     [mapView setZoomEnabled:YES];
     [mapView setScrollEnabled:YES];
     [mapView setDelegate:self];
+    mapView.showsUserLocation = TRUE;
+    srand((unsigned)time(0));
     
     // Navigation bar
     [self.navigationItem setHidesBackButton:true animated:false];
@@ -163,7 +184,16 @@
     else
         [mapView setUserTrackingMode:MKUserTrackingModeFollow animated:TRUE];
     
+    // Data updating
+    [self viewOpened];
+    
     [TestFlight passCheckpoint:@"Map"];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [self reloadMapAnnotations];
 }
 
 -(BOOL)isPerson:(PersonAnnotation*)per
@@ -230,13 +260,6 @@
         // TODO: show message at the bottom: "Zoom closier to see more."
     }
 }
-
-- (void) viewDidAppear:(BOOL)animated
-{
-    [self reloadMapAnnotations];
-}
-
-
 
 
 -(MKAnnotationView *)mapView:(MKMapView *)mV viewForAnnotation:(id <MKAnnotation>)annotation

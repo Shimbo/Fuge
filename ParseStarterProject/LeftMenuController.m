@@ -66,7 +66,8 @@
 }
 -(void)showUser{
     ProfileViewController *profileViewController = [[ProfileViewController alloc] initWithNibName:@"ProfileView" bundle:nil];
-    profileViewController.main = YES;
+    if (_mapViewController)
+        profileViewController.main = YES;
     [self showViewController:profileViewController];
 }
 

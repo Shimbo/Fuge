@@ -39,7 +39,7 @@ enum EInboxItemType
 @property (nonatomic,retain) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
-- (void) reloadData;
+- (void) refreshData;
 
 - (void) dismissMeetup;
 

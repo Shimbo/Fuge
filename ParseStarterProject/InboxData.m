@@ -15,18 +15,18 @@
 #pragma mark -
 #pragma mark Main
 
-- (void)reloadInbox:(InboxViewController*)controller
+- (void)reloadInboxInBackground
 {
     nInboxLoadingStage = 0;
     
     // Invites
-    [self loadInvites:controller];
+    [self loadInvites];
     
     // Unread PMs
-    [self loadMessages:controller];
+    [self loadMessages];
     
     // Unread comments
-    [self loadComments:controller];
+    [self loadComments];
 }
 
 NSInteger sort2(id item1, id item2, void *context)
@@ -40,7 +40,7 @@ NSInteger sort2(id item1, id item2, void *context)
     return NSOrderedAscending;
 }
 
-- (NSMutableDictionary*) getInbox:(InboxViewController*)controller
+- (NSMutableDictionary*) getInbox
 {
     // Still loading
     if ( ! [self isInboxLoaded] )
@@ -190,17 +190,17 @@ NSInteger sort2(id item1, id item2, void *context)
     return ( nInboxLoadingStage == INBOX_LOADED );
 }
 
-- (void) incrementLoadingStage:(InboxViewController*)controller
+- (void) incrementInboxLoadingStage
 {
     nInboxLoadingStage++;
     
     if ( [self isInboxLoaded] )
     {
-        if ( controller )
-            [controller reloadData];
+        [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingInboxComplete
+                                                           object:nil];
         
-        // TODO: this call is an overkill, but don't know how to update new count other way, now we're calculating it with all other stuff upon load
-        [self getInbox:controller];
+        // TODO: this call is an overkill, but don't know how to update new unread count other way, now we're calculating it with all other stuff upon load
+        [self getInbox];
     }
 }
 
@@ -214,7 +214,7 @@ NSInteger sort2(id item1, id item2, void *context)
     return invites;
 }
 
-- (void)loadInvites:(InboxViewController*)controller
+- (void)loadInvites
 {
     // Query
     PFQuery *invitesQuery = [PFQuery queryWithClassName:@"Invite"];
@@ -256,7 +256,7 @@ NSInteger sort2(id item1, id item2, void *context)
         invites = uniqueInvites;
         
         // Loading stage complete
-        [self incrementLoadingStage:controller];
+        [self incrementInboxLoadingStage];
     }];
 }
 
@@ -326,7 +326,7 @@ NSInteger sort2(id item1, id item2, void *context)
     return threadsUnique;
 }
 
-- (void)loadComments:(InboxViewController*)controller
+- (void)loadComments
 {
     // Query
     PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Comment"];
@@ -345,7 +345,7 @@ NSInteger sort2(id item1, id item2, void *context)
         comments = [[NSMutableArray alloc] initWithArray:objects];
         
         // Loading stage complete
-        [self incrementLoadingStage:controller];
+        [self incrementInboxLoadingStage];
     }];
 }
 

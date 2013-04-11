@@ -6,6 +6,7 @@
 }
 
 @property (nonatomic,retain) IBOutlet UITableView *tableView;
+@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
 
 @end

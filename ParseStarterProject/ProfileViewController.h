@@ -19,6 +19,7 @@
     IBOutlet UIButton *buttonRoles;
     IBOutlet UITextField *areaEdit;
     IBOutlet UISwitch *discoverySwitch;
+    IBOutlet UIButton *buttonSave;
 }
 @property (nonatomic,assign)BOOL main;
 - (IBAction) showSearchWhereOptions;

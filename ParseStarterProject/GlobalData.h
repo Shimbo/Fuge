@@ -16,9 +16,30 @@
 
 static NSString *const kInboxUnreadCountDidUpdate = @"kInboxUnreadCountDidChange";
 
+static NSString *const kLoadingMainComplete = @"kLoadingMainComplete";
+static NSString *const kLoadingMapComplete = @"kLoadingMapComplete";
+static NSString *const kLoadingCirclesComplete = @"kLoadingCirclesComplete";
+static NSString *const kLoadingInboxComplete = @"kLoadingInboxComplete";
+
+static NSString *const kAppRestored = @"kAppRestored";
+
 #define globalData [GlobalData sharedInstance]
 #define strCurrentUserId [[PFUser currentUser] objectForKey:@"fbId"]
 #define strCurrentUserName [[PFUser currentUser] objectForKey:@"fbName"]
+
+typedef enum ELoadingSection
+{
+    LOADING_MAIN        = 0,
+    LOADING_SECONDARY   = 1
+}LoadingSection;
+
+typedef enum ELoadingResult
+{
+    LOAD_OK             = 0,
+    LOAD_NOCONNECTION   = 1,
+    LOAD_NOFACEBOOK     = 2,
+    LOAD_STARTED        = 99
+}LoadingResult;
 
 typedef enum EInviteStatus
 {
@@ -37,6 +58,8 @@ typedef  enum EMeetupCommentType
 }CommentType;
 
 #define INBOX_LOADED    3   // Number of stages in loading
+#define MAP_LOADED      3
+#define CIRCLES_LOADED  1
 
 @interface GlobalData : NSObject
 {
@@ -49,12 +72,18 @@ typedef  enum EMeetupCommentType
     NSArray             *invites;
     NSMutableArray      *messages;
     NSMutableArray      *comments;
-    NSUInteger          nInboxLoadingStage;
     NSUInteger          nInboxUnreadCount;
+    NSUInteger          nInboxLoadingStage;
+    NSUInteger          nMapLoadingStage;
+    NSUInteger          nCirclesLoadingStage;
     NSMutableArray      *newFriendsFb;
     NSMutableArray      *newFriends2O;
     
     NSMutableDictionary *_circleByNumber;
+    
+    NSUInteger          nLoadStatusMain;
+    NSUInteger          nLoadStatusSecondary;
+    NSUInteger          nLoadStatusInbox;
 }
 
 + (id)sharedInstance;
@@ -78,7 +107,11 @@ typedef  enum EMeetupCommentType
 - (void)addComment:(PFObject*)comment;
 
 // Global data, loading in foreground
-- (void)reload:(MapViewController*)controller;
+- (void)loadData;
+- (void)reloadFriendsInBackground;
+- (void)reloadMapInfoInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast;
+- (Boolean)isMapLoaded;
+- (Boolean)areCirclesLoaded;
 
 // Misc
 - (void) addRecentInvites:(NSArray*)recentInvites;
@@ -104,10 +137,10 @@ typedef  enum EMeetupCommentType
 
 @interface GlobalData (Inbox)
     // Inbox data, loading in background
-- (void)reloadInbox:(InboxViewController*)controller;
-- (NSMutableDictionary*) getInbox:(InboxViewController*)controller;
+- (void)reloadInboxInBackground;
+- (NSMutableDictionary*) getInbox;
 - (Boolean)isInboxLoaded;
-- (void) incrementLoadingStage:(InboxViewController*)controller;
+- (void) incrementInboxLoadingStage;
     // Inbox utils
 - (void)postInboxUnreadCountDidUpdate;
 - (NSUInteger)getInboxUnreadCount;
@@ -120,7 +153,7 @@ typedef  enum EMeetupCommentType
 
 @interface GlobalData (Messages)
 - (void)addMessage:(Message*)message;
-- (void)loadMessages:(InboxViewController*)controller;
+- (void)loadMessages;
 - (NSArray*)getUniqueMessages;
 - (void)loadThread:(Person*)person target:(id)target selector:(SEL)callback;
 @end

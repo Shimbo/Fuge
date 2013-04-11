@@ -1,17 +1,12 @@
 #import <Parse/Parse.h>
+#import "TestFlightSDK/TestFlight.h"
 #import "ParseStarterProjectAppDelegate.h"
 #import "RootViewController.h"
-
-#import "LoginViewController.h"
 #import "Circle.h"
-
 #import "GlobalData.h"
-
 #import "LeftMenuController.h"
-
-#import "TestFlightSDK/TestFlight.h"
-
 #import "LocationManager.h"
+#import "LoadingController.h"
 
 
 @implementation ParseStarterProjectAppDelegate
@@ -29,8 +24,10 @@
     
     self.circledImageCache = [[NSCache alloc]init];
     [self.circledImageCache setCountLimit:90];
+    
     bFirstActivation = true;
-        
+    
+    // Testflight
 #ifndef RELEASE
     [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
 #endif
@@ -38,112 +35,51 @@
         [TestFlight takeOff:@"d42a1f02-bb75-4c1e-896e-e0e4f41daf17"];
     }
     @catch (NSException *exception) {
-        NSLog(@"----%@",exception);
+        NSLog(@"TestFlight error: %@",exception);
     }
-    
     [TestFlight passCheckpoint:@"Initialization started"];
     
+    // Parse
     [Parse setApplicationId:@"VMhSG8IQ9xibufk8lAPpclIwdXVfYD44OpKmsHdn"
                   clientKey:@"u2kJ1jWBjN9qY3ARlJuEyNkvUA9EjOMv1R4w5sDX"];
     
+    // Facebook
     [PFFacebookUtils initializeFacebook];
     
-    // Location data
-    [locManager startUpdating];
-    
-    // Versions
-    // TODO: move to loader
-    // TODO 2: call AppStore
-    // TODO 3: UIAlertViewDelegate
-    // TODO 4: actually, just show a label (where news should be) and button Update.
-    
-    // Checking version information
-    PFQuery *systemQuery = [PFQuery queryWithClassName:@"System"];
-    PFObject* system = [systemQuery getFirstObject];
-    float minVersion = [[system objectForKey:@"minVersion"] floatValue];
-    float curVersion = [[system objectForKey:@"curVersion"] floatValue];
-    float thisVersion = [[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"] floatValue];
-    if ( thisVersion < minVersion )
-    {
-        UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"New version is out!" message:@"You're running old version of the application. Please, update first." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil,nil];
-        [message show];
-        //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms://itunes.com/apps/cut-the-rope"]];
-        return NO;
-    }
-    if ( thisVersion < curVersion )
-    {
-        UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"New version is out!" message:@"You're running old version of the application. We recommend you updating the application." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:@"Later",nil];
-        [message show];
-        //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms://itunes.com/apps/cut-the-rope"]];
-        //return NO;
-    }
-    
-    
+    // ACL
     PFACL *defaultACL = [PFACL ACL];
     // If you would like all objects to be private by default, remove this line.
     [defaultACL setPublicReadAccess:YES];
     [PFACL setDefaultACL:defaultACL withAccessForCurrentUser:YES];
     
+    // Left menu
     LeftMenuController *leftMenu = [[LeftMenuController alloc]init];
     self.revealController = [PKRevealController revealControllerWithFrontViewController:nil leftViewController:leftMenu rightViewController:nil options:nil];
     window.rootViewController = self.revealController;
     [window makeKeyAndVisible];
     
-    if (! PFFacebookUtils.session.isOpen || ! [[PFUser currentUser] isAuthenticated])
-    {
-        [self showLoginWindow:NO];
-    }
-    else
-    {
-        [self createNewMainNavigation];
-        //NSError* error;
-        //[[PFUser currentUser] refresh:&error];
-        //if ( error )
-        //    NSLog(@"Uh oh. An error occurred: %@", error);
-    }
-    
-    // Retrieving initial data
-    
-    
-	//rootViewController.displayList = [self displayList];
-	//rootViewController.calendar = [self calendar];
-	
-
-	
-	// Configure and show the window
-
-
-    
+    // Loading screen
+    LoadingController *loadingViewController = [[LoadingController alloc] initWithNibName:@"LoadingController" bundle:nil];
+    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:loadingViewController];
+    [self.revealController presentViewController:nav animated:NO completion:nil];
+        
+    // Notifications
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|
                                                     UIRemoteNotificationTypeAlert|
                                                     UIRemoteNotificationTypeSound];
     
-    [TestFlight passCheckpoint:@"Initialization ended"];
+    [TestFlight passCheckpoint:@"Basic initialization ended"];
     
     return YES;
 }
 
--(void)createNewMainNavigation{
-    LeftMenuController *leftMenu = (LeftMenuController*)self.revealController.leftViewController;
-    [leftMenu showMap];
 
-}
 
--(void)showLoginWindow:(BOOL)animated{
-    LoginViewController *loginViewController = [[LoginViewController alloc] initWithNibName:@"LoginView" bundle:nil];
-    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:loginViewController];
-    
-    [self.revealController presentViewController:nav animated:animated
-                                      completion:nil];
-}
-
--(void)userDidLogin{
-    [self createNewMainNavigation];
-    
-}
-
+// TODONOW: check it (add some variable for login right away)
 -(void)userDidLogout{
-    [self showLoginWindow:YES];
+    LoadingController *loadingViewController = [[LoadingController alloc] initWithNibName:@"LoadingController" bundle:nil];
+    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:loadingViewController];
+    [self.revealController presentViewController:nav animated:NO completion:nil];
 }
 
 
@@ -219,9 +155,14 @@
     if ( bFirstActivation )
         bFirstActivation = false;
     else if ( [[PFUser currentUser] isAuthenticated])
-        [globalData reloadInbox:nil];    // TODO: show loading screen here, always open on loading screen
+    {
+        [globalData reloadFriendsInBackground];
+        [globalData reloadMapInfoInBackground:nil toNorthEast:nil];
+        [globalData reloadInboxInBackground];
+        [[NSNotificationCenter defaultCenter]postNotificationName:kAppRestored
+                                                           object:nil];
+    }
 }
-
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     /*
@@ -230,6 +171,7 @@
      See also applicationDidEnterBackground:.
      */
 }
+
 
 
 @end

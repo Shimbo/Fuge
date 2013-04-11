@@ -7,7 +7,8 @@
 //
 
 #import <Parse/Parse.h>
-
+#import "ParseStarterProjectAppDelegate.h"
+#import "LeftMenuController.h"
 #import "ProfileViewController.h"
 #include "RootViewController.h"
 
@@ -52,31 +53,32 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (IBAction)donePressed:(UIButton *)sender {
     
-    [self save];
-    [self dismissViewControllerAnimated:YES completion:nil];
+    ParseStarterProjectAppDelegate *delegate = AppDelegate;
+    
+    //[self dismissViewControllerAnimated:YES completion:nil];
+    //[delegate.revealController dismissViewControllerAnimated:TRUE completion:nil];
+    
+    
+    LeftMenuController *leftMenu = (LeftMenuController*)delegate.revealController.leftViewController;
+    [leftMenu showMap];
 }
 
 
 ///////////////////////// Dropdown list stuff
 
 
-/*- (void)viewDidUnload {
-    labelRoles = nil;
-    [self setOutlet:nil];
-    [super viewDidUnload];
-}*/
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    if (!self.main) {
+    if ( _main )
+        buttonSave.hidden = TRUE;
+    else
         self.navigationItem.leftBarButtonItem = nil;
-    }
     arrayRoles = [[NSMutableArray alloc] init];
     [arrayRoles addObject:@"CEO"];
     [arrayRoles addObject:@"CTO"];

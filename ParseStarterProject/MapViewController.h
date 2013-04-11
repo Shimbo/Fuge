@@ -20,13 +20,10 @@
 }
 
 @property (nonatomic, retain) IBOutlet REVClusterMapView *mapView;
-
-- (void) reloadData;
-- (void) reloadFinished;
-
 @property (nonatomic, retain) IBOutlet UIActivityIndicatorView *activityIndicator;
+@property (strong, nonatomic) IBOutlet UIButton *reloadButton;
 
-@property BOOL initialized;
-
+- (IBAction)reloadTap:(id)sender;
+- (void) reloadFinished;
 
 @end

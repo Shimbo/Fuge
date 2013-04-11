@@ -40,75 +40,18 @@ static GlobalData *sharedInstance = nil;
         messages = nil;
         comments = nil;
         nInboxLoadingStage = 0;
+        nMapLoadingStage = 0;
+        nCirclesLoadingStage = 0;
         nInboxUnreadCount = 0;
         newFriendsFb = nil;
         newFriends2O = nil;
+        nLoadStatusMain = LOAD_STARTED;
+        nLoadStatusSecondary = LOAD_STARTED;
+        nLoadStatusInbox = LOAD_STARTED;
     }
     
     return self;
 }
-
--(void)createCommentForMeetup:(Meetup*)meetup commentType:(CommentType)type commentText:(NSString*)text
-{
-    // Creating comment about meetup creation in db
-    PFObject* comment = [[PFObject alloc] initWithClassName:@"Comment"];
-    NSMutableString* strComment = [[NSMutableString alloc] initWithFormat:@""];
-    NSNumber* trueNum = [[NSNumber alloc] initWithInt:1];
-    NSNumber* typeNum = [[NSNumber alloc] initWithInt:meetup.meetupType];
-    
-    switch (type)
-    {
-        case COMMENT_CREATED:
-            [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
-            if (meetup.meetupType == TYPE_MEETUP)
-                [strComment appendString:@" created the meetup: "];
-            else
-                [strComment appendString:@" created the thread: "];
-            [strComment appendString:meetup.strSubject];
-            [comment setObject:trueNum forKey:@"system"];
-            break;
-        case COMMENT_SAVED:
-            [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
-            if (meetup.meetupType == TYPE_MEETUP)
-                [strComment appendString:@" changed meetup details."];
-            else
-                [strComment appendString:@" changed thread details."];
-            [comment setObject:trueNum forKey:@"system"];
-            break;
-        case COMMENT_JOINED:
-            [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
-            [strComment appendString:@" joined the event."];
-            [comment setObject:trueNum forKey:@"system"];
-            break;
-        case COMMENT_PLAIN:
-            [strComment appendString:text];
-            meetup.numComments++;
-            [globalData updateConversation:nil count:meetup.numComments thread:meetup.strId];
-            break;
-    }
-    
-    [comment setObject:strCurrentUserId forKey:@"userId"];
-    [comment setObject:strCurrentUserName forKey:@"userName"];
-    [comment setObject:[PFUser currentUser] forKey:@"userData"];
-    [comment setObject:meetup.strSubject forKey:@"meetupSubject"];
-    [comment setObject:meetup.strId forKey:@"meetupId"];
-    [comment setObject:meetup.meetupData forKey:@"meetupData"];
-    [comment setObject:strComment forKey:@"comment"];
-    [comment setObject:typeNum forKey:@"type"];
-    //comment.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
-    //[comment.ACL setPublicReadAccess:true];
-    
-    [comment saveInBackground];
-    
-    // Add comment to the list of threads
-    [self addComment:comment];
-    
-    // TODO: Send to everybody around (using public/2ndO filter, send checkbox and geo-query) push about the meetup
-    
-    // Subscription
-    [globalData subscribeToThread:meetup.strId];
-}
-
 
 // We don't want to allocate a new instance, so return the current one.
 + (id)allocWithZone:(NSZone*)zone {
@@ -219,6 +162,112 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 
 #pragma mark -
+#pragma mark Global
+
+
+- (void)loadingFailed:(NSUInteger)nStage status:(NSUInteger)nStatus
+{
+    switch ( nStage )
+    {
+        case LOADING_MAIN:
+            nLoadStatusMain = nStatus;
+            break;
+        case LOADING_SECONDARY:
+            nLoadStatusSecondary = nStatus;
+            // Show no connection bubble
+            break;
+    }
+}
+
+- (void)loadData
+{
+    nLoadStatusMain = LOAD_STARTED;
+    
+    // Clean old data
+    [circles removeAllObjects];
+    [meetups removeAllObjects];
+    
+    // Current user data
+    FBRequest *request = [FBRequest requestForMe];
+    [request startWithCompletionHandler:^(FBRequestConnection *connection,
+                                          id result, NSError *error) {
+        if ( error )
+        {
+            NSLog(@"Uh oh. An error occurred: %@", error);
+            [self loadingFailed:LOADING_MAIN status:LOAD_NOFACEBOOK];
+        }
+        else
+        {
+            // Store the current user's Facebook ID on the user
+            [[PFUser currentUser] setObject:[result objectForKey:@"id"]
+                                     forKey:@"fbId"];
+            [[PFUser currentUser] setObject:[result objectForKey:@"name"]
+                                     forKey:@"fbName"];
+            [[PFUser currentUser] setObject:[result objectForKey:@"birthday"]
+                                     forKey:@"fbBirthday"];
+            [[PFUser currentUser] setObject:[result objectForKey:@"gender"]
+                                     forKey:@"fbGender"];
+            [[PFUser currentUser] save];
+                        
+            // Main load ended, send notification about it
+            nLoadStatusMain = LOAD_OK;
+            [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMainComplete
+                                                               object:nil];
+            
+            // FB friends, 2O friends, fb friends not installed the app
+            [self reloadFriendsInBackground];
+            
+            // Map data: random people, meetups, threads, etc - location based
+            [self reloadMapInfoInBackground:nil toNorthEast:nil];
+            
+            // FB Meetups
+            [self loadFBMeetups];
+            
+            // Inbox
+            [self reloadInboxInBackground];
+            
+            // Push channels initialization
+            [pushManager initChannelsFirstTime:[result objectForKey:@"id"]];
+        }
+    }];
+}
+
+// Will not use any load status, on fail just nothing
+- (void)reloadFriendsInBackground
+{
+    nCirclesLoadingStage = 0;
+    
+    FBRequest *request2 = [FBRequest requestForMyFriends];
+    [request2 startWithCompletionHandler:^(FBRequestConnection *connection,
+                                           id result, NSError *error)
+     {
+         if ( error )
+         {
+             NSLog(@"Uh oh. An error occurred: %@", error);
+             [self loadingFailed:LOADING_SECONDARY status:LOAD_NOFACEBOOK];
+         }
+         else
+         {
+             // FB friends, 2O/FBout inside, 2O will call pushes block and user save
+             [self loadFbFriendsInBackground:result];
+         }
+     }];
+}
+
+// Will use secondary load status to show problems with connection
+- (void)reloadMapInfoInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast
+{
+    nMapLoadingStage = 0;
+    
+    // Random friends
+    [self loadRandomPeopleInBackground:southWest toNorthEast:northEast];
+    
+    // Meetups
+    [self loadMeetupsInBackground:southWest toNorthEast:northEast];
+}
+
+
+#pragma mark -
 #pragma mark Friends
 
 
@@ -229,18 +278,23 @@ NSInteger sortByName(id num1, id num2, void *context)
     if ( [strId compare:[ [PFUser currentUser] objectForKey:@"fbId"] ] == NSOrderedSame )
         return;
     
-    // Already added users
-    if ( [self getPersonById:strId] )
+    // Already added users: only update location
+    Person* person = [self getPersonById:strId];
+    if ( person )
+    {
+        [person updateLocation:[user objectForKey:@"location"]];
         return;
+    }
     
     // Adding new person
-    Person *person = [[Person alloc] init:user circle:circleUser];
+    person = [[Person alloc] init:user circle:circleUser];
     
     Circle *circle = [globalData getCircle:circleUser];
     [circle addPerson:person];
 }
 
-- (void) loadFbFriends:(id)friends
+// Load friends in background
+- (void) loadFbFriendsInBackground:(id)friends
 {
     // result will contain an array with your user's friends in the "data" key
     NSArray *friendObjects = [friends objectForKey:@"data"];
@@ -261,84 +315,151 @@ NSInteger sortByName(id num1, id num2, void *context)
     PFQuery *friendQuery = [PFUser query];
     [friendQuery whereKey:@"fbId" containedIn:friendIds];
     [friendQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
-    NSArray *friendUsers = [friendQuery findObjects];
-    
-    // Data collection
-    for (PFUser *friendUser in friendUsers)
+    [friendQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
     {
-        // Collecting second circle data
-        NSMutableArray *friendFriendIds = [friendUser objectForKey:@"fbFriends"];
-        [[PFUser currentUser] addUniqueObjectsFromArray:friendFriendIds forKey:@"fbFriends2O"];
+        NSArray *friendUsers = objects;
         
-        // Adding first circle friends
-        [self addPerson:friendUser userCircle:CIRCLE_FB];
-        
-        // Notification for that user if the friend is new
-        [pushManager sendPushNewUser:PUSH_NEW_FBFRIEND idTo:[friendUser objectForKey:@"fbId"]];
-    }
-    
-    // Excluding FB friends from 2O friends
-    NSMutableArray* temp2O = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
-    [temp2O removeObjectsInArray:friendIds];   // To exclude FB friends from 2O
-    [[PFUser currentUser] setObject:temp2O forKey:@"fbFriends2O"];
-    
-    // Creating new friends list
-    if ( oldFriendsFb )
-    {
-        newFriendsFb = [[[PFUser currentUser] objectForKey:@"fbFriends"] mutableCopy];
-        newFriends2O = [[[PFUser currentUser] objectForKey:@"fbFriends2O"] mutableCopy];
-        [newFriendsFb removeObjectsInArray:oldFriendsFb];
-        [newFriends2O removeObjectsInArray:oldFriends2O];
-        
-        // Removing people not using the app
-        NSMutableArray *filteredItemsFb = [NSMutableArray array];
-        NSMutableArray *filteredItems2O = [NSMutableArray array];
-        for (NSString *friendUser in newFriendsFb)
-            if ( [self getPersonById:friendUser] )
-                [filteredItemsFb addObject:friendUser];
-        for (NSString *friendUser in newFriends2O)
-            if ( [self getPersonById:friendUser] )
-                [filteredItems2O addObject:friendUser];
-        newFriendsFb = filteredItemsFb;
-        newFriends2O = filteredItems2O;
-    }
+        if ( error )
+        {
+            NSLog(@"error:%@", error);
+            [self loadingFailed:LOADING_SECONDARY status:LOAD_NOCONNECTION];
+            [self incrementCirclesLoadingStage]; // because we will skip 2O stage that loads in bg
+        }
+        else
+        {
+            // Data collection
+            for (PFUser *friendUser in friendUsers)
+            {
+                // Collecting second circle data
+                NSMutableArray *friendFriendIds = [friendUser objectForKey:@"fbFriends"];
+                [[PFUser currentUser] addUniqueObjectsFromArray:friendFriendIds forKey:@"fbFriends2O"];
+                
+                // Adding first circle friends
+                [self addPerson:friendUser userCircle:CIRCLE_FB];
+                
+                // Notification for that user if the friend is new
+                [pushManager sendPushNewUser:PUSH_NEW_FBFRIEND idTo:[friendUser objectForKey:@"fbId"]];
+            }
+            
+            // Excluding FB friends from 2O friends
+            NSMutableArray* temp2O = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
+            if ( temp2O )
+                [temp2O removeObjectsInArray:friendIds];   // To exclude FB friends from 2O
+            else
+            {
+                temp2O = [[NSMutableArray alloc] initWithCapacity:30];
+                [[PFUser currentUser] setObject:temp2O forKey:@"fbFriends2O"];
+            }
+            
+            // Creating new friends list
+            if ( oldFriendsFb )
+            {
+                newFriendsFb = [[[PFUser currentUser] objectForKey:@"fbFriends"] mutableCopy];
+                newFriends2O = [[[PFUser currentUser] objectForKey:@"fbFriends2O"] mutableCopy];
+                [newFriendsFb removeObjectsInArray:oldFriendsFb];
+                if ( oldFriends2O )
+                    [newFriends2O removeObjectsInArray:oldFriends2O];
+                
+                // Removing people not using the app
+                NSMutableArray *filteredItemsFb = [NSMutableArray array];
+                NSMutableArray *filteredItems2O = [NSMutableArray array];
+                for (NSString *friendUser in newFriendsFb)
+                    if ( [self getPersonById:friendUser] )
+                        [filteredItemsFb addObject:friendUser];
+                for (NSString *friendUser in newFriends2O)
+                    if ( [self getPersonById:friendUser] )
+                        [filteredItems2O addObject:friendUser];
+                newFriendsFb = filteredItemsFb;
+                newFriends2O = filteredItems2O;
+            }
+            
+            // 2O friends
+            [self load2OFriendsInBackground:friends];
+        }
+    }];
 }
 
-- (void) load2OFriends
+- (void) load2OFriendsInBackground:(id)friends
 {
     // Second circle friends query
     NSMutableArray *friend2OIds = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
     PFQuery *friend2OQuery = [PFUser query];
     [friend2OQuery whereKey:@"fbId" containedIn:friend2OIds];
     [friend2OQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
-    NSArray *friend2OUsers = [friend2OQuery findObjects];
-    
-    // Data collection
-    for (PFUser *friend2OUser in friend2OUsers)
-    {
-        [self addPerson:friend2OUser userCircle:CIRCLE_2O];
+    [friend2OQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
-        // Notification for that user if the friend is new
-        [pushManager sendPushNewUser:PUSH_NEW_2OFRIEND idTo:[friend2OUser objectForKey:@"fbId"]];
-    }
+        if ( error )
+        {
+            NSLog(@"error:%@", error);
+            [self loadingFailed:LOADING_SECONDARY status:LOAD_NOCONNECTION];
+        }
+        else
+        {
+            NSArray *friend2OUsers = objects;
+            
+            // Data collection
+            for (PFUser *friend2OUser in friend2OUsers)
+            {
+                [self addPerson:friend2OUser userCircle:CIRCLE_2O];
+                
+                // Notification for that user if the friend is new
+                [pushManager sendPushNewUser:PUSH_NEW_2OFRIEND idTo:[friend2OUser objectForKey:@"fbId"]];
+            }
+            
+            // Pushes sent for all new users, turn it off
+            [globalVariables pushToFriendsSent];
+            
+            // Save user data as it's useful for other users to find 2O friends
+            [[PFUser currentUser] saveInBackground]; // // TODO: here was Eventually - ?
+        }
+        
+        // FB friends out of the app
+        [self loadFbOthers:friends];
+        
+        [self incrementCirclesLoadingStage];
+    }];
 }
 
-- (void) loadRandom
+- (void) loadRandomPeopleInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast
 {
-    PFGeoPoint* ptUser = [[PFUser currentUser] objectForKey:@"location"];
-    if ( ! ptUser )
-        return;
-    
     // Query
     PFQuery *friendAnyQuery = [PFUser query];
-    [friendAnyQuery whereKey:@"location" nearGeoPoint:ptUser withinKilometers:RANDOM_PERSON_KILOMETERS];
+    
+    // We could load based on player location or map rect if he moved the map later
+    if ( ! southWest )
+    {
+        PFGeoPoint* ptUser = [[PFUser currentUser] objectForKey:@"location"];
+        if ( ! ptUser )
+            return;
+
+        [friendAnyQuery whereKey:@"location" nearGeoPoint:ptUser withinKilometers:RANDOM_PERSON_KILOMETERS];
+    }
+    else
+    {
+        [friendAnyQuery whereKey:@"location" withinGeoBoxFromSouthwest:southWest toNortheast:northEast];
+    }
     [friendAnyQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
-    NSArray *friendAnyUsers = [friendAnyQuery findObjects];
     
-    // Adding users
-    for (PFUser *friendAnyUser in friendAnyUsers)
-        [self addPerson:friendAnyUser userCircle:CIRCLE_RANDOM];
-    
+    // Actual load
+    [friendAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        
+        if ( error )
+        {
+            NSLog(@"error:%@", error);
+            [self loadingFailed:LOADING_SECONDARY status:LOAD_NOCONNECTION];
+        }
+        else
+        {
+            NSArray *friendAnyUsers = objects;
+            
+            // Adding users
+            for (PFUser *friendAnyUser in friendAnyUsers)
+                [self addPerson:friendAnyUser userCircle:CIRCLE_RANDOM];
+        }
+        
+        // In any case, increment loading stage
+        [self incrementMapLoadingStage];
+    }];
 }
 
 - (void) loadFbOthers:(id)friends
@@ -379,7 +500,8 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 
 #pragma mark -
-#pragma mark Reloaders: meetups
+#pragma mark Meetups
+
 
 // This one is used by new meetup window
 - (void)addMeetup:(Meetup*)meetup
@@ -397,7 +519,10 @@ NSInteger sortByName(id num1, id num2, void *context)
     // Test if such meetup was already added
     Meetup* meetup = [self getMeetupById:[meetupData objectForKey:@"meetupId" ] ];
     if ( meetup )
+    {
+        [meetup unpack:meetupData];
         return meetup;
+    }
     
     // Expiration check
     NSDate* dateTimeExp = [meetupData objectForKey:@"meetupDateExp"];
@@ -500,17 +625,24 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 }
 
-- (void)loadMeetups
+- (void)loadMeetupsInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast
 {
-    PFGeoPoint* ptUser = [[PFUser currentUser] objectForKey:@"location"];
-    if ( ! ptUser )
-        return;
-    
     PFQuery *meetupAnyQuery = [PFQuery queryWithClassName:@"Meetup"];
     meetupAnyQuery.limit = 1000;
     
     // Location filter
-    [meetupAnyQuery whereKey:@"location" nearGeoPoint:ptUser withinKilometers:RANDOM_EVENT_KILOMETERS];
+    if ( ! southWest )
+    {
+        PFGeoPoint* ptUser = [[PFUser currentUser] objectForKey:@"location"];
+        if ( ! ptUser )
+            return;
+
+        [meetupAnyQuery whereKey:@"location" nearGeoPoint:ptUser withinKilometers:RANDOM_EVENT_KILOMETERS];
+    }
+    else
+    {
+        [meetupAnyQuery whereKey:@"location" withinGeoBoxFromSouthwest:southWest toNortheast:northEast];
+    }
     
     // Date-time filter
     NSDate* dateHide = [NSDate date];
@@ -524,33 +656,64 @@ NSInteger sortByName(id num1, id num2, void *context)
     [meetupAnyQuery orderByAscending:@"createdAt"];
     
     // Query for public/2O meetups
-    NSArray *meetupsData = [meetupAnyQuery findObjects];
-    for (PFObject *meetupData in meetupsData)
-        [self addMeetupWithData:meetupData];
+    [meetupAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if ( error )
+        {
+            NSLog(@"error:%@", error);
+            [self loadingFailed:LOADING_SECONDARY status:LOAD_NOCONNECTION];
+        }
+        else
+        {
+            NSArray *meetupsData = objects;
+            for (PFObject *meetupData in meetupsData)
+                [self addMeetupWithData:meetupData];
+        }
+        
+        // In any case, increment loading stage
+        [self incrementMapLoadingStage];
+    }];
     
-    // Query for events that user was subscribed to (to show also private and remote events/threads)
+    // Query for events that user was subscribed to (to show also private and remote events/threads) - this query calls only for first request, not for the map reloads
     NSArray* subscriptions = [[PFUser currentUser] objectForKey:@"subscriptions"];
-    if ( subscriptions && subscriptions.count > 0 )
+    if ( ! southWest && subscriptions && subscriptions.count > 0 )
     {
         meetupAnyQuery = [PFQuery queryWithClassName:@"Meetup"];
         meetupAnyQuery.limit = 1000;
         [meetupAnyQuery whereKey:@"meetupDateExp" greaterThan:dateHide];
         [meetupAnyQuery whereKey:@"meetupId" containedIn:subscriptions];
-        meetupsData = [meetupAnyQuery findObjects];
-        
-        // Later we're updating subscription removing deleted and expired objects
-        NSMutableArray* newSubscriptions = [[NSMutableArray alloc] initWithCapacity:meetupsData.count];
-        for (PFObject *meetupData in meetupsData)
+
+        // Query for public/2O meetups
+        [meetupAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
         {
-            Meetup* result = [self addMeetupWithData:meetupData];
-            NSString* strMeetupId = [meetupData objectForKey:@"meetupId"];
-            if ( ! result )
-                [self unsubscribeToThread:strMeetupId];
+            if ( error )
+            {
+                NSLog(@"error:%@", error);
+                [self loadingFailed:LOADING_SECONDARY status:LOAD_NOCONNECTION];
+            }
             else
-                [newSubscriptions addObject:strMeetupId];
-        }
-        [[PFUser currentUser] setObject:newSubscriptions forKey:@"subscriptions"];
-    }    
+            {
+                NSArray *meetupsData = objects;
+                
+                // Later we're updating subscription removing deleted and expired objects
+                NSMutableArray* newSubscriptions = [[NSMutableArray alloc] initWithCapacity:meetupsData.count];
+                for (PFObject *meetupData in meetupsData)
+                {
+                    Meetup* result = [self addMeetupWithData:meetupData];
+                    NSString* strMeetupId = [meetupData objectForKey:@"meetupId"];
+                    if ( ! result )
+                        [self unsubscribeToThread:strMeetupId];
+                    else
+                        [newSubscriptions addObject:strMeetupId];
+                }
+                [[PFUser currentUser] setObject:newSubscriptions forKey:@"subscriptions"];
+            }
+            
+            // In any case, increment loading stage
+            [self incrementMapLoadingStage];
+        }];
+    }
+    else
+        [self incrementMapLoadingStage];
 }
 
 
@@ -597,89 +760,79 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 
 #pragma mark -
-#pragma mark Global
+#pragma mark Comments
 
-
-- (void)reload:(MapViewController*)controller
-{
-    // Clean old data
-    [circles removeAllObjects];
-    [meetups removeAllObjects];
-    
-    // Current user data
-    FBRequest *request = [FBRequest requestForMe];
-    [request startWithCompletionHandler:^(FBRequestConnection *connection,
-                                          id result, NSError *error) {
-        if (!error) {
-            // Store the current user's Facebook ID on the user
-            [[PFUser currentUser] setObject:[result objectForKey:@"id"]
-                                     forKey:@"fbId"];
-            [[PFUser currentUser] setObject:[result objectForKey:@"name"]
-                                     forKey:@"fbName"];
-            [[PFUser currentUser] setObject:[result objectForKey:@"birthday"]
-                                     forKey:@"fbBirthday"];
-            [[PFUser currentUser] setObject:[result objectForKey:@"gender"]
-                                     forKey:@"fbGender"];
-            [[PFUser currentUser] save];
-        }
-        else {
-            NSLog(@"Uh oh. An error occurred: %@", error);
-        }
-        
-        // FB friendlist
-        FBRequest *request2 = [FBRequest requestForMyFriends];
-        [request2 startWithCompletionHandler:^(FBRequestConnection *connection,
-                                               id result, NSError *error)
-        {
-            if (!error)
-            {
-                // FB friends
-                [self loadFbFriends:result];
-                
-                // 2O friends
-                [self load2OFriends];
-                
-                // Random friends
-                [self loadRandom];
-                
-                // FB friends out of the app
-                [self loadFbOthers:result];
-                
-                // Meetups
-                [self loadMeetups];
-                
-                // FB Meetups
-                [self loadFBMeetups];
-                
-                // Pushes sent for new users, turn it off
-                [globalVariables pushToFriendsSent];
-                
-                // Save user data
-                [[PFUser currentUser] saveInBackground]; // // TODO: here was Eventually - ?
-                
-                // Reload table
-                if ( controller )
-                    [controller reloadFinished];
-                
-                // Start background loading for inbox
-                [self reloadInbox:nil];
-            }
-            else
-            {
-                NSLog(@"Uh oh. An error occurred: %@", error);
-            }
-        }];
-    }];
-}
 
 - (void)addComment:(PFObject*)comment
 {
     [comments addObject:comment];
 }
 
+-(void)createCommentForMeetup:(Meetup*)meetup commentType:(CommentType)type commentText:(NSString*)text
+{
+    // Creating comment about meetup creation in db
+    PFObject* comment = [[PFObject alloc] initWithClassName:@"Comment"];
+    NSMutableString* strComment = [[NSMutableString alloc] initWithFormat:@""];
+    NSNumber* trueNum = [[NSNumber alloc] initWithInt:1];
+    NSNumber* typeNum = [[NSNumber alloc] initWithInt:meetup.meetupType];
+    
+    switch (type)
+    {
+        case COMMENT_CREATED:
+            [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
+            if (meetup.meetupType == TYPE_MEETUP)
+                [strComment appendString:@" created the meetup: "];
+            else
+                [strComment appendString:@" created the thread: "];
+            [strComment appendString:meetup.strSubject];
+            [comment setObject:trueNum forKey:@"system"];
+            break;
+        case COMMENT_SAVED:
+            [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
+            if (meetup.meetupType == TYPE_MEETUP)
+                [strComment appendString:@" changed meetup details."];
+            else
+                [strComment appendString:@" changed thread details."];
+            [comment setObject:trueNum forKey:@"system"];
+            break;
+        case COMMENT_JOINED:
+            [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
+            [strComment appendString:@" joined the event."];
+            [comment setObject:trueNum forKey:@"system"];
+            break;
+        case COMMENT_PLAIN:
+            [strComment appendString:text];
+            meetup.numComments++;
+            [globalData updateConversation:nil count:meetup.numComments thread:meetup.strId];
+            break;
+    }
+    
+    [comment setObject:strCurrentUserId forKey:@"userId"];
+    [comment setObject:strCurrentUserName forKey:@"userName"];
+    [comment setObject:[PFUser currentUser] forKey:@"userData"];
+    [comment setObject:meetup.strSubject forKey:@"meetupSubject"];
+    [comment setObject:meetup.strId forKey:@"meetupId"];
+    [comment setObject:meetup.meetupData forKey:@"meetupData"];
+    [comment setObject:strComment forKey:@"comment"];
+    [comment setObject:typeNum forKey:@"type"];
+    //comment.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
+    //[comment.ACL setPublicReadAccess:true];
+    
+    [comment saveInBackground];
+    
+    // Add comment to the list of threads
+    [self addComment:comment];
+    
+    // TODO: Send to everybody around (using public/2ndO filter, send checkbox and geo-query) push about the meetup
+    
+    // Subscription
+    [globalData subscribeToThread:meetup.strId];
+}
+
 
 #pragma mark -
 #pragma mark Misc
+
 
 - (void) attendMeetup:(NSString*)strMeetup
 {
@@ -836,5 +989,34 @@ NSInteger sortByName(id num1, id num2, void *context)
     [newFriendsFb removeObject:strUser];
     [newFriends2O removeObject:strUser];
 }
+
+- (Boolean)isMapLoaded
+{
+    return ( nMapLoadingStage == MAP_LOADED );
+}
+
+- (Boolean)areCirclesLoaded
+{
+    return ( nCirclesLoadingStage == CIRCLES_LOADED );
+}
+
+- (void) incrementMapLoadingStage
+{
+    nMapLoadingStage++;
+    
+    if ( [self isMapLoaded] )
+        [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMapComplete
+                                                           object:nil];
+}
+
+- (void) incrementCirclesLoadingStage
+{
+    nCirclesLoadingStage++;
+    
+    if ( [self areCirclesLoaded] )
+        [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingCirclesComplete
+                                                           object:nil];
+}
+
 
 @end

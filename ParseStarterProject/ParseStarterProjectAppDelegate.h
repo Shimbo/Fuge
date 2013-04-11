@@ -10,19 +10,14 @@
     Boolean bFirstActivation;
 }
 
-//@property (nonatomic, strong) IBOutlet RootViewController *viewController;
-
 @property (nonatomic, strong) IBOutlet UIWindow *window;
-//@property (nonatomic, retain) UINavigationController *mainNavigation;
 @property (nonatomic, retain) PKRevealController *revealController;
 
 @property (nonatomic, retain) NSCache *imageCache;
 @property (nonatomic, retain) NSCache *circledImageCache;
 
-//- (NSArray *)displayList;
 @property (nonatomic, retain, readonly) RootViewController *rootViewController;
 
-
 -(void)userDidLogout;
--(void)userDidLogin;
+
 @end

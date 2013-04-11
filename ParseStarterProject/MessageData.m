@@ -129,7 +129,7 @@ NSInteger sort(id message1, id message2, void *context)
     return NSOrderedAscending;
 }
 
-- (void)loadMessages:(InboxViewController*)controller
+- (void)loadMessages
 {
     // Query
     PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Message"];
@@ -161,7 +161,7 @@ NSInteger sort(id message1, id message2, void *context)
                 [self addMessageWithData:messageData];
             
             // Loading stage complete
-            [self incrementLoadingStage:controller];
+            [self incrementInboxLoadingStage];
         }];
     }];
     

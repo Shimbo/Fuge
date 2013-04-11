@@ -23,4 +23,6 @@
 @property(nonatomic,weak)ParseStarterProjectAppDelegate *appDelegate;
 
 -(void)showMap;
+-(void)showUser;
+
 @end

@@ -77,9 +77,9 @@ static PushManager *sharedInstance = nil;
     [PFPush sendPushMessageToChannelInBackground:strChannel withMessage:strPush];
 }*/
 
-- (void)initChannelsFirstTime
+- (void)initChannelsFirstTime:(NSString*)strId
 {
-    NSString* strUserChannel =[[NSString alloc] initWithFormat:@"fb%@", [[PFUser currentUser] objectForKey:@"fbId"]];
+    NSString* strUserChannel =[[NSString alloc] initWithFormat:@"fb%@", strId];
     [[PFInstallation currentInstallation] addUniqueObject:strUserChannel forKey:@"channels"];
     [[PFInstallation currentInstallation] addUniqueObject:@"" forKey:@"channels"];
     [[PFInstallation currentInstallation] saveInBackground];

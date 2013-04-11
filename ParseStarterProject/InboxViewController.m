@@ -26,6 +26,10 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         inbox = nil;
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(refreshData)
+                                                name:kLoadingInboxComplete
+                                                object:nil];
     }
     return self;
 }
@@ -44,42 +48,46 @@
     // Reload button
     UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithTitle:@"Reload" style:UIBarButtonItemStyleBordered target:self action:@selector(reloadClicked)];
     [self.navigationItem setRightBarButtonItem:reloadBtn];
-
 }
 
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
-    // Loading
-    [TestFlight passCheckpoint:@"Inbox appeared"];
-    [self reloadData];
+    [TestFlight passCheckpoint:@"Inbox opened"];
+    
+    // Loading or updating UI
+    if ( [globalData isInboxLoaded] )
+    {
+        [self refreshData];
+    }
+    else
+    {
+        // UI
+        [self.activityIndicator startAnimating];
+        self.navigationController.view.userInteractionEnabled = FALSE;
+    }
 }
 
 - (void) reloadClicked
 {
-    [globalData reloadInbox:self];
-    [self reloadData];
+    // UI
+    [self.activityIndicator startAnimating];
+    self.navigationController.view.userInteractionEnabled = FALSE;
+    
+    // Loading
+    [globalData reloadInboxInBackground];
 }
 
-- (void) reloadData {
+- (void) refreshData {
     
-    inbox = [globalData getInbox:self];
+    [self.activityIndicator stopAnimating];
+    self.navigationController.view.userInteractionEnabled = TRUE;
     
-    if ( ! inbox )
-    {
-        [self.activityIndicator startAnimating];
-        self.navigationController.view.userInteractionEnabled = NO;
-    }
-    else
-    {
-        [TestFlight passCheckpoint:@"Inbox loaded from data"];
-        
+    inbox = [globalData getInbox];
+    
+    if ( inbox )
         [[self tableView] reloadData];
-        
-        [self.activityIndicator stopAnimating];
-        self.navigationController.view.userInteractionEnabled = YES;
-    }
 }
 
 

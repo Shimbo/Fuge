@@ -25,6 +25,19 @@
 
 #define ROW_HEIGHT  60
 
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(reloadFinished)
+                                                name:kLoadingCirclesComplete
+                                                object:nil];
+    }
+    return self;
+}
+
+
 #pragma mark -
 #pragma mark Buttons
 
@@ -47,11 +60,6 @@
 #pragma mark View loading
 
 
-- (void) viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-}
-
 - (void) viewDidLoad {
     [super viewDidLoad];
     
@@ -64,6 +72,21 @@
     self.tableView.tableFooterView = [[UIView alloc]init];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     self.tableView.rowHeight = ROW_HEIGHT;
+    
+    if ( ! [globalData areCirclesLoaded] )
+    {
+        [self.activityIndicator startAnimating];
+        self.navigationController.view.userInteractionEnabled = FALSE;
+    }
+    else
+        self.navigationController.view.userInteractionEnabled = TRUE;
+}
+
+- (void) reloadFinished
+{
+    [self.activityIndicator stopAnimating];
+    self.navigationController.view.userInteractionEnabled = TRUE;
+    [[self tableView] reloadData];
 }
 
 

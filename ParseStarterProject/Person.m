@@ -28,27 +28,8 @@
         strCircle = [Circle getPersonType:nCircle];
         idCircle = nCircle;
         
-        // Distance calculation
-        strDistance = @"";
-        PFGeoPoint *geoPointUser = [[PFUser currentUser] objectForKey:@"location"];
-        PFGeoPoint *geoPointFriend = [user objectForKey:@"location"];
-        CLLocation* locationFriend = nil;
-        CLLocationDistance distance = 40000000.0f;
-        if ( geoPointUser && geoPointFriend )
-        {
-            CLLocation* locationUser = [[CLLocation alloc] initWithLatitude:geoPointUser.latitude longitude:geoPointUser.longitude];
-            locationFriend = [[CLLocation alloc] initWithLatitude:geoPointFriend.latitude longitude:geoPointFriend.longitude];
-            distance = [locationUser distanceFromLocation:locationFriend];
-            
-            if ( distance < 1000.0f )
-                strDistance = [[NSString alloc] initWithFormat:@"%.0f m", distance];
-            else if ( distance < 10000.0f )
-                strDistance = [[NSString alloc] initWithFormat:@"%.1f km", distance/1000.0f];
-            else
-                strDistance = [[NSString alloc] initWithFormat:@"%.0f km", distance/1000.0f];
-            
-            location = locationFriend.coordinate;
-        }
+        // Location
+        [self updateLocation:[user objectForKey:@"location"]];
         
         // Age calculations
         NSDateFormatter* myFormatter = [[NSDateFormatter alloc] init];
@@ -66,6 +47,31 @@
         numUnreadMessages = 0;
 	}
 	return self;
+}
+
+- (void)updateLocation:(PFGeoPoint*)ptNewLocation
+{
+    // Distance calculation
+    strDistance = @"";
+    PFGeoPoint *geoPointUser = [[PFUser currentUser] objectForKey:@"location"];
+    PFGeoPoint *geoPointFriend = ptNewLocation;
+    CLLocation* locationFriend = nil;
+    CLLocationDistance distance = 40000000.0f;
+    if ( ! geoPointUser || ! geoPointFriend )
+        return;
+    
+    CLLocation* locationUser = [[CLLocation alloc] initWithLatitude:geoPointUser.latitude longitude:geoPointUser.longitude];
+    locationFriend = [[CLLocation alloc] initWithLatitude:geoPointFriend.latitude longitude:geoPointFriend.longitude];
+    distance = [locationUser distanceFromLocation:locationFriend];
+        
+    if ( distance < 1000.0f )
+        strDistance = [[NSString alloc] initWithFormat:@"%.0f m", distance];
+    else if ( distance < 10000.0f )
+        strDistance = [[NSString alloc] initWithFormat:@"%.1f km", distance/1000.0f];
+    else
+        strDistance = [[NSString alloc] initWithFormat:@"%.0f km", distance/1000.0f];
+        
+    location = locationFriend.coordinate;
 }
 
 - (id)initEmpty:(NSUInteger)nCircle{

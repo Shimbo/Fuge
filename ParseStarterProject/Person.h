@@ -43,6 +43,8 @@
 - (id)init:(PFUser*)user circle:(NSUInteger)nCircle;
 - (id)initEmpty:(NSUInteger)nCircle;
 
+- (void)updateLocation:(PFGeoPoint*)ptNewLocation;
+
 -(NSString*)imageURL;
 -(NSString*)largeImageURL;
 
