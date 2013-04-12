@@ -45,6 +45,7 @@
             badgeColor = [MainStyle grayColor];
             break;
     }
+    [_badge removeFromSuperview];
     _badge = [CustomBadge badgeWithWhiteBackgroundAndTextColor:badgeColor];
     _badge.center = CGPointMake(6, 8);
     [self addSubview:_badge];

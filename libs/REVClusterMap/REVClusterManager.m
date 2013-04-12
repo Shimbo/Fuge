@@ -9,13 +9,14 @@
 //
 
 #import "REVClusterManager.h"
-
+#import "GlobalVariables.h"
 
 #define BASE_RADIUS .5 // = 1 mile
 #define MINIMUM_LATITUDE_DELTA 0.20
 #define BLOCKS 4
 
 #define MINIMUM_CLUSTER_LEVEL 100000
+
 
 @implementation REVClusterManager
 
@@ -43,7 +44,7 @@
             CGFloat xDist = (p2.x - p1.x);
             CGFloat yDist = (p2.y - p1.y);
             CGFloat distance = sqrt((xDist * xDist) + (yDist * yDist));
-            if (distance < 25) {
+            if (distance < DISTANCE_FOR_GROUPING_PINS) {
                 added = YES;
                 [block addAnnotation:pin];
                 break;

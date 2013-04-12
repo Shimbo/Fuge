@@ -14,6 +14,7 @@
 #import "ImageLoader.h"
 #import "UIImage+Circled.h"
 
+
 @interface TimerView : UIView
 @property (nonatomic,assign)CGFloat time;
 @property (nonatomic,strong)UIColor *timerColor;
@@ -102,6 +103,7 @@
             badgeColor = [MainStyle grayColor];
             break;
     }
+    [_badge removeFromSuperview];
     _badge = [CustomBadge badgeWithWhiteBackgroundAndTextColor:badgeColor];
     _badge.center = CGPointMake(8, 8);
     [self addSubview:_badge];
