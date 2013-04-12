@@ -198,6 +198,7 @@ NSInteger sort2(id item1, id item2, void *context)
     {
         [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingInboxComplete
                                                            object:nil];
+        [self postInboxUnreadCountDidUpdate];
         
         // TODO: this call is an overkill, but don't know how to update new unread count other way, now we're calculating it with all other stuff upon load
         [self getInbox];
