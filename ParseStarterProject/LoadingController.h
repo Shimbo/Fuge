@@ -10,7 +10,7 @@
 
 @interface LoadingController : UIViewController
 {
-    
+    Boolean bVersionChecked;
 }
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
 @property (strong, nonatomic) IBOutlet UIButton *loginButton;

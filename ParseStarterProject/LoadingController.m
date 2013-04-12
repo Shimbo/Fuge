@@ -29,6 +29,7 @@
                                                 selector:@selector(loadingFailed)
                                                 name:kLoadingMainFailed
                                                 object:nil];
+        bVersionChecked = false;
     }
     return self;
 }
@@ -37,11 +38,15 @@
 // TODO 2: call AppStore
 // TODO 4: actually, just show a label (where news should be) and button Update.
 
-- (Boolean) versionCheck
+- (Boolean) versionCheck:(NSError**)error
 {
     // Checking version information
     PFQuery *systemQuery = [PFQuery queryWithClassName:@"System"];
-    PFObject* system = [systemQuery getFirstObject];
+    PFObject* system = [systemQuery getFirstObject:error];
+    
+    if ( (*error).code != 0 )
+        return false;
+    
     float minVersion = [[system objectForKey:@"minVersion"] floatValue];
     float curVersion = [[system objectForKey:@"curVersion"] floatValue];
     float thisVersion = [[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"] floatValue];
@@ -60,22 +65,25 @@
         //return NO;
     }
     
+    bVersionChecked = true;
     return true;
 }
 
-- (void)viewDidLoad
+- (void)loadSequence
 {
-    [super viewDidLoad];
-    
-    // Animation started
-    [self.loadingIndicator startAnimating];
-    //self.navigationController.view.userInteractionEnabled = NO;
+    NSError* error = [NSError alloc];
     
     // Version check
-    Boolean bShowAppStoreButton = ! [self versionCheck];
+    Boolean bShowAppStoreButton = ! [self versionCheck:&error];
+    if ( error.code != 0 )
+    {
+        [self noInternet];
+        return;
+    }
+    
     if ( bShowAppStoreButton )
     {
-        // Do some UI stuff
+        // TODO: TODONOW: Do some UI stuff
         return;
     }
     
@@ -95,20 +103,25 @@
     }
     else
     {
-        [globalData loadData];
+        [globalData performSelector:@selector(loadData) withObject:nil afterDelay:0.01];
     }
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    // Animation started
+    [self.loadingIndicator startAnimating];
+    //self.navigationController.view.userInteractionEnabled = NO;
+    
+    [self performSelector:@selector(loadSequence) withObject:nil afterDelay:0.01];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-
-- (void) showLoginButton
-{
-    
 }
 
 -(void) proceedToProfile
@@ -144,17 +157,20 @@
     if ( nStatus == LOAD_NOFACEBOOK )
         [self loginFailed];
     else
-    {
-        [self.loadingIndicator stopAnimating];
-        self.view.userInteractionEnabled = TRUE;
-        _loginButton.hidden = TRUE;
-        _retryButton.hidden = FALSE;
-        _descriptionText.hidden = FALSE;
-        _titleText.hidden = FALSE;
-        _miscText.hidden = FALSE;
-        _titleText.text = @"Ooups!";
-        _descriptionText.text = @"It seems like you don’t have internet \n connection at the moment. Try \n again if you’re so confident!";
-    }
+        [self noInternet];
+}
+
+- (void) noInternet
+{
+    [self.loadingIndicator stopAnimating];
+    self.view.userInteractionEnabled = TRUE;
+    _loginButton.hidden = TRUE;
+    _retryButton.hidden = FALSE;
+    _descriptionText.hidden = FALSE;
+    _titleText.hidden = FALSE;
+    _miscText.hidden = TRUE;
+    _titleText.text = @"Ooups!";
+    _descriptionText.text = @"It seems like you don’t have internet \n connection at the moment. Try \n again if you’re so confident!";
 }
 
 - (void) loginFailed
@@ -166,7 +182,7 @@
     _titleText.hidden = FALSE;
     _miscText.hidden = FALSE;
     _titleText.text = @"Ooups!";
-    _descriptionText.text = @"Looks like you haven’t finished \n login process or wasn’t able to do so. \n Please, try again.!";
+    _descriptionText.text = @"Looks like you haven’t finished \n login process or wasn’t able to do so. \n Please, try again!";
 }
 
 - (IBAction)loginDown:(id)sender {
@@ -233,7 +249,10 @@
     _descriptionText.hidden = TRUE;
     _titleText.hidden = TRUE;
     _miscText.hidden = TRUE;
-    [globalData loadData];
+    if ( bVersionChecked )
+        [globalData performSelector:@selector(loadData) withObject:nil afterDelay:0.01];
+    else
+        [self performSelector:@selector(loadSequence) withObject:nil afterDelay:0.01];
 }
 
 - (IBAction)updateDown:(id)sender {
