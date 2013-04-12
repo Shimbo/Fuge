@@ -26,5 +26,7 @@
 
 -(void)startUpdating;
 -(PFGeoPoint*)getPosition;
+-(PFGeoPoint*)getDefaultPosition;
+-(Boolean) getLocationStatus;
 
 @end

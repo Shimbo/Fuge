@@ -12,6 +12,7 @@
 #import "MapViewController.h"
 #import "FSVenue.h"
 #import "Message.h"
+#import "LocationManager.h"
 
 @implementation GlobalData
 
@@ -171,12 +172,27 @@ NSInteger sortByName(id num1, id num2, void *context)
     {
         case LOADING_MAIN:
             nLoadStatusMain = nStatus;
+            [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMainFailed
+                                                               object:nil];
             break;
         case LOADING_SECONDARY:
             nLoadStatusSecondary = nStatus;
-            // Show no connection bubble
+            [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingSecondaryFailed
+                                                               object:nil];
             break;
     }
+}
+
+- (NSUInteger) getLoadingStatus:(NSUInteger)nStage
+{
+    switch ( nStage )
+    {
+        case LOADING_MAIN:
+            return nLoadStatusMain;
+        case LOADING_SECONDARY:
+            return nLoadStatusSecondary;
+    }
+    return LOAD_OK;
 }
 
 - (void)loadData
@@ -438,8 +454,8 @@ NSInteger sortByName(id num1, id num2, void *context)
     {
         PFGeoPoint* ptUser = [[PFUser currentUser] objectForKey:@"location"];
         if ( ! ptUser )
-            return;
-
+            ptUser = [locManager getDefaultPosition];
+        
         [friendAnyQuery whereKey:@"location" nearGeoPoint:ptUser withinKilometers:RANDOM_PERSON_KILOMETERS];
     }
     else
@@ -643,7 +659,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     {
         PFGeoPoint* ptUser = [[PFUser currentUser] objectForKey:@"location"];
         if ( ! ptUser )
-            return;
+            ptUser = [locManager getDefaultPosition];
 
         [meetupAnyQuery whereKey:@"location" nearGeoPoint:ptUser withinKilometers:RANDOM_EVENT_KILOMETERS];
     }

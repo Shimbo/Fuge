@@ -24,6 +24,7 @@
 #import "MeetupInviteViewController.h"
 #import "SCAnnotationView.h"
 #import "REVClusterAnnotationView.h"
+#import "LocationManager.h"
 
 @implementation MapViewController
 
@@ -168,21 +169,29 @@
     
     // Setting user location
     PFGeoPoint *geoPointUser = [[PFUser currentUser] objectForKey:@"location"];
+    float span = 0.05f;
+    
+    // Tracking mode
     if ( geoPointUser )
-    {
         [mapView setUserTrackingMode:MKUserTrackingModeNone animated:FALSE];
-        
-        CLLocation* locationUser = [[CLLocation alloc] initWithLatitude:geoPointUser.latitude longitude:geoPointUser.longitude];
-        
-        MKCoordinateRegion region = { {0.0, 0.0 }, { 0.0, 0.0 } };
-        region.center.latitude = locationUser.coordinate.latitude;//..mapView.userLocation.location.coordinate.latitude;
-        region.center.longitude = locationUser.coordinate.longitude;//mapView.userLocation.location.coordinate.longitude;
-        region.span.longitudeDelta = 0.05f;
-        region.span.latitudeDelta = 0.05f;
-        [mapView setRegion:region animated:YES];
-    }
     else
         [mapView setUserTrackingMode:MKUserTrackingModeFollow animated:TRUE];
+    
+    // Default position
+    if ( ! geoPointUser )
+    {
+        geoPointUser = [locManager getDefaultPosition];
+        span = 0.25f;
+    }
+    
+    // Default map location
+    CLLocation* locationUser = [[CLLocation alloc] initWithLatitude:geoPointUser.latitude longitude:geoPointUser.longitude];
+    MKCoordinateRegion region = { {0.0, 0.0 }, { 0.0, 0.0 } };
+    region.center.latitude = locationUser.coordinate.latitude;//..mapView.userLocation.location.coordinate.latitude;
+    region.center.longitude = locationUser.coordinate.longitude;//mapView.userLocation.location.coordinate.longitude;
+    region.span.longitudeDelta = span;
+    region.span.latitudeDelta = span;
+    [mapView setRegion:region animated:YES];
     
     // Data updating
     [self viewOpened];
@@ -264,7 +273,6 @@
 
 -(MKAnnotationView *)mapView:(MKMapView *)mV viewForAnnotation:(id <MKAnnotation>)annotation
 {
-    
     REVClusterPin *pin = (REVClusterPin *)annotation;
     if (annotation != mapView.userLocation)
     {
@@ -295,8 +303,6 @@
             pinView.canShowCallout = YES;
             return pinView;
         }
-
-        
     }
     else {
         [mapView.userLocation setTitle:@"I am here"];
@@ -321,9 +327,6 @@
             [meetupController setMeetup:((MeetupAnnotation*) view.annotation).meetup];
             [self.navigationController pushViewController:meetupController animated:YES];
         }
-
-        
-        
     }
 }
 

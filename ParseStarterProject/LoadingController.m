@@ -22,8 +22,12 @@
     if (self) {
         
         [[NSNotificationCenter defaultCenter]addObserver:self
-                                                selector:@selector(proceedToMapWindow)
+                                                selector:@selector(mainComplete)
                                                 name:kLoadingMainComplete
+                                                object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(loadingFailed)
+                                                name:kLoadingMainFailed
                                                 object:nil];
     }
     return self;
@@ -109,14 +113,21 @@
 
 -(void) proceedToProfile
 {
-    ParseStarterProjectAppDelegate *delegate = AppDelegate;
-    [delegate.revealController dismissViewControllerAnimated:TRUE completion:nil];
+/*    ParseStarterProjectAppDelegate *delegate = AppDelegate;
     LeftMenuController *leftMenu = (LeftMenuController*)delegate.revealController.leftViewController;
-    [leftMenu showUser];
+    [leftMenu prepareMap];*/
     
-/*    ProfileViewController *profileViewController = [[ProfileViewController alloc] initWithNibName:@"ProfileView" bundle:nil];
-    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:profileViewController];
-    [delegate.revealController presentViewController:nav animated:NO completion:nil];*/
+    ProfileViewController *profileViewController = [[ProfileViewController alloc] initWithNibName:@"ProfileView" bundle:nil];
+    [self.navigationController presentViewController:profileViewController animated:TRUE completion:nil];
+}
+
+-(void) mainComplete
+{
+    // Show profile window if it's new user
+    if ( [globalVariables isNewUser] )
+        [self proceedToProfile];
+    else
+        [self proceedToMapWindow];
 }
 
 -(void) proceedToMapWindow
@@ -127,16 +138,42 @@
     [leftMenu showMap];
 }
 
+- (void) loadingFailed
+{
+    NSUInteger nStatus = [globalData getLoadingStatus:LOADING_MAIN];
+    if ( nStatus == LOAD_NOFACEBOOK )
+        [self loginFailed];
+    else
+    {
+        [self.loadingIndicator stopAnimating];
+        self.view.userInteractionEnabled = TRUE;
+        _loginButton.hidden = TRUE;
+        _retryButton.hidden = FALSE;
+        _descriptionText.hidden = FALSE;
+        _titleText.hidden = FALSE;
+        _miscText.hidden = FALSE;
+        _titleText.text = @"Ooups!";
+        _descriptionText.text = @"It seems like you don’t have internet \n connection at the moment. Try \n again if you’re so confident!";
+    }
+}
+
 - (void) loginFailed
 {
-    
+    [self.loadingIndicator stopAnimating];
+    self.view.userInteractionEnabled = TRUE;
+    _loginButton.hidden = FALSE;
+    _descriptionText.hidden = FALSE;
+    _titleText.hidden = FALSE;
+    _miscText.hidden = FALSE;
+    _titleText.text = @"Ooups!";
+    _descriptionText.text = @"Looks like you haven’t finished \n login process or wasn’t able to do so. \n Please, try again.!";
 }
 
 - (IBAction)loginDown:(id)sender {
     
     // Activity indicator
     [self.loadingIndicator startAnimating];
-    self.view.userInteractionEnabled = NO;
+    //self.view.userInteractionEnabled = NO;
     
     NSArray *permissionsArray = @[ @"user_about_me", @"user_relationships", @"user_birthday", @"user_location"];
     
@@ -167,8 +204,12 @@
         }
         
         // Waiting for location data
-        while ( ! [locManager getPosition] )
-            sleep(100);
+        NSUInteger nRetries = 0;
+        while ( ! [locManager getPosition] && nRetries < 3 )
+        {
+            sleep(1);
+            nRetries++;
+        }
         // TODO: set text "Updating position"? check for failure normally
         // Check also what to do if user blocked loction services
         [globalData setUserPosition:[locManager getPosition]];
@@ -179,20 +220,20 @@
         
         if ( [PFUser currentUser] )
         {
-            // Show profile window if it's new user
-            if ( [globalVariables isNewUser] )
-            {
-                [self proceedToProfile];
-                [[NSNotificationCenter defaultCenter]removeObserver:self];
-            }
-            
             // Start loading data
             [globalData loadData];
-         }
-     }];
+        }
+    }];
 }
 
 - (IBAction)retryDown:(id)sender {
+    [self.loadingIndicator startAnimating];
+    self.view.userInteractionEnabled = FALSE;
+    _retryButton.hidden = TRUE;
+    _descriptionText.hidden = TRUE;
+    _titleText.hidden = TRUE;
+    _miscText.hidden = TRUE;
+    [globalData loadData];
 }
 
 - (IBAction)updateDown:(id)sender {

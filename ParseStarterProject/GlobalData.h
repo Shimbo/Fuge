@@ -21,6 +21,9 @@ static NSString *const kLoadingMapComplete = @"kLoadingMapComplete";
 static NSString *const kLoadingCirclesComplete = @"kLoadingCirclesComplete";
 static NSString *const kLoadingInboxComplete = @"kLoadingInboxComplete";
 
+static NSString *const kLoadingMainFailed = @"kLoadingMainFailed";
+static NSString *const kLoadingSecondaryFailed = @"kLoadingSecondaryFailed";
+
 static NSString *const kAppRestored = @"kAppRestored";
 
 #define globalData [GlobalData sharedInstance]
@@ -110,6 +113,7 @@ typedef  enum EMeetupCommentType
 - (void)loadData;
 - (void)reloadFriendsInBackground;
 - (void)reloadMapInfoInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast;
+- (NSUInteger)getLoadingStatus:(NSUInteger)nStage;
 - (Boolean)isMapLoaded;
 - (Boolean)areCirclesLoaded;
 

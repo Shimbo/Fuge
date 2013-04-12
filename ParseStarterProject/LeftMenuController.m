@@ -71,6 +71,13 @@
     [self showViewController:profileViewController];
 }
 
+-(void)prepareMap
+{
+    if (!_mapViewController) {
+        _mapViewController = [[MapViewController alloc] initWithNibName:@"MapView" bundle:nil];
+    }
+}
+
 -(void)showMap{
     if (!_mapViewController) {
         _mapViewController = [[MapViewController alloc] initWithNibName:@"MapView" bundle:nil];

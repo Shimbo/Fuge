@@ -67,9 +67,47 @@ static LocationManager *sharedInstance = nil;
     NSLog(@"Location updated");
 }
 
+- (void)locationManager: (CLLocationManager *)manager
+       didFailWithError: (NSError *)error {
+    
+    NSString *errorString;
+    [manager stopUpdatingLocation];
+    NSLog(@"Error: %@",[error localizedDescription]);
+    UIAlertView *alert;
+    switch([error code]) {
+        case kCLErrorDenied:
+            //Access denied by user
+            errorString = @"You denied access to location services. It will affect the functionality you will be able to use. We advise to turn it on in settings.";
+            [locationManager stopUpdatingLocation];
+            alert = [[UIAlertView alloc] initWithTitle:@"Important notice" message:errorString delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+            [alert show];
+            break;
+        case kCLErrorLocationUnknown:
+            //Probably temporary...
+            errorString = @"Location data unavailable";
+            break;
+        default:
+            errorString = @"An unknown error has occurred";
+            break;
+    }
+}
+
+-(PFGeoPoint*)getDefaultPosition
+{
+    return [PFGeoPoint geoPointWithLatitude:37.7750 longitude:-122.4183];
+}
+
 -(PFGeoPoint*)getPosition
 {
     return geoPoint;
+}
+
+-(Boolean) getLocationStatus
+{
+    if([CLLocationManager locationServicesEnabled] &&
+            [CLLocationManager authorizationStatus] != kCLAuthorizationStatusDenied)
+        return TRUE;
+    return FALSE;
 }
 
 @end
