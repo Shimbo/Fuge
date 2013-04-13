@@ -135,7 +135,7 @@
     inboxCell.subject.text = item.subject;
     inboxCell.message.text = item.message;
     inboxCell.misc.text = item.misc;
-    if ( [item.fromId compare:strCurrentUserId] == NSOrderedSame || item.type == INBOX_ITEM_INVITE || item.type == INBOX_ITEM_COMMENT )
+    if ( [item.fromId compare:strCurrentUserId] == NSOrderedSame && item.type != INBOX_ITEM_COMMENT )
         [inboxCell.mainImage loadImageFromURL:[Person imageURLWithId:item.toId]];
     else
         [inboxCell.mainImage loadImageFromURL:[Person imageURLWithId:item.fromId]];

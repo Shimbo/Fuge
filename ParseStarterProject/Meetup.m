@@ -14,13 +14,14 @@
 
 @implementation Meetup
 
-@synthesize strId,strOwnerId,strOwnerName,strSubject,dateTime,privacy,meetupType,location,strVenue,strAddress,meetupData,numComments,numAttendees,dateTimeExp,durationSeconds;
+@synthesize strId,strOwnerId,strOwnerName,strSubject,dateTime,privacy,meetupType,location,strVenue,strAddress,meetupData,numComments,numAttendees,attendees,dateTimeExp,durationSeconds;
 
 -(id) init
 {
     if (self = [super init]) {
         meetupType = TYPE_THREAD;
         meetupData = nil;
+        attendees = nil;
         durationSeconds = 3600;
         strAddress = @"";
     }
@@ -89,6 +90,7 @@
     strAddress = [meetupData objectForKey:@"address"];
     numComments = [[meetupData objectForKey:@"numComments"] integerValue];
     numAttendees = [[meetupData objectForKey:@"numAttendees"] integerValue];
+    attendees = [meetupData objectForKey:@"attendees"];
     durationSeconds = [[meetupData objectForKey:@"duration"] integerValue];
 }
 
@@ -304,5 +306,20 @@ static UIViewController* tempController = nil;
     self.location = ptLocation;
     self.strVenue = [[NSString alloc] initWithFormat:@"Lat: %f.3, lon: %f.3", ptLocation.latitude, ptLocation.longitude];
 }
+
+-(void)addAttendee:(NSString*)str
+{
+    if ( ! attendees )
+        attendees = [[NSMutableArray alloc] initWithObjects:strId,nil];
+    else
+        [attendees addObject:str];
+}
+
+-(void)removeAttendee:(NSString*)str
+{
+    if ( attendees )
+        [attendees removeObjectIdenticalTo:str];
+}
+
 
 @end

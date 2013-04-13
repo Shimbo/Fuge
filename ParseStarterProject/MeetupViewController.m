@@ -97,14 +97,15 @@
 {    
     // Creating attendee in db
     PFObject* attendee = [[PFObject alloc] initWithClassName:@"Attendee"];
-    NSString* strUserId = (NSString *) [[PFUser currentUser] objectForKey:@"fbId"];
-    NSString* strUserName = (NSString *) [[PFUser currentUser] objectForKey:@"fbName"];
-    [attendee setObject:strUserId forKey:@"userId"];
-    [attendee setObject:strUserName forKey:@"userName"];
+    [attendee setObject:strCurrentUserId forKey:@"userId"];
+    [attendee setObject:strCurrentUserName forKey:@"userName"];
     [attendee setObject:meetup.strId forKey:@"meetupId"];
     [attendee setObject:meetup.strSubject forKey:@"meetupSubject"];
     [attendee setObject:meetup.meetupData forKey:@"meetupData"];
     [attendee saveInBackground];
+    
+    // Adding attendee to the meetup
+    [meetup addAttendee:strCurrentUserId];
     
     // Creating comment about joining in db
     [globalData createCommentForMeetup:meetup commentType:COMMENT_JOINED commentText:nil];
@@ -242,52 +243,71 @@
     mapView.showsUserLocation = TRUE;
     [mapView setDelegate:self];
     [mapView setRegion:reg animated:true];
-
     
     NSNumber* buttonOn = [NSNumber numberWithInt:1];
+    
+    // Time check
+    Boolean bNotPassed = [meetup.dateTime compare:[NSDate dateWithTimeIntervalSinceNow:
+                -(NSTimeInterval)meetup.durationSeconds]] == NSOrderedDescending;
     
     // Own meetup or not
     if ( [meetup.strOwnerId compare:strCurrentUserId ] != NSOrderedSame )
     {
-        PFQuery *meetupAnyQuery = [PFQuery queryWithClassName:@"Attendee"];
-        [meetupAnyQuery whereKey:@"userId" equalTo:[[PFUser currentUser] objectForKey:@"fbId"]];
-        [meetupAnyQuery whereKey:@"meetupId" equalTo:meetup.strId];
-        [meetupAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *attendees, NSError* error)
+        // Joined or not
+        Boolean bJoined = false;
+        if ( meetup.attendees )
+            for ( NSString* str in meetup.attendees )
+                if ( [str compare:strCurrentUserId] == NSOrderedSame )
+                {
+                    bJoined = true;
+                    break;
+                }
+        
+        if ( ! bJoined )
         {
-            if ( [attendees count] == 0 )   // Not attending yet
+            if ( meetup.meetupType == TYPE_MEETUP )
             {
-                if ( meetup.meetupType == TYPE_MEETUP )
+                if ( bNotPassed )
                     buttons[MB_JOIN] = buttonOn;
-                else
-                    buttons[MB_SUBSCRIBE] = buttonOn;
-                
-                if ( invite )   // Window opened from invite
-                    buttons[MB_DECLINE] = buttonOn;
             }
-            else    // Attending already
-            {
-                if ( meetup.meetupType == TYPE_THREAD )
-                    buttons[MB_SUBSCRIBE] = buttonOn;
+            else
+                buttons[MB_SUBSCRIBE] = buttonOn;
+            
+            if ( invite )   // Window opened from invite
+                buttons[MB_DECLINE] = buttonOn;
+        }
+        else    // Attending already
+        {
+            if ( meetup.meetupType == TYPE_THREAD )
+                buttons[MB_SUBSCRIBE] = buttonOn;
+            
+            if ( meetup.meetupType == TYPE_THREAD || bNotPassed )
                 buttons[MB_INVITE] = buttonOn;
-                
-                if ( meetup.meetupType == TYPE_MEETUP )
+            
+            if ( meetup.meetupType == TYPE_MEETUP )
+            {
+                // Time check
+                if ( bNotPassed )
                 {
                     buttons[MB_LEAVE] = buttonOn;
                     if ( ! [meetup addedToCalendar] )
                         buttons[MB_CALENDAR] = buttonOn;
                 }
             }
-            
-            [self updateButtons];
-        }];
+        }
+        
+        [self updateButtons];
     }
     else
     {
-        buttons[MB_CANCEL] = buttonOn;
-        buttons[MB_EDIT] = buttonOn;
-        buttons[MB_INVITE] = buttonOn;
-
-        if ( ! [meetup addedToCalendar] && meetup.meetupType == TYPE_MEETUP )
+        if ( meetup.meetupType == TYPE_THREAD || bNotPassed )
+        {
+            buttons[MB_CANCEL] = buttonOn;
+            buttons[MB_EDIT] = buttonOn;
+            buttons[MB_INVITE] = buttonOn;
+        }
+        
+        if ( ! [meetup addedToCalendar] && meetup.meetupType == TYPE_MEETUP && bNotPassed )
             buttons[MB_CALENDAR] = buttonOn;
         
         [self updateButtons];

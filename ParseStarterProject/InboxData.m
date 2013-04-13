@@ -89,8 +89,8 @@ NSInteger sort2(id item1, id item2, void *context)
             else if ( [pObject.parseClassName compare:@"Comment"] == NSOrderedSame )
             {
                 item.type = INBOX_ITEM_COMMENT;
-                item.fromId = [pObject objectForKey:@"meetupId"]; // we're doing it vice versa so "from" will always store our conversation origin
-                item.toId = [pObject objectForKey:@"userId"];
+                item.fromId = [pObject objectForKey:@"userId"];
+                item.toId = [pObject objectForKey:@"meetupId"];
                 item.subject = [pObject objectForKey:@"meetupSubject"];
                 item.message = [pObject objectForKey:@"comment"];
                 item.misc = nil;
@@ -147,7 +147,7 @@ NSInteger sort2(id item1, id item2, void *context)
     NSDate* dateRecent = [[NSDate alloc] initWithTimeIntervalSinceNow:-24*60*60*7];
     for ( InboxViewItem* item in sortedArray )
     {
-        // Invites always in new
+        // Invites and new users always in new
         if ( item.type == INBOX_ITEM_INVITE || item.type == INBOX_ITEM_NEWUSER )
         {
             if ( item.misc )
@@ -157,11 +157,16 @@ NSInteger sort2(id item1, id item2, void *context)
             continue;
         }
         
-        // Messages
+        // Messages and comments below
         Boolean bNew = false;
         
-        NSDate* lastDate = [self getConversationDate:item.fromId];
-        if ( lastDate && ([item.dateTime compare:lastDate] == NSOrderedDescending ) )
+        NSDate* lastDate;
+        if ( item.type == INBOX_ITEM_COMMENT || ( [item.fromId compare:strCurrentUserId] == NSOrderedSame ) )
+            lastDate = [self getConversationDate:item.toId];
+        else
+            lastDate = [self getConversationDate:item.fromId];
+            
+        if ( lastDate && ([item.dateTime compare:lastDate] == NSOrderedDescending ) && ( [item.fromId compare:strCurrentUserId] != NSOrderedSame ) )
             bNew = true;
         
         if ( bNew )

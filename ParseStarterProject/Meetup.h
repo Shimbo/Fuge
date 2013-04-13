@@ -45,6 +45,7 @@ typedef enum kEMeetupPrivacy
     
     NSUInteger  numComments;
     NSUInteger  numAttendees;
+    NSMutableArray* attendies;
     
     // Write only during save method and loading
     PFObject*   meetupData;
@@ -63,6 +64,7 @@ typedef enum kEMeetupPrivacy
 @property (nonatomic, assign) EMeetupType meetupType;
 @property (nonatomic, assign) NSUInteger numComments;
 @property (nonatomic, assign) NSUInteger numAttendees;
+@property (nonatomic, copy) NSMutableArray* attendees;
 @property (nonatomic, assign) NSUInteger durationSeconds;
 
 @property (nonatomic, copy) PFObject *meetupData;
@@ -80,5 +82,9 @@ typedef enum kEMeetupPrivacy
 -(NSUInteger)getUnreadMessagesCount;
 -(Boolean)hasPassed;
 -(float)getTimerTill;
+
+// Only in local version, not on server (separate cloud code)
+-(void)addAttendee:(NSString*)str;
+-(void)removeAttendee:(NSString*)str;
 
 @end
