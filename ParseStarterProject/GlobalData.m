@@ -595,32 +595,32 @@ NSInteger sortByName(id num1, id num2, void *context)
             NSLog(@"Error: %@", [error localizedDescription]);
         } else {
             NSLog(@"Result: %@", result);
-        }
-        
-        NSArray* data = [result objectForKey:@"data"];
-        NSArray* events = [((NSDictionary*) data[0]) objectForKey:@"fql_result_set"];
-        NSArray* venues = [((NSDictionary*) data[1]) objectForKey:@"fql_result_set"];
-        
-        for ( NSDictionary* event in events )
-        {
-            for ( NSDictionary* venue in venues )
+            
+            NSArray* data = [result objectForKey:@"data"];
+            NSArray* events = [((NSDictionary*) data[0]) objectForKey:@"fql_result_set"];
+            NSArray* venues = [((NSDictionary*) data[1]) objectForKey:@"fql_result_set"];
+            
+            for ( NSDictionary* event in events )
             {
-                NSDictionary* eventVenue = [event objectForKey:@"venue"];
-                if ( ! eventVenue )
-                    break;
-                NSString* eventVenueId = [eventVenue objectForKey:@"id"];
-                if ( ! eventVenueId )
-                    break;
-                NSDictionary* venueLocation = [venue objectForKey:@"location"];
-                if ( ! venueLocation )
-                    break;
-                NSString* venueId = [venue objectForKey:@"page_id"];
-                if ( ! venueId )
-                    break;
-                if ( [eventVenueId compare:venueId] == NSOrderedSame )
+                for ( NSDictionary* venue in venues )
                 {
-                    Meetup* meetup = [[Meetup alloc] initWithFbEvent:event venue:venue];
-                    [self addMeetup:meetup];
+                    NSDictionary* eventVenue = [event objectForKey:@"venue"];
+                    if ( ! eventVenue )
+                        break;
+                    NSString* eventVenueId = [eventVenue objectForKey:@"id"];
+                    if ( ! eventVenueId )
+                        break;
+                    NSDictionary* venueLocation = [venue objectForKey:@"location"];
+                    if ( ! venueLocation )
+                        break;
+                    NSString* venueId = [venue objectForKey:@"page_id"];
+                    if ( ! venueId )
+                        break;
+                    if ( [eventVenueId compare:venueId] == NSOrderedSame )
+                    {
+                        Meetup* meetup = [[Meetup alloc] initWithFbEvent:event venue:venue];
+                        [self addMeetup:meetup];
+                    }
                 }
             }
         }
