@@ -60,7 +60,7 @@
         [actualButtons addObject:declineBtn];
     if ( [buttons[MB_LEAVE] integerValue] != 0 )
         [actualButtons addObject:leaveBtn];
-    if ( [buttons[MB_CALENDAR] integerValue] != 0 )
+    if ( [buttons[MB_CALENDAR] integerValue] != 0 && ! [meetup addedToCalendar] )
         [actualButtons addObject:calendarBtn];
     if ( [buttons[MB_INVITE] integerValue] != 0 )
         [actualButtons addObject:inviteBtn];
@@ -138,7 +138,7 @@
     }
     [self reloadAnnotation];
     // Ask to add to calendar
-    [meetup addToCalendar:self shouldAlert:true];
+    [meetup addToCalendar];
 }
 
 - (void)editClicked
@@ -152,7 +152,7 @@
 
 - (void)calendarClicked
 {
-    [meetup addToCalendar:self shouldAlert:true];
+    [meetup addToCalendar];
     return;
 }
 
@@ -247,70 +247,77 @@
     NSNumber* buttonOn = [NSNumber numberWithInt:1];
     
     // Time check
-    Boolean bNotPassed = [meetup.dateTime compare:[NSDate dateWithTimeIntervalSinceNow:
-                -(NSTimeInterval)meetup.durationSeconds]] == NSOrderedDescending;
+    Boolean bPassed = [meetup passed];
     
-    // Own meetup or not
-    if ( [meetup.strOwnerId compare:strCurrentUserId ] != NSOrderedSame )
+    // Facebook or not
+    if ( meetup.bFacebookEvent )
     {
-        // Joined or not
-        Boolean bJoined = false;
-        if ( meetup.attendees )
-            for ( NSString* str in meetup.attendees )
-                if ( [str compare:strCurrentUserId] == NSOrderedSame )
-                {
-                    bJoined = true;
-                    break;
-                }
-        
-        if ( ! bJoined )
+        if ( ! bPassed )
         {
-            if ( meetup.meetupType == TYPE_MEETUP )
-            {
-                if ( bNotPassed )
-                    buttons[MB_JOIN] = buttonOn;
-            }
-            else
-                buttons[MB_SUBSCRIBE] = buttonOn;
-            
-            if ( invite )   // Window opened from invite
-                buttons[MB_DECLINE] = buttonOn;
+            buttons[MB_CALENDAR] = buttonOn;
+            [self updateButtons];
         }
-        else    // Attending already
-        {
-            if ( meetup.meetupType == TYPE_THREAD )
-                buttons[MB_SUBSCRIBE] = buttonOn;
-            
-            if ( meetup.meetupType == TYPE_THREAD || bNotPassed )
-                buttons[MB_INVITE] = buttonOn;
-            
-            if ( meetup.meetupType == TYPE_MEETUP )
-            {
-                // Time check
-                if ( bNotPassed )
-                {
-                    buttons[MB_LEAVE] = buttonOn;
-                    if ( ! [meetup addedToCalendar] )
-                        buttons[MB_CALENDAR] = buttonOn;
-                }
-            }
-        }
-        
-        [self updateButtons];
     }
     else
     {
-        if ( meetup.meetupType == TYPE_THREAD || bNotPassed )
+        // Own meetup or not
+        if ( [meetup.strOwnerId compare:strCurrentUserId ] != NSOrderedSame )
         {
-            buttons[MB_CANCEL] = buttonOn;
-            buttons[MB_EDIT] = buttonOn;
-            buttons[MB_INVITE] = buttonOn;
+            // Joined or not
+            Boolean bJoined = false;
+            if ( meetup.attendees )
+                for ( NSString* str in meetup.attendees )
+                    if ( [str compare:strCurrentUserId] == NSOrderedSame )
+                    {
+                        bJoined = true;
+                        break;
+                    }
+            
+            if ( ! bJoined )    // Or thread as thread can't be joined
+            {
+                if ( meetup.meetupType == TYPE_MEETUP )
+                {
+                    if ( ! bPassed || invite )
+                        buttons[MB_JOIN] = buttonOn;
+                }
+                
+                if ( meetup.meetupType == TYPE_THREAD || bPassed )
+                    buttons[MB_SUBSCRIBE] = buttonOn;
+                
+                if ( meetup.meetupType == TYPE_THREAD )
+                    buttons[MB_INVITE] = buttonOn;
+                
+                if ( invite )   // Window opened from invite
+                    buttons[MB_DECLINE] = buttonOn;
+            }
+            else    // Attending already
+            {
+                if ( bPassed )
+                    buttons[MB_SUBSCRIBE] = buttonOn;
+                else
+                {
+                    buttons[MB_INVITE] = buttonOn;
+                    buttons[MB_LEAVE] = buttonOn;
+                    buttons[MB_CALENDAR] = buttonOn;
+                }
+            }
+            
+            [self updateButtons];
         }
-        
-        if ( ! [meetup addedToCalendar] && meetup.meetupType == TYPE_MEETUP && bNotPassed )
-            buttons[MB_CALENDAR] = buttonOn;
-        
-        [self updateButtons];
+        else
+        {
+            if ( meetup.meetupType == TYPE_THREAD || ! bPassed )
+            {
+                buttons[MB_CANCEL] = buttonOn;
+                buttons[MB_EDIT] = buttonOn;
+                buttons[MB_INVITE] = buttonOn;
+            }
+            
+            if ( meetup.meetupType == TYPE_MEETUP && ! bPassed )
+                buttons[MB_CALENDAR] = buttonOn;
+            
+            [self updateButtons];
+        }
     }
     
     // Setting location and date labels

@@ -11,10 +11,11 @@
 #import "GlobalVariables.h"
 #import "FSVenue.h"
 #import "LocationManager.h"
+#import "ParseStarterProjectAppDelegate.h"
 
 @implementation Meetup
 
-@synthesize strId,strOwnerId,strOwnerName,strSubject,dateTime,privacy,meetupType,location,strVenue,strAddress,meetupData,numComments,numAttendees,attendees,dateTimeExp,durationSeconds;
+@synthesize strId,strOwnerId,strOwnerName,strSubject,dateTime,privacy,meetupType,location,strVenue,strAddress,meetupData,numComments,numAttendees,attendees,dateTimeExp,durationSeconds,bFacebookEvent;
 
 -(id) init
 {
@@ -22,15 +23,62 @@
         meetupType = TYPE_THREAD;
         meetupData = nil;
         attendees = nil;
+        numComments = numAttendees = 0;
         durationSeconds = 3600;
         strAddress = @"";
+        bFacebookEvent = false;
     }
+    
+    return self;
+}
+
+-(id) initWithFbEvent:(NSDictionary*)eventData venue:(NSDictionary*)venueData
+{
+    self = [self init];
+    
+    bFacebookEvent = true;
+    meetupType = TYPE_MEETUP;
+    privacy = MEETUP_PUBLIC;
+    
+    strId = [ [NSString alloc] initWithFormat:@"fbmt_%@", [eventData objectForKey:@"eid"] ];
+    strOwnerId = [eventData objectForKey:@"creator"];
+    strOwnerName = [eventData objectForKey:@"host"];
+    strSubject = [eventData objectForKey:@"name"];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
+    
+    
+    NSString* strStartDate = [eventData objectForKey:@"start_time"];
+    dateTime = [dateFormatter dateFromString:strStartDate];
+    NSString* strEndDate = [eventData objectForKey:@"end_time"];
+    NSDate* endDate = [dateFormatter dateFromString:strEndDate];
+    durationSeconds = [endDate timeIntervalSince1970] - [dateTime timeIntervalSince1970];
+    
+    NSDictionary* venueLocation = [venueData objectForKey:@"location"];
+    if ( [venueLocation objectForKey:@"latitude"] && [venueLocation objectForKey:@"longitude"])
+    {
+        double lat = [[venueLocation objectForKey:@"latitude"] doubleValue];
+        double lon = [[venueLocation objectForKey:@"longitude"] doubleValue];
+        location = [PFGeoPoint geoPointWithLatitude:lat longitude:lon];
+    }
+    strVenue = [venueLocation objectForKey:@"name"];
+    if ( ! strVenue )
+        strVenue = [venueData objectForKey:@"name"];
+    strAddress = [venueLocation objectForKey:@"street"];
+    
+    numAttendees = [[eventData objectForKey:@"attending_count"] intValue];
+    dateTimeExp = [NSDate dateWithTimeInterval:3600*24*7 sinceDate:dateTime];
     
     return self;
 }
 
 - (void) save
 {
+    // We're not changing or saving Facebook events nor creating our own as a copy
+    if ( bFacebookEvent )
+        return;
+    
     NSNumber* timestamp = [[NSNumber alloc] initWithDouble:[dateTime timeIntervalSince1970]];
     
     // For the first save we can't do it in the background because following objects
@@ -96,6 +144,8 @@
 
 -(NSUInteger)getUnreadMessagesCount
 {
+    if ( bFacebookEvent )
+        return 0;
     NSUInteger nOldCount = [globalData getConversationCount:strId];
     return numComments - nOldCount;
 }
@@ -125,24 +175,22 @@
     return 0.0f;
 }
 
-static UIViewController* tempController = nil;
-
 - (void)presentEventEditViewControllerWithEventStore:(EKEventStore*)eventStore
 {
     EKEvent *event  = [EKEvent eventWithEventStore:eventStore];
     event.title     = [strSubject stringByAppendingFormat:@" at %@", strVenue];
     event.startDate = dateTime;
-    event.endDate   = [[NSDate alloc] initWithTimeInterval:3600 sinceDate:event.startDate];
+    event.endDate   = [[NSDate alloc] initWithTimeInterval:durationSeconds sinceDate:event.startDate];
     event.location = strAddress;
     
     EKEventEditViewController* eventView = [[EKEventEditViewController alloc] initWithNibName:nil bundle:nil];
     [eventView setEventStore:eventStore];
     [eventView setEvent:event];
     
-    if ( tempController )
-    {
-        [tempController presentViewController:eventView animated:YES completion:nil];
-    }
+    ParseStarterProjectAppDelegate *delegate = AppDelegate;
+    UIViewController* controller = delegate.revealController;
+    
+    [controller presentViewController:eventView animated:YES completion:nil];
     
     eventView.editViewDelegate = self;
 }
@@ -225,18 +273,13 @@ static UIViewController* tempController = nil;
     [self addToCalendarInternal];
 }
 
--(void) addToCalendar:(UIViewController*)controller shouldAlert:(Boolean)alert
+-(void) addToCalendar
 {
-    tempController = controller;
-    
     // Already added
     if ( [self addedToCalendar] )
     {
-        if ( alert )
-        {
-            UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Calendar" message:@"This meetup is already added to your calendar." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil,nil];
-            [message show];
-        }
+        UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Calendar" message:@"This meetup is already added to your calendar." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil,nil];
+        [message show];
         return;
     }
     
@@ -254,7 +297,7 @@ static UIViewController* tempController = nil;
 {
     EKEventStore *eventStore = [[EKEventStore alloc] init];
     
-    NSDate* dateEnd = [[NSDate alloc] initWithTimeInterval:3600 sinceDate:dateTime];
+    NSDate* dateEnd = [[NSDate alloc] initWithTimeInterval:durationSeconds sinceDate:dateTime];
     NSPredicate *predicateForEvents = [eventStore predicateForEventsWithStartDate:dateTime endDate:dateEnd calendars:nil];
     
     NSArray *eventsFound = [eventStore eventsMatchingPredicate:predicateForEvents];
@@ -262,6 +305,7 @@ static UIViewController* tempController = nil;
     for (EKEvent *eventToCheck in eventsFound)
     {
         if ([eventToCheck.location isEqualToString:strAddress])
+            if ( [eventToCheck.title isEqualToString:[strSubject stringByAppendingFormat:@" at %@", strVenue]])
             return true;
     }
     
@@ -321,5 +365,10 @@ static UIViewController* tempController = nil;
         [attendees removeObjectIdenticalTo:str];
 }
 
+-(Boolean) passed
+{
+    return [dateTime compare:[NSDate dateWithTimeIntervalSinceNow:
+                              -(NSTimeInterval)durationSeconds]] == NSOrderedAscending;
+}
 
 @end

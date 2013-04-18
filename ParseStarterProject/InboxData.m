@@ -241,6 +241,16 @@ NSInteger sort2(id item1, id item2, void *context)
         NSMutableArray* uniqueInvites = [NSMutableArray arrayWithCapacity:30];
         for ( PFObject* inviteNew in objects )
         {
+            // Already subscribed
+            if ( [globalData isSubscribedToThread:[inviteNew objectForKey:@"meetupId"]])
+            {
+                // Saving as duplicate
+                NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_DUPLICATE];
+                [inviteNew setObject:inviteStatus forKey:@"status"];
+                [inviteNew saveInBackground];
+                continue;
+            }
+            
             Boolean bFound = false;
             for ( PFObject* inviteOld in uniqueInvites )
             {
@@ -259,6 +269,7 @@ NSInteger sort2(id item1, id item2, void *context)
             if ( ! bFound )
                 [uniqueInvites addObject:inviteNew];
         }
+                
         invites = uniqueInvites;
         
         // Loading stage complete

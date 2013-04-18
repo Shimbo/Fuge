@@ -6,7 +6,7 @@
 @interface ParseStarterProjectAppDelegate : NSObject <UIApplicationDelegate> {
 
     UIWindow *window;
-	UINavigationController *navigationController;
+	//UINavigationController *navigationController;
     Boolean bFirstActivation;
 }
 

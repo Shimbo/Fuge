@@ -47,6 +47,8 @@ typedef enum kEMeetupPrivacy
     NSUInteger  numAttendees;
     NSMutableArray* attendies;
     
+    Boolean     bFacebookEvent;
+    
     // Write only during save method and loading
     PFObject*   meetupData;
 }
@@ -66,6 +68,7 @@ typedef enum kEMeetupPrivacy
 @property (nonatomic, assign) NSUInteger numAttendees;
 @property (nonatomic, copy) NSMutableArray* attendees;
 @property (nonatomic, assign) NSUInteger durationSeconds;
+@property (nonatomic, assign) Boolean bFacebookEvent;
 
 @property (nonatomic, copy) PFObject *meetupData;
 
@@ -73,8 +76,10 @@ typedef enum kEMeetupPrivacy
 -(void) save;
 -(void) unpack:(PFObject*)data;
 
+-(id) initWithFbEvent:(NSDictionary*)eventData venue:(NSDictionary*)venueData;
+
 -(Boolean) addedToCalendar;
--(void) addToCalendar:(UIViewController*)controller shouldAlert:(Boolean)alert;
+-(void) addToCalendar;
 
 -(void)populateWithVenue:(FSVenue*)venue;
 -(void)populateWithCoords;
@@ -86,5 +91,7 @@ typedef enum kEMeetupPrivacy
 // Only in local version, not on server (separate cloud code)
 -(void)addAttendee:(NSString*)str;
 -(void)removeAttendee:(NSString*)str;
+
+-(Boolean) passed;
 
 @end
