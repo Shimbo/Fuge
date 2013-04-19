@@ -223,27 +223,36 @@ NSInteger sortByName(id num1, id num2, void *context)
                                      forKey:@"fbBirthday"];
             [[PFUser currentUser] setObject:[result objectForKey:@"gender"]
                                      forKey:@"fbGender"];
-            [[PFUser currentUser] save];
-                        
-            // Main load ended, send notification about it
-            nLoadStatusMain = LOAD_OK;
-            [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMainComplete
-                                                               object:nil];
-            
-            // FB friends, 2O friends, fb friends not installed the app
-            [self reloadFriendsInBackground];
-            
-            // Map data: random people, meetups, threads, etc - location based
-            [self reloadMapInfoInBackground:nil toNorthEast:nil];
-            
-            // FB Meetups
-            [self loadFBMeetups];
-            
-            // Inbox
-            [self reloadInboxInBackground];
-            
-            // Push channels initialization
-            [pushManager initChannelsFirstTime:[result objectForKey:@"id"]];
+            [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                
+                if ( error )
+                {
+                    NSLog(@"Uh oh. An error occurred: %@", error);
+                    [self loadingFailed:LOADING_MAIN status:LOAD_NOCONNECTION];
+                }
+                else
+                {
+                    // Main load ended, send notification about it
+                    nLoadStatusMain = LOAD_OK;
+                    [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMainComplete
+                                                                       object:nil];
+                    
+                    // FB friends, 2O friends, fb friends not installed the app
+                    [self reloadFriendsInBackground];
+                    
+                    // Map data: random people, meetups, threads, etc - location based
+                    [self reloadMapInfoInBackground:nil toNorthEast:nil];
+                    
+                    // FB Meetups
+                    [self loadFBMeetups];
+                    
+                    // Inbox
+                    [self reloadInboxInBackground];
+                    
+                    // Push channels initialization
+                    [pushManager initChannelsFirstTime:[result objectForKey:@"id"]];
+                }
+            }];
         }
     }];
 }
@@ -594,7 +603,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         if (error) {
             NSLog(@"Error: %@", [error localizedDescription]);
         } else {
-            NSLog(@"Result: %@", result);
+            //NSLog(@"Result: %@", result);
             
             NSArray* data = [result objectForKey:@"data"];
             NSArray* events = [((NSDictionary*) data[0]) objectForKey:@"fql_result_set"];
@@ -983,7 +992,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 - (void) setUserPosition:(PFGeoPoint*)geoPoint
 {
-    if ( [[PFUser currentUser] isAuthenticated] )
+    if ( [[PFUser currentUser] isAuthenticated] && geoPoint )
         [[PFUser currentUser] setObject:geoPoint forKey:@"location"];
 }
 
