@@ -70,6 +70,14 @@
     [defaultACL setPublicReadAccess:YES];
     [PFACL setDefaultACL:defaultACL withAccessForCurrentUser:YES];
     
+    // Zoom in animated
+    _backgroundImage.alpha = 0.0f;
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
+    [UIView setAnimationDuration:1.0];
+    _backgroundImage.alpha = 1.0f;
+    [UIView commitAnimations];
+    
     [self performSelector:@selector(loadSequencePart1) withObject:nil afterDelay:0.01f];
 }
 
@@ -166,12 +174,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    _backgroundImage.alpha = 0.0f;
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDuration:2.0];
-    _backgroundImage.alpha = 1.0f;
-    [UIView commitAnimations];
     
     [self animateHypno];
     
