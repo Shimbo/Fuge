@@ -193,6 +193,10 @@
 
 -(void) mainComplete
 {
+    // Turning on status bar
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
+    _backgroundImage.hidden = TRUE;
+    
     // Show profile window if it's new user
     if ( [globalVariables isNewUser] )
         [self proceedToProfile];
