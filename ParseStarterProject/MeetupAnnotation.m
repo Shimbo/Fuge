@@ -38,7 +38,6 @@
         
         self.meetup = meetup;
         
-        // Useful!!!
         BOOL passed = [meetup hasPassed]; // grey?
         BOOL attorsubsc; // orange or just blue?
         if (!passed) {

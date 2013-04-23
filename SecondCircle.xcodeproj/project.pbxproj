@@ -93,7 +93,6 @@
 		47D7CE3A170EB1FA00988F6A /* pinPerson@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 47D7CE39170EB1FA00988F6A /* pinPerson@2x.png */; };
 		4998650515BF305000803E05 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4998650415BF305000803E05 /* StoreKit.framework */; };
 		4C057322166AE74D00EF6FAD /* FacebookLogin.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C057321166AE74D00EF6FAD /* FacebookLogin.png */; };
-		4C057324166AEE0A00EF6FAD /* Background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4C057323166AEE0A00EF6FAD /* Background.jpg */; };
 		4C057326166AEF4800EF6FAD /* ProfileView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C057325166AEF4800EF6FAD /* ProfileView.xib */; };
 		4C05732A166AEF9B00EF6FAD /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C057328166AEF9B00EF6FAD /* ProfileViewController.m */; };
 		4C05733B166B73D900EF6FAD /* UserProfileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C057339166B73D900EF6FAD /* UserProfileController.m */; };
@@ -279,7 +278,6 @@
 		47D7CE39170EB1FA00988F6A /* pinPerson@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pinPerson@2x.png"; sourceTree = "<group>"; };
 		4998650415BF305000803E05 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		4C057321166AE74D00EF6FAD /* FacebookLogin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = FacebookLogin.png; path = resources/FacebookLogin.png; sourceTree = "<group>"; };
-		4C057323166AEE0A00EF6FAD /* Background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = Background.jpg; path = resources/Background.jpg; sourceTree = "<group>"; };
 		4C057325166AEF4800EF6FAD /* ProfileView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProfileView.xib; sourceTree = "<group>"; };
 		4C057327166AEF9A00EF6FAD /* ProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileViewController.h; sourceTree = "<group>"; };
 		4C057328166AEF9B00EF6FAD /* ProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileViewController.m; sourceTree = "<group>"; };
@@ -480,7 +478,6 @@
 				09ABC07E13A1D52D009C3FCF /* main.m */,
 				4C057321166AE74D00EF6FAD /* FacebookLogin.png */,
 				4CED2F6517206D850054E99A /* bg.png */,
-				4C057323166AEE0A00EF6FAD /* Background.jpg */,
 				09ABC08313A1D52D009C3FCF /* MainWindow.xib */,
 				4C08DDDE163C89A80093C851 /* MainWindow.xib */,
 			);
@@ -816,7 +813,6 @@
 				C4C51B591613CE0800959FDC /* Default@2x.png in Resources */,
 				4C08DDDF163C89A80093C851 /* MainWindow.xib in Resources */,
 				4C057322166AE74D00EF6FAD /* FacebookLogin.png in Resources */,
-				4C057324166AEE0A00EF6FAD /* Background.jpg in Resources */,
 				4C057326166AEF4800EF6FAD /* ProfileView.xib in Resources */,
 				4C05733C166B73D900EF6FAD /* UserProfile.xib in Resources */,
 				4CFE78C9166BBA7900E1BF72 /* FilterView.xib in Resources */,

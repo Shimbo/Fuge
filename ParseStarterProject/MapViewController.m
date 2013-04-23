@@ -51,7 +51,7 @@
                                                 name:kLoadingCirclesFailed
                                                 object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self
-                                                selector:@selector(viewOpened)
+                                                selector:@selector(reloadStatusChanged)
                                                 name:kAppRestored
                                                 object:nil];
     }

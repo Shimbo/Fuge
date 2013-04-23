@@ -166,6 +166,8 @@
     
     // Creating comment
     [globalData createCommentForMeetup:_meetup commentType:COMMENT_SAVED commentText:nil];
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)next {
