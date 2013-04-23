@@ -18,6 +18,7 @@
 - (void)reloadInboxInBackground
 {
     nInboxLoadingStage = 0;
+    nLoadStatusInbox = LOAD_STARTED;
     
     // Invites
     [self loadInvites];
@@ -43,7 +44,7 @@ NSInteger sort2(id item1, id item2, void *context)
 - (NSMutableDictionary*) getInbox
 {
     // Still loading
-    if ( ! [self isInboxLoaded] )
+    if ( ! [self getLoadingStatus:LOADING_INBOX] == LOAD_OK )
         return nil;
     
     // Gathering data
@@ -190,17 +191,14 @@ NSInteger sort2(id item1, id item2, void *context)
     return inbox;
 }
 
-- (Boolean)isInboxLoaded
-{
-    return ( nInboxLoadingStage == INBOX_LOADED );
-}
-
 - (void) incrementInboxLoadingStage
 {
     nInboxLoadingStage++;
     
-    if ( [self isInboxLoaded] )
+    if ( nInboxLoadingStage == INBOX_LOADED )
     {
+        nLoadStatusInbox = LOAD_OK;
+        
         [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingInboxComplete
                                                            object:nil];
         [self postInboxUnreadCountDidUpdate];
@@ -237,43 +235,51 @@ NSInteger sort2(id item1, id item2, void *context)
     // Loading
     [invitesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
-        // Creating list of unique invites (only 1 per meetup)
-        NSMutableArray* uniqueInvites = [NSMutableArray arrayWithCapacity:30];
-        for ( PFObject* inviteNew in objects )
+        if ( error )
         {
-            // Already subscribed
-            if ( [globalData isSubscribedToThread:[inviteNew objectForKey:@"meetupId"]])
+            NSLog(@"Uh oh. An error occurred: %@", error);
+            [self loadingFailed:LOADING_INBOX status:LOAD_NOCONNECTION];
+        }
+        else
+        {
+            // Creating list of unique invites (only 1 per meetup)
+            NSMutableArray* uniqueInvites = [NSMutableArray arrayWithCapacity:30];
+            for ( PFObject* inviteNew in objects )
             {
-                // Saving as duplicate
-                NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_DUPLICATE];
-                [inviteNew setObject:inviteStatus forKey:@"status"];
-                [inviteNew saveInBackground];
-                continue;
-            }
-            
-            Boolean bFound = false;
-            for ( PFObject* inviteOld in uniqueInvites )
-            {
-                if ( [[inviteNew objectForKey:@"meetupId"] compare:[inviteOld objectForKey:@"meetupId"]] == NSOrderedSame )
+                // Already subscribed
+                if ( [globalData isSubscribedToThread:[inviteNew objectForKey:@"meetupId"]])
                 {
-                    bFound = true;
-                    
                     // Saving as duplicate
                     NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_DUPLICATE];
                     [inviteNew setObject:inviteStatus forKey:@"status"];
                     [inviteNew saveInBackground];
-                    
-                    break;
+                    continue;
                 }
-            }
-            if ( ! bFound )
-                [uniqueInvites addObject:inviteNew];
-        }
                 
-        invites = uniqueInvites;
-        
-        // Loading stage complete
-        [self incrementInboxLoadingStage];
+                Boolean bFound = false;
+                for ( PFObject* inviteOld in uniqueInvites )
+                {
+                    if ( [[inviteNew objectForKey:@"meetupId"] compare:[inviteOld objectForKey:@"meetupId"]] == NSOrderedSame )
+                    {
+                        bFound = true;
+                        
+                        // Saving as duplicate
+                        NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_DUPLICATE];
+                        [inviteNew setObject:inviteStatus forKey:@"status"];
+                        [inviteNew saveInBackground];
+                        
+                        break;
+                    }
+                }
+                if ( ! bFound )
+                    [uniqueInvites addObject:inviteNew];
+            }
+            
+            invites = uniqueInvites;
+            
+            // Loading stage complete
+            [self incrementInboxLoadingStage];
+        }
     }];
 }
 
@@ -358,11 +364,19 @@ NSInteger sort2(id item1, id item2, void *context)
     // Loading
     [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
-        // Comments
-        comments = [[NSMutableArray alloc] initWithArray:objects];
-        
-        // Loading stage complete
-        [self incrementInboxLoadingStage];
+        if ( error )
+        {
+            NSLog(@"Uh oh. An error occurred: %@", error);
+            [self loadingFailed:LOADING_INBOX status:LOAD_NOCONNECTION];
+        }
+        else
+        {
+            // Comments
+            comments = [[NSMutableArray alloc] initWithArray:objects];
+            
+            // Loading stage complete
+            [self incrementInboxLoadingStage];
+        }
     }];
 }
 

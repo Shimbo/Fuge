@@ -35,12 +35,20 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         [[NSNotificationCenter defaultCenter]addObserver:self
-                                                selector:@selector(reloadFinished)
+                                                selector:@selector(reloadStatusChanged)
                                                 name:kLoadingMapComplete
                                                 object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self
-                                                selector:@selector(reloadFinished)
+                                                selector:@selector(reloadStatusChanged)
                                                 name:kLoadingCirclesComplete
+                                                object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(reloadStatusChanged)
+                                                name:kLoadingMapFailed
+                                                object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(reloadStatusChanged)
+                                                name:kLoadingCirclesFailed
                                                 object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self
                                                 selector:@selector(viewOpened)
@@ -124,30 +132,24 @@
     [globalData reloadMapInfoInBackground:southWest toNorthEast:northEast];
 }
 
-- (void) reloadFinished
+- (void) reloadStatusChanged
 {
     // UI
-    if ( [globalData areCirclesLoaded] && [globalData isMapLoaded] )
+    if ( [globalData getLoadingStatus:LOADING_CIRCLES] != LOAD_STARTED &&
+            [globalData getLoadingStatus:LOADING_MAP] != LOAD_STARTED )
     {
         _reloadButton.hidden = FALSE;
         self.navigationController.view.userInteractionEnabled = YES;
         [self.activityIndicator stopAnimating];
     }
-    
-    // Refresh map
-    [self reloadMapAnnotations];
-}
-
-- (void) viewOpened
-{
-    // Data updating
-    if ( ! [globalData isMapLoaded] )
+    else
     {
         [self.activityIndicator startAnimating];
         _reloadButton.hidden = TRUE;
     }
-    else
-        [self reloadFinished];
+    
+    // Refresh map
+    [self reloadMapAnnotations];
 }
 
 - (void)viewDidLoad
@@ -194,7 +196,7 @@
     [mapView setRegion:region animated:YES];
     
     // Data updating
-    [self viewOpened];
+    [self reloadStatusChanged];
     
     [TestFlight passCheckpoint:@"Map"];
 }

@@ -30,6 +30,10 @@
                                                 selector:@selector(refreshData)
                                                 name:kLoadingInboxComplete
                                                 object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(loadingFailed)
+                                                name:kLoadingInboxFailed
+                                                object:nil];
     }
     return self;
 }
@@ -57,7 +61,7 @@
     [TestFlight passCheckpoint:@"Inbox opened"];
     
     // Loading or updating UI
-    if ( [globalData isInboxLoaded] )
+    if ( [globalData getLoadingStatus:LOADING_INBOX] != LOAD_STARTED )
     {
         [self refreshData];
     }
@@ -88,6 +92,11 @@
     
     if ( inbox )
         [[self tableView] reloadData];
+}
+
+- (void) loadingFailed {
+    [self.activityIndicator stopAnimating];
+    self.navigationController.view.userInteractionEnabled = TRUE;
 }
 
 

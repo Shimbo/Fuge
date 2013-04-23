@@ -24,6 +24,6 @@
 @property (strong, nonatomic) IBOutlet UIButton *reloadButton;
 
 - (IBAction)reloadTap:(id)sender;
-- (void) reloadFinished;
+- (void) reloadStatusChanged;
 
 @end

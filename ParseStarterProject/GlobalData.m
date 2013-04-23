@@ -47,7 +47,8 @@ static GlobalData *sharedInstance = nil;
         newFriendsFb = nil;
         newFriends2O = nil;
         nLoadStatusMain = LOAD_STARTED;
-        nLoadStatusSecondary = LOAD_STARTED;
+        nLoadStatusMap = LOAD_STARTED;
+        nLoadStatusCircles = LOAD_STARTED;
         nLoadStatusInbox = LOAD_STARTED;
     }
     
@@ -175,9 +176,19 @@ NSInteger sortByName(id num1, id num2, void *context)
             [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMainFailed
                                                                object:nil];
             break;
-        case LOADING_SECONDARY:
-            nLoadStatusSecondary = nStatus;
-            [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingSecondaryFailed
+        case LOADING_MAP:
+            nLoadStatusMap = nStatus;
+            [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMapFailed
+                                                               object:nil];
+            break;
+        case LOADING_CIRCLES:
+            nLoadStatusCircles = nStatus;
+            [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingCirclesFailed
+                                                               object:nil];
+            break;
+        case LOADING_INBOX:
+            nLoadStatusInbox = nStatus;
+            [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingInboxFailed
                                                                object:nil];
             break;
     }
@@ -189,8 +200,12 @@ NSInteger sortByName(id num1, id num2, void *context)
     {
         case LOADING_MAIN:
             return nLoadStatusMain;
-        case LOADING_SECONDARY:
-            return nLoadStatusSecondary;
+        case LOADING_MAP:
+            return nLoadStatusMap;
+        case LOADING_CIRCLES:
+            return nLoadStatusCircles;
+        case LOADING_INBOX:
+            return nLoadStatusInbox;
     }
     return LOAD_OK;
 }
@@ -234,8 +249,7 @@ NSInteger sortByName(id num1, id num2, void *context)
                 {
                     // Main load ended, send notification about it
                     nLoadStatusMain = LOAD_OK;
-                    [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMainComplete
-                                                                       object:nil];
+                    [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMainComplete object:nil];
                     
                     // FB friends, 2O friends, fb friends not installed the app
                     [self reloadFriendsInBackground];
@@ -261,6 +275,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 - (void)reloadFriendsInBackground
 {
     nCirclesLoadingStage = 0;
+    nLoadStatusCircles = LOAD_STARTED;
     
     FBRequest *request2 = [FBRequest requestForMyFriends];
     [request2 startWithCompletionHandler:^(FBRequestConnection *connection,
@@ -269,7 +284,7 @@ NSInteger sortByName(id num1, id num2, void *context)
          if ( error )
          {
              NSLog(@"Uh oh. An error occurred: %@", error);
-             [self loadingFailed:LOADING_SECONDARY status:LOAD_NOFACEBOOK];
+             [self loadingFailed:LOADING_CIRCLES status:LOAD_NOFACEBOOK];
          }
          else
          {
@@ -283,6 +298,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 - (void)reloadMapInfoInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast
 {
     nMapLoadingStage = 0;
+    nLoadStatusMap = LOAD_STARTED;
     
     // Random friends
     [self loadRandomPeopleInBackground:southWest toNorthEast:northEast];
@@ -355,8 +371,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         if ( error )
         {
             NSLog(@"error:%@", error);
-            [self loadingFailed:LOADING_SECONDARY status:LOAD_NOCONNECTION];
-            [self incrementCirclesLoadingStage]; // because we will skip 2O stage that loads in bg
+            [self loadingFailed:LOADING_CIRCLES status:LOAD_NOCONNECTION];
         }
         else
         {
@@ -424,7 +439,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         if ( error )
         {
             NSLog(@"error:%@", error);
-            [self loadingFailed:LOADING_SECONDARY status:LOAD_NOCONNECTION];
+            [self loadingFailed:LOADING_CIRCLES status:LOAD_NOCONNECTION];
         }
         else
         {
@@ -479,7 +494,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         if ( error )
         {
             NSLog(@"error:%@", error);
-            [self loadingFailed:LOADING_SECONDARY status:LOAD_NOCONNECTION];
+            [self loadingFailed:LOADING_MAP status:LOAD_NOCONNECTION];
         }
         else
         {
@@ -671,7 +686,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         if ( error )
         {
             NSLog(@"error:%@", error);
-            [self loadingFailed:LOADING_SECONDARY status:LOAD_NOCONNECTION];
+            [self loadingFailed:LOADING_MAP status:LOAD_NOCONNECTION];
         }
         else
         {
@@ -699,7 +714,7 @@ NSInteger sortByName(id num1, id num2, void *context)
             if ( error )
             {
                 NSLog(@"error:%@", error);
-                [self loadingFailed:LOADING_SECONDARY status:LOAD_NOCONNECTION];
+                [self loadingFailed:LOADING_MAP status:LOAD_NOCONNECTION];
             }
             else
             {
@@ -1002,32 +1017,28 @@ NSInteger sortByName(id num1, id num2, void *context)
     [newFriends2O removeObject:strUser];
 }
 
-- (Boolean)isMapLoaded
-{
-    return ( nMapLoadingStage == MAP_LOADED );
-}
-
-- (Boolean)areCirclesLoaded
-{
-    return ( nCirclesLoadingStage == CIRCLES_LOADED );
-}
-
 - (void) incrementMapLoadingStage
 {
     nMapLoadingStage++;
     
-    if ( [self isMapLoaded] )
+    if ( nMapLoadingStage == MAP_LOADED )
+    {
+        nLoadStatusMap = LOAD_OK;
         [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMapComplete
                                                            object:nil];
+    }
 }
 
 - (void) incrementCirclesLoadingStage
 {
     nCirclesLoadingStage++;
     
-    if ( [self areCirclesLoaded] )
+    if ( nCirclesLoadingStage == CIRCLES_LOADED )
+    {
+        nLoadStatusCircles = LOAD_OK;
         [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingCirclesComplete
                                                            object:nil];
+    }
 }
 
 
