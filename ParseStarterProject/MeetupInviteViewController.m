@@ -39,10 +39,6 @@
     // Creating invites
     if ( meetup )
     {
-        // Adding to calendar here
-        if ( bNewMeetup && meetup.meetupType == TYPE_MEETUP )
-            [meetup addToCalendar:self shouldAlert:YES];
-        
         for ( Person* person in [self selectedPersons])
             [globalData createInvite:meetup objectTo:nil stringTo:person.strId];
         // TODO for Misha: try to find appropriate PFUser* for this strId to make invite protected for existing users
@@ -53,7 +49,11 @@
     [arrayRecentIds addObjectsFromArray:[[self selectedPersons] valueForKeyPath:@"strId"]];
     [globalData addRecentInvites:arrayRecentIds];
     
-    [self dismissViewControllerAnimated:YES completion:nil];
+    // Adding to calendar here
+    [self dismissViewControllerAnimated:YES completion:^{
+        if ( bNewMeetup && meetup.meetupType == TYPE_MEETUP )
+            [meetup addToCalendar];
+    }];
 }
 
 - (void)viewDidLoad

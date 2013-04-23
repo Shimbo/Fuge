@@ -24,6 +24,7 @@
 #import "MeetupInviteViewController.h"
 #import "SCAnnotationView.h"
 #import "REVClusterAnnotationView.h"
+#import "LocationManager.h"
 
 @implementation MapViewController
 
@@ -34,12 +35,20 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         [[NSNotificationCenter defaultCenter]addObserver:self
-                                                selector:@selector(reloadFinished)
+                                                selector:@selector(reloadStatusChanged)
                                                 name:kLoadingMapComplete
                                                 object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self
-                                                selector:@selector(reloadFinished)
+                                                selector:@selector(reloadStatusChanged)
                                                 name:kLoadingCirclesComplete
+                                                object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(reloadStatusChanged)
+                                                name:kLoadingMapFailed
+                                                object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(reloadStatusChanged)
+                                                name:kLoadingCirclesFailed
                                                 object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self
                                                 selector:@selector(viewOpened)
@@ -123,30 +132,24 @@
     [globalData reloadMapInfoInBackground:southWest toNorthEast:northEast];
 }
 
-- (void) reloadFinished
+- (void) reloadStatusChanged
 {
     // UI
-    if ( [globalData areCirclesLoaded] && [globalData isMapLoaded] )
+    if ( [globalData getLoadingStatus:LOADING_CIRCLES] != LOAD_STARTED &&
+            [globalData getLoadingStatus:LOADING_MAP] != LOAD_STARTED )
     {
         _reloadButton.hidden = FALSE;
         self.navigationController.view.userInteractionEnabled = YES;
         [self.activityIndicator stopAnimating];
     }
-    
-    // Refresh map
-    [self reloadMapAnnotations];
-}
-
-- (void) viewOpened
-{
-    // Data updating
-    if ( ! [globalData isMapLoaded] )
+    else
     {
         [self.activityIndicator startAnimating];
         _reloadButton.hidden = TRUE;
     }
-    else
-        [self reloadFinished];
+    
+    // Refresh map
+    [self reloadMapAnnotations];
 }
 
 - (void)viewDidLoad
@@ -168,24 +171,32 @@
     
     // Setting user location
     PFGeoPoint *geoPointUser = [[PFUser currentUser] objectForKey:@"location"];
+    float span = 0.05f;
+    
+    // Tracking mode
     if ( geoPointUser )
-    {
         [mapView setUserTrackingMode:MKUserTrackingModeNone animated:FALSE];
-        
-        CLLocation* locationUser = [[CLLocation alloc] initWithLatitude:geoPointUser.latitude longitude:geoPointUser.longitude];
-        
-        MKCoordinateRegion region = { {0.0, 0.0 }, { 0.0, 0.0 } };
-        region.center.latitude = locationUser.coordinate.latitude;//..mapView.userLocation.location.coordinate.latitude;
-        region.center.longitude = locationUser.coordinate.longitude;//mapView.userLocation.location.coordinate.longitude;
-        region.span.longitudeDelta = 0.05f;
-        region.span.latitudeDelta = 0.05f;
-        [mapView setRegion:region animated:YES];
-    }
     else
         [mapView setUserTrackingMode:MKUserTrackingModeFollow animated:TRUE];
     
+    // Default position
+    if ( ! geoPointUser )
+    {
+        geoPointUser = [locManager getDefaultPosition];
+        span = 0.25f;
+    }
+    
+    // Default map location
+    CLLocation* locationUser = [[CLLocation alloc] initWithLatitude:geoPointUser.latitude longitude:geoPointUser.longitude];
+    MKCoordinateRegion region = { {0.0, 0.0 }, { 0.0, 0.0 } };
+    region.center.latitude = locationUser.coordinate.latitude;//..mapView.userLocation.location.coordinate.latitude;
+    region.center.longitude = locationUser.coordinate.longitude;//mapView.userLocation.location.coordinate.longitude;
+    region.span.longitudeDelta = span;
+    region.span.latitudeDelta = span;
+    [mapView setRegion:region animated:YES];
+    
     // Data updating
-    [self viewOpened];
+    [self reloadStatusChanged];
     
     [TestFlight passCheckpoint:@"Map"];
 }
@@ -264,7 +275,6 @@
 
 -(MKAnnotationView *)mapView:(MKMapView *)mV viewForAnnotation:(id <MKAnnotation>)annotation
 {
-    
     REVClusterPin *pin = (REVClusterPin *)annotation;
     if (annotation != mapView.userLocation)
     {
@@ -295,8 +305,6 @@
             pinView.canShowCallout = YES;
             return pinView;
         }
-
-        
     }
     else {
         [mapView.userLocation setTitle:@"I am here"];
@@ -321,9 +329,6 @@
             [meetupController setMeetup:((MeetupAnnotation*) view.annotation).meetup];
             [self.navigationController pushViewController:meetupController animated:YES];
         }
-
-        
-        
     }
 }
 

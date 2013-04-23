@@ -30,6 +30,10 @@
                                                 selector:@selector(refreshData)
                                                 name:kLoadingInboxComplete
                                                 object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(loadingFailed)
+                                                name:kLoadingInboxFailed
+                                                object:nil];
     }
     return self;
 }
@@ -57,7 +61,7 @@
     [TestFlight passCheckpoint:@"Inbox opened"];
     
     // Loading or updating UI
-    if ( [globalData isInboxLoaded] )
+    if ( [globalData getLoadingStatus:LOADING_INBOX] != LOAD_STARTED )
     {
         [self refreshData];
     }
@@ -88,6 +92,11 @@
     
     if ( inbox )
         [[self tableView] reloadData];
+}
+
+- (void) loadingFailed {
+    [self.activityIndicator stopAnimating];
+    self.navigationController.view.userInteractionEnabled = TRUE;
 }
 
 
@@ -135,7 +144,7 @@
     inboxCell.subject.text = item.subject;
     inboxCell.message.text = item.message;
     inboxCell.misc.text = item.misc;
-    if ( [item.fromId compare:strCurrentUserId] == NSOrderedSame || item.type == INBOX_ITEM_INVITE || item.type == INBOX_ITEM_COMMENT )
+    if ( [item.fromId compare:strCurrentUserId] == NSOrderedSame && item.type != INBOX_ITEM_COMMENT )
         [inboxCell.mainImage loadImageFromURL:[Person imageURLWithId:item.toId]];
     else
         [inboxCell.mainImage loadImageFromURL:[Person imageURLWithId:item.fromId]];

@@ -1,5 +1,4 @@
 #import <Parse/Parse.h>
-#import "TestFlightSDK/TestFlight.h"
 #import "ParseStarterProjectAppDelegate.h"
 #import "RootViewController.h"
 #import "Circle.h"
@@ -16,9 +15,10 @@
 #pragma mark - UIApplicationDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-   
-    NSLog(@"%@", launchOptions);
-
+    
+    if ( launchOptions )
+        NSLog(@"Launch options: %@", launchOptions);
+    
     self.imageCache = [[NSCache alloc]init];
     [self.imageCache setCountLimit:90];
     
@@ -26,31 +26,6 @@
     [self.circledImageCache setCountLimit:90];
     
     bFirstActivation = true;
-    
-    // Testflight
-#ifndef RELEASE
-    [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
-#endif
-    @try {
-        [TestFlight takeOff:@"d42a1f02-bb75-4c1e-896e-e0e4f41daf17"];
-    }
-    @catch (NSException *exception) {
-        NSLog(@"TestFlight error: %@",exception);
-    }
-    [TestFlight passCheckpoint:@"Initialization started"];
-    
-    // Parse
-    [Parse setApplicationId:@"VMhSG8IQ9xibufk8lAPpclIwdXVfYD44OpKmsHdn"
-                  clientKey:@"u2kJ1jWBjN9qY3ARlJuEyNkvUA9EjOMv1R4w5sDX"];
-    
-    // Facebook
-    [PFFacebookUtils initializeFacebook];
-    
-    // ACL
-    PFACL *defaultACL = [PFACL ACL];
-    // If you would like all objects to be private by default, remove this line.
-    [defaultACL setPublicReadAccess:YES];
-    [PFACL setDefaultACL:defaultACL withAccessForCurrentUser:YES];
     
     // Left menu
     LeftMenuController *leftMenu = [[LeftMenuController alloc]init];
@@ -67,8 +42,6 @@
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|
                                                     UIRemoteNotificationTypeAlert|
                                                     UIRemoteNotificationTypeSound];
-    
-    [TestFlight passCheckpoint:@"Basic initialization ended"];
     
     return YES;
 }

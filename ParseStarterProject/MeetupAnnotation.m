@@ -74,7 +74,9 @@
         self.attendedPersons = [NSMutableArray arrayWithCapacity:2];
     }
     
-    if ([self.meetup.strOwnerId isEqualToString:person.strId]) {
+    // Changed priority from owner to user
+//    if ([self.meetup.strOwnerId isEqualToString:person.strId]) {
+    if ([strCurrentUserId isEqualToString:person.strId]) {
         if (self.attendedPersons.count) {
             [self.attendedPersons insertObject:person atIndex:0];
             return;
@@ -82,8 +84,6 @@
     }
     
     [self.attendedPersons addObject:person];
-    
-
 }
 @end
 

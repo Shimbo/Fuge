@@ -12,6 +12,7 @@
 #import "MapViewController.h"
 #import "FSVenue.h"
 #import "Message.h"
+#import "LocationManager.h"
 
 @implementation GlobalData
 
@@ -46,7 +47,8 @@ static GlobalData *sharedInstance = nil;
         newFriendsFb = nil;
         newFriends2O = nil;
         nLoadStatusMain = LOAD_STARTED;
-        nLoadStatusSecondary = LOAD_STARTED;
+        nLoadStatusMap = LOAD_STARTED;
+        nLoadStatusCircles = LOAD_STARTED;
         nLoadStatusInbox = LOAD_STARTED;
     }
     
@@ -171,12 +173,41 @@ NSInteger sortByName(id num1, id num2, void *context)
     {
         case LOADING_MAIN:
             nLoadStatusMain = nStatus;
+            [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMainFailed
+                                                               object:nil];
             break;
-        case LOADING_SECONDARY:
-            nLoadStatusSecondary = nStatus;
-            // Show no connection bubble
+        case LOADING_MAP:
+            nLoadStatusMap = nStatus;
+            [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMapFailed
+                                                               object:nil];
+            break;
+        case LOADING_CIRCLES:
+            nLoadStatusCircles = nStatus;
+            [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingCirclesFailed
+                                                               object:nil];
+            break;
+        case LOADING_INBOX:
+            nLoadStatusInbox = nStatus;
+            [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingInboxFailed
+                                                               object:nil];
             break;
     }
+}
+
+- (NSUInteger) getLoadingStatus:(NSUInteger)nStage
+{
+    switch ( nStage )
+    {
+        case LOADING_MAIN:
+            return nLoadStatusMain;
+        case LOADING_MAP:
+            return nLoadStatusMap;
+        case LOADING_CIRCLES:
+            return nLoadStatusCircles;
+        case LOADING_INBOX:
+            return nLoadStatusInbox;
+    }
+    return LOAD_OK;
 }
 
 - (void)loadData
@@ -207,27 +238,35 @@ NSInteger sortByName(id num1, id num2, void *context)
                                      forKey:@"fbBirthday"];
             [[PFUser currentUser] setObject:[result objectForKey:@"gender"]
                                      forKey:@"fbGender"];
-            [[PFUser currentUser] save];
-                        
-            // Main load ended, send notification about it
-            nLoadStatusMain = LOAD_OK;
-            [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMainComplete
-                                                               object:nil];
-            
-            // FB friends, 2O friends, fb friends not installed the app
-            [self reloadFriendsInBackground];
-            
-            // Map data: random people, meetups, threads, etc - location based
-            [self reloadMapInfoInBackground:nil toNorthEast:nil];
-            
-            // FB Meetups
-            [self loadFBMeetups];
-            
-            // Inbox
-            [self reloadInboxInBackground];
-            
-            // Push channels initialization
-            [pushManager initChannelsFirstTime:[result objectForKey:@"id"]];
+            [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                
+                if ( error )
+                {
+                    NSLog(@"Uh oh. An error occurred: %@", error);
+                    [self loadingFailed:LOADING_MAIN status:LOAD_NOCONNECTION];
+                }
+                else
+                {
+                    // Main load ended, send notification about it
+                    nLoadStatusMain = LOAD_OK;
+                    [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMainComplete object:nil];
+                    
+                    // FB friends, 2O friends, fb friends not installed the app
+                    [self reloadFriendsInBackground];
+                    
+                    // Map data: random people, meetups, threads, etc - location based
+                    [self reloadMapInfoInBackground:nil toNorthEast:nil];
+                    
+                    // FB Meetups
+                    [self loadFBMeetups];
+                    
+                    // Inbox
+                    [self reloadInboxInBackground];
+                    
+                    // Push channels initialization
+                    [pushManager initChannelsFirstTime:[result objectForKey:@"id"]];
+                }
+            }];
         }
     }];
 }
@@ -236,6 +275,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 - (void)reloadFriendsInBackground
 {
     nCirclesLoadingStage = 0;
+    nLoadStatusCircles = LOAD_STARTED;
     
     FBRequest *request2 = [FBRequest requestForMyFriends];
     [request2 startWithCompletionHandler:^(FBRequestConnection *connection,
@@ -244,7 +284,7 @@ NSInteger sortByName(id num1, id num2, void *context)
          if ( error )
          {
              NSLog(@"Uh oh. An error occurred: %@", error);
-             [self loadingFailed:LOADING_SECONDARY status:LOAD_NOFACEBOOK];
+             [self loadingFailed:LOADING_CIRCLES status:LOAD_NOFACEBOOK];
          }
          else
          {
@@ -258,6 +298,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 - (void)reloadMapInfoInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast
 {
     nMapLoadingStage = 0;
+    nLoadStatusMap = LOAD_STARTED;
     
     // Random friends
     [self loadRandomPeopleInBackground:southWest toNorthEast:northEast];
@@ -330,8 +371,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         if ( error )
         {
             NSLog(@"error:%@", error);
-            [self loadingFailed:LOADING_SECONDARY status:LOAD_NOCONNECTION];
-            [self incrementCirclesLoadingStage]; // because we will skip 2O stage that loads in bg
+            [self loadingFailed:LOADING_CIRCLES status:LOAD_NOCONNECTION];
         }
         else
         {
@@ -399,7 +439,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         if ( error )
         {
             NSLog(@"error:%@", error);
-            [self loadingFailed:LOADING_SECONDARY status:LOAD_NOCONNECTION];
+            [self loadingFailed:LOADING_CIRCLES status:LOAD_NOCONNECTION];
         }
         else
         {
@@ -438,8 +478,8 @@ NSInteger sortByName(id num1, id num2, void *context)
     {
         PFGeoPoint* ptUser = [[PFUser currentUser] objectForKey:@"location"];
         if ( ! ptUser )
-            return;
-
+            ptUser = [locManager getDefaultPosition];
+        
         [friendAnyQuery whereKey:@"location" nearGeoPoint:ptUser withinKilometers:RANDOM_PERSON_KILOMETERS];
     }
     else
@@ -454,7 +494,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         if ( error )
         {
             NSLog(@"error:%@", error);
-            [self loadingFailed:LOADING_SECONDARY status:LOAD_NOCONNECTION];
+            [self loadingFailed:LOADING_MAP status:LOAD_NOCONNECTION];
         }
         else
         {
@@ -564,73 +604,51 @@ NSInteger sortByName(id num1, id num2, void *context)
 // Under construction!
 - (void)loadFBMeetups
 {
-    return;
+    NSString *query =
+    @"{"
+    @"'event_info':'SELECT eid, venue, name, start_time, end_time, creator, host, attending_count from event WHERE eid in (SELECT eid FROM event_member WHERE uid = me())',"
+    @"'event_venue':'SELECT name, location, page_id FROM page WHERE page_id IN (SELECT venue.id FROM #event_info)',"
+    @"}";
+    NSDictionary *queryParam = [NSDictionary dictionaryWithObjectsAndKeys:
+                                query, @"q", nil];
     
-    //    FBRequest *request = [FBRequest requestForMe];
-    //    [request startWithCompletionHandler:^(FBRequestConnection *connection,
-    //                                          id result, NSError *error) {
-    
-    // Facebook events
-    //    [self.facebook authorize:[NSArray arrayWithObjects:@"user_events",
-    //                              @"friends_events",  nil]];
-    
-    //NSArray *permissions = [[NSArray alloc] initWithObjects: @"user_events", nil];
-    //[FBSession openActiveSessionWithReadPermissions:permissions allowLoginUI:YES completionHandler:nil];
-    //NSLog(@"permissions::%@",FBSession.activeSession.permissions);
-    
-    /*FBRequest *friendRequest = [FBRequest requestForGraphPath:@"me/friends?fields=name,picture,birthday,location"];
-     [ friendRequest startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-     NSArray *data = [result objectForKey:@"data"];
-     for (FBGraphObject<FBGraphUser> *friend in data) {
-     NSLog(@"%@:%@", [friend name],[friend birthday]);
-     }}];*/
-    
-    // pic_small,pic_big,
-    
-    //name,description,eid,
-    //location
-    // id,latitude,longitude,located_in
-    
-    NSString* fql1 = [NSString stringWithFormat:
-                      @"SELECT venue from event WHERE eid in (SELECT eid FROM event_member WHERE uid = me())"];
-    NSString* fql2 = [NSString stringWithFormat:
-                      @"SELECT name FROM page WHERE page_id IN (SELECT venue.id FROM #event_info)"];
-    NSString* fqlStr = [NSString stringWithFormat:
-                        @"{\"event_info\":\"%@\",\"event_venue\":\"%@\"}",fql1,fql2];
-    NSDictionary* params = [NSDictionary dictionaryWithObject:fqlStr forKey:@"queries"];
-    
-    
-    //FBRequest *fql = [FBRequest requestForGraphPath:@"fql.multiquery"];
-    FBRequest *fql = [FBRequest requestWithGraphPath:@"fql.query" parameters:params HTTPMethod:@"POST"];
-    
-    [fql startWithCompletionHandler:^(FBRequestConnection *connection,
-                                      id result,
-                                      NSError *error) {
-        if (result) {
-            NSLog(@"result:%@", result);
-        }
+    [FBRequestConnection startWithGraphPath:@"/fql" parameters:queryParam
+                        HTTPMethod:@"GET" completionHandler:^(FBRequestConnection *connection,
+                        id result, NSError *error) {
         if (error) {
-            NSLog(@"error:%@", error);
+            NSLog(@"Error: %@", [error localizedDescription]);
+        } else {
+            //NSLog(@"Result: %@", result);
+            
+            NSArray* data = [result objectForKey:@"data"];
+            NSArray* events = [((NSDictionary*) data[0]) objectForKey:@"fql_result_set"];
+            NSArray* venues = [((NSDictionary*) data[1]) objectForKey:@"fql_result_set"];
+            
+            for ( NSDictionary* event in events )
+            {
+                for ( NSDictionary* venue in venues )
+                {
+                    NSDictionary* eventVenue = [event objectForKey:@"venue"];
+                    if ( ! eventVenue )
+                        break;
+                    NSString* eventVenueId = [eventVenue objectForKey:@"id"];
+                    if ( ! eventVenueId )
+                        break;
+                    NSDictionary* venueLocation = [venue objectForKey:@"location"];
+                    if ( ! venueLocation )
+                        break;
+                    NSString* venueId = [venue objectForKey:@"page_id"];
+                    if ( ! venueId )
+                        break;
+                    if ( [eventVenueId compare:venueId] == NSOrderedSame )
+                    {
+                        Meetup* meetup = [[Meetup alloc] initWithFbEvent:event venue:venue];
+                        [self addMeetup:meetup];
+                    }
+                }
+            }
         }
     }];
-    
-    FBRequest *request = [FBRequest requestForGraphPath:@"me/events"];
-    [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-        /*
-        NSArray* events = [result objectForKey:@"data"];
-        
-                for ( FBGraphObject* event in events )
-         {
-         NSLog(@"%@", [event objectForKey:@"id"] );
-         NSDictionary* venue = [event objectForKey:@"venue"];
-         if ( venue )
-         NSLog(@"%d", [[venue objectForKey:@"latitude"] integerValue] );
-         }*/
-        
-    }];
-    
-    //[self.facebook requestWithGraphPath:@"me/events" andDelegate:friendsVC];
-
 }
 
 - (void)loadMeetupsInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast
@@ -643,7 +661,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     {
         PFGeoPoint* ptUser = [[PFUser currentUser] objectForKey:@"location"];
         if ( ! ptUser )
-            return;
+            ptUser = [locManager getDefaultPosition];
 
         [meetupAnyQuery whereKey:@"location" nearGeoPoint:ptUser withinKilometers:RANDOM_EVENT_KILOMETERS];
     }
@@ -668,7 +686,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         if ( error )
         {
             NSLog(@"error:%@", error);
-            [self loadingFailed:LOADING_SECONDARY status:LOAD_NOCONNECTION];
+            [self loadingFailed:LOADING_MAP status:LOAD_NOCONNECTION];
         }
         else
         {
@@ -696,7 +714,7 @@ NSInteger sortByName(id num1, id num2, void *context)
             if ( error )
             {
                 NSLog(@"error:%@", error);
-                [self loadingFailed:LOADING_SECONDARY status:LOAD_NOCONNECTION];
+                [self loadingFailed:LOADING_MAP status:LOAD_NOCONNECTION];
             }
             else
             {
@@ -820,7 +838,8 @@ NSInteger sortByName(id num1, id num2, void *context)
     [comment setObject:[PFUser currentUser] forKey:@"userData"];
     [comment setObject:meetup.strSubject forKey:@"meetupSubject"];
     [comment setObject:meetup.strId forKey:@"meetupId"];
-    [comment setObject:meetup.meetupData forKey:@"meetupData"];
+    if ( meetup.meetupData )
+        [comment setObject:meetup.meetupData forKey:@"meetupData"];
     [comment setObject:strComment forKey:@"comment"];
     [comment setObject:typeNum forKey:@"type"];
     //comment.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
@@ -988,7 +1007,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 - (void) setUserPosition:(PFGeoPoint*)geoPoint
 {
-    if ( [[PFUser currentUser] isAuthenticated] )
+    if ( [[PFUser currentUser] isAuthenticated] && geoPoint )
         [[PFUser currentUser] setObject:geoPoint forKey:@"location"];
 }
 
@@ -998,32 +1017,28 @@ NSInteger sortByName(id num1, id num2, void *context)
     [newFriends2O removeObject:strUser];
 }
 
-- (Boolean)isMapLoaded
-{
-    return ( nMapLoadingStage == MAP_LOADED );
-}
-
-- (Boolean)areCirclesLoaded
-{
-    return ( nCirclesLoadingStage == CIRCLES_LOADED );
-}
-
 - (void) incrementMapLoadingStage
 {
     nMapLoadingStage++;
     
-    if ( [self isMapLoaded] )
+    if ( nMapLoadingStage == MAP_LOADED )
+    {
+        nLoadStatusMap = LOAD_OK;
         [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMapComplete
                                                            object:nil];
+    }
 }
 
 - (void) incrementCirclesLoadingStage
 {
     nCirclesLoadingStage++;
     
-    if ( [self areCirclesLoaded] )
+    if ( nCirclesLoadingStage == CIRCLES_LOADED )
+    {
+        nLoadStatusCircles = LOAD_OK;
         [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingCirclesComplete
                                                            object:nil];
+    }
 }
 
 

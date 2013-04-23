@@ -33,6 +33,10 @@
                                                 selector:@selector(reloadFinished)
                                                 name:kLoadingCirclesComplete
                                                 object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(loadingFailed)
+                                                name:kLoadingCirclesFailed
+                                                object:nil];
     }
     return self;
 }
@@ -47,12 +51,14 @@
     [self.navigationController pushViewController:filterViewController animated:YES];
 }
 
-
-- (void)newMeetupClicked{
-    NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
-    UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:newMeetupViewController];
-    [self.navigationController presentViewController:navigation
-                                            animated:YES completion:nil];
+- (void) reloadClicked
+{
+    // UI
+    [self.activityIndicator startAnimating];
+    self.navigationController.view.userInteractionEnabled = FALSE;
+    
+    // Loading
+    [globalData reloadFriendsInBackground];
 }
 
 
@@ -73,13 +79,17 @@
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     self.tableView.rowHeight = ROW_HEIGHT;
     
-    if ( ! [globalData areCirclesLoaded] )
+    if ( [globalData getLoadingStatus:LOADING_CIRCLES] == LOAD_STARTED )
     {
         [self.activityIndicator startAnimating];
         self.navigationController.view.userInteractionEnabled = FALSE;
     }
     else
         self.navigationController.view.userInteractionEnabled = TRUE;
+    
+    // Reload button
+    UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithTitle:@"Reload" style:UIBarButtonItemStyleBordered target:self action:@selector(reloadClicked)];
+    [self.navigationItem setRightBarButtonItem:reloadBtn];
 }
 
 - (void) reloadFinished
@@ -87,6 +97,12 @@
     [self.activityIndicator stopAnimating];
     self.navigationController.view.userInteractionEnabled = TRUE;
     [[self tableView] reloadData];
+}
+
+- (void) loadingFailed
+{
+    [self.activityIndicator stopAnimating];
+    self.navigationController.view.userInteractionEnabled = TRUE;
 }
 
 

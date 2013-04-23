@@ -25,4 +25,6 @@
 -(void)showMap;
 -(void)showUser;
 
+-(void)prepareMap;
+
 @end

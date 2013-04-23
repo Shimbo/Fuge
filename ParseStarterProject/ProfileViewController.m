@@ -58,11 +58,7 @@
 - (IBAction)donePressed:(UIButton *)sender {
     
     ParseStarterProjectAppDelegate *delegate = AppDelegate;
-    
-    //[self dismissViewControllerAnimated:YES completion:nil];
-    //[delegate.revealController dismissViewControllerAnimated:TRUE completion:nil];
-    
-    
+    [delegate.revealController dismissViewControllerAnimated:TRUE completion:nil];
     LeftMenuController *leftMenu = (LeftMenuController*)delegate.revealController.leftViewController;
     [leftMenu showMap];
 }

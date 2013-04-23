@@ -18,6 +18,7 @@
 - (void)reloadInboxInBackground
 {
     nInboxLoadingStage = 0;
+    nLoadStatusInbox = LOAD_STARTED;
     
     // Invites
     [self loadInvites];
@@ -43,7 +44,7 @@ NSInteger sort2(id item1, id item2, void *context)
 - (NSMutableDictionary*) getInbox
 {
     // Still loading
-    if ( ! [self isInboxLoaded] )
+    if ( ! [self getLoadingStatus:LOADING_INBOX] == LOAD_OK )
         return nil;
     
     // Gathering data
@@ -89,8 +90,8 @@ NSInteger sort2(id item1, id item2, void *context)
             else if ( [pObject.parseClassName compare:@"Comment"] == NSOrderedSame )
             {
                 item.type = INBOX_ITEM_COMMENT;
-                item.fromId = [pObject objectForKey:@"meetupId"]; // we're doing it vice versa so "from" will always store our conversation origin
-                item.toId = [pObject objectForKey:@"userId"];
+                item.fromId = [pObject objectForKey:@"userId"];
+                item.toId = [pObject objectForKey:@"meetupId"];
                 item.subject = [pObject objectForKey:@"meetupSubject"];
                 item.message = [pObject objectForKey:@"comment"];
                 item.misc = nil;
@@ -147,7 +148,7 @@ NSInteger sort2(id item1, id item2, void *context)
     NSDate* dateRecent = [[NSDate alloc] initWithTimeIntervalSinceNow:-24*60*60*7];
     for ( InboxViewItem* item in sortedArray )
     {
-        // Invites always in new
+        // Invites and new users always in new
         if ( item.type == INBOX_ITEM_INVITE || item.type == INBOX_ITEM_NEWUSER )
         {
             if ( item.misc )
@@ -157,11 +158,16 @@ NSInteger sort2(id item1, id item2, void *context)
             continue;
         }
         
-        // Messages
+        // Messages and comments below
         Boolean bNew = false;
         
-        NSDate* lastDate = [self getConversationDate:item.fromId];
-        if ( lastDate && ([item.dateTime compare:lastDate] == NSOrderedDescending ) )
+        NSDate* lastDate;
+        if ( item.type == INBOX_ITEM_COMMENT || ( [item.fromId compare:strCurrentUserId] == NSOrderedSame ) )
+            lastDate = [self getConversationDate:item.toId];
+        else
+            lastDate = [self getConversationDate:item.fromId];
+            
+        if ( lastDate && ([item.dateTime compare:lastDate] == NSOrderedDescending ) && ( [item.fromId compare:strCurrentUserId] != NSOrderedSame ) )
             bNew = true;
         
         if ( bNew )
@@ -185,19 +191,17 @@ NSInteger sort2(id item1, id item2, void *context)
     return inbox;
 }
 
-- (Boolean)isInboxLoaded
-{
-    return ( nInboxLoadingStage == INBOX_LOADED );
-}
-
 - (void) incrementInboxLoadingStage
 {
     nInboxLoadingStage++;
     
-    if ( [self isInboxLoaded] )
+    if ( nInboxLoadingStage == INBOX_LOADED )
     {
+        nLoadStatusInbox = LOAD_OK;
+        
         [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingInboxComplete
                                                            object:nil];
+        [self postInboxUnreadCountDidUpdate];
         
         // TODO: this call is an overkill, but don't know how to update new unread count other way, now we're calculating it with all other stuff upon load
         [self getInbox];
@@ -231,32 +235,51 @@ NSInteger sort2(id item1, id item2, void *context)
     // Loading
     [invitesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
-        // Creating list of unique invites (only 1 per meetup)
-        NSMutableArray* uniqueInvites = [NSMutableArray arrayWithCapacity:30];
-        for ( PFObject* inviteNew in objects )
+        if ( error )
         {
-            Boolean bFound = false;
-            for ( PFObject* inviteOld in uniqueInvites )
+            NSLog(@"Uh oh. An error occurred: %@", error);
+            [self loadingFailed:LOADING_INBOX status:LOAD_NOCONNECTION];
+        }
+        else
+        {
+            // Creating list of unique invites (only 1 per meetup)
+            NSMutableArray* uniqueInvites = [NSMutableArray arrayWithCapacity:30];
+            for ( PFObject* inviteNew in objects )
             {
-                if ( [[inviteNew objectForKey:@"meetupId"] compare:[inviteOld objectForKey:@"meetupId"]] == NSOrderedSame )
+                // Already subscribed
+                if ( [globalData isSubscribedToThread:[inviteNew objectForKey:@"meetupId"]])
                 {
-                    bFound = true;
-                    
                     // Saving as duplicate
                     NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_DUPLICATE];
                     [inviteNew setObject:inviteStatus forKey:@"status"];
                     [inviteNew saveInBackground];
-                    
-                    break;
+                    continue;
                 }
+                
+                Boolean bFound = false;
+                for ( PFObject* inviteOld in uniqueInvites )
+                {
+                    if ( [[inviteNew objectForKey:@"meetupId"] compare:[inviteOld objectForKey:@"meetupId"]] == NSOrderedSame )
+                    {
+                        bFound = true;
+                        
+                        // Saving as duplicate
+                        NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_DUPLICATE];
+                        [inviteNew setObject:inviteStatus forKey:@"status"];
+                        [inviteNew saveInBackground];
+                        
+                        break;
+                    }
+                }
+                if ( ! bFound )
+                    [uniqueInvites addObject:inviteNew];
             }
-            if ( ! bFound )
-                [uniqueInvites addObject:inviteNew];
+            
+            invites = uniqueInvites;
+            
+            // Loading stage complete
+            [self incrementInboxLoadingStage];
         }
-        invites = uniqueInvites;
-        
-        // Loading stage complete
-        [self incrementInboxLoadingStage];
     }];
 }
 
@@ -341,11 +364,19 @@ NSInteger sort2(id item1, id item2, void *context)
     // Loading
     [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
-        // Comments
-        comments = [[NSMutableArray alloc] initWithArray:objects];
-        
-        // Loading stage complete
-        [self incrementInboxLoadingStage];
+        if ( error )
+        {
+            NSLog(@"Uh oh. An error occurred: %@", error);
+            [self loadingFailed:LOADING_INBOX status:LOAD_NOCONNECTION];
+        }
+        else
+        {
+            // Comments
+            comments = [[NSMutableArray alloc] initWithArray:objects];
+            
+            // Loading stage complete
+            [self incrementInboxLoadingStage];
+        }
     }];
 }
 

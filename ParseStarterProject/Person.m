@@ -57,21 +57,26 @@
     PFGeoPoint *geoPointFriend = ptNewLocation;
     CLLocation* locationFriend = nil;
     CLLocationDistance distance = 40000000.0f;
-    if ( ! geoPointUser || ! geoPointFriend )
-        return;
     
-    CLLocation* locationUser = [[CLLocation alloc] initWithLatitude:geoPointUser.latitude longitude:geoPointUser.longitude];
-    locationFriend = [[CLLocation alloc] initWithLatitude:geoPointFriend.latitude longitude:geoPointFriend.longitude];
-    distance = [locationUser distanceFromLocation:locationFriend];
+    if ( geoPointFriend )
+    {
+        locationFriend = [[CLLocation alloc] initWithLatitude:geoPointFriend.latitude longitude:geoPointFriend.longitude];
+        location = locationFriend.coordinate;
+    }
+    
+    if ( geoPointUser && geoPointFriend )
+    {
+        CLLocation* locationUser = [[CLLocation alloc] initWithLatitude:geoPointUser.latitude longitude:geoPointUser.longitude];
         
-    if ( distance < 1000.0f )
-        strDistance = [[NSString alloc] initWithFormat:@"%.0f m", distance];
-    else if ( distance < 10000.0f )
-        strDistance = [[NSString alloc] initWithFormat:@"%.1f km", distance/1000.0f];
-    else
-        strDistance = [[NSString alloc] initWithFormat:@"%.0f km", distance/1000.0f];
+        distance = [locationUser distanceFromLocation:locationFriend];
         
-    location = locationFriend.coordinate;
+        if ( distance < 1000.0f )
+            strDistance = [[NSString alloc] initWithFormat:@"%.0f m", distance];
+        else if ( distance < 10000.0f )
+            strDistance = [[NSString alloc] initWithFormat:@"%.1f km", distance/1000.0f];
+        else
+            strDistance = [[NSString alloc] initWithFormat:@"%.0f km", distance/1000.0f];
+    }
 }
 
 - (void)changeCircle:(NSUInteger)nCircle

@@ -10,15 +10,17 @@
 
 @interface LoadingController : UIViewController
 {
-    
+    Boolean bVersionChecked;
+    NSUInteger  nAnimationStage;
+    Boolean     bAnimation;
 }
-@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
 @property (strong, nonatomic) IBOutlet UIButton *loginButton;
 @property (strong, nonatomic) IBOutlet UIButton *retryButton;
 @property (strong, nonatomic) IBOutlet UIButton *updateButton;
 @property (strong, nonatomic) IBOutlet UILabel *titleText;
 @property (strong, nonatomic) IBOutlet UITextView *descriptionText;
 @property (strong, nonatomic) IBOutlet UILabel *miscText;
+@property (strong, nonatomic) IBOutlet UIImageView *backgroundImage;
 
 - (IBAction)loginDown:(id)sender;
 - (IBAction)retryDown:(id)sender;

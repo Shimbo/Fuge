@@ -21,6 +21,11 @@ static NSString *const kLoadingMapComplete = @"kLoadingMapComplete";
 static NSString *const kLoadingCirclesComplete = @"kLoadingCirclesComplete";
 static NSString *const kLoadingInboxComplete = @"kLoadingInboxComplete";
 
+static NSString *const kLoadingMainFailed = @"kLoadingMainFailed";
+static NSString *const kLoadingMapFailed = @"kLoadingMapFailed";
+static NSString *const kLoadingCirclesFailed = @"kLoadingCirclesFailed";
+static NSString *const kLoadingInboxFailed = @"kLoadingInboxFailed";
+
 static NSString *const kAppRestored = @"kAppRestored";
 
 #define globalData [GlobalData sharedInstance]
@@ -30,7 +35,9 @@ static NSString *const kAppRestored = @"kAppRestored";
 typedef enum ELoadingSection
 {
     LOADING_MAIN        = 0,
-    LOADING_SECONDARY   = 1
+    LOADING_MAP         = 1,
+    LOADING_CIRCLES     = 2,
+    LOADING_INBOX       = 3
 }LoadingSection;
 
 typedef enum ELoadingResult
@@ -46,7 +53,8 @@ typedef enum EInviteStatus
     INVITE_NEW      = 0,
     INVITE_DECLINED = 1,
     INVITE_ACCEPTED = 2,
-    INVITE_DUPLICATE = 3
+    INVITE_DUPLICATE = 3,
+    INVITE_EXPIRED  = 4
 }InviteStatus;
 
 typedef  enum EMeetupCommentType
@@ -82,7 +90,8 @@ typedef  enum EMeetupCommentType
     NSMutableDictionary *_circleByNumber;
     
     NSUInteger          nLoadStatusMain;
-    NSUInteger          nLoadStatusSecondary;
+    NSUInteger          nLoadStatusMap;
+    NSUInteger          nLoadStatusCircles;
     NSUInteger          nLoadStatusInbox;
 }
 
@@ -110,8 +119,7 @@ typedef  enum EMeetupCommentType
 - (void)loadData;
 - (void)reloadFriendsInBackground;
 - (void)reloadMapInfoInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast;
-- (Boolean)isMapLoaded;
-- (Boolean)areCirclesLoaded;
+- (NSUInteger)getLoadingStatus:(NSUInteger)nStage;
 
 // Misc
 - (void) addRecentInvites:(NSArray*)recentInvites;
@@ -132,6 +140,9 @@ typedef  enum EMeetupCommentType
 // One of two last parameters should be nil
 - (void)createInvite:(Meetup*)meetup objectTo:(Person*)recipient stringTo:(NSString*)strRecipient;
 
+// For internal use
+- (void)loadingFailed:(NSUInteger)nStage status:(NSUInteger)nStatus;
+
 @end
 
 
@@ -139,7 +150,6 @@ typedef  enum EMeetupCommentType
     // Inbox data, loading in background
 - (void)reloadInboxInBackground;
 - (NSMutableDictionary*) getInbox;
-- (Boolean)isInboxLoaded;
 - (void) incrementInboxLoadingStage;
     // Inbox utils
 - (void)postInboxUnreadCountDidUpdate;

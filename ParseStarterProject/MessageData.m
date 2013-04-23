@@ -140,29 +140,45 @@ NSInteger sort(id message1, id message2, void *context)
     // Loading
     [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *messages1, NSError *error) {
         
-        PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Message"];
-        [messagesQuery whereKey:@"idUserFrom" equalTo:strCurrentUserId];
-        [messagesQuery orderByAscending:@"createdAt"];
-        messagesQuery.limit = 200;
-        
-        [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *messages2, NSError *error) {
+        if ( error )
+        {
+            NSLog(@"Uh oh. An error occurred: %@", error);
+            [self loadingFailed:LOADING_INBOX status:LOAD_NOCONNECTION];
+        }
+        else
+        {
+            PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Message"];
+            [messagesQuery whereKey:@"idUserFrom" equalTo:strCurrentUserId];
+            [messagesQuery orderByAscending:@"createdAt"];
+            messagesQuery.limit = 200;
             
-            // Merging and sorting results
-            NSMutableSet *set = [NSMutableSet setWithArray:messages1];
-            [set addObjectsFromArray:messages2];
-            NSArray *array = [set allObjects];
-            NSArray *sortedArray = [array sortedArrayUsingFunction:sort context:NULL];
-            
-            // Creating array
-            messages = [[NSMutableArray alloc] init];
-            
-            // Loading it with data
-            for ( PFObject* messageData in sortedArray )
-                [self addMessageWithData:messageData];
-            
-            // Loading stage complete
-            [self incrementInboxLoadingStage];
-        }];
+            [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *messages2, NSError *error) {
+                
+                if ( error )
+                {
+                    NSLog(@"Uh oh. An error occurred: %@", error);
+                    [self loadingFailed:LOADING_INBOX status:LOAD_NOCONNECTION];
+                }
+                else
+                {
+                    // Merging and sorting results
+                    NSMutableSet *set = [NSMutableSet setWithArray:messages1];
+                    [set addObjectsFromArray:messages2];
+                    NSArray *array = [set allObjects];
+                    NSArray *sortedArray = [array sortedArrayUsingFunction:sort context:NULL];
+                    
+                    // Creating array
+                    messages = [[NSMutableArray alloc] init];
+                    
+                    // Loading it with data
+                    for ( PFObject* messageData in sortedArray )
+                        [self addMessageWithData:messageData];
+                    
+                    // Loading stage complete
+                    [self incrementInboxLoadingStage];
+                }
+            }];
+        }
     }];
     
     // TODO: add check for paging and paging itself if result count == limit in any of two queries

@@ -181,8 +181,9 @@
     [globalData addMeetup:_meetup];
     [globalData createCommentForMeetup:_meetup commentType:COMMENT_CREATED commentText:nil];
     
-    // Add to attending list
+    // Add to attending list and update meetup attending list (only on client)
     [globalData attendMeetup:_meetup.strId];
+    [_meetup addAttendee:strCurrentUserId];
     
     // Invites
     MeetupInviteViewController *inviteController = [[MeetupInviteViewController alloc]init];
