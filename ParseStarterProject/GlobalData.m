@@ -251,6 +251,9 @@ NSInteger sortByName(id num1, id num2, void *context)
                     nLoadStatusMain = LOAD_OK;
                     [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMainComplete object:nil];
                     
+                    // Push channels initialization
+                    [pushManager initChannelsFirstTime:[result objectForKey:@"id"]];
+                    
                     // FB friends, 2O friends, fb friends not installed the app
                     [self reloadFriendsInBackground];
                     
@@ -262,9 +265,6 @@ NSInteger sortByName(id num1, id num2, void *context)
                     
                     // Inbox
                     [self reloadInboxInBackground];
-                    
-                    // Push channels initialization
-                    [pushManager initChannelsFirstTime:[result objectForKey:@"id"]];
                 }
             }];
         }
