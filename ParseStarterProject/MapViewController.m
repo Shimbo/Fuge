@@ -97,7 +97,7 @@
 }
 
 - (void)newThreadClicked{
-    NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
+    NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupViewController" bundle:nil];
     [newMeetupViewController setType:TYPE_THREAD];
     UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:newMeetupViewController];
     [self.navigationController presentViewController:navigation animated:YES completion:nil];
@@ -106,7 +106,7 @@
 
 
 - (void)newMeetupClicked{
-    NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
+    NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupViewController" bundle:nil];
     [newMeetupViewController setType:TYPE_MEETUP];
     UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:newMeetupViewController];
     [self.navigationController presentViewController:navigation animated:YES completion:nil];

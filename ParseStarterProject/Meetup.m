@@ -117,8 +117,6 @@
         [meetupData save];
     else
         [meetupData saveInBackground];
-    
-    // TODO: add animation for save not in background
 }
 
 -(void) unpack:(PFObject*)data

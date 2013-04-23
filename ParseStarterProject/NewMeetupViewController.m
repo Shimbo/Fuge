@@ -162,6 +162,7 @@
     
     // Saving meetup on server
     [self populateMeetupWithData:_meetup];
+    
     [_meetup save];
     
     // Creating comment
@@ -170,10 +171,8 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)next {
-    if (![self validateForm])
-        return;
-    
+- (void)nextInternal
+{
     // Saving meetup on server
     _meetup = [[Meetup alloc] init];
     [self populateMeetupWithData:_meetup];
@@ -187,12 +186,24 @@
     [globalData attendMeetup:_meetup.strId];
     [_meetup addAttendee:strCurrentUserId];
     
+    // Loading ended
+    [activityIndicator stopAnimating];
+    
     // Invites
     MeetupInviteViewController *inviteController = [[MeetupInviteViewController alloc]init];
     if ( invitee ) // Add invitee if this window was ivoked from user profile
         [inviteController addInvitee:invitee];
     [inviteController setMeetup:_meetup newMeetup:true];
     [self.navigationController pushViewController:inviteController animated:YES];
+}
+
+- (void)next {
+    if (![self validateForm])
+        return;
+    
+    [activityIndicator startAnimating];
+    
+    [self performSelector:@selector(nextInternal) withObject:nil afterDelay:0.01f];
 }
 
 - (IBAction)venueButtonDown:(id)sender {

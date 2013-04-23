@@ -8,8 +8,9 @@
 
 #import "MeetupAnnotation.h"
 #import "GlobalData.h"
-@implementation MeetupAnnotation
+#import "GlobalVariables.h"
 
+@implementation MeetupAnnotation
 
 - (id)initWithMeetup:(Meetup*)meetup
 {
@@ -28,7 +29,16 @@
         }
         
         self.title = meetup.strSubject;
-        self.subtitle = [[NSString alloc] initWithFormat:@"Organizer: %@", meetup.strOwnerName ];
+        if ( meetup.meetupType == TYPE_MEETUP )
+        {
+            // Don't trim name for Facebook events as organizers are not people
+            if ( meetup.bFacebookEvent )
+                self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Attending: %d", meetup.strOwnerName, meetup.numAttendees ];
+            else
+                self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Attending: %d", [globalVariables trimName:meetup.strOwnerName], meetup.numAttendees ];
+        }
+        else
+            self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Comments: %d", [globalVariables trimName:meetup.strOwnerName], meetup.numComments ];
         self.strId = meetup.strId;
         
         CLLocationCoordinate2D coord;

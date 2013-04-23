@@ -70,6 +70,8 @@ NSInteger sort2(id item1, id item2, void *context)
                     item.misc = @"Accepted!";
                 else if ( [[pObject objectForKey:@"status"] integerValue] == INVITE_DECLINED )
                     item.misc = @"Declined.";
+                else if ( [[pObject objectForKey:@"expirationDate"] compare:[NSDate date]] == NSOrderedAscending )
+                    item.misc = @"Expired.";
                 else item.misc = nil;
                 
                 item.type = INBOX_ITEM_INVITE;
@@ -152,7 +154,12 @@ NSInteger sort2(id item1, id item2, void *context)
         if ( item.type == INBOX_ITEM_INVITE || item.type == INBOX_ITEM_NEWUSER )
         {
             if ( item.misc )
-                [inboxRecent addObject:item];
+            {
+                if ( [item.dateTime compare:dateRecent] == NSOrderedDescending )
+                    [inboxRecent addObject:item];
+                else
+                    [inboxOld addObject:item];
+            }
             else
                 [inboxNew addObject:item];
             continue;
@@ -224,10 +231,6 @@ NSInteger sort2(id item1, id item2, void *context)
     PFQuery *invitesQuery = [PFQuery queryWithClassName:@"Invite"];
     [invitesQuery whereKey:@"idUserTo" equalTo:strCurrentUserId];
     
-    // Date-time filter
-    NSNumber* timestampNow = [[NSNumber alloc] initWithDouble:[[NSDate date] timeIntervalSince1970]];
-    [invitesQuery whereKey:@"meetupTimestamp" greaterThan:timestampNow];
-    
     // 0 means it's unaccepted invite
     NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_NEW];
     [invitesQuery whereKey:@"status" equalTo:inviteStatus];
@@ -256,9 +259,18 @@ NSInteger sort2(id item1, id item2, void *context)
                     continue;
                 }
                 
+                // Expired
+                if ( [[inviteNew objectForKey:@"expirationDate"] compare:[NSDate date]] == NSOrderedAscending )
+                {
+                    NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_EXPIRED];
+                    [inviteNew setObject:inviteStatus forKey:@"status"];
+                    [inviteNew saveInBackground];
+                }
+                
                 Boolean bFound = false;
                 for ( PFObject* inviteOld in uniqueInvites )
                 {
+                    // Duplicate
                     if ( [[inviteNew objectForKey:@"meetupId"] compare:[inviteOld objectForKey:@"meetupId"]] == NSOrderedSame )
                     {
                         bFound = true;

@@ -126,7 +126,7 @@
 		4C706F021723F1DC00C35E82 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C706F011723F1DC00C35E82 /* Icon.png */; };
 		4C706F041723F1E300C35E82 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C706F031723F1E300C35E82 /* Icon@2x.png */; };
 		4C7E3FD61699017C0065484F /* NewMeetupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FD41699017C0065484F /* NewMeetupViewController.m */; };
-		4C7E3FD71699017C0065484F /* NewMeetupView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E3FD51699017C0065484F /* NewMeetupView.xib */; };
+		4C7E3FD71699017C0065484F /* NewMeetupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E3FD51699017C0065484F /* NewMeetupViewController.xib */; };
 		4C7E3FDB169A09880065484F /* MeetupAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FDA169A09880065484F /* MeetupAnnotation.m */; };
 		4C7E3FDE169A09D20065484F /* Meetup.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FDD169A09D20065484F /* Meetup.m */; };
 		4C7E3FE2169A1BB40065484F /* MeetupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FE0169A1BB30065484F /* MeetupViewController.m */; };
@@ -328,7 +328,7 @@
 		4C706F031723F1E300C35E82 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon@2x.png"; path = "../Icon@2x.png"; sourceTree = "<group>"; };
 		4C7E3FD31699017C0065484F /* NewMeetupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewMeetupViewController.h; sourceTree = "<group>"; };
 		4C7E3FD41699017C0065484F /* NewMeetupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewMeetupViewController.m; sourceTree = "<group>"; };
-		4C7E3FD51699017C0065484F /* NewMeetupView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NewMeetupView.xib; sourceTree = "<group>"; };
+		4C7E3FD51699017C0065484F /* NewMeetupViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NewMeetupViewController.xib; sourceTree = "<group>"; };
 		4C7E3FD9169A09880065484F /* MeetupAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetupAnnotation.h; sourceTree = "<group>"; };
 		4C7E3FDA169A09880065484F /* MeetupAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetupAnnotation.m; sourceTree = "<group>"; };
 		4C7E3FDC169A09D10065484F /* Meetup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Meetup.h; sourceTree = "<group>"; };
@@ -704,7 +704,7 @@
 				4C057325166AEF4800EF6FAD /* ProfileView.xib */,
 				4C05733A166B73D900EF6FAD /* UserProfile.xib */,
 				4CFE78C7166BBA7900E1BF72 /* FilterView.xib */,
-				4C7E3FD51699017C0065484F /* NewMeetupView.xib */,
+				4C7E3FD51699017C0065484F /* NewMeetupViewController.xib */,
 				4C7E3FE1169A1BB30065484F /* MeetupView.xib */,
 				4C7E3FEB169A456B0065484F /* VenueSelectView.xib */,
 				47A1AC6D16A7DDD3004B4CFA /* VenueCell.xib */,
@@ -819,7 +819,7 @@
 				4C27C96F1691862B00B2A905 /* README.md in Resources */,
 				4C27C9701691862B00B2A905 /* release_notes.md in Resources */,
 				4C188D231698C51A004CF42D /* MapView.xib in Resources */,
-				4C7E3FD71699017C0065484F /* NewMeetupView.xib in Resources */,
+				4C7E3FD71699017C0065484F /* NewMeetupViewController.xib in Resources */,
 				4C7E3FE3169A1BB40065484F /* MeetupView.xib in Resources */,
 				4C7E3FED169A456B0065484F /* VenueSelectView.xib in Resources */,
 				47A1AC6E16A7DDD3004B4CFA /* VenueCell.xib in Resources */,

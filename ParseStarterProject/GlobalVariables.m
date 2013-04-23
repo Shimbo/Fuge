@@ -101,4 +101,11 @@ static GlobalVariables *sharedInstance = nil;
     [[PFUser currentUser] saveInBackground];
 }
 
+- (NSString*)trimName:(NSString*)name
+{
+    NSRange range = [name rangeOfString:@" "];
+    NSString* newString = [NSString stringWithFormat:@"%@.", [name substringToIndex:range.location+2]];
+    return newString;
+}
+
 @end
