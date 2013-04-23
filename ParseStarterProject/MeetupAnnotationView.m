@@ -210,9 +210,9 @@
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
             UIImage* roundedImage = [UIImage appleMask:[UIImage imageNamed:@"mask25.png"]
                                               forImage:image];
-            roundedImage = [UIImage imageWithCGImage:roundedImage.CGImage
-                                               scale:2
-                                         orientation:roundedImage.imageOrientation];
+//            roundedImage = [UIImage imageWithCGImage:roundedImage.CGImage
+//                                               scale:2
+//                                         orientation:roundedImage.imageOrientation];
             [_imageLoader setImage:roundedImage url:url];
             
             dispatch_async(dispatch_get_main_queue(), ^{
