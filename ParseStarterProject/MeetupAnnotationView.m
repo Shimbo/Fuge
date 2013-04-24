@@ -73,7 +73,7 @@
         _back = [[UIImageView alloc]initWithFrame:self.bounds];
         [self addSubview:_back];
         
-        _icon = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"threadIcon.png"]];
+        _icon = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"iconMeetup.png"]];
         _icon.center = CGPointMake(25, 24);
         [self addSubview:_icon];
         
