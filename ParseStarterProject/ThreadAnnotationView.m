@@ -25,9 +25,8 @@
         [self addSubview:_back];
         
         _icon = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"threadIcon.png"]];
-        _icon.center = CGPointMake(23, 24);
+        _icon.center = CGPointMake(23, 23);
         [self addSubview:_icon];
-        
     }
     return self;
 }
@@ -77,12 +76,20 @@
     [self updateBackForColor:color];
 }
 
+-(void)setPinIcon:(Meetup*)meetup{
+    if ( meetup.privacy == MEETUP_PRIVATE )
+        _icon.image = [UIImage imageNamed:@"iconPrivate.png"];
+    else
+        _icon.image = [UIImage imageNamed:@"iconThread.png"];
+}
+
 -(void)setUnreaCount:(NSUInteger)count{
     [_badge setNumber:count];
 }
 
 -(void)prepareForAnnotation:(ThreadAnnotation*)ann{
     [self setPinColor:ann.pinColor];
+    [self setPinIcon:ann.meetup];
     [self setUnreaCount:ann.numUnreadCount];
 }
 

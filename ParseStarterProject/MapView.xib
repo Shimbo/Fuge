@@ -52,7 +52,7 @@
 					<object class="IBUIActivityIndicatorView" id="612576983">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">-2147483383</int>
-						<string key="NSFrame">{{280, 420}, {20, 20}}</string>
+						<string key="NSFrame">{{282, 422}, {20, 20}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView"/>
@@ -64,19 +64,20 @@
 					<object class="IBUIButton" id="523732407">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">265</int>
-						<string key="NSFrame">{{274, 414}, {32, 32}}</string>
+						<string key="NSFrame">{{276, 414}, {33, 36}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="612576983"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
+						<int key="IBUIContentMode">4</int>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 						<int key="IBUIContentHorizontalAlignment">0</int>
 						<int key="IBUIContentVerticalAlignment">0</int>
 						<bool key="IBUIShowsTouchWhenHighlighted">YES</bool>
 						<object class="NSCustomResource" key="IBUINormalImage">
 							<string key="NSClassName">NSImage</string>
-							<string key="NSResourceName">reload.png</string>
+							<string key="NSResourceName">refresh.png</string>
 						</object>
 						<object class="IBUIFontDescription" key="IBUIFontDescription">
 							<int key="type">1</int>
@@ -178,8 +179,8 @@
 						<reference key="object" ref="191373211"/>
 						<array class="NSMutableArray" key="children">
 							<reference ref="879375998"/>
-							<reference ref="612576983"/>
 							<reference ref="523732407"/>
+							<reference ref="612576983"/>
 						</array>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -292,8 +293,8 @@
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 		<object class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
-			<string key="NS.key.0">reload.png</string>
-			<string key="NS.object.0">{64, 64}</string>
+			<string key="NS.key.0">refresh.png</string>
+			<string key="NS.object.0">{33, 36}</string>
 		</object>
 		<string key="IBCocoaTouchPluginVersion">2083</string>
 	</data>
