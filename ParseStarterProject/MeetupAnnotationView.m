@@ -73,8 +73,8 @@
         _back = [[UIImageView alloc]initWithFrame:self.bounds];
         [self addSubview:_back];
         
-        _icon = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"threadIcon.png"]];
-        _icon.center = CGPointMake(26, 24);
+        _icon = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"iconMeetup.png"]];
+        _icon.center = CGPointMake(25, 24);
         [self addSubview:_icon];
         
         _personImage = [[UIImageView alloc]initWithFrame:CGRectMake(12.5, 12, 25, 25)];
@@ -84,7 +84,6 @@
         _timerView = [[TimerView alloc]init];
         [self addSubview:_timerView];
         
-        [self setPinPrivacy:PinPublic];
         [self setNeedsDisplay];
     }
     return self;
@@ -150,18 +149,13 @@
     [self updateTimerForColor:color];
 }
 
--(void)setPinPrivacy:(PinPrivacy)privacy{
-    switch (privacy) {
-        case PinPrivate:
-            _icon.image = [UIImage imageNamed:@"iconPrivate.png"];
-            break;
-        case PinPublic:
-            _icon.image = [UIImage imageNamed:@"iconPublic.png"];
-            break;
-        default:
-            NSLog(@"Privacy Error");
-            break;
-    }
+-(void)setPinIcon:(Meetup*)meetup{
+    if ( meetup.privacy == MEETUP_PRIVATE )
+        _icon.image = [UIImage imageNamed:@"iconPrivate.png"];
+    else if ( meetup.bFacebookEvent )
+        _icon.image = [UIImage imageNamed:@"iconFacebook.png"];
+    else
+        _icon.image = [UIImage imageNamed:@"iconMeetup.png"];
 }
 
 -(void)setTime:(CGFloat)time{
@@ -182,7 +176,7 @@
 
 -(void)prepareForAnnotation:(MeetupAnnotation*)ann{
     [self setPinColor:ann.pinColor];
-    [self setPinPrivacy:ann.pinPrivacy];
+    [self setPinIcon:ann.meetup];
     [self setTime:ann.time];
     [self setUnreaCount:ann.numUnreadCount];
     if (ann.attendedPersons.count) {

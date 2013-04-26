@@ -251,6 +251,9 @@ NSInteger sortByName(id num1, id num2, void *context)
                     nLoadStatusMain = LOAD_OK;
                     [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMainComplete object:nil];
                     
+                    // Push channels initialization
+                    [pushManager initChannelsFirstTime:[result objectForKey:@"id"]];
+                    
                     // FB friends, 2O friends, fb friends not installed the app
                     [self reloadFriendsInBackground];
                     
@@ -262,9 +265,6 @@ NSInteger sortByName(id num1, id num2, void *context)
                     
                     // Inbox
                     [self reloadInboxInBackground];
-                    
-                    // Push channels initialization
-                    [pushManager initChannelsFirstTime:[result objectForKey:@"id"]];
                 }
             }];
         }
@@ -754,7 +754,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     // Id, fromStr, fromId
     [invite setObject:meetup.strId forKey:@"meetupId"];
     [invite setObject:meetup.meetupData forKey:@"meetupData"];
-    [invite setObject:[[NSNumber alloc] initWithDouble:[meetup.dateTime timeIntervalSince1970]] forKey:@"meetupTimestamp"];
+    [invite setObject:[meetup.dateTime dateByAddingTimeInterval:meetup.durationSeconds] forKey:@"expirationDate"];
     [invite setObject:[NSNumber numberWithInt:meetup.meetupType] forKey:@"type"];
     [invite setObject:meetup.strSubject forKey:@"meetupSubject"];
     
@@ -781,7 +781,10 @@ NSInteger sortByName(id num1, id num2, void *context)
         [invite.ACL setPublicWriteAccess:true];
     }
     
-    [invite save];
+    [invite saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if ( error )
+            NSLog(@"Uh oh. An error occurred: %@", error);
+    }];
 }
 
 
@@ -845,7 +848,10 @@ NSInteger sortByName(id num1, id num2, void *context)
     //comment.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
     //[comment.ACL setPublicReadAccess:true];
     
-    [comment saveInBackground];
+    [comment saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if ( error )
+            NSLog(@"error:%@", error);
+    }];
     
     // Add comment to the list of threads
     [self addComment:comment];

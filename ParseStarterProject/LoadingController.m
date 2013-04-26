@@ -45,22 +45,6 @@
 
 - (void)loadSequencePart0
 {
-    // Testflight
-#ifndef RELEASE
-    [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
-#endif
-    @try {
-        [TestFlight takeOff:@"d42a1f02-bb75-4c1e-896e-e0e4f41daf17"];
-    }
-    @catch (NSException *exception) {
-        NSLog(@"TestFlight error: %@",exception);
-    }
-    [TestFlight passCheckpoint:@"Initialization phase 0"];
-    
-    // Parse
-    [Parse setApplicationId:@"VMhSG8IQ9xibufk8lAPpclIwdXVfYD44OpKmsHdn"
-                  clientKey:@"u2kJ1jWBjN9qY3ARlJuEyNkvUA9EjOMv1R4w5sDX"];
-    
     // Facebook
     [PFFacebookUtils initializeFacebook];
     

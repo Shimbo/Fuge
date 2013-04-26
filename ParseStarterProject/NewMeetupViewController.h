@@ -19,6 +19,7 @@
     IBOutlet UIDatePicker *dateTime;
     IBOutlet UIButton *location;
     IBOutlet UISwitch *notifySwitch;
+    IBOutlet UIActivityIndicatorView *activityIndicator;
     UINavigationController *venueNavViewController;
     Meetup* _meetup;
     Person* invitee;

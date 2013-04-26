@@ -6,7 +6,7 @@
 #import "LeftMenuController.h"
 #import "LocationManager.h"
 #import "LoadingController.h"
-
+#import "TestFlightSDK/TestFlight.h"
 
 @implementation ParseStarterProjectAppDelegate
 
@@ -26,6 +26,22 @@
     [self.circledImageCache setCountLimit:90];
     
     bFirstActivation = true;
+    
+    // Testflight
+#ifndef RELEASE
+    [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
+#endif
+    @try {
+        [TestFlight takeOff:@"d42a1f02-bb75-4c1e-896e-e0e4f41daf17"];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"TestFlight error: %@",exception);
+    }
+    [TestFlight passCheckpoint:@"Initialization phase 0"];
+    
+    // Parse
+    [Parse setApplicationId:@"VMhSG8IQ9xibufk8lAPpclIwdXVfYD44OpKmsHdn"
+                  clientKey:@"u2kJ1jWBjN9qY3ARlJuEyNkvUA9EjOMv1R4w5sDX"];
     
     // Left menu
     LeftMenuController *leftMenu = [[LeftMenuController alloc]init];
@@ -105,7 +121,12 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [PFPush handlePush:userInfo];
-    NSLog(@"%@", userInfo);
+    NSLog(@"Push catched: %@", userInfo);
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    if ( currentInstallation.badge != 0) {
+        currentInstallation.badge = 0;
+        [currentInstallation saveInBackground];
+    }
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
@@ -125,6 +146,13 @@
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
+    
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    if ( currentInstallation.badge != 0) {
+        currentInstallation.badge = 0;
+        [currentInstallation saveInBackground];
+    }
+    
     if ( bFirstActivation )
         bFirstActivation = false;
     else if ( [[PFUser currentUser] isAuthenticated])

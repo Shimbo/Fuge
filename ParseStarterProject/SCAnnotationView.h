@@ -8,7 +8,11 @@
 
 #import <MapKit/MapKit.h>
 
+@class CustomBadge;
+
 @interface SCAnnotationView : MKAnnotationView
+{
+}
 
 +(SCAnnotationView*)constructAnnotationViewForAnnotation:(id)annotation
                                                   forMap:(MKMapView*)mapView;

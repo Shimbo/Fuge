@@ -39,4 +39,6 @@
 
 + (id)sharedInstance;
 
+- (NSString*)trimName:(NSString*)name;
+
 @end

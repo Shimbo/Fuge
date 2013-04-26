@@ -10,7 +10,7 @@
 #import "SCAnnotationView.h"
 
 @class ThreadAnnotation;
-@class CustomBadge;
+
 @interface ThreadAnnotationView : SCAnnotationView{
     CustomBadge *_badge;
     UIImageView *_back;

@@ -143,7 +143,7 @@
 
 - (void)editClicked
 {
-    NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupView" bundle:nil];
+    NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupViewController" bundle:nil];
     [newMeetupViewController setMeetup:meetup];
     
     UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:newMeetupViewController];
@@ -253,10 +253,7 @@
     if ( meetup.bFacebookEvent )
     {
         if ( ! bPassed )
-        {
             buttons[MB_CALENDAR] = buttonOn;
-            [self updateButtons];
-        }
     }
     else
     {
@@ -301,8 +298,6 @@
                     buttons[MB_CALENDAR] = buttonOn;
                 }
             }
-            
-            [self updateButtons];
         }
         else
         {
@@ -315,10 +310,9 @@
             
             if ( meetup.meetupType == TYPE_MEETUP && ! bPassed )
                 buttons[MB_CALENDAR] = buttonOn;
-            
-            [self updateButtons];
         }
     }
+    [self updateButtons];
     
     // Setting location and date labels
     [labelLocation setText:meetup.strVenue];
