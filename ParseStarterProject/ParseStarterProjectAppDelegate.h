@@ -1,5 +1,5 @@
 @class RootViewController;
-
+@class JMImageCache;
 #import "PKRevealController.h"
 #define AppDelegate (ParseStarterProjectAppDelegate*)[[UIApplication sharedApplication]delegate];
 
@@ -13,8 +13,8 @@
 @property (nonatomic, strong) IBOutlet UIWindow *window;
 @property (nonatomic, retain) PKRevealController *revealController;
 
-@property (nonatomic, retain) NSCache *imageCache;
-@property (nonatomic, retain) NSCache *circledImageCache;
+@property (nonatomic, retain) JMImageCache *imageCache;
+@property (nonatomic, retain) JMImageCache *circledImageCache;
 
 @property (nonatomic, retain, readonly) RootViewController *rootViewController;
 

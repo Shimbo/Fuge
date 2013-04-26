@@ -21,5 +21,6 @@
 
 -(void)loadImageWithURL:(NSString*)url;
 
+
 -(void)prepareForAnnotation:(PersonAnnotation*)annotation;
 @end

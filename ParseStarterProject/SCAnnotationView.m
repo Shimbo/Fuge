@@ -36,6 +36,9 @@
     }else if ([annotation isMemberOfClass:[ThreadAnnotation class]]){
         isThread = YES;
         identifier = threadPin;
+    }else if([annotation isMemberOfClass:[MKUserLocation class]]){
+        isPerson = YES;
+        identifier = personPin;
     }
     pinView = (SCAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:identifier];
     

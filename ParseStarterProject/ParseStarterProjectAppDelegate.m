@@ -7,6 +7,7 @@
 #import "LocationManager.h"
 #import "LoadingController.h"
 #import "TestFlightSDK/TestFlight.h"
+#import "JMImageCache.h"
 
 @implementation ParseStarterProjectAppDelegate
 
@@ -19,11 +20,14 @@
     if ( launchOptions )
         NSLog(@"Launch options: %@", launchOptions);
     
-    self.imageCache = [[NSCache alloc]init];
+    self.imageCache = [[JMImageCache alloc]init];
     [self.imageCache setCountLimit:90];
+    [self.imageCache cleanCache];
     
-    self.circledImageCache = [[NSCache alloc]init];
+    self.circledImageCache = [[JMImageCache alloc]init];
+    self.circledImageCache.prefix = @"circled";
     [self.circledImageCache setCountLimit:90];
+    [self.circledImageCache cleanCache];
     
     bFirstActivation = true;
     
@@ -52,6 +56,7 @@
     // Loading screen
     LoadingController *loadingViewController = [[LoadingController alloc] initWithNibName:@"LoadingController" bundle:nil];
     UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:loadingViewController];
+    nav.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     [self.revealController presentViewController:nav animated:NO completion:nil];
         
     // Notifications
@@ -78,8 +83,8 @@
 -(void)applicationDidReceiveMemoryWarning:(UIApplication *)application{
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.imageCache removeAllObjects];
-            [self.circledImageCache removeAllObjects];
+            [self.imageCache applicationDidReceiveMemoryWarning];
+            [self.circledImageCache applicationDidReceiveMemoryWarning];
             NSLog(@"cleaned");
         });
     });

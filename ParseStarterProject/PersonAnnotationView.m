@@ -9,7 +9,6 @@
 #import "PersonAnnotationView.h"
 #import "ImageLoader.h"
 #import "CustomBadge.h"
-#import "UIImage+Circled.h"
 #import <QuartzCore/QuartzCore.h>
 #import "MainStyle.h"
 #import "PersonAnnotation.h"
@@ -23,7 +22,7 @@
     {
         self.frame = CGRectMake(0, 0, 35, 35);
         self.opaque = NO;
-            
+        self.calloutOffset = CGPointMake(6, 0);
         _back = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"pinPerson.png"]];
         [self addSubview:_back];
         
@@ -56,19 +55,7 @@
     }
     _personImage.image = nil;
     [_imageLoader loadImageWithUrl:url handler:^(UIImage *image) {
-        
-        dispatch_async(dispatch_get_global_queue(0, 0), ^{
-            UIImage* roundedImage = [UIImage appleMask:[UIImage imageNamed:@"mask35.png"]
-                                              forImage:image];
-            roundedImage = [UIImage imageWithCGImage:roundedImage.CGImage
-                                               scale:2
-                                         orientation:roundedImage.imageOrientation];
-            [_imageLoader setImage:roundedImage url:url];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                _personImage.image = roundedImage;
-            });
-        });
+            _personImage.image = image;
     }];
 }
 

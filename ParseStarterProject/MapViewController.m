@@ -24,8 +24,9 @@
 #import "MeetupInviteViewController.h"
 #import "SCAnnotationView.h"
 #import "REVClusterAnnotationView.h"
+#import "PersonAnnotationView.h"
 #import "LocationManager.h"
-
+#import <QuartzCore/QuartzCore.h>
 @implementation MapViewController
 
 @synthesize mapView;
@@ -307,7 +308,17 @@
         }
     }
     else {
-        [mapView.userLocation setTitle:@"I am here"];
+        PersonAnnotationView *pinView;
+        pinView = (PersonAnnotationView*)
+        [SCAnnotationView constructAnnotationViewForAnnotation:annotation
+                                                        forMap:mV];
+        pinView.layer.zPosition = 1;
+//        [pinView prepareForAnnotation:annotation];
+        PFUser *user = [PFUser currentUser];
+        Person *p = [[Person alloc]init:user circle:0];
+        [pinView loadImageWithURL:p.imageURL];
+        pinView.canShowCallout = NO;
+        return pinView;
     }
     return nil;
 }

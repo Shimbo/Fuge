@@ -8,19 +8,22 @@
 
 #import "ImageLoader.h"
 #import "ParseStarterProjectAppDelegate.h"
-
+#import "JMImageCache.h"
+#import "UIImage+Circled.h"
 
 @implementation ImageLoader{
     NSURLConnection *connection;
     NSMutableData *data;
     NSString *__weak _urlString;
     ImageHandler _handler;
+    BOOL roundedImages;
 }
 
 - (id)initForCircleImages
 {
     self = [super init];
     if (self) {
+        roundedImages = YES;
         ParseStarterProjectAppDelegate *dlgt = (ParseStarterProjectAppDelegate*)[[UIApplication sharedApplication]delegate];
         _imageCache = dlgt.circledImageCache;
         self.maxImageSize = 400000;
@@ -42,7 +45,7 @@
 }
 
 -(UIImage*)getImage:(NSString*)url{
-    return [_imageCache objectForKey:url];
+    return [_imageCache cachedImageForKey:url];
 }
 
 -(void)setImage:(UIImage*)image url:(NSString*)url {
@@ -61,10 +64,8 @@
         handler(nil);
     }
     
-    
-    
     _urlString = url;
-    UIImage *cachedImage = [_imageCache objectForKey:_urlString];
+    UIImage *cachedImage = [_imageCache cachedImageForKey:_urlString];
     
     if ( cachedImage != nil ) {
 //        STLog(@"asd:%@",_urlString);
@@ -82,7 +83,12 @@
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]
                                              cachePolicy:NSURLRequestReturnCacheDataElseLoad
                                          timeoutInterval:10];
-    connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+    connection = [[NSURLConnection alloc] initWithRequest:request
+                                                 delegate:self
+                                         startImmediately:NO];
+    [connection scheduleInRunLoop:[NSRunLoop currentRunLoop]
+                          forMode:NSRunLoopCommonModes];
+    [connection start];
 }
 
 
@@ -117,6 +123,17 @@
         NSLog(@"no image: %@",_urlString);
     }
     if (image) {
+        if (roundedImages) {
+            image  = [UIImage appleMask:[UIImage imageNamed:@"mask35.png"]
+                               forImage:image];
+            NSData *rdata = UIImagePNGRepresentation(image);
+            [_imageCache saveToDisk:rdata
+                            withKey:_urlString];
+        }else{
+
+            [_imageCache saveToDisk:data
+                            withKey:_urlString];
+        }
         [_imageCache setObject:image
                         forKey:_urlString
                           cost:data.length];
