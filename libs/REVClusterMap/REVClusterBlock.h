@@ -10,17 +10,12 @@
 
 #import <Foundation/Foundation.h>
 #import <MapKit/MapKit.h>
-#import "REVAnnotationsCollection.h"
 
-@interface REVClusterBlock : NSObject {
-    REVAnnotationsCollection *annotationsCollection;
-}
-
+@interface REVClusterBlock : NSObject
 
 
 - (void) addAnnotation:(id<MKAnnotation>)annotation;
 - (id<MKAnnotation>) getClusteredAnnotation;
-- (id<MKAnnotation>) getAnnotationForIndex:(NSInteger)index;
-- (NSInteger) count;
+-(CLLocation*)location;
 
 @end

@@ -15,15 +15,10 @@
     CLLocationCoordinate2D coordinate;
     NSString *title;
     NSString *subtitle;
-    
-    NSArray *nodes;
-    
 }
-@property(nonatomic, retain) NSArray *nodes;
+@property(nonatomic, assign) NSInteger nodeCount;
 @property(nonatomic, assign) CLLocationCoordinate2D coordinate;
 @property(nonatomic, copy) NSString *title;
 @property(nonatomic, copy) NSString *subtitle;
-
-- (NSUInteger) nodeCount;
 
 @end

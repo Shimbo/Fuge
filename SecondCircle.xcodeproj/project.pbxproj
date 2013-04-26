@@ -45,7 +45,6 @@
 		471EAC6216C0D43A009F88F9 /* poweredByFoursquare_gray@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 471EAC5B16C0D3E0009F88F9 /* poweredByFoursquare_gray@2x.png */; };
 		476D1E2316A8273600077458 /* FSVenue.m in Sources */ = {isa = PBXBuildFile; fileRef = 476D1E2216A8273600077458 /* FSVenue.m */; };
 		477353241713F6CE004CA0D8 /* SCAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 477353231713F6CE004CA0D8 /* SCAnnotationView.m */; };
-		4773533117140853004CA0D8 /* REVAnnotationsCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 4773532717140853004CA0D8 /* REVAnnotationsCollection.m */; };
 		4773533217140853004CA0D8 /* REVClusterBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 4773532917140853004CA0D8 /* REVClusterBlock.m */; };
 		4773533317140853004CA0D8 /* REVClusterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4773532B17140853004CA0D8 /* REVClusterManager.m */; };
 		4773533417140853004CA0D8 /* REVClusterMapView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4773532E17140853004CA0D8 /* REVClusterMapView.m */; };
@@ -213,8 +212,6 @@
 		476D1E2216A8273600077458 /* FSVenue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSVenue.m; sourceTree = "<group>"; };
 		477353221713F6CE004CA0D8 /* SCAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCAnnotationView.h; sourceTree = "<group>"; };
 		477353231713F6CE004CA0D8 /* SCAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCAnnotationView.m; sourceTree = "<group>"; };
-		4773532617140853004CA0D8 /* REVAnnotationsCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REVAnnotationsCollection.h; sourceTree = "<group>"; };
-		4773532717140853004CA0D8 /* REVAnnotationsCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = REVAnnotationsCollection.m; sourceTree = "<group>"; };
 		4773532817140853004CA0D8 /* REVClusterBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REVClusterBlock.h; sourceTree = "<group>"; };
 		4773532917140853004CA0D8 /* REVClusterBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = REVClusterBlock.m; sourceTree = "<group>"; };
 		4773532A17140853004CA0D8 /* REVClusterManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REVClusterManager.h; sourceTree = "<group>"; };
@@ -573,8 +570,6 @@
 		4773532517140853004CA0D8 /* REVClusterMap */ = {
 			isa = PBXGroup;
 			children = (
-				4773532617140853004CA0D8 /* REVAnnotationsCollection.h */,
-				4773532717140853004CA0D8 /* REVAnnotationsCollection.m */,
 				4773532817140853004CA0D8 /* REVClusterBlock.h */,
 				4773532917140853004CA0D8 /* REVClusterBlock.m */,
 				4773532A17140853004CA0D8 /* REVClusterManager.h */,
@@ -936,7 +931,6 @@
 				47B203FA1710196200B756FA /* MainStyle.m in Sources */,
 				47B204031711861B00B756FA /* ThreadAnnotationView.m in Sources */,
 				477353241713F6CE004CA0D8 /* SCAnnotationView.m in Sources */,
-				4773533117140853004CA0D8 /* REVAnnotationsCollection.m in Sources */,
 				4773533217140853004CA0D8 /* REVClusterBlock.m in Sources */,
 				4773533317140853004CA0D8 /* REVClusterManager.m in Sources */,
 				4773533417140853004CA0D8 /* REVClusterMapView.m in Sources */,
@@ -1019,8 +1013,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1040,8 +1034,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = SecondCircle;
-				PROVISIONING_PROFILE = "8307A363-80CD-4621-8D22-4F4BC61EB8E1";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "8307A363-80CD-4621-8D22-4F4BC61EB8E1";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
 				WRAPPER_EXTENSION = app;

@@ -13,13 +13,5 @@
 
 @implementation REVClusterPin
 @synthesize title,coordinate,subtitle;
-@synthesize nodes;
-
-- (NSUInteger) nodeCount
-{
-    if( nodes )
-        return [nodes count];
-    return 0;
-}
 
 @end

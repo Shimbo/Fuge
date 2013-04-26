@@ -17,7 +17,9 @@
 - (BOOL) mapViewDidZoom;
 @end
 
-@implementation REVClusterMapView
+@implementation REVClusterMapView{
+    REVClusterManager *_manager;
+}
 
 @synthesize delegate;
 
@@ -201,8 +203,7 @@
         if( zoomLevel == 19 ){
             [super addAnnotations:annotationsCopy];
         }else{
-            NSArray *add = [REVClusterManager clusterAnnotationsForMapView:self
-                                                        forAnnotations:annotationsCopy];
+            NSArray *add = [_manager clusterAnnotationsForZoomLevel:zoomLevel];
             [super addAnnotations:add];
         }
     }
@@ -234,9 +235,11 @@
 
 - (void) addAnnotations:(NSArray *)annotations
 {
+    _manager = [[REVClusterManager alloc]init];
     [annotationsCopy addObjectsFromArray:annotations];
-    NSArray *add = [REVClusterManager clusterAnnotationsForMapView:self
-                                                    forAnnotations:annotationsCopy];
+    NSArray *add = [_manager clusterAnnotationsForMapView:self
+                                           forAnnotations:annotationsCopy
+                                                zoomLevel:zoomLevel];
     
     [super addAnnotations:add];
 }

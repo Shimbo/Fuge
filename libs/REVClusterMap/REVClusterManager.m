@@ -1,4 +1,4 @@
-//
+    //
 //  
 //    ___  _____   ______  __ _   _________ 
 //   / _ \/ __/ | / / __ \/ /| | / / __/ _ \
@@ -11,51 +11,90 @@
 #import "REVClusterManager.h"
 #import "GlobalVariables.h"
 
-#define BASE_RADIUS .5 // = 1 mile
-#define MINIMUM_LATITUDE_DELTA 0.20
-#define BLOCKS 4
-
-#define MINIMUM_CLUSTER_LEVEL 100000
 
 
-@implementation REVClusterManager
+@implementation REVClusterManager{
+    NSMutableDictionary *_cache;
+    NSArray *_pins;
+    __weak MKMapView *_map;
+    NSMutableDictionary *dist;
+}
+
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        _cache = [NSMutableDictionary dictionaryWithCapacity:20];
+        dist = [NSMutableDictionary dictionaryWithCapacity:20];
+        CGFloat a = DISTANCE_FOR_GROUPING_PINS;
+        for (int i = 1; i<=19; i++) {
+            dist[@(i)] = @(a);
+            a/=2;
+        }
+//        NSLog(@"%@",dist);
+    }
+    return self;
+}
+
+-(NSArray*)clusterAnnotationsForZoomLevel:(NSInteger)zoomLevel{
+    NSArray *pins = _cache[@(zoomLevel)];
+    if (!pins){
+        pins = [self clusterAnnotationsForMapView:_map
+                                   forAnnotations:_pins
+                                        zoomLevel:zoomLevel];
+    }
+    return pins;
+}
+
+-(CGFloat)distanceBetwen:(CGPoint)p1 and:(CGPoint)p2{
+    CGFloat xDist = (p2.x - p1.x);
+    CGFloat yDist = (p2.y - p1.y);
+    CGFloat distance = sqrt((xDist * xDist) + (yDist * yDist));
+    return distance;
+}
+
+-(REVClusterBlock*)findNearbyBlockToPoint:(CLLocation*)point
+                                  inArray:(NSArray*)array
+                              distanceMax:(NSInteger)distanceMax{
+    REVClusterBlock *result = nil;
+    CGFloat min = CGFLOAT_MAX;
+    for (REVClusterBlock *block in array) {
+        double distance = [point distanceFromLocation:block.location];
+        if (distance < distanceMax &&
+            min > distance) {
+            min = distance;
+            result = block;
+        }
+    }
+    return result;
+}
 
 
-
-+ (NSArray *) clusterAnnotationsForMapView:(MKMapView *)mapView
+- (NSArray *) clusterAnnotationsForMapView:(MKMapView *)mapView
                             forAnnotations:(NSArray *)pins
+                                 zoomLevel:(NSInteger)zoomLevel
 {
 
-    
-
-
-    
+    _map = mapView;
+    _pins = pins;
 
     NSMutableArray* clusteredBlocks = [NSMutableArray arrayWithCapacity:40];
+    CGFloat max = [dist[@(zoomLevel)] floatValue];
     for (REVClusterPin *pin in pins)
     {
-        CGPoint p1 = [mapView convertCoordinate:pin.coordinate
-                                         toPointToView:mapView];
-        BOOL added = NO;
-        for (REVClusterBlock *block in clusteredBlocks) {
-            id<MKAnnotation>  an = [block getAnnotationForIndex:0];
-            CGPoint p2 = [mapView convertCoordinate:an.coordinate
-                                      toPointToView:mapView];
-            CGFloat xDist = (p2.x - p1.x);
-            CGFloat yDist = (p2.y - p1.y);
-            CGFloat distance = sqrt((xDist * xDist) + (yDist * yDist));
-            if (distance < DISTANCE_FOR_GROUPING_PINS) {
-                added = YES;
-                [block addAnnotation:pin];
-                break;
-            }
-        }
-        if (!added) {
+        CLLocation *l1 = [[CLLocation alloc]initWithLatitude:pin.coordinate.latitude
+                                                   longitude:pin.coordinate.longitude];
+        
+        REVClusterBlock *block = [self findNearbyBlockToPoint:l1
+                                                      inArray:clusteredBlocks
+                                                  distanceMax:max];
+        if (block) {
+            [block addAnnotation:pin];
+        }else{
             REVClusterBlock *block = [[REVClusterBlock alloc] init];
             [block addAnnotation:pin];
             [clusteredBlocks addObject:block];
         }
-
     }
     
     //create New Pins
@@ -63,7 +102,7 @@
     for ( REVClusterBlock *block in clusteredBlocks )
         [newPins addObject:[block getClusteredAnnotation]];
         
-
+    _cache[@(zoomLevel)] = newPins;
     return newPins;
 }
 @end
