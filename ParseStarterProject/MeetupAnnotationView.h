@@ -20,6 +20,7 @@
     UIImageView *_personImage;
     TimerView *_timerView;
     ImageLoader *_imageLoader;
+
 }
 
 /*

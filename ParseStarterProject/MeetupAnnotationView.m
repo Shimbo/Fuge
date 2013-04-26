@@ -68,7 +68,7 @@
     {
         self.frame = CGRectMake(0, 0, 50, 60);
         self.opaque = NO;
-
+        self.centerOffset = CGPointMake(0, -22);
         
         _back = [[UIImageView alloc]initWithFrame:self.bounds];
         [self addSubview:_back];
@@ -204,9 +204,6 @@
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
             UIImage* roundedImage = [UIImage appleMask:[UIImage imageNamed:@"mask25.png"]
                                               forImage:image];
-//            roundedImage = [UIImage imageWithCGImage:roundedImage.CGImage
-//                                               scale:2
-//                                         orientation:roundedImage.imageOrientation];
             [_imageLoader setImage:roundedImage url:url];
             
             dispatch_async(dispatch_get_main_queue(), ^{

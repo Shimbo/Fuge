@@ -20,7 +20,7 @@
     {
         self.frame = CGRectMake(0, 0, 46, 58);
         self.opaque = NO;
-        
+        self.centerOffset = CGPointMake(0, -22);
         _back = [[UIImageView alloc]initWithFrame:self.bounds];
         [self addSubview:_back];
         
