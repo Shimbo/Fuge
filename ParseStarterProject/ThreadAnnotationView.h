@@ -11,10 +11,21 @@
 
 @class ThreadAnnotation;
 
-@interface ThreadAnnotationView : SCAnnotationView{
+
+@interface ThreadPin :UIView{
     CustomBadge *_badge;
     UIImageView *_back;
     UIImageView *_icon;
+}
+-(void)prepareForAnnotation:(ThreadAnnotation*)ann;
+@end
+
+
+
+
+
+@interface ThreadAnnotationView : SCAnnotationView{
+    ThreadPin *_contentView;
 }
 
 -(void)prepareForAnnotation:(ThreadAnnotation*)ann;

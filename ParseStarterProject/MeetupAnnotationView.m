@@ -56,37 +56,45 @@
 
 
 
+@implementation MeetupPin
 
+-(void)setup{
+    _back = [[UIImageView alloc]initWithFrame:self.bounds];
+    [self addSubview:_back];
+    
+    _icon = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"iconMeetup.png"]];
+    _icon.center = CGPointMake(25, 24);
+    [self addSubview:_icon];
+    
+    _personImage = [[UIImageView alloc]initWithFrame:CGRectMake(12.5, 12, 25, 25)];
+    _personImage.contentMode = UIViewContentModeScaleAspectFill;
+    [self addSubview:_personImage];
+    
+    _timerView = [[TimerView alloc]init];
+    [self addSubview:_timerView];
+}
 
-
-@implementation MeetupAnnotationView
-
-- (id) initWithAnnotation: (id <MKAnnotation>) annotation reuseIdentifier: (NSString *) reuseIdentifier
+- (id)initWithFrame:(CGRect)frame
 {
-    self = [super initWithAnnotation: annotation reuseIdentifier: reuseIdentifier];
-    if (self != nil)
-    {
-        self.frame = CGRectMake(0, 0, 50, 60);
-        self.opaque = NO;
-        self.centerOffset = CGPointMake(0, -22);
-        
-        _back = [[UIImageView alloc]initWithFrame:self.bounds];
-        [self addSubview:_back];
-        
-        _icon = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"iconMeetup.png"]];
-        _icon.center = CGPointMake(25, 24);
-        [self addSubview:_icon];
-        
-        _personImage = [[UIImageView alloc]initWithFrame:CGRectMake(12.5, 12, 25, 25)];
-        _personImage.contentMode = UIViewContentModeScaleAspectFill;
-        [self addSubview:_personImage];
-
-        _timerView = [[TimerView alloc]init];
-        [self addSubview:_timerView];
-        
-        [self setNeedsDisplay];
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self setup];
     }
     return self;
+}
+
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        [self setup];
+    }
+    return self;
+}
+
+-(void)awakeFromNib{
+    [super awakeFromNib];
+    [self setup];
 }
 
 -(void)updateBadgeForColor:(PinColor)color{
@@ -211,6 +219,33 @@
             });
         });
     }];
+}
+
+@end
+
+
+
+
+@implementation MeetupAnnotationView
+
+- (id) initWithAnnotation: (id <MKAnnotation>) annotation reuseIdentifier: (NSString *) reuseIdentifier
+{
+    self = [super initWithAnnotation: annotation reuseIdentifier: reuseIdentifier];
+    if (self != nil)
+    {
+        self.frame = CGRectMake(0, 0, 50, 60);
+        self.opaque = NO;
+        self.centerOffset = CGPointMake(0, -22);
+        _contentView = [[MeetupPin alloc]initWithFrame:self.bounds];
+        [self addSubview:_contentView];
+
+        
+    }
+    return self;
+}
+
+-(void)prepareForAnnotation:(MeetupAnnotation*)ann{
+    [_contentView prepareForAnnotation:ann];
 }
 
 

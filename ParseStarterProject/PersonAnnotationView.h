@@ -12,7 +12,8 @@
 @class PersonAnnotation;
 @class ImageLoader;
 @class CustomBadge;
-@interface PersonAnnotationView : SCAnnotationView{
+
+@interface PersonPin : UIView{
     ImageLoader *_imageLoader;
     CustomBadge *_badge;
     UIImageView *_back;
@@ -20,7 +21,14 @@
 }
 
 -(void)loadImageWithURL:(NSString*)url;
+-(void)prepareForAnnotation:(PersonAnnotation*)annotation;
+@end
 
 
+@interface PersonAnnotationView : SCAnnotationView{
+    PersonPin *_contentView;
+}
+
+-(void)loadImageWithURL:(NSString*)url;
 -(void)prepareForAnnotation:(PersonAnnotation*)annotation;
 @end

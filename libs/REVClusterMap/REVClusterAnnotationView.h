@@ -17,7 +17,10 @@
     CustomBadge *_badge;
     UIImageView *_backgroundImageView;
     UILabel *_label;
+//    UIActivityIndicatorView *_activity;
 }
--(void)prepareForAnnotation:(REVClusterPin*)annotation;
 @property (nonatomic, readonly) CLLocationCoordinate2D coordinate;
+
+-(void)prepareForAnnotation:(REVClusterPin*)annotation;
+
 @end

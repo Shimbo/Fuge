@@ -94,6 +94,11 @@
 		47C7402A172BE5DE00087C2A /* orange-comb@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 47C74028172BE5DE00087C2A /* orange-comb@2x.png */; };
 		47C7402D172BE5E900087C2A /* grey-comb.png in Resources */ = {isa = PBXBuildFile; fileRef = 47C7402B172BE5E900087C2A /* grey-comb.png */; };
 		47C7402E172BE5E900087C2A /* grey-comb@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 47C7402C172BE5E900087C2A /* grey-comb@2x.png */; };
+		47C74035172BFA6C00087C2A /* TableAnnotationsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 47C74034172BFA6C00087C2A /* TableAnnotationsViewController.m */; };
+		47C7403B172BFAF900087C2A /* AnnotationCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 47C7403A172BFAF900087C2A /* AnnotationCell.m */; };
+		47C7403D172BFB1F00087C2A /* AnnotationCellPerson.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47C7403C172BFB1E00087C2A /* AnnotationCellPerson.xib */; };
+		47C74040172C04F200087C2A /* AnnotationCellMeetup.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47C7403E172C04F200087C2A /* AnnotationCellMeetup.xib */; };
+		47C74041172C04F200087C2A /* AnnotationCellThread.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47C7403F172C04F200087C2A /* AnnotationCellThread.xib */; };
 		47D7CE3A170EB1FA00988F6A /* pinPerson@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 47D7CE39170EB1FA00988F6A /* pinPerson@2x.png */; };
 		4998650515BF305000803E05 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4998650415BF305000803E05 /* StoreKit.framework */; };
 		4C057322166AE74D00EF6FAD /* FacebookLogin.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C057321166AE74D00EF6FAD /* FacebookLogin.png */; };
@@ -288,6 +293,13 @@
 		47C74028172BE5DE00087C2A /* orange-comb@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "orange-comb@2x.png"; sourceTree = "<group>"; };
 		47C7402B172BE5E900087C2A /* grey-comb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "grey-comb.png"; sourceTree = "<group>"; };
 		47C7402C172BE5E900087C2A /* grey-comb@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "grey-comb@2x.png"; sourceTree = "<group>"; };
+		47C74033172BFA6C00087C2A /* TableAnnotationsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableAnnotationsViewController.h; sourceTree = "<group>"; };
+		47C74034172BFA6C00087C2A /* TableAnnotationsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableAnnotationsViewController.m; sourceTree = "<group>"; };
+		47C74039172BFAF900087C2A /* AnnotationCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnnotationCell.h; sourceTree = "<group>"; };
+		47C7403A172BFAF900087C2A /* AnnotationCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnnotationCell.m; sourceTree = "<group>"; };
+		47C7403C172BFB1E00087C2A /* AnnotationCellPerson.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AnnotationCellPerson.xib; sourceTree = "<group>"; };
+		47C7403E172C04F200087C2A /* AnnotationCellMeetup.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AnnotationCellMeetup.xib; sourceTree = "<group>"; };
+		47C7403F172C04F200087C2A /* AnnotationCellThread.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AnnotationCellThread.xib; sourceTree = "<group>"; };
 		47D7CE39170EB1FA00988F6A /* pinPerson@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pinPerson@2x.png"; sourceTree = "<group>"; };
 		4998650415BF305000803E05 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		4C057321166AE74D00EF6FAD /* FacebookLogin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = FacebookLogin.png; path = resources/FacebookLogin.png; sourceTree = "<group>"; };
@@ -666,9 +678,24 @@
 			name = "Map Annotations";
 			sourceTree = "<group>";
 		};
+		47C7402F172BFA1700087C2A /* Table Annotations */ = {
+			isa = PBXGroup;
+			children = (
+				47C74033172BFA6C00087C2A /* TableAnnotationsViewController.h */,
+				47C74034172BFA6C00087C2A /* TableAnnotationsViewController.m */,
+				47C7403C172BFB1E00087C2A /* AnnotationCellPerson.xib */,
+				47C7403E172C04F200087C2A /* AnnotationCellMeetup.xib */,
+				47C7403F172C04F200087C2A /* AnnotationCellThread.xib */,
+				47C74039172BFAF900087C2A /* AnnotationCell.h */,
+				47C7403A172BFAF900087C2A /* AnnotationCell.m */,
+			);
+			name = "Table Annotations";
+			sourceTree = "<group>";
+		};
 		4C08DDCD163C88480093C851 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				47C7402F172BFA1700087C2A /* Table Annotations */,
 				47B203FD171183E800B756FA /* Map Annotations */,
 				4C188D1F1698C51A004CF42D /* MapViewController.h */,
 				4C188D201698C51A004CF42D /* MapViewController.m */,
@@ -908,6 +935,9 @@
 				47C7402A172BE5DE00087C2A /* orange-comb@2x.png in Resources */,
 				47C7402D172BE5E900087C2A /* grey-comb.png in Resources */,
 				47C7402E172BE5E900087C2A /* grey-comb@2x.png in Resources */,
+				47C7403D172BFB1F00087C2A /* AnnotationCellPerson.xib in Resources */,
+				47C74040172C04F200087C2A /* AnnotationCellMeetup.xib in Resources */,
+				47C74041172C04F200087C2A /* AnnotationCellThread.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -975,6 +1005,8 @@
 				4773533817140A9C004CA0D8 /* REVClusterAnnotationView.m in Sources */,
 				4CA3F06517170D8A00271E7A /* LoadingController.m in Sources */,
 				47AEC1F8172AEA170095DA31 /* JMImageCache.m in Sources */,
+				47C74035172BFA6C00087C2A /* TableAnnotationsViewController.m in Sources */,
+				47C7403B172BFAF900087C2A /* AnnotationCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

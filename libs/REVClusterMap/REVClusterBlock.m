@@ -11,6 +11,7 @@
 #import "REVClusterMap.h"
 #import "MeetupAnnotation.h"
 #import "ThreadAnnotationView.h"
+#import "PersonAnnotation.h"
 
 
 @implementation REVClusterBlock{
@@ -19,6 +20,8 @@
     double ySum;
     CLLocation *_location;
     NSMutableArray *_nodes;
+    int _count;
+    id _firsrNode;
 }
 
 - (id)init
@@ -40,21 +43,20 @@
 
 - (void) addAnnotation:(id<MKAnnotation>)annotation
 {
+    
+    
     if ([annotation isKindOfClass:[MeetupAnnotation class]]) {
         MeetupAnnotation *a = (MeetupAnnotation*)annotation;
-        if (a.pinColor > _pinColor) 
-            _pinColor = a.pinColor;
-        if (a.time > _pinTime) 
-            _pinTime = a.time;
-    }
-    
-    if ([annotation isKindOfClass:[ThreadAnnotation class]]) {
-        ThreadAnnotation *a = (ThreadAnnotation*)annotation;
         if (a.pinColor > _pinColor)
             _pinColor = a.pinColor;
+        if (a.time > _pinTime)
+            _pinTime = a.time;
     }
-    
     [_nodes addObject:annotation];
+    if (!_firsrNode) {
+        _firsrNode = annotation;
+    }
+    _count++;
     _location = nil;
     _pin = nil;
     MKMapPoint mapPoint = MKMapPointForCoordinate( [annotation coordinate] );
@@ -65,17 +67,17 @@
 
 - (id<MKAnnotation>) getClusteredAnnotation
 {
-    if (_nodes.count == 1)
-        return _nodes[0];
+    if (_count == 1)
+        return _firsrNode;
     
     if (!_pin) {
-        double x = xSum / _nodes.count;
-        double y = ySum / _nodes.count;
+        double x = xSum / _count;
+        double y = ySum / _count;
         CLLocationCoordinate2D location = MKCoordinateForMapPoint(MKMapPointMake(x, y));
         _pin = [[REVClusterPin alloc] init];
         _pin.coordinate = location;
         _pin.nodes = _nodes;
-        _pin.nodeCount = _nodes.count;
+        _pin.nodeCount = _count;
         _pin.pinColor = _pinColor;
         _pin.time = _pinTime;
     }

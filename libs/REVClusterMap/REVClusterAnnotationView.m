@@ -22,7 +22,7 @@
     self = [super initWithAnnotation:annotation reuseIdentifier:reuseIdentifier];
     if ( self )
     {
-        self.frame = CGRectMake(0, 0, 58, 58);
+        self.frame = CGRectMake(0, 0, 40, 40);
         _backgroundImageView = [[UIImageView alloc]initWithFrame:self.bounds];
         [self addSubview:_backgroundImageView];
         
@@ -38,6 +38,7 @@
 
 - (void) setClusterNum:(NSUInteger)num
 {
+    _label.hidden = NO;
     [_label setText:[NSString stringWithFormat:@"%d",num]];
 }
 

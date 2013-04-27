@@ -27,6 +27,8 @@
 #import "PersonAnnotationView.h"
 #import "LocationManager.h"
 #import <QuartzCore/QuartzCore.h>
+#import "TableAnnotationsViewController.h"
+
 @implementation MapViewController
 
 @synthesize mapView;
@@ -281,20 +283,21 @@
     {
         if( [pin nodeCount] > 0 ){
             pin.title = @"___";
-            REVClusterAnnotationView *annView;
-            annView = (REVClusterAnnotationView*)
+            REVClusterAnnotationView *pinView;
+            pinView = (REVClusterAnnotationView*)
             [mapView dequeueReusableAnnotationViewWithIdentifier:@"cluster"];
             
-            if( !annView )
-                annView = (REVClusterAnnotationView*)
+            if( !pinView )
+                pinView = (REVClusterAnnotationView*)
                 [[REVClusterAnnotationView alloc] initWithAnnotation:annotation
                                                       reuseIdentifier:@"cluster"] ;
             
             
-            [annView prepareForAnnotation:pin];
+            [pinView prepareForAnnotation:pin];
             
-            annView.canShowCallout = NO;
-            return annView;
+            pinView.canShowCallout = NO;
+            pinView.layer.zPosition = 1;
+            return pinView;
         }else{
             SCAnnotationView *pinView;
             pinView = [SCAnnotationView constructAnnotationViewForAnnotation:annotation
@@ -304,6 +307,7 @@
             UIButton *btnView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
             pinView.rightCalloutAccessoryView = btnView;
             pinView.canShowCallout = YES;
+            pinView.layer.zPosition = 1;
             return pinView;
         }
     }
@@ -312,7 +316,7 @@
         pinView = (PersonAnnotationView*)
         [SCAnnotationView constructAnnotationViewForAnnotation:annotation
                                                         forMap:mV];
-        pinView.layer.zPosition = 1;
+        
 //        [pinView prepareForAnnotation:annotation];
         PFUser *user = [PFUser currentUser];
         Person *p = [[Person alloc]init:user circle:0];
@@ -343,26 +347,38 @@
     }
 }
 
--(void)fitMapViewForAnotations:(NSArray*)annotations{
+-(BOOL)fitMapViewForAnotations:(NSArray*)annotations{
+    if ([self.mapView isMaximumZoom])
+        return NO;
+    
     MKMapRect zoomRect = MKMapRectNull;
-    for (id <MKAnnotation> annotation in annotations)
-    {
+    for (id <MKAnnotation> annotation in annotations){
         MKMapPoint annotationPoint = MKMapPointForCoordinate(annotation.coordinate);
         MKMapRect pointRect = MKMapRectMake(annotationPoint.x, annotationPoint.y,
                                             0.1, 0.1);
         zoomRect = MKMapRectUnion(zoomRect, pointRect);
     }
-    [mapView setVisibleMapRect:zoomRect
-                   edgePadding:UIEdgeInsetsMake(60, 30, 20, 30)
-                      animated:YES];
+    if (zoomRect.size.width > 0.2 || zoomRect.size.height > 0.2) {
+        [mapView setVisibleMapRect:zoomRect
+                       edgePadding:UIEdgeInsetsMake(60, 30, 20, 30)
+                          animated:YES];
+        return YES;
+    }
+    
+    return NO;
 }
 
 - (void)mapView:(MKMapView *)mv didSelectAnnotationView:(MKAnnotationView *)view
 {
     if ([view isKindOfClass:[REVClusterAnnotationView class]]) {
-        if (![self.mapView isMaximumZoom]) {
-            REVClusterPin *pin = (REVClusterPin*)view.annotation;
-            [self fitMapViewForAnotations:pin.nodes];
+        REVClusterPin *pin = (REVClusterPin*)view.annotation;
+        
+        if ([self fitMapViewForAnotations:pin.nodes] == NO) {
+            TableAnnotationsViewController *ctrl = [[TableAnnotationsViewController alloc]init];
+            ctrl.annotations = pin.nodes;
+            UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:ctrl];
+            nav.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+            [self presentViewController:nav animated:YES completion:nil];
         }
     }
 }

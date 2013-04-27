@@ -10,25 +10,39 @@
 #import "MeetupAnnotation.h"
 #import "MainStyle.h"
 #import "CustomBadge.h"
-#import <QuartzCore/QuartzCore.h>
-@implementation ThreadAnnotationView
 
-- (id) initWithAnnotation: (id <MKAnnotation>) annotation reuseIdentifier: (NSString *) reuseIdentifier
+@implementation ThreadPin
+
+-(void)setup{
+    _back = [[UIImageView alloc]initWithFrame:self.bounds];
+    [self addSubview:_back];
+    
+    _icon = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"iconThread.png"]];
+    _icon.center = CGPointMake(23, 23);
+    [self addSubview:_icon];
+}
+
+- (id)initWithFrame:(CGRect)frame
 {
-    self = [super initWithAnnotation: annotation reuseIdentifier: reuseIdentifier];
-    if (self != nil)
-    {
-        self.frame = CGRectMake(0, 0, 46, 58);
-        self.opaque = NO;
-        self.centerOffset = CGPointMake(0, -22);
-        _back = [[UIImageView alloc]initWithFrame:self.bounds];
-        [self addSubview:_back];
-        
-        _icon = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"iconThread.png"]];
-        _icon.center = CGPointMake(23, 23);
-        [self addSubview:_icon];
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self setup];
     }
     return self;
+}
+
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        [self setup];
+    }
+    return self;
+}
+
+-(void)awakeFromNib{
+    [super awakeFromNib];
+    [self setup];
 }
 
 -(void)updateBadgeForColor:(PinColor)color{
@@ -92,5 +106,27 @@
     [self setPinIcon:ann.meetup];
     [self setUnreaCount:ann.numUnreadCount];
 }
+@end
 
+@implementation ThreadAnnotationView
+
+- (id) initWithAnnotation: (id <MKAnnotation>) annotation reuseIdentifier: (NSString *) reuseIdentifier
+{
+    self = [super initWithAnnotation: annotation reuseIdentifier: reuseIdentifier];
+    if (self != nil)
+    {
+        self.frame = CGRectMake(0, 0, 46, 58);
+        self.opaque = NO;
+        self.centerOffset = CGPointMake(0, -22);
+        _contentView = [[ThreadPin alloc]initWithFrame:self.bounds];
+        [self addSubview:_contentView];
+
+    }
+    return self;
+}
+
+
+-(void)prepareForAnnotation:(ThreadAnnotation*)ann{
+    [_contentView prepareForAnnotation:ann];
+}
 @end

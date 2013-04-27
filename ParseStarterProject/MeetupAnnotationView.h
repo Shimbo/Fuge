@@ -13,23 +13,22 @@
 @class CustomBadge;
 @class TimerView;
 @class ImageLoader;
-@interface MeetupAnnotationView : SCAnnotationView{
+
+@interface MeetupPin : UIView{
     CustomBadge *_badge;
     UIImageView *_back;
     UIImageView *_icon;
     UIImageView *_personImage;
     TimerView *_timerView;
     ImageLoader *_imageLoader;
-
 }
+-(void)prepareForAnnotation:(MeetupAnnotation*)ann;
 
-/*
--(void)setPinColor:(PinColor)color;
--(void)setPinPrivacy:(PinPrivacy)privacy;
--(void)setTime:(CGFloat)time;
--(void)setUnreaCount:(NSUInteger)count;
-*/
+@end
 
+@interface MeetupAnnotationView : SCAnnotationView{
+    MeetupPin *_contentView;
+}
 
 -(void)prepareForAnnotation:(MeetupAnnotation*)ann;
 @end
