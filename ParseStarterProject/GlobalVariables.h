@@ -18,7 +18,7 @@
 
 #define TIME_FOR_JOIN_PERSON_AND_MEETUP         0.95 //in %
 #define DISTANCE_FOR_JOIN_PERSON_AND_MEETUP     100 //in meters
-#define DISTANCE_FOR_GROUPING_PINS              222000 //in meters
+#define DISTANCE_FOR_GROUPING_PINS              500000 //in meters
 
 
 @interface GlobalVariables : NSObject
