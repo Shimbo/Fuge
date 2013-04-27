@@ -55,7 +55,7 @@
     }
     _personImage.image = nil;
     [_imageLoader loadImageWithUrl:url handler:^(UIImage *image) {
-            _personImage.image = image;
+        _personImage.image = image;
     }];
 }
 

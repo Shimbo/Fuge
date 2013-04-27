@@ -12,9 +12,12 @@
 #import <MapKit/MapKit.h>
 #import "CustomBadge.h"
 
+@class REVClusterPin;
 @interface REVClusterAnnotationView : MKAnnotationView <MKAnnotation> {
     CustomBadge *_badge;
+    UIImageView *_backgroundImageView;
+    UILabel *_label;
 }
-- (void) setClusterNum:(NSUInteger)num;
+-(void)prepareForAnnotation:(REVClusterPin*)annotation;
 @property (nonatomic, readonly) CLLocationCoordinate2D coordinate;
 @end

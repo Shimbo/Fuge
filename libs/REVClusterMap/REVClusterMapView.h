@@ -19,4 +19,5 @@
 @property(nonatomic,assign) id<MKMapViewDelegate> delegate;
 
 -(void)cleanUpAnnotations;
+-(BOOL)isMaximumZoom;
 @end

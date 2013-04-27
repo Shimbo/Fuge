@@ -191,6 +191,9 @@
     }
 }
 
+-(BOOL)isMaximumZoom{
+    return zoomLevel == 19;
+}
 - (void) mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated
 {
     
@@ -200,12 +203,8 @@
         [arr removeObject:self.userLocation];
         [super removeAnnotations:arr];
         self.showsUserLocation = self.showsUserLocation;
-        if( zoomLevel == 19 ){
-            [super addAnnotations:annotationsCopy];
-        }else{
             NSArray *add = [_manager clusterAnnotationsForZoomLevel:zoomLevel];
             [super addAnnotations:add];
-        }
     }
     
 

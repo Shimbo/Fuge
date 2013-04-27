@@ -28,8 +28,12 @@
         dist = [NSMutableDictionary dictionaryWithCapacity:20];
         CGFloat a = DISTANCE_FOR_GROUPING_PINS;
         for (int i = 1; i<=19; i++) {
-            dist[@(i)] = @(a);
+            if (i == 19)
+                dist[@(i)] = @(1.0);
+            else
+                dist[@(i)] = @(a);
             a/=2;
+
         }
 //        NSLog(@"%@",dist);
     }

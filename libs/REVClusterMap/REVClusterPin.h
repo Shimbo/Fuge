@@ -17,8 +17,12 @@
     NSString *subtitle;
 }
 @property(nonatomic, assign) NSInteger nodeCount;
+@property(nonatomic, strong) NSMutableArray *nodes;
 @property(nonatomic, assign) CLLocationCoordinate2D coordinate;
 @property(nonatomic, copy) NSString *title;
 @property(nonatomic, copy) NSString *subtitle;
+
+@property (nonatomic, assign) PinColor pinColor;
+@property (nonatomic, assign) CGFloat time;
 
 @end

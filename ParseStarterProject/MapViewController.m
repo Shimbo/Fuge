@@ -291,7 +291,7 @@
                                                       reuseIdentifier:@"cluster"] ;
             
             
-            [annView setClusterNum:[pin nodeCount]];
+            [annView prepareForAnnotation:pin];
             
             annView.canShowCallout = NO;
             return annView;
@@ -343,20 +343,27 @@
     }
 }
 
+-(void)fitMapViewForAnotations:(NSArray*)annotations{
+    MKMapRect zoomRect = MKMapRectNull;
+    for (id <MKAnnotation> annotation in annotations)
+    {
+        MKMapPoint annotationPoint = MKMapPointForCoordinate(annotation.coordinate);
+        MKMapRect pointRect = MKMapRectMake(annotationPoint.x, annotationPoint.y,
+                                            0.1, 0.1);
+        zoomRect = MKMapRectUnion(zoomRect, pointRect);
+    }
+    [mapView setVisibleMapRect:zoomRect
+                   edgePadding:UIEdgeInsetsMake(60, 30, 20, 30)
+                      animated:YES];
+}
+
 - (void)mapView:(MKMapView *)mv didSelectAnnotationView:(MKAnnotationView *)view
 {
-    
     if ([view isKindOfClass:[REVClusterAnnotationView class]]) {
-        CLLocationCoordinate2D centerCoordinate = [(REVClusterPin *)view.annotation coordinate];
-        
-        MKCoordinateSpan newSpan =
-        MKCoordinateSpanMake(mapView.region.span.latitudeDelta/2.0,
-                             mapView.region.span.longitudeDelta/2.0);
-        
-        //mapView.region = MKCoordinateRegionMake(centerCoordinate, newSpan);
-        
-        [mapView setRegion:MKCoordinateRegionMake(centerCoordinate, newSpan)
-                  animated:YES];
+        if (![self.mapView isMaximumZoom]) {
+            REVClusterPin *pin = (REVClusterPin*)view.annotation;
+            [self fitMapViewForAnotations:pin.nodes];
+        }
     }
 }
 - (void)didReceiveMemoryWarning

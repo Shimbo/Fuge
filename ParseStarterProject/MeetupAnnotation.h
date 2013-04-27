@@ -11,11 +11,7 @@
 #import "Meetup.h"
 #import "REVClusterPin.h"
 
-typedef enum kPinColor{
-    PinOrange = 1,
-    PinBlue,
-    PinGray
-}PinColor;
+
 
 typedef enum kPinPrivacy{
     PinPrivate = 1,
@@ -35,8 +31,6 @@ typedef enum kPinPrivacy{
 @property (nonatomic,strong) NSMutableArray *attendedPersons;
 @property (nonatomic, strong) NSString *strId;
 @property (nonatomic, assign) PinPrivacy pinPrivacy;
-@property (nonatomic, assign) PinColor pinColor;
-@property (nonatomic, assign) CGFloat time;
 @property (nonatomic, readonly)NSUInteger numUnreadCount;
 
 -(void)addPerson:(Person*)person;

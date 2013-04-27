@@ -11,7 +11,10 @@
 #import <Foundation/Foundation.h>
 #import <MapKit/MapKit.h>
 
-@interface REVClusterBlock : NSObject
+@interface REVClusterBlock : NSObject{
+    PinColor _pinColor;
+    CGFloat _pinTime;
+}
 
 
 - (void) addAnnotation:(id<MKAnnotation>)annotation;

@@ -10,6 +10,8 @@
 
 #import "REVClusterAnnotationView.h"
 #import "MainStyle.h"
+#import "REVClusterPin.h"
+
 
 @implementation REVClusterAnnotationView
 
@@ -20,18 +22,45 @@
     self = [super initWithAnnotation:annotation reuseIdentifier:reuseIdentifier];
     if ( self )
     {
-        _badge = [CustomBadge badgeWithWhiteBackgroundAndTextColor:
-                  [MainStyle orangeColor]];
-//        _badge.center = CGPointMake(0, 0);
-        self.frame = _badge.bounds;
-        [self addSubview:_badge];
+        self.frame = CGRectMake(0, 0, 58, 58);
+        _backgroundImageView = [[UIImageView alloc]initWithFrame:self.bounds];
+        [self addSubview:_backgroundImageView];
+        
+        _label = [[UILabel alloc]initWithFrame:self.bounds];
+        _label.backgroundColor = [UIColor clearColor];
+        _label.textColor = [UIColor whiteColor];
+        _label.font = [UIFont fontWithName:@"Helvetica" size:18];
+        _label.textAlignment = NSTextAlignmentCenter;
+        [self addSubview:_label];
     }
     return self;
 }
 
 - (void) setClusterNum:(NSUInteger)num
 {
-    [_badge setNumber:num];
+    [_label setText:[NSString stringWithFormat:@"%d",num]];
+}
+
+-(void)setColor:(PinColor)color{
+    switch (color) {
+        case PinBlue:
+            _backgroundImageView.image = [UIImage imageNamed:@"blue-comb.png"];
+            break;
+        case PinGray:
+            _backgroundImageView.image = [UIImage imageNamed:@"grey-comb.png"];
+            break;
+        case PinOrange:
+            _backgroundImageView.image = [UIImage imageNamed:@"orange-comb.png"];
+            break;
+            
+        default:
+            break;
+    }
+}
+
+-(void)prepareForAnnotation:(REVClusterPin*)annotation{
+    [self setClusterNum:annotation.nodeCount];
+    [self setColor:annotation.pinColor];
 }
 
 
