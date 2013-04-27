@@ -18,6 +18,8 @@
 
 @implementation LoadingController
 
+static Boolean bAnimating = true;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -151,7 +153,8 @@
         if (nAnimationStage == 2)
             nAnimationStage = 0;
         
-        [self animateHypno];
+        if ( bAnimating )
+            [self animateHypno];
     }];
 }
 
@@ -173,6 +176,13 @@
 {
     ProfileViewController *profileViewController = [[ProfileViewController alloc] initWithNibName:@"ProfileView" bundle:nil];
     [self.navigationController presentViewController:profileViewController animated:TRUE completion:nil];
+}
+
+- (void) viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    bAnimating = false;
+    _backgroundImage.hidden = TRUE;
 }
 
 -(void) mainComplete
