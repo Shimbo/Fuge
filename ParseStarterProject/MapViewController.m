@@ -155,6 +155,11 @@
     [self reloadMapAnnotations];
 }
 
+-(void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
+{
+    _userLocation.coordinate = newLocation.coordinate;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -164,8 +169,18 @@
     [mapView setZoomEnabled:YES];
     [mapView setScrollEnabled:YES];
     [mapView setDelegate:self];
-    mapView.showsUserLocation = TRUE;
-    srand((unsigned)time(0));
+    mapView.showsUserLocation = NO;
+    
+    _locationManager = [[CLLocationManager alloc]init];
+    _locationManager.delegate = self;
+    _locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
+    [_locationManager startUpdatingLocation];
+    
+    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized) {
+        _userLocation = [[PersonAnnotation alloc] init];
+        _userLocation.title = @"You are here";
+        _userLocation.subtitle = nil;
+    }
     
     // Navigation bar
     [self.navigationItem setHidesBackButton:true animated:false];
@@ -176,11 +191,7 @@
     PFGeoPoint *geoPointUser = [[PFUser currentUser] objectForKey:@"location"];
     float span = 0.05f;
     
-    // Tracking mode
-    if ( geoPointUser )
-        [mapView setUserTrackingMode:MKUserTrackingModeNone animated:FALSE];
-    else
-        [mapView setUserTrackingMode:MKUserTrackingModeFollow animated:TRUE];
+
     
     // Default position
     if ( ! geoPointUser )
@@ -191,6 +202,7 @@
     
     // Default map location
     CLLocation* locationUser = [[CLLocation alloc] initWithLatitude:geoPointUser.latitude longitude:geoPointUser.longitude];
+    _userLocation.coordinate = locationUser.coordinate;
     MKCoordinateRegion region = { {0.0, 0.0 }, { 0.0, 0.0 } };
     region.center.latitude = locationUser.coordinate.latitude;//..mapView.userLocation.location.coordinate.latitude;
     region.center.longitude = locationUser.coordinate.longitude;//mapView.userLocation.location.coordinate.longitude;
@@ -250,10 +262,8 @@
 
 -(void)reloadMapAnnotations{
     _personsAnnotations = [NSMutableArray arrayWithCapacity:20];
-    _meetupAnnotations = [NSMutableArray arrayWithCapacity:50];
+    _meetupAnnotations = [NSMutableArray arrayWithCapacity:20];
     _threadAnnotations = [NSMutableArray arrayWithCapacity:20];
-    [mapView cleanUpAnnotations];
-
     
     // Persons and meetups adding
     NSUInteger nLimit = MAX_ANNOTATIONS_ON_THE_MAP;
@@ -267,10 +277,11 @@
     NSMutableArray *array = [_personsAnnotations mutableCopy];
     [array addObjectsFromArray:_meetupAnnotations];
     [array addObjectsFromArray:_threadAnnotations];
+    if (_userLocation)
+        [array addObject:_userLocation];
     [mapView addAnnotations:array];
 
-    if ( nLimit == 0 )
-    {
+    if ( nLimit == 0 ){
         // TODO: show message at the bottom: "Zoom closier to see more."
     }
 }
@@ -279,7 +290,7 @@
 -(MKAnnotationView *)mapView:(MKMapView *)mV viewForAnnotation:(id <MKAnnotation>)annotation
 {
     REVClusterPin *pin = (REVClusterPin *)annotation;
-    if (annotation != mapView.userLocation)
+    if (annotation != _userLocation)
     {
         if( [pin nodeCount] > 0 ){
             pin.title = @"___";
@@ -321,7 +332,8 @@
         PFUser *user = [PFUser currentUser];
         Person *p = [[Person alloc]init:user circle:0];
         [pinView loadImageWithURL:p.imageURL];
-        pinView.canShowCallout = NO;
+        pinView.canShowCallout = YES;
+        pinView.rightCalloutAccessoryView = nil;
         return pinView;
     }
     return nil;

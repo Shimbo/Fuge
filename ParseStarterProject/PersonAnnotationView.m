@@ -88,7 +88,7 @@
 {
     self = [super initWithAnnotation: annotation reuseIdentifier: reuseIdentifier];
     if (self != nil){
-        self.calloutOffset = CGPointMake(6, 0);
+        self.calloutOffset = CGPointMake(0, 0);
         self.frame = CGRectMake(0, 0, 48, 48);
         _contentView = [[PersonPin alloc]initWithFrame:self.bounds];
         [self addSubview:_contentView];

@@ -10,13 +10,15 @@
 #import <MapKit/MapKit.h>
 #import "MainViewController.h"
 #import "REVClusterMapView.h"
-
-@interface MapViewController : MainViewController <MKMapViewDelegate>
+@class PersonAnnotation;
+@interface MapViewController : MainViewController <MKMapViewDelegate,CLLocationManagerDelegate>
 {
     IBOutlet REVClusterMapView *mapView;
     NSMutableArray *_personsAnnotations;
     NSMutableArray *_meetupAnnotations;
     NSMutableArray *_threadAnnotations;
+    CLLocationManager *_locationManager;
+    PersonAnnotation *_userLocation;
 }
 
 @property (nonatomic, retain) IBOutlet REVClusterMapView *mapView;

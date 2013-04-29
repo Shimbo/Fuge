@@ -234,6 +234,7 @@
 
 - (void) addAnnotations:(NSArray *)annotations
 {
+    [self cleanUpAnnotations];
     _manager = [[REVClusterManager alloc]init];
     [annotationsCopy addObjectsFromArray:annotations];
     NSArray *add = [_manager clusterAnnotationsForMapView:self
@@ -245,9 +246,14 @@
 
 -(void)cleanUpAnnotations{
     [annotationsCopy removeAllObjects];
-    NSMutableArray *arr = [self.annotations mutableCopy];
-    [arr removeObject:self.userLocation];
-    [super removeAnnotations:arr];
+    if (self.userLocation) {
+        NSMutableArray *arr = [self.annotations mutableCopy];
+        [arr removeObject:self.userLocation];
+        [super removeAnnotations:arr];
+    }else{
+        [super removeAnnotations:self.annotations];
+    }
+
 }
 
 
