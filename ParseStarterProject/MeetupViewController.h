@@ -25,12 +25,13 @@ enum EMeetupButtons
     
     MB_TOTAL_COUNT  = 8
 };
+#import "GrowingTextViewExampleViewController.h"
 
-@interface MeetupViewController : UIViewController <UITextViewDelegate, MKMapViewDelegate>
+@interface MeetupViewController : GrowingTextViewExampleViewController
+<UITextViewDelegate, MKMapViewDelegate>
 {
     Meetup* meetup;
     IBOutlet UITextView *comments;
-    IBOutlet UITextView *newComment;
     IBOutlet MKMapView *mapView;
     IBOutlet UILabel *labelDate;
     IBOutlet UILabel *labelLocation;

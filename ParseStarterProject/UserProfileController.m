@@ -104,7 +104,6 @@
 
 - (void)viewDidUnload {
     messageHistory = nil;
-    messageNew = nil;
     profileImage = nil;
     labelDistance = nil;
     labelCircle = nil;
@@ -117,7 +116,7 @@
 
 
 
-
+/*
 
 static const CGFloat KEYBOARD_ANIMATION_DURATION = 0.3;
 static const CGFloat MINIMUM_SCROLL_FRACTION = 0.2;
@@ -176,15 +175,7 @@ double animatedDistance;
     [UIView commitAnimations];
 }
 
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
-{
-	if ( [ text isEqualToString: @"\n" ] )
-    {
-        [ textView resignFirstResponder ];
-        return NO;
-    }
-    return YES;
-}
+*/
 
 - (void) callbackMessageSave:(NSNumber *)result error:(NSError *)error
 {
@@ -194,7 +185,7 @@ double animatedDistance;
     // Updating history
     NSMutableString* stringHistory = [[NSMutableString alloc] initWithFormat:@""];
     [stringHistory appendString:@"    You: "];
-    [stringHistory appendString:messageNew.text];
+    [stringHistory appendString:textView.text];
     [stringHistory appendString:@"\n"];
     [stringHistory appendString:messageHistory.text];
     [messageHistory setText:stringHistory];
@@ -205,9 +196,8 @@ double animatedDistance;
     [messageHistory scrollRangeToVisible:range];
     
     // Emptying message
-    [messageNew setText:@""];
-    messageNew.editable = true;
-    
+    [textView setText:@""];
+    textView.editable = YES;
     // Updating conversation
     messagesCount++;
     [globalData updateConversation:nil count:messagesCount thread:personThis.strId];
@@ -215,27 +205,26 @@ double animatedDistance;
     [self.activityIndicator stopAnimating];
 }
 
-- (void) textViewDidEndEditing:(UITextView *)textView
-{
-    CGRect viewFrame = self.view.frame;
-    viewFrame.origin.y += animatedDistance;
-    
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationBeginsFromCurrentState:YES];
-    [UIView setAnimationDuration:KEYBOARD_ANIMATION_DURATION];
-    
-    [self.view setFrame:viewFrame];
-    
-    [UIView commitAnimations];
-    
-    if ( [messageNew.text compare:@""] == NSOrderedSame )
+-(void) keyboardWillShow:(NSNotification *)note{
+    [super keyboardWillShow:note];
+    messageHistory.userInteractionEnabled = NO;
+}
+
+-(void) keyboardWillHide:(NSNotification *)note{
+    [super keyboardWillHide:note];
+    messageHistory.userInteractionEnabled = YES;
+}
+
+-(void)send{
+    [super send];
+    if ( textView.text.length == 0)
         return;
     
     // Adding message with callback on save
     Message* newMessage = [[Message alloc] init];
     newMessage.strUserFrom = strCurrentUserId;
     newMessage.strUserTo = personThis.strId;
-    newMessage.strText = messageNew.text;
+    newMessage.strText = textView.text;
     newMessage.objUserFrom = [PFUser currentUser];
     newMessage.objUserTo = personThis.personData;
     newMessage.strNameUserFrom = strCurrentUserName;
@@ -247,8 +236,10 @@ double animatedDistance;
     
     // Start animating
     [self.activityIndicator startAnimating];
-    messageNew.editable = false;
+    textView.editable = NO;
 }
+
+
 
 
 - (IBAction)addButtonDown:(id)sender {
@@ -281,7 +272,7 @@ double animatedDistance;
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
-    [messageNew resignFirstResponder];
+    [textView resignFirstResponder];
 }
 
 @end

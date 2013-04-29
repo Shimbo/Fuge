@@ -77,7 +77,6 @@
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     [self.tableView setContentOffset:CGPointMake(0, 0)];
-
     if (_delegate.selectedVenue) {
         [self.mapView selectAnnotation:_delegate.selectedVenue animated:NO];
         [self setMapCenter:_delegate.selectedVenue.lat.doubleValue+0.00035

@@ -23,8 +23,29 @@
         _meetup = nil;
         invitee = nil;
         self.navigationItem.leftItemsSupplementBackButton = true;
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWillShow:)
+                                                     name:UIKeyboardWillShowNotification
+                                                   object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWillHide:)
+                                                     name:UIKeyboardWillHideNotification
+                                                   object:nil];
     }
     return self;
+}
+
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter]removeObserver:self];
+}
+
+-(void) keyboardWillShow:(NSNotification *)note{
+    dateTime.userInteractionEnabled = NO;
+}
+
+-(void) keyboardWillHide:(NSNotification *)note{
+    dateTime.userInteractionEnabled = YES;
 }
 
 -(void) setMeetup:(Meetup*)m

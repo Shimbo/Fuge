@@ -36,6 +36,17 @@
 		470E5D2716F99EB90090A19F /* Calendar-Day.png in Resources */ = {isa = PBXBuildFile; fileRef = 470E5D2516F99EB90090A19F /* Calendar-Day.png */; };
 		470E5D2816F99EB90090A19F /* Calendar-Day@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 470E5D2616F99EB90090A19F /* Calendar-Day@2x.png */; };
 		470E5D2B16F9A5E40090A19F /* PersonAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 470E5D2A16F9A5E40090A19F /* PersonAnnotationView.m */; };
+		471984A2172EB9A800A5FE8E /* HPGrowingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 47198497172EB9A800A5FE8E /* HPGrowingTextView.m */; };
+		471984A3172EB9A800A5FE8E /* HPTextViewInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 47198499172EB9A800A5FE8E /* HPTextViewInternal.m */; };
+		471984A4172EB9A800A5FE8E /* MessageEntryBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 4719849A172EB9A800A5FE8E /* MessageEntryBackground.png */; };
+		471984A5172EB9A800A5FE8E /* MessageEntryBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4719849B172EB9A800A5FE8E /* MessageEntryBackground@2x.png */; };
+		471984A6172EB9A800A5FE8E /* MessageEntryInputField.png in Resources */ = {isa = PBXBuildFile; fileRef = 4719849C172EB9A800A5FE8E /* MessageEntryInputField.png */; };
+		471984A7172EB9A800A5FE8E /* MessageEntryInputField@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4719849D172EB9A800A5FE8E /* MessageEntryInputField@2x.png */; };
+		471984A8172EB9A800A5FE8E /* MessageEntrySendButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 4719849E172EB9A800A5FE8E /* MessageEntrySendButton.png */; };
+		471984A9172EB9A800A5FE8E /* MessageEntrySendButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4719849F172EB9A800A5FE8E /* MessageEntrySendButton@2x.png */; };
+		471984AA172EB9A800A5FE8E /* MessageEntrySendButtonPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 471984A0172EB9A800A5FE8E /* MessageEntrySendButtonPressed.png */; };
+		471984AB172EB9A800A5FE8E /* MessageEntrySendButtonPressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 471984A1172EB9A800A5FE8E /* MessageEntrySendButtonPressed@2x.png */; };
+		471984B0172EBA5200A5FE8E /* GrowingTextViewExampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 471984AF172EBA0D00A5FE8E /* GrowingTextViewExampleViewController.m */; };
 		471EAC5C16C0D419009F88F9 /* Foursquare2.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5216C0D3E0009F88F9 /* Foursquare2.m */; };
 		471EAC5D16C0D42C009F88F9 /* FSRequester.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5416C0D3E0009F88F9 /* FSRequester.m */; };
 		471EAC5E16C0D42F009F88F9 /* FSTargetCallback.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5616C0D3E0009F88F9 /* FSTargetCallback.m */; };
@@ -211,6 +222,20 @@
 		470E5D2616F99EB90090A19F /* Calendar-Day@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Calendar-Day@2x.png"; sourceTree = "<group>"; };
 		470E5D2916F9A5E40090A19F /* PersonAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersonAnnotationView.h; sourceTree = "<group>"; };
 		470E5D2A16F9A5E40090A19F /* PersonAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersonAnnotationView.m; sourceTree = "<group>"; };
+		47198496172EB9A800A5FE8E /* HPGrowingTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPGrowingTextView.h; sourceTree = "<group>"; };
+		47198497172EB9A800A5FE8E /* HPGrowingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPGrowingTextView.m; sourceTree = "<group>"; };
+		47198498172EB9A800A5FE8E /* HPTextViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPTextViewInternal.h; sourceTree = "<group>"; };
+		47198499172EB9A800A5FE8E /* HPTextViewInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPTextViewInternal.m; sourceTree = "<group>"; };
+		4719849A172EB9A800A5FE8E /* MessageEntryBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MessageEntryBackground.png; sourceTree = "<group>"; };
+		4719849B172EB9A800A5FE8E /* MessageEntryBackground@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MessageEntryBackground@2x.png"; sourceTree = "<group>"; };
+		4719849C172EB9A800A5FE8E /* MessageEntryInputField.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MessageEntryInputField.png; sourceTree = "<group>"; };
+		4719849D172EB9A800A5FE8E /* MessageEntryInputField@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MessageEntryInputField@2x.png"; sourceTree = "<group>"; };
+		4719849E172EB9A800A5FE8E /* MessageEntrySendButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MessageEntrySendButton.png; sourceTree = "<group>"; };
+		4719849F172EB9A800A5FE8E /* MessageEntrySendButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MessageEntrySendButton@2x.png"; sourceTree = "<group>"; };
+		471984A0172EB9A800A5FE8E /* MessageEntrySendButtonPressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MessageEntrySendButtonPressed.png; sourceTree = "<group>"; };
+		471984A1172EB9A800A5FE8E /* MessageEntrySendButtonPressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MessageEntrySendButtonPressed@2x.png"; sourceTree = "<group>"; };
+		471984AE172EBA0D00A5FE8E /* GrowingTextViewExampleViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GrowingTextViewExampleViewController.h; sourceTree = "<group>"; };
+		471984AF172EBA0D00A5FE8E /* GrowingTextViewExampleViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GrowingTextViewExampleViewController.m; sourceTree = "<group>"; };
 		471EAC5116C0D3E0009F88F9 /* Foursquare2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Foursquare2.h; sourceTree = "<group>"; };
 		471EAC5216C0D3E0009F88F9 /* Foursquare2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Foursquare2.m; sourceTree = "<group>"; };
 		471EAC5316C0D3E0009F88F9 /* FSRequester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FSRequester.h; sourceTree = "<group>"; };
@@ -575,6 +600,36 @@
 			path = icons;
 			sourceTree = SOURCE_ROOT;
 		};
+		47198494172EB9A800A5FE8E /* HPGrowingTextView */ = {
+			isa = PBXGroup;
+			children = (
+				47198495172EB9A800A5FE8E /* class */,
+				4719849A172EB9A800A5FE8E /* MessageEntryBackground.png */,
+				4719849B172EB9A800A5FE8E /* MessageEntryBackground@2x.png */,
+				4719849C172EB9A800A5FE8E /* MessageEntryInputField.png */,
+				4719849D172EB9A800A5FE8E /* MessageEntryInputField@2x.png */,
+				4719849E172EB9A800A5FE8E /* MessageEntrySendButton.png */,
+				4719849F172EB9A800A5FE8E /* MessageEntrySendButton@2x.png */,
+				471984A0172EB9A800A5FE8E /* MessageEntrySendButtonPressed.png */,
+				471984A1172EB9A800A5FE8E /* MessageEntrySendButtonPressed@2x.png */,
+			);
+			name = HPGrowingTextView;
+			path = libs/HPGrowingTextView;
+			sourceTree = "<group>";
+		};
+		47198495172EB9A800A5FE8E /* class */ = {
+			isa = PBXGroup;
+			children = (
+				471984AE172EBA0D00A5FE8E /* GrowingTextViewExampleViewController.h */,
+				471984AF172EBA0D00A5FE8E /* GrowingTextViewExampleViewController.m */,
+				47198496172EB9A800A5FE8E /* HPGrowingTextView.h */,
+				47198497172EB9A800A5FE8E /* HPGrowingTextView.m */,
+				47198498172EB9A800A5FE8E /* HPTextViewInternal.h */,
+				47198499172EB9A800A5FE8E /* HPTextViewInternal.m */,
+			);
+			path = class;
+			sourceTree = "<group>";
+		};
 		47534D8516A6F8DC008CC823 /* Foursquare2 */ = {
 			isa = PBXGroup;
 			children = (
@@ -597,6 +652,7 @@
 		47534DC916A7143F008CC823 /* libs */ = {
 			isa = PBXGroup;
 			children = (
+				47198494172EB9A800A5FE8E /* HPGrowingTextView */,
 				479A7DFF16F8C58F00E97576 /* CustomBadge */,
 				4706D0F616C10D0600CAF9AF /* PKRevealController */,
 				47A1AC6216A7DBD2004B4CFA /* AsyncImages */,
@@ -938,6 +994,14 @@
 				47C7403D172BFB1F00087C2A /* AnnotationCellPerson.xib in Resources */,
 				47C74040172C04F200087C2A /* AnnotationCellMeetup.xib in Resources */,
 				47C74041172C04F200087C2A /* AnnotationCellThread.xib in Resources */,
+				471984A4172EB9A800A5FE8E /* MessageEntryBackground.png in Resources */,
+				471984A5172EB9A800A5FE8E /* MessageEntryBackground@2x.png in Resources */,
+				471984A6172EB9A800A5FE8E /* MessageEntryInputField.png in Resources */,
+				471984A7172EB9A800A5FE8E /* MessageEntryInputField@2x.png in Resources */,
+				471984A8172EB9A800A5FE8E /* MessageEntrySendButton.png in Resources */,
+				471984A9172EB9A800A5FE8E /* MessageEntrySendButton@2x.png in Resources */,
+				471984AA172EB9A800A5FE8E /* MessageEntrySendButtonPressed.png in Resources */,
+				471984AB172EB9A800A5FE8E /* MessageEntrySendButtonPressed@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1007,6 +1071,9 @@
 				47AEC1F8172AEA170095DA31 /* JMImageCache.m in Sources */,
 				47C74035172BFA6C00087C2A /* TableAnnotationsViewController.m in Sources */,
 				47C7403B172BFAF900087C2A /* AnnotationCell.m in Sources */,
+				471984A2172EB9A800A5FE8E /* HPGrowingTextView.m in Sources */,
+				471984A3172EB9A800A5FE8E /* HPTextViewInternal.m in Sources */,
+				471984B0172EBA5200A5FE8E /* GrowingTextViewExampleViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

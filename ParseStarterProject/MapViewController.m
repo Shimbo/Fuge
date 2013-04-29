@@ -276,13 +276,14 @@
     nLimit -= [self loadPersonAnnotations:CIRCLE_RANDOM limit:nLimit];
     nLimit -= [self loadMeetupAndThreadAnnotations:nLimit];
     
+    if (_userLocation)
+        [_personsAnnotations addObject:_userLocation];
     [self joinPersonsAndMeetups];
     
     NSMutableArray *array = [_personsAnnotations mutableCopy];
     [array addObjectsFromArray:_meetupAnnotations];
     [array addObjectsFromArray:_threadAnnotations];
-    if (_userLocation)
-        [array addObject:_userLocation];
+
     [mapView addAnnotations:array];
 
     if ( nLimit == 0 ){

@@ -28,7 +28,6 @@
         buttons = [[NSMutableArray alloc] init];
         for ( int n = 0; n < MB_TOTAL_COUNT; n++ )
             [buttons addObject:[NSNumber numberWithInt:0]];
-        newComment.editable = false;
     }
     return self;
 }
@@ -352,14 +351,11 @@
             [globalData updateConversation:((PFObject*)commentsList[commentsList.count-1]).createdAt count:meetup.numComments thread:meetup.strId];
         
         // Make new comment editable now
-        newComment.editable = true;
     }];
     [self reloadAnnotation];
 }
 
--(void)hideKeyBoard{
-    [newComment resignFirstResponder];
-}
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -379,7 +375,6 @@
 
 - (void)viewDidUnload {
     comments = nil;
-    newComment = nil;
     mapView = nil;
     labelDate = nil;
     labelLocation = nil;
@@ -405,7 +400,7 @@
 }
 
 
-
+/*
 
 
 
@@ -465,49 +460,42 @@ double animatedDistance;
     
     [UIView commitAnimations];
 }
-
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
-{
-	if ( [ text isEqualToString: @"\n" ] )
-    {
-        [ textView resignFirstResponder ];
-        return NO;
-    }
-    return YES;
+*/
+-(void) keyboardWillShow:(NSNotification *)note{
+    [super keyboardWillShow:note];
+    comments.userInteractionEnabled = NO;
 }
 
-- (void) textViewDidEndEditing:(UITextView *)textView
-{
-    CGRect viewFrame = self.view.frame;
-    viewFrame.origin.y += animatedDistance;
-    
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationBeginsFromCurrentState:YES];
-    [UIView setAnimationDuration:KEYBOARD_ANIMATION_DURATION];
-    
-    [self.view setFrame:viewFrame];
-    
-    [UIView commitAnimations];
-    
-    if ( [newComment.text compare:@""] == NSOrderedSame )
+-(void) keyboardWillHide:(NSNotification *)note{
+    [super keyboardWillHide:note];
+    comments.userInteractionEnabled = YES;
+}
+
+
+-(void)send{
+    [super send];
+    if ( textView.text.length == 0 )
         return;
     
     // Creating comment in db
-    [globalData createCommentForMeetup:meetup commentType:COMMENT_PLAIN commentText:newComment.text];
+    [globalData createCommentForMeetup:meetup
+                           commentType:COMMENT_PLAIN
+                           commentText:textView.text];
     
     // Adding comment to the list
     NSMutableString* stringComments = [[NSMutableString alloc] initWithString:comments.text];
     [stringComments appendString:@"    "];
     [stringComments appendString:strCurrentUserName];
     [stringComments appendString:@": "];
-    [stringComments appendString:newComment.text];
+    [stringComments appendString:textView.text];
     [stringComments appendString:@"\n"];
     [comments setText:stringComments];
     
-    [newComment setText:@""];    
+    [textView setText:@""];
 }
 
+
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
-    [newComment resignFirstResponder];
+    [textView resignFirstResponder];
 }
 @end

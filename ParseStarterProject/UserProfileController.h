@@ -8,12 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "Person.h"
+#import "GrowingTextViewExampleViewController.h"
+
 @class AsyncImageView;
-@interface UserProfileController : UIViewController <UITextViewDelegate, UIAlertViewDelegate>
+@interface UserProfileController : GrowingTextViewExampleViewController <UIAlertViewDelegate>
 {
     Person* personThis;
     IBOutlet UITextView *messageHistory;
-    IBOutlet UITextView *messageNew;
     IBOutlet AsyncImageView *profileImage;
     UIBarButtonItem *buttonProfile;
     IBOutlet UILabel *labelDistance;
