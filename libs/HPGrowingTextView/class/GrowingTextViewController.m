@@ -25,9 +25,9 @@
 //	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //	THE SOFTWARE.
 
-#import "GrowingTextViewExampleViewController.h"
+#import "GrowingTextViewController.h"
 
-@implementation GrowingTextViewExampleViewController
+@implementation GrowingTextViewController
 
 
 -(id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil

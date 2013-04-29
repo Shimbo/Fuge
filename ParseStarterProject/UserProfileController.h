@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "Person.h"
-#import "GrowingTextViewExampleViewController.h"
+#import "GrowingTextViewController.h"
 
 @class AsyncImageView;
-@interface UserProfileController : GrowingTextViewExampleViewController <UIAlertViewDelegate>
+@interface UserProfileController : GrowingTextViewController <UIAlertViewDelegate>
 {
     Person* personThis;
     IBOutlet UITextView *messageHistory;

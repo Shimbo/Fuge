@@ -46,7 +46,7 @@
 		471984A9172EB9A800A5FE8E /* MessageEntrySendButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4719849F172EB9A800A5FE8E /* MessageEntrySendButton@2x.png */; };
 		471984AA172EB9A800A5FE8E /* MessageEntrySendButtonPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 471984A0172EB9A800A5FE8E /* MessageEntrySendButtonPressed.png */; };
 		471984AB172EB9A800A5FE8E /* MessageEntrySendButtonPressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 471984A1172EB9A800A5FE8E /* MessageEntrySendButtonPressed@2x.png */; };
-		471984B0172EBA5200A5FE8E /* GrowingTextViewExampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 471984AF172EBA0D00A5FE8E /* GrowingTextViewExampleViewController.m */; };
+		471984B0172EBA5200A5FE8E /* GrowingTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 471984AF172EBA0D00A5FE8E /* GrowingTextViewController.m */; };
 		471EAC5C16C0D419009F88F9 /* Foursquare2.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5216C0D3E0009F88F9 /* Foursquare2.m */; };
 		471EAC5D16C0D42C009F88F9 /* FSRequester.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5416C0D3E0009F88F9 /* FSRequester.m */; };
 		471EAC5E16C0D42F009F88F9 /* FSTargetCallback.m in Sources */ = {isa = PBXBuildFile; fileRef = 471EAC5616C0D3E0009F88F9 /* FSTargetCallback.m */; };
@@ -234,8 +234,8 @@
 		4719849F172EB9A800A5FE8E /* MessageEntrySendButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MessageEntrySendButton@2x.png"; sourceTree = "<group>"; };
 		471984A0172EB9A800A5FE8E /* MessageEntrySendButtonPressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MessageEntrySendButtonPressed.png; sourceTree = "<group>"; };
 		471984A1172EB9A800A5FE8E /* MessageEntrySendButtonPressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MessageEntrySendButtonPressed@2x.png"; sourceTree = "<group>"; };
-		471984AE172EBA0D00A5FE8E /* GrowingTextViewExampleViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GrowingTextViewExampleViewController.h; sourceTree = "<group>"; };
-		471984AF172EBA0D00A5FE8E /* GrowingTextViewExampleViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GrowingTextViewExampleViewController.m; sourceTree = "<group>"; };
+		471984AE172EBA0D00A5FE8E /* GrowingTextViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GrowingTextViewController.h; sourceTree = "<group>"; };
+		471984AF172EBA0D00A5FE8E /* GrowingTextViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GrowingTextViewController.m; sourceTree = "<group>"; };
 		471EAC5116C0D3E0009F88F9 /* Foursquare2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Foursquare2.h; sourceTree = "<group>"; };
 		471EAC5216C0D3E0009F88F9 /* Foursquare2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Foursquare2.m; sourceTree = "<group>"; };
 		471EAC5316C0D3E0009F88F9 /* FSRequester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FSRequester.h; sourceTree = "<group>"; };
@@ -620,8 +620,8 @@
 		47198495172EB9A800A5FE8E /* class */ = {
 			isa = PBXGroup;
 			children = (
-				471984AE172EBA0D00A5FE8E /* GrowingTextViewExampleViewController.h */,
-				471984AF172EBA0D00A5FE8E /* GrowingTextViewExampleViewController.m */,
+				471984AE172EBA0D00A5FE8E /* GrowingTextViewController.h */,
+				471984AF172EBA0D00A5FE8E /* GrowingTextViewController.m */,
 				47198496172EB9A800A5FE8E /* HPGrowingTextView.h */,
 				47198497172EB9A800A5FE8E /* HPGrowingTextView.m */,
 				47198498172EB9A800A5FE8E /* HPTextViewInternal.h */,
@@ -1073,7 +1073,7 @@
 				47C7403B172BFAF900087C2A /* AnnotationCell.m in Sources */,
 				471984A2172EB9A800A5FE8E /* HPGrowingTextView.m in Sources */,
 				471984A3172EB9A800A5FE8E /* HPTextViewInternal.m in Sources */,
-				471984B0172EBA5200A5FE8E /* GrowingTextViewExampleViewController.m in Sources */,
+				471984B0172EBA5200A5FE8E /* GrowingTextViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
