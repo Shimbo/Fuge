@@ -26,6 +26,7 @@
 //	THE SOFTWARE.
 
 #import "GrowingTextViewController.h"
+#import "GlobalVariables.h"
 
 @implementation GrowingTextViewController
 
@@ -64,7 +65,7 @@
     textView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
     
 	textView.minNumberOfLines = 1;
-	textView.maxNumberOfLines = 1;
+	textView.maxNumberOfLines = MAX_LINES;
 	textView.returnKeyType = UIReturnKeyDone; //just as an example
 	textView.font = [UIFont systemFontOfSize:15.0f];
 	textView.delegate = self;

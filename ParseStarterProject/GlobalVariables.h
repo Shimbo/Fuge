@@ -22,6 +22,7 @@
 
 //in meters
 #define MAX_ZOOM_LEVEL              19
+#define MAX_LINES              9
 
 @interface GlobalVariables : NSObject
 {
