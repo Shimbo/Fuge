@@ -46,7 +46,7 @@
                                     action:@selector(close)];
     
     self.tableView.tableHeaderView = self.headerView;
-    _recentVenues = [globalData getRecentVenues];
+    _recentVenues = [[globalData getRecentVenues] mutableCopy];
 }
 
 -(void)updateLocation{
@@ -176,6 +176,7 @@
                                                   longitude:venue.coordinate.longitude];
         venue.dist = [curLoc distanceFromLocation:l]/1000.0;
     }
+    [self sortByDistance:_recentVenues];
     [self.tableView reloadData];
 }
 
