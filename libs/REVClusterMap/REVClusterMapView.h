@@ -20,4 +20,6 @@
 
 -(void)cleanUpAnnotations;
 -(BOOL)isMaximumZoom;
+-(NSInteger)zoomLevel;
+-(NSInteger)zoomLevelForMarRect:(MKMapRect)mapRect;
 @end

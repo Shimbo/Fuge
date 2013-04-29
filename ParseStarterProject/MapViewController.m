@@ -363,6 +363,8 @@
     if ([self.mapView isMaximumZoom])
         return NO;
     
+
+    
     MKMapRect zoomRect = MKMapRectNull;
     for (id <MKAnnotation> annotation in annotations){
         MKMapPoint annotationPoint = MKMapPointForCoordinate(annotation.coordinate);
@@ -370,7 +372,8 @@
                                             0.1, 0.1);
         zoomRect = MKMapRectUnion(zoomRect, pointRect);
     }
-    if (zoomRect.size.width > 0.2 || zoomRect.size.height > 0.2) {
+    NSInteger jump =[self.mapView zoomLevelForMarRect:zoomRect]-[self.mapView zoomLevel];
+    if (jump < LIMIT_FOR_AUTO_ZOOM &&( zoomRect.size.width > 0.2 || zoomRect.size.height > 0.2)) {
         [mapView setVisibleMapRect:zoomRect
                        edgePadding:UIEdgeInsetsMake(60, 30, 20, 30)
                           animated:YES];

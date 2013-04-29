@@ -215,6 +215,15 @@
     }
 }
 
+-(NSInteger)zoomLevel{
+    return zoomLevel;
+}
+
+-(NSInteger)zoomLevelForMarRect:(MKMapRect)mapRect{
+    return [self zoomLevelForMapRect:mapRect
+             withMapViewSizeInPixels:self.frame.size];
+}
+
 - (BOOL) mapViewDidZoom
 {
     NSUInteger nzl  = [self zoomLevelForMapRect:self.visibleMapRect
