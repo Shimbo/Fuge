@@ -240,7 +240,7 @@
     // Map
     CLLocationCoordinate2D loc = CLLocationCoordinate2DMake(meetup.location.latitude,meetup.location.longitude);
     MKCoordinateRegion reg = MKCoordinateRegionMakeWithDistance(loc, 200.0f, 200.0f);
-    mapView.showsUserLocation = TRUE;
+    mapView.showsUserLocation = NO;
     [mapView setDelegate:self];
     [mapView setRegion:reg animated:true];
     

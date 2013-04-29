@@ -178,8 +178,12 @@
     
     if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized) {
         _userLocation = [[PersonAnnotation alloc] init];
-        _userLocation.title = @"You are here";
-        _userLocation.subtitle = nil;
+        Person *p = [[Person alloc]init:[PFUser currentUser] circle:0];
+        p.isCurrentUser = YES;
+        _userLocation.person = p;
+        _userLocation.title = [[PFUser currentUser] objectForKey:@"fbName"];
+        _userLocation.subtitle = @"This is you.";
+        
     }
     
     // Navigation bar
@@ -290,50 +294,36 @@
 -(MKAnnotationView *)mapView:(MKMapView *)mV viewForAnnotation:(id <MKAnnotation>)annotation
 {
     REVClusterPin *pin = (REVClusterPin *)annotation;
-    if (annotation != _userLocation)
-    {
-        if( [pin nodeCount] > 0 ){
-            pin.title = @"___";
-            REVClusterAnnotationView *pinView;
+    if( [pin nodeCount] > 0 ){
+        pin.title = @"___";
+        static NSString *clusterId = @"cluster";
+        REVClusterAnnotationView *pinView;
+        pinView = (REVClusterAnnotationView*)
+        [mapView dequeueReusableAnnotationViewWithIdentifier:clusterId];
+        
+        if( !pinView )
             pinView = (REVClusterAnnotationView*)
-            [mapView dequeueReusableAnnotationViewWithIdentifier:@"cluster"];
-            
-            if( !pinView )
-                pinView = (REVClusterAnnotationView*)
-                [[REVClusterAnnotationView alloc] initWithAnnotation:annotation
-                                                      reuseIdentifier:@"cluster"] ;
-            
-            
-            [pinView prepareForAnnotation:pin];
-            
-            pinView.canShowCallout = NO;
-            pinView.layer.zPosition = 1;
-            return pinView;
-        }else{
-            SCAnnotationView *pinView;
-            pinView = [SCAnnotationView constructAnnotationViewForAnnotation:annotation
-                                                                      forMap:mV];
-            [pinView prepareForAnnotation:annotation];
-            
+            [[REVClusterAnnotationView alloc] initWithAnnotation:annotation
+                                                 reuseIdentifier:clusterId] ;
+        
+        
+        [pinView prepareForAnnotation:pin];
+        pinView.canShowCallout = NO;
+        return pinView;
+    }else{
+        SCAnnotationView *pinView;
+        pinView = [SCAnnotationView constructAnnotationViewForAnnotation:annotation
+                                                                  forMap:mV];
+        [pinView prepareForAnnotation:annotation];
+        
+        if (_userLocation != annotation) {
             UIButton *btnView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
             pinView.rightCalloutAccessoryView = btnView;
-            pinView.canShowCallout = YES;
-            pinView.layer.zPosition = 1;
-            return pinView;
+        }else{
+            pinView.rightCalloutAccessoryView = nil;
         }
-    }
-    else {
-        PersonAnnotationView *pinView;
-        pinView = (PersonAnnotationView*)
-        [SCAnnotationView constructAnnotationViewForAnnotation:annotation
-                                                        forMap:mV];
-        
-//        [pinView prepareForAnnotation:annotation];
-        PFUser *user = [PFUser currentUser];
-        Person *p = [[Person alloc]init:user circle:0];
-        [pinView loadImageWithURL:p.imageURL];
+
         pinView.canShowCallout = YES;
-        pinView.rightCalloutAccessoryView = nil;
         return pinView;
     }
     return nil;
@@ -372,8 +362,9 @@
                                             0.1, 0.1);
         zoomRect = MKMapRectUnion(zoomRect, pointRect);
     }
-    NSInteger jump =[self.mapView zoomLevelForMarRect:zoomRect]-[self.mapView zoomLevel];
-    if (jump < LIMIT_FOR_AUTO_ZOOM &&( zoomRect.size.width > 0.2 || zoomRect.size.height > 0.2)) {
+
+    NSInteger newLevel = [self.mapView zoomLevelForMarRect:zoomRect];
+    if (newLevel < MAX_ZOOM_LEVEL) {
         [mapView setVisibleMapRect:zoomRect
                        edgePadding:UIEdgeInsetsMake(60, 30, 20, 30)
                           animated:YES];

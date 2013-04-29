@@ -22,7 +22,7 @@
     self = [super initWithAnnotation:annotation reuseIdentifier:reuseIdentifier];
     if ( self )
     {
-        self.frame = CGRectMake(0, 0, 40, 40);
+        self.frame = CGRectMake(0, 0, 49, 49);
         _backgroundImageView = [[UIImageView alloc]initWithFrame:self.bounds];
         [self addSubview:_backgroundImageView];
         

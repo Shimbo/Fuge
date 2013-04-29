@@ -36,6 +36,7 @@
 @property (nonatomic, retain) NSString *strCircle;
 @property (nonatomic) NSUInteger idCircle;
 @property (nonatomic, assign) NSUInteger numUnreadMessages;
+@property (nonatomic, assign) NSUInteger isCurrentUser;
 
 @property (nonatomic, copy) PFUser *personData;
 

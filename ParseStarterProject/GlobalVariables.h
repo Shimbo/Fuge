@@ -20,8 +20,8 @@
 #define DISTANCE_FOR_JOIN_PERSON_AND_MEETUP     100 //in meters
 #define DISTANCE_FOR_GROUPING_PINS              500000 //in meters
 
-//in levels(19 zoom levels on map)
-#define LIMIT_FOR_AUTO_ZOOM              10 
+//in meters
+#define MAX_ZOOM_LEVEL              19
 
 @interface GlobalVariables : NSObject
 {

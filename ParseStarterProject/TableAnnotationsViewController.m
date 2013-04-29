@@ -169,16 +169,18 @@
 {
     
     id<MKAnnotation> obj = self.annotations[indexPath.row];
-    if ( [obj isMemberOfClass:[PersonAnnotation class]] )
+    if ( [obj isMemberOfClass:[PersonAnnotation class]])
     {
-        UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
-        [self.navigationController pushViewController:userProfileController animated:YES];
-        [userProfileController setPerson:((PersonAnnotation*) obj).person];
-    }
-    
-    if ( [obj isMemberOfClass:[MeetupAnnotation class]]||
-        [obj isMemberOfClass:[ThreadAnnotation class]])
-    {
+        if (((PersonAnnotation*) obj).person.isCurrentUser == NO) {
+            UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
+            [self.navigationController pushViewController:userProfileController animated:YES];
+            [userProfileController setPerson:((PersonAnnotation*) obj).person];
+        }
+        else{
+            [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        }
+
+    }else{
         MeetupViewController *meetupController = [[MeetupViewController alloc] initWithNibName:@"MeetupView" bundle:nil];
         [meetupController setMeetup:((MeetupAnnotation*) obj).meetup];
         [self.navigationController pushViewController:meetupController animated:YES];

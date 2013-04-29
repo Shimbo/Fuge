@@ -55,9 +55,11 @@
     
     // Loading screen
     LoadingController *loadingViewController = [[LoadingController alloc] initWithNibName:@"LoadingController" bundle:nil];
-    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:loadingViewController];
-    nav.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [self.revealController presentViewController:nav animated:NO completion:nil];
+    loadingViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+//    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:loadingViewController];
+//    nav.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    [self.revealController presentViewController:loadingViewController
+                                        animated:NO completion:nil];
         
     // Notifications
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|
@@ -72,8 +74,9 @@
 // TODONOW: check it (add some variable for login right away)
 -(void)userDidLogout{
     LoadingController *loadingViewController = [[LoadingController alloc] initWithNibName:@"LoadingController" bundle:nil];
-    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:loadingViewController];
-    [self.revealController presentViewController:nav animated:NO completion:nil];
+    loadingViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    [self.revealController presentViewController:loadingViewController
+                                        animated:NO completion:nil];
 }
 
 

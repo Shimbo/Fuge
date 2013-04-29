@@ -73,11 +73,12 @@ static Boolean bAnimating = true;
     
     // Checking version information
     PFQuery *systemQuery = [PFQuery queryWithClassName:@"System"];
+    __weak LoadingController *ctrl = self;
     [systemQuery getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
         
         if (error)
         {
-            [self noInternet];
+            [ctrl noInternet];
             return;
         }
         else
@@ -91,14 +92,14 @@ static Boolean bAnimating = true;
             float thisVersion = [[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"] floatValue];
             if ( thisVersion < minVersion )
             {
-                UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"New version is out!" message:@"You're running old version of the application. Please, update first." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil,nil];
+                UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"New version is out!" message:@"You're running old version of the application. Please, update first." delegate:ctrl cancelButtonTitle:@"OK" otherButtonTitles:nil,nil];
                 [message show];
                 //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms://itunes.com/apps/cut-the-rope"]];
                 bShowAppStoreButton = TRUE;
             }
             if ( thisVersion < curVersion )
             {
-                UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"New version is out!" message:@"You're running old version of the application. We recommend you updating the application." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:@"Later",nil];
+                UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"New version is out!" message:@"You're running old version of the application. We recommend you updating the application." delegate:ctrl cancelButtonTitle:@"OK" otherButtonTitles:@"Later",nil];
                 [message show];
                 //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms://itunes.com/apps/cut-the-rope"]];
                 //return NO;
@@ -111,7 +112,7 @@ static Boolean bAnimating = true;
             else
             {
                 bVersionChecked = true;
-                [self performSelector:@selector(loadSequencePart2) withObject:nil afterDelay:0.01f];
+                [ctrl performSelector:@selector(loadSequencePart2) withObject:nil afterDelay:0.01f];
             }
         }
     }];
@@ -175,7 +176,7 @@ static Boolean bAnimating = true;
 -(void) proceedToProfile
 {
     ProfileViewController *profileViewController = [[ProfileViewController alloc] initWithNibName:@"ProfileView" bundle:nil];
-    [self.navigationController presentViewController:profileViewController animated:TRUE completion:nil];
+    [self presentViewController:profileViewController animated:TRUE completion:nil];
 }
 
 - (void) viewDidDisappear:(BOOL)animated
@@ -268,8 +269,9 @@ static Boolean bAnimating = true;
     [self hideAll];
     
     NSArray *permissionsArray = @[ @"user_about_me", @"user_relationships", @"user_birthday", @"user_location"];
-    
-    [PFFacebookUtils logInWithPermissions:permissionsArray block:^(PFUser *user, NSError *error)
+    __weak LoadingController *ctrl = self;
+    [PFFacebookUtils logInWithPermissions:permissionsArray
+                                    block:^(PFUser *user, NSError *error)
     {
          if ( ! user )
          {
@@ -278,7 +280,7 @@ static Boolean bAnimating = true;
              } else {
                  NSLog(@"Uh oh. An error occurred: %@", error);
              }
-             [self loginFailed];
+             [ctrl loginFailed];
              return;
          }
          else
@@ -329,5 +331,9 @@ static Boolean bAnimating = true;
 }
 
 - (IBAction)updateDown:(id)sender {
+}
+
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter]removeObserver:self];
 }
 @end
