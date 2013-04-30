@@ -29,6 +29,7 @@
     self = [super init];
     if (self) {
         _nodes = [NSMutableArray arrayWithCapacity:4];
+        _pinColor = PinGray;
     }
     return self;
 }
