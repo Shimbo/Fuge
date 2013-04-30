@@ -18,7 +18,7 @@
 
 @implementation LoadingController
 
-static Boolean bAnimating = true;
+static Boolean bRotating = true;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -34,6 +34,7 @@ static Boolean bAnimating = true;
                                                 name:kLoadingMainFailed
                                                 object:nil];
         bVersionChecked = false;
+        bRotating = true;
         bAnimation = true;
         nAnimationStage = 0;
         _backgroundImage.alpha = 0.0f;
@@ -154,7 +155,7 @@ static Boolean bAnimating = true;
         if (nAnimationStage == 2)
             nAnimationStage = 0;
         
-        if ( bAnimating )
+        if ( bRotating )
             [self animateHypno];
     }];
 }
@@ -182,7 +183,7 @@ static Boolean bAnimating = true;
 - (void) viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
-    bAnimating = false;
+    bRotating = false;
     _backgroundImage.hidden = TRUE;
 }
 
@@ -190,7 +191,6 @@ static Boolean bAnimating = true;
 {
     // Turning on status bar
     [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
-    _backgroundImage.hidden = TRUE;
     
     // Show profile window if it's new user
     if ( [globalVariables isNewUser] )

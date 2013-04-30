@@ -56,11 +56,9 @@
     // Loading screen
     LoadingController *loadingViewController = [[LoadingController alloc] initWithNibName:@"LoadingController" bundle:nil];
     loadingViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-//    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:loadingViewController];
-//    nav.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     [self.revealController presentViewController:loadingViewController
                                         animated:NO completion:nil];
-        
+    
     // Notifications
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|
                                                     UIRemoteNotificationTypeAlert|
