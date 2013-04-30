@@ -41,7 +41,7 @@
 					<object class="IBUITextView" id="321326171">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">274</int>
-						<string key="NSFrame">{{117, 32}, {193, 239}}</string>
+						<string key="NSFrame">{{117, 32}, {203, 350}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="411455609"/>
@@ -225,7 +225,6 @@
 						<string key="NSFrame">{{10, 236}, {100, 27}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -528,16 +527,16 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">GrowingTextViewExampleViewController</string>
+					<string key="className">GrowingTextViewController</string>
 					<string key="superclassName">UIViewController</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/GrowingTextViewExampleViewController.h</string>
+						<string key="minorKey">./Classes/GrowingTextViewController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">UserProfileController</string>
-					<string key="superclassName">GrowingTextViewExampleViewController</string>
+					<string key="superclassName">GrowingTextViewController</string>
 					<dictionary class="NSMutableDictionary" key="actions">
 						<string key="addButtonDown:">id</string>
 						<string key="ignoreButtonDown:">id</string>

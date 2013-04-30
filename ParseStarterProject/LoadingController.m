@@ -97,7 +97,7 @@ static Boolean bAnimating = true;
                 //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms://itunes.com/apps/cut-the-rope"]];
                 bShowAppStoreButton = TRUE;
             }
-            if ( thisVersion < curVersion )
+            else if ( thisVersion < curVersion )
             {
                 UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"New version is out!" message:@"You're running old version of the application. We recommend you updating the application." delegate:ctrl cancelButtonTitle:@"OK" otherButtonTitles:@"Later",nil];
                 [message show];

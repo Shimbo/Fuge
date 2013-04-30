@@ -618,7 +618,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         if (error) {
             NSLog(@"Error: %@", [error localizedDescription]);
         } else {
-            //NSLog(@"Result: %@", result);
+            NSLog(@"Result: %@", result);
             
             NSArray* data = [result objectForKey:@"data"];
             NSArray* events = [((NSDictionary*) data[0]) objectForKey:@"fql_result_set"];
