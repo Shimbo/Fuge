@@ -69,11 +69,6 @@ static Boolean bAnimating = true;
 
 - (void)loadSequencePart1
 {
-    if ( [globalData isUserAdmin]){
-        bVersionChecked = true;
-        [self performSelector:@selector(loadSequencePart2) withObject:nil afterDelay:0.01f];
-        return;
-    }
     [TestFlight passCheckpoint:@"Initialization phase 1"];
     
     // Checking version information
