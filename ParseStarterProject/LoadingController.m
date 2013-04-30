@@ -38,6 +38,7 @@ static Boolean bRotating = true;
         bAnimation = true;
         nAnimationStage = 0;
         _backgroundImage.alpha = 0.0f;
+        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:NO];
     }
     return self;
 }
