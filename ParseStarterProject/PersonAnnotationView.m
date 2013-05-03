@@ -60,7 +60,9 @@
 
 -(void)loadImageWithURL:(NSString*)url{
     if (!_imageLoader) {
-        _imageLoader = [[ImageLoader alloc]initForCircleImages];
+        _imageLoader = [[ImageLoader alloc]initForCircleImages];    
+        _imageLoader.cachPolicy = CFAsyncCachePolicyDiskAndMemory;
+        _imageLoader.loadPolicy = CFAsyncReturnCacheDataAndUpdateCachedImageOnce;
     }
     [_imageLoader cancel];
     UIImage *im = [_imageLoader getImage:url];

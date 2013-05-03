@@ -10,7 +10,6 @@
 
 #import "AsyncImageView.h"
 #import <QuartzCore/QuartzCore.h>
-#import "ImageLoader.h"
 #import <malloc/malloc.h>
 
 #define SPINNY_TAG 5555
@@ -24,7 +23,9 @@
 
 
 
-- (void)initAsyncView {
+- (void)setup {
+    self.cachPolicy = CFAsyncCachePolicyDiskAndMemory;
+    self.loadPolicy = CFAsyncReturnCacheDataAndUpdateCachedImageOnce;
     self.backgroundColor = [UIColor clearColor];
     cornerRadius = 4.0;
     shadowed = NO;
@@ -68,6 +69,11 @@
 
 }
 
+-(void)awakeFromNib{
+    [super awakeFromNib];
+    [self setup];
+}
+
 -(void)cutCorners{
     isRounded = YES;
 }
@@ -80,7 +86,9 @@
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self != nil) {
-        [self initAsyncView];
+        self.cachPolicy = CFAsyncCachePolicyDiskAndMemory;
+        self.loadPolicy = CFAsyncReturnCacheDataAndUpdateCachedImageOnce;
+        [self setup];
     }
     return self;
 }
@@ -88,7 +96,9 @@
 - (id)init {
     self = [super init];
     if (self) {
-//        [self initAsyncView];
+        self.cachPolicy = CFAsyncCachePolicyDiskAndMemory;
+        self.loadPolicy = CFAsyncReturnCacheDataAndUpdateCachedImageOnce;
+//        [self setup];
     }
     return self;
 }
@@ -104,7 +114,7 @@
     [self cleanSubviews];
     if (!imageView && !spinny) {
         BOOL oldaValue = self.shadowed;
-        [self initAsyncView];
+        [self setup];
         logo.hidden = NO;
         [spinny stopAnimating];
         self.shadowed = oldaValue;
@@ -170,12 +180,17 @@
 	_target = target_;
     selector = selector_;
     
-
-    
+    if (currentHash == url.hash && imageView.image) {
+        return;
+    }
+    currentHash = url.hash;
     if (!loader) {
         loader = [[ImageLoader alloc]init];
+        loader.cachPolicy = self.cachPolicy;
+        loader.loadPolicy = self.loadPolicy;
+        loader.shoulCacheCircledImage = self.shoulCacheCircledImage;
     }
-    
+
     UIImage *im = [loader getImage:url];
     if (im) {
         [self addImageToImageView:im animated:NO];
@@ -185,6 +200,7 @@
     [self cleanSubviews];
     imageView.image = nil;
     logo.hidden = NO;
+    
     [loader loadImageWithUrl:url handler:^(UIImage *image) {
         [self addImageToImageView:image animated:YES];
         [_target performSelector:selector withObject:image];

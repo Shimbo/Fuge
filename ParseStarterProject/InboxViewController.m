@@ -133,7 +133,6 @@
 	static NSString *CellIdentifier = @"InboxCellIdent";
     
 	InboxCell *inboxCell = (InboxCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-	
     NSArray *keys = [inbox allKeys];
     id aKey = [keys objectAtIndex:indexPath.section];
     
@@ -144,6 +143,7 @@
     inboxCell.subject.text = item.subject;
     inboxCell.message.text = item.message;
     inboxCell.misc.text = item.misc;
+    inboxCell.mainImage.shoulCacheCircledImage = YES;
     if ( [item.fromId compare:strCurrentUserId] == NSOrderedSame && item.type != INBOX_ITEM_COMMENT )
         [inboxCell.mainImage loadImageFromURL:[Person imageURLWithId:item.toId]];
     else

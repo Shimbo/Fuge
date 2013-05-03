@@ -9,40 +9,26 @@
 
 @class JMImageCache;
 
-@protocol JMImageCacheDelegate <NSObject>
-
-@optional
-- (void) cache:(JMImageCache *)c didDownloadImage:(UIImage *)i forURL:(NSURL *)url;
-- (void) cache:(JMImageCache *)c didDownloadImage:(UIImage *)i forURL:(NSURL *)url key:(NSString*)key;
-
-@end
+static const NSInteger kDefaultCacheMaxCacheAge = 60 * 60 * 24 * 7; // 1 week
+static const NSInteger kDefaultMaxCaccheSize = 100000000; // 100 MB
 
 @interface JMImageCache : NSCache
 
-@property(nonatomic,strong)NSString *prefix;
-
 + (JMImageCache *) sharedCache;
+
+@property(nonatomic,strong)NSString*prefix;
+@property (assign, nonatomic) unsigned long long maxCacheSize;
+@property (assign, nonatomic) NSInteger maxCacheAge;
+
 -(void)applicationDidReceiveMemoryWarning;
-- (void) imageForURL:(NSURL *)url key:(NSString *)key completionBlock:(void (^)(UIImage *image))completion failureBlock:(void (^)(NSURLRequest *request, NSURLResponse *response, NSError* error))failure;
-- (void) imageForURL:(NSURL *)url completionBlock:(void (^)(UIImage *image))completion failureBlock:(void (^)(NSURLRequest *request, NSURLResponse *response, NSError* error))failure;
-
-- (UIImage *) cachedImageForKey:(NSString *)key;
-- (UIImage *) cachedImageForURL:(NSURL *)url;
-
-- (UIImage *) imageForURL:(NSURL *)url key:(NSString*)key delegate:(id<JMImageCacheDelegate>)d;
-- (UIImage *) imageForURL:(NSURL *)url delegate:(id<JMImageCacheDelegate>)d;
 
 - (UIImage *) imageFromDiskForKey:(NSString *)key;
-- (UIImage *) imageFromDiskForURL:(NSURL *)url;
 
-- (void) setImage:(UIImage *)i forKey:(NSString *)key;
-- (void) setImage:(UIImage *)i forURL:(NSURL *)url;
-- (void) removeImageForKey:(NSString *)key;
-- (void) removeImageForURL:(NSURL *)url;
+- (void) imageFromDiskForKey:(NSString *)key block:(void (^)(UIImage *image))completion;
 
--(void)saveToDisk:(NSData*)data withKey:(NSString*)key;
+-(void)saveToDisk:(UIImage*)data withKey:(NSString*)key;
 
-- (void) writeData:(NSData *)data toPath:(NSString *)path;
-- (void) performDiskWriteOperation:(NSInvocation *)invoction;
+- (UIImage *)decodedImageWithImage:(UIImage* )image;
+
 -(void)cleanCache;
 @end

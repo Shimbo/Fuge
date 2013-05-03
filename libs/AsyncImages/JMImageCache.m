@@ -7,6 +7,22 @@
 //
 
 #import "JMImageCache.h"
+#import <ImageIO/ImageIO.h>
+#import <MobileCoreServices/MobileCoreServices.h>
+
+
+
+#if OS_OBJECT_USE_OBJC
+#define SDDispatchQueueRelease(q)
+#define SDDispatchQueueSetterSementics strong
+#else
+#define SDDispatchQueueRelease(q) (dispatch_release(q))
+#define SDDispatchQueueSetterSementics assign
+#endif
+
+@interface JMImageCache()
+@property (SDDispatchQueueSetterSementics, nonatomic) dispatch_queue_t ioQueue;
+@end
 
 static inline NSString *JMImageCacheDirectory() {
 	static NSString *_JMImageCacheDirectory;
@@ -18,30 +34,20 @@ static inline NSString *JMImageCacheDirectory() {
 
 	return _JMImageCacheDirectory;
 }
-inline static NSString *keyForURL(NSURL *url) {
-	return [url absoluteString];
-}
 
 
-@interface JMImageCache ()
 
-@property (strong, nonatomic) NSOperationQueue *diskOperationQueue;
 
-- (void) _downloadAndWriteImageForURL:(NSURL *)url key:(NSString *)key completionBlock:(void (^)(UIImage *image))completion failureBlock:(void (^)(NSURLRequest *request, NSURLResponse *response, NSError* error))failure;
-
-@end
 
 @implementation JMImageCache{
-    NSDictionary *todayAttr;
+    NSMutableDictionary *_touchedImages;
 }
 
--(NSString *)cachePathForKey:(NSString*) key {
+-(NSString *)cachePathForKey:(NSString *)key {
     NSString *fileName = [NSString stringWithFormat:@"JMImageCache-%u-%@", [key hash],
                           self.prefix];
 	return [JMImageCacheDirectory() stringByAppendingPathComponent:fileName];
 }
-
-@synthesize diskOperationQueue = _diskOperationQueue;
 
 + (JMImageCache *) sharedCache {
 	static JMImageCache *_sharedCache = nil;
@@ -57,10 +63,10 @@ inline static NSString *keyForURL(NSURL *url) {
 - (id) init {
     self = [super init];
     if(!self) return nil;
-    self.prefix = @"1";
-    todayAttr  = @{NSFileModificationDate: [NSDate date]};
-    self.diskOperationQueue = [[NSOperationQueue alloc] init];
-
+    self.maxCacheAge = kDefaultCacheMaxCacheAge;
+    self.maxCacheSize = kDefaultMaxCaccheSize;
+    _ioQueue = dispatch_queue_create("com.soundtracker.imageio", DISPATCH_QUEUE_SERIAL);
+    _touchedImages = [[NSMutableDictionary alloc]initWithCapacity:10];
     [[NSFileManager defaultManager] createDirectoryAtPath:JMImageCacheDirectory()
                               withIntermediateDirectories:YES
                                                attributes:nil
@@ -68,63 +74,16 @@ inline static NSString *keyForURL(NSURL *url) {
 	return self;
 }
 
-- (void) _downloadAndWriteImageForURL:(NSURL *)url key:(NSString *)key completionBlock:(void (^)(UIImage *image))completion failureBlock:(void (^)(NSURLRequest *request, NSURLResponse *response, NSError* error))failure
+- (void)dealloc
 {
-    if (!key && !url) return;
-
-    if (!key) {
-        key = keyForURL(url);
-    }
-
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        
-        NSURLRequest* request = [NSURLRequest requestWithURL:url];
-        NSURLResponse* response = nil;
-        NSError* error = nil;
-        NSData* data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-        
-        if (error)
-        {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                if(failure)  failure(request, response, error);
-            });
-            return;
-        }
-        
-        UIImage *i = [[UIImage alloc] initWithData:data];
-        if (!i)
-        {
-            NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
-            [errorDetail setValue:[NSString stringWithFormat:@"Failed to init image with data from for URL: %@", url] forKey:NSLocalizedDescriptionKey];
-            NSError* error = [NSError errorWithDomain:@"JMImageCacheErrorDomain" code:1 userInfo:errorDetail];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                if(failure) failure(request, response, error);
-            });
-        }
-        else
-        {
-            [self saveToDisk:data withKey:key];
-            [self setImage:i forKey:key];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if(completion) completion(i);
-            });
-        }
-    });
+    SDDispatchQueueRelease(_ioQueue);
 }
 
--(void)saveToDisk:(NSData*)data withKey:(NSString*)key{
-    NSString *cachePath = [self cachePathForKey:key];
-    NSInvocation *writeInvocation = [NSInvocation invocationWithMethodSignature:[self methodSignatureForSelector:@selector(writeData:toPath:)]];
-    
-    [writeInvocation setTarget:self];
-    [writeInvocation setSelector:@selector(writeData:toPath:)];
-    [writeInvocation setArgument:&data atIndex:2];
-    [writeInvocation setArgument:&cachePath atIndex:3];
-    
-    [self performDiskWriteOperation:writeInvocation];
+-(void)saveToDisk:(UIImage*)data withKey:(NSString*)key{
+    NSString *cachePath = [self  cachePathForKey:key];
+    dispatch_async(_ioQueue, ^{
+        [self writeData:data toPath:cachePath];
+    });
 }
 
 
@@ -136,7 +95,7 @@ inline static NSString *keyForURL(NSURL *url) {
 - (void) removeAllObjects {
     [super removeAllObjects];
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(_ioQueue, ^{
         NSFileManager *fileMgr = [NSFileManager defaultManager];
         NSError *error = nil;
         NSArray *directoryContents = [fileMgr contentsOfDirectoryAtPath:JMImageCacheDirectory() error:&error];
@@ -159,158 +118,218 @@ inline static NSString *keyForURL(NSURL *url) {
 - (void) removeObjectForKey:(id)key {
     [super removeObjectForKey:key];
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(_ioQueue, ^{
         NSFileManager *fileMgr = [NSFileManager defaultManager];
         NSString *cachePath = [self cachePathForKey:key];
-
         NSError *error = nil;
-
-        BOOL removeSuccess = [fileMgr removeItemAtPath:cachePath error:&error];
-        if (!removeSuccess) {
-            //Error Occured
-        }
+        [fileMgr removeItemAtPath:cachePath error:&error];
     });
 }
 
 #pragma mark -
 #pragma mark Getter Methods
 
-- (void) imageForURL:(NSURL *)url key:(NSString *)key completionBlock:(void (^)(UIImage *image))completion failureBlock:(void (^)(NSURLRequest *request, NSURLResponse *response, NSError* error))failure{
 
-	UIImage *i = [self cachedImageForKey:key];
-
-	if(i) {
-		if(completion) completion(i);
-	} else {
-        [self _downloadAndWriteImageForURL:url key:key completionBlock:completion failureBlock:failure];
+-(void)touchImagefForPath:(NSString*)path{
+    if (_touchedImages[path]) {
+        return;
     }
+    _touchedImages[path] = @"";
+    NSDictionary* todayAttr  = @{NSFileModificationDate: [NSDate date]};
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        [[NSFileManager defaultManager ] setAttributes: todayAttr
+                                          ofItemAtPath: path
+                                                 error: NULL];
+    });
 }
 
-- (void) imageForURL:(NSURL *)url completionBlock:(void (^)(UIImage *image))completion failureBlock:(void (^)(NSURLRequest *request, NSURLResponse *response, NSError* error))failure{
-    [self imageForURL:url key:keyForURL(url) completionBlock:completion failureBlock:(failure)];
-}
 
-- (UIImage *) cachedImageForKey:(NSString *)key {
-    if(!key) return nil;
-
-	id returner = [super objectForKey:key];
-
-	if(returner) {
-        return returner;
-	} else {
-        UIImage *i = [self imageFromDiskForKey:key];
-        if(i)
-            [self setImage:i forKey:key];
-
-        return i;
+- (UIImage *)decodedImageWithImage:(UIImage* )image
+{
+    CGImageRef imageRef = image.CGImage;
+    CGSize imageSize = CGSizeMake(CGImageGetWidth(imageRef), CGImageGetHeight(imageRef));
+    CGRect imageRect = (CGRect){.origin = CGPointZero, .size = imageSize};
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
+    
+    int infoMask = (bitmapInfo & kCGBitmapAlphaInfoMask);
+    BOOL anyNonAlpha = (infoMask == kCGImageAlphaNone ||
+                        infoMask == kCGImageAlphaNoneSkipFirst ||
+                        infoMask == kCGImageAlphaNoneSkipLast);
+    
+    // CGBitmapContextCreate doesn't support kCGImageAlphaNone with RGB.
+    // https://developer.apple.com/library/mac/#qa/qa1037/_index.html
+    if (infoMask == kCGImageAlphaNone && CGColorSpaceGetNumberOfComponents(colorSpace) > 1)
+    {
+        // Unset the old alpha info.
+        bitmapInfo &= ~kCGBitmapAlphaInfoMask;
+        
+        // Set noneSkipFirst.
+        bitmapInfo |= kCGImageAlphaNoneSkipFirst;
     }
-
-    return nil;
-}
-
-- (UIImage *) cachedImageForURL:(NSURL *)url {
-    NSString *key = keyForURL(url);
-    return [self cachedImageForKey:key];
-}
-
-- (UIImage *) imageForURL:(NSURL *)url key:(NSString*)key delegate:(id<JMImageCacheDelegate>)d {
-	if(!url) return nil;
-
-	UIImage *i = [self cachedImageForURL:url];
-
-	if(i) {
-		return i;
-	} else {
-        [self _downloadAndWriteImageForURL:url key:key completionBlock:^(UIImage *image) {
-            if(d) {
-                if([d respondsToSelector:@selector(cache:didDownloadImage:forURL:)]) {
-                    [d cache:self didDownloadImage:image forURL:url];
-                }
-                if([d respondsToSelector:@selector(cache:didDownloadImage:forURL:key:)]) {
-                    [d cache:self didDownloadImage:image forURL:url key:key];
-                }
-            }
-        }
-        failureBlock:nil];
+    // Some PNGs tell us they have alpha but only 3 components. Odd.
+    else if (!anyNonAlpha && CGColorSpaceGetNumberOfComponents(colorSpace) == 3)
+    {
+        // Unset the old alpha info.
+        bitmapInfo &= ~kCGBitmapAlphaInfoMask;
+        bitmapInfo |= kCGImageAlphaPremultipliedFirst;
     }
-
-    return nil;
+    
+    // It calculates the bytes-per-row based on the bitsPerComponent and width arguments.
+    CGContextRef context = CGBitmapContextCreate(NULL,
+                                                 imageSize.width,
+                                                 imageSize.height,
+                                                 CGImageGetBitsPerComponent(imageRef),
+                                                 0,
+                                                 colorSpace,
+                                                 bitmapInfo);
+    CGColorSpaceRelease(colorSpace);
+    
+    // If failed, return undecompressed image
+    if (!context) return image;
+	
+    CGContextDrawImage(context, imageRect, imageRef);
+    CGImageRef decompressedImageRef = CGBitmapContextCreateImage(context);
+	
+    CGContextRelease(context);
+	
+    UIImage *decompressedImage = [UIImage imageWithCGImage:decompressedImageRef scale:image.scale orientation:image.imageOrientation];
+    CGImageRelease(decompressedImageRef);
+    return decompressedImage;
 }
 
-- (UIImage *) imageForURL:(NSURL *)url delegate:(id<JMImageCacheDelegate>)d {
-    return [self imageForURL:url key:keyForURL(url) delegate:d];
+- (void) imageFromDiskForKey:(NSString *)key block:(void (^)(UIImage *image))completion{
+    dispatch_async(_ioQueue, ^{
+        UIImage *im = [self imageFromDiskForKey:key];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completion(im);
+        });
+    });
 }
 
 - (UIImage *) imageFromDiskForKey:(NSString *)key {
-    NSString *path = [self cachePathForKey:key];
-	UIImage *i = [[UIImage alloc] initWithData:[NSData dataWithContentsOfFile:path
-                                                                      options:0
-                                                                        error:NULL]];
+    if (!key) {
+        return nil;
+    }
     
-//    [[ NSFileManager defaultManager ] setAttributes: todayAttr
-//                                       ofItemAtPath: path
-//                                              error: NULL];
+    
+    NSString *path =[self cachePathForKey:key];
+    NSData *data = [NSData dataWithContentsOfFile:path];
+    if (!data) {
+        return nil;
+    }
+    UIImage *image = [UIImage imageWithData:data];
+    UIImage *i = nil;
+    if (image) {
+        i = [self decodedImageWithImage:image];
+        [self touchImagefForPath:path];
+    }
 	return i;
 }
 
-- (UIImage *) imageFromDiskForURL:(NSURL *)url {
-    return [self imageFromDiskForKey:keyForURL(url)];
-}
 
-#pragma mark -
-#pragma mark Setter Methods
 
-- (void) setImage:(UIImage *)i forKey:(NSString *)key {
-	if (i) {
-		[super setObject:i forKey:key];
-	}
-}
-- (void) setImage:(UIImage *)i forURL:(NSURL *)url {
-    [self setImage:i forKey:keyForURL(url)];
-}
-- (void) removeImageForKey:(NSString *)key {
-	[self removeObjectForKey:key];
-}
-- (void) removeImageForURL:(NSURL *)url {
-    [self removeImageForKey:keyForURL(url)];
-}
 
 #pragma mark -
 #pragma mark Disk Writing Operations
 
-- (void) writeData:(NSData*)data toPath:(NSString *)path {
-	[data writeToFile:path atomically:YES];
-}
-- (void) performDiskWriteOperation:(NSInvocation *)invoction {
-	NSInvocationOperation *operation = [[NSInvocationOperation alloc] initWithInvocation:invoction];
+- (void) writeData:(UIImage*)image toPath:(NSString *)path {
+    if (!image || !path) {
+        return;
+    }
+    NSData *data = UIImagePNGRepresentation(image);
     
-	[self.diskOperationQueue addOperation:operation];
+    if (data) {
+        NSFileManager *fileManager = NSFileManager.new;
+        [fileManager createFileAtPath:path
+                             contents:data
+                           attributes:nil];
+    }
+
 }
+
 
 -(void)cleanCache{
-    NSInvocation *cleanInv = [NSInvocation invocationWithMethodSignature:[self methodSignatureForSelector:@selector(removeOldFiles)]];
-    [cleanInv setTarget:self];
-    [cleanInv setSelector:@selector(removeOldFiles)];
-    [self performDiskWriteOperation:cleanInv];
+    dispatch_async(_ioQueue, ^{
+        [self removeOldFiles];
+    });
 }
 
+//84362730 = 2013-04-30 19:56:49 +0000
+//29062240 = 2013-04-30 19:56:45 +0000
 -(void)removeOldFiles{
-
-    NSFileManager* fm = [NSFileManager defaultManager];
-    NSArray *directoryContents = [fm contentsOfDirectoryAtPath:JMImageCacheDirectory() error:nil];
-    NSError* err = nil;
-    BOOL res;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSURL *diskCacheURL = [NSURL fileURLWithPath:JMImageCacheDirectory() isDirectory:YES];
+    NSArray *resourceKeys = @[ NSURLIsDirectoryKey, NSURLContentModificationDateKey, NSURLTotalFileAllocatedSizeKey ];
     
-//    NSDate *yesterDay = [[NSDate date] dateByAddingTimeInterval:(-0*24*60*60)];
-    for (NSString *path in directoryContents) {
-        NSString *fullPath = [JMImageCacheDirectory() stringByAppendingPathComponent:path];
-//        NSDate   *creationDate = [[fm attributesOfItemAtPath:fullPath error:nil] fileModificationDate];
-//        if ([creationDate compare:yesterDay] == NSOrderedAscending)
-//        {
-            // creation date is before the Yesterday date
-            res = [fm removeItemAtPath:fullPath
-                                 error:&err];
-//        }
+    // This enumerator prefetches useful properties for our cache files.
+    NSDirectoryEnumerator *fileEnumerator = [fileManager enumeratorAtURL:diskCacheURL
+                                              includingPropertiesForKeys:resourceKeys
+                                                                 options:NSDirectoryEnumerationSkipsHiddenFiles
+                                                            errorHandler:NULL];
+    
+    NSDate *expirationDate = [NSDate dateWithTimeIntervalSinceNow:-self.maxCacheAge];
+    NSMutableDictionary *cacheFiles = [NSMutableDictionary dictionary];
+    unsigned long long currentCacheSize = 0;
+    
+    // Enumerate all of the files in the cache directory.  This loop has two purposes:
+    //
+    //  1. Removing files that are older than the expiration date.
+    //  2. Storing file attributes for the size-based cleanup pass.
+    for (NSURL *fileURL in fileEnumerator)
+    {
+        NSDictionary *resourceValues = [fileURL resourceValuesForKeys:resourceKeys error:NULL];
+        
+        // Skip directories.
+        if ([resourceValues[NSURLIsDirectoryKey] boolValue])
+        {
+            continue;
+        }
+        
+        // Remove files that are older than the expiration date;
+        NSDate *modificationDate = resourceValues[NSURLContentModificationDateKey];
+        if ([[modificationDate laterDate:expirationDate] isEqualToDate:expirationDate])
+        {
+            [fileManager removeItemAtURL:fileURL error:nil];
+            continue;
+        }
+        
+        // Store a reference to this file and account for its total size.
+        NSNumber *totalAllocatedSize = resourceValues[NSURLTotalFileAllocatedSizeKey];
+        currentCacheSize += [totalAllocatedSize unsignedLongLongValue];
+        [cacheFiles setObject:resourceValues forKey:fileURL];
+    }
+
+    // If our remaining disk cache exceeds a configured maximum size, perform a second
+    // size-based cleanup pass.  We delete the oldest files first.
+    if (self.maxCacheSize > 0 && currentCacheSize > self.maxCacheSize)
+    {
+        // Target half of our maximum cache size for this cleanup pass.
+        const unsigned long long desiredCacheSize = self.maxCacheSize / 2;
+        
+        // Sort the remaining cache files by their last modification time (oldest first).
+        NSArray *sortedFiles = [cacheFiles keysSortedByValueWithOptions:NSSortConcurrent
+                                                        usingComparator:^NSComparisonResult(id obj1, id obj2)
+                                {
+                                    return [obj1[NSURLContentModificationDateKey] compare:obj2[NSURLContentModificationDateKey]];
+                                }];
+        
+        // Delete files until we fall below our desired cache size.
+        for (NSURL *fileURL in sortedFiles)
+        {
+            if ([fileManager removeItemAtURL:fileURL error:nil])
+            {
+                NSDictionary *resourceValues = cacheFiles[fileURL];
+                NSNumber *totalAllocatedSize = resourceValues[NSURLTotalFileAllocatedSizeKey];
+                currentCacheSize -= [totalAllocatedSize unsignedLongLongValue];
+                
+                if (currentCacheSize < desiredCacheSize)
+                {
+                    break;
+                }
+            }
+        }
     }
 }
 @end

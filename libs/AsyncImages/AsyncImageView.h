@@ -16,7 +16,7 @@
 // Value's are ImageCacheObject's
 //
 //static ImageCache *imageCache = nil;
-
+#import "ImageLoader.h"
 @class ImageLoader;
 @interface AsyncImageView : UIView {
     ImageLoader *loader;
@@ -27,16 +27,20 @@
     UIActivityIndicatorView *spinny;
     SEL selector;
     UIImageView *logo;
+    NSUInteger currentHash;
 }
 
+@property (nonatomic) CFAsyncCachePolicy cachPolicy;
+@property (nonatomic) CFAsyncLoadPolicy loadPolicy;
 
+@property(nonatomic,assign)BOOL shoulCacheCircledImage;
 @property (nonatomic,weak)id target;
 @property (weak, nonatomic,readonly)NSString* urlString;
 @property (nonatomic,assign)BOOL shadowed;
 @property(nonatomic,strong) UIImageView* imageView;
 @property (nonatomic) BOOL isRounded;
 
-- (void)initAsyncView;
+
 -(void)cutCorners;
 -(void)loadImageFromURL:(NSString*)url withTarger:(id)target_ selector:(SEL)selector_ ;
 
