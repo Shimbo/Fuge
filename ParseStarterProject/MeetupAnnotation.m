@@ -53,10 +53,18 @@
         if (!passed) {
             if ( meetup.meetupType == TYPE_MEETUP )
                 attorsubsc = [globalData isAttendingMeetup:meetup.strId];
-            else
+            else {
                 attorsubsc = [globalData isSubscribedToThread:meetup.strId];
+                
+                // all read threads are passed as well
+                if ( [globalData getConversationPresence:meetup.strId] )
+                {
+                    NSUInteger nComments = [globalData getConversationCount:meetup.strId];
+                    if ( nComments == meetup.numComments )
+                        passed = true;
+                }
+            }
         }
-
         
         self.pinColor = PinBlue;
         if (passed) {

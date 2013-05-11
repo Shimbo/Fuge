@@ -73,11 +73,11 @@
     return self;
 }
 
-- (void) save
+- (Boolean) save
 {
     // We're not changing or saving Facebook events nor creating our own as a copy
     if ( bFacebookEvent )
-        return;
+        return true;
     
     NSNumber* timestamp = [[NSNumber alloc] initWithDouble:[dateTime timeIntervalSince1970]];
     
@@ -89,7 +89,7 @@
     if ( ! meetupData )
     {
         bFirstSave = true;
-        meetupData = [[PFObject alloc] initWithClassName:@"Meetup"];
+        meetupData = [PFObject objectWithClassName:@"Meetup"];
         
         // Id, fromStr, fromId
         [meetupData setObject:[NSNumber numberWithInt:meetupType] forKey:@"type"];
@@ -114,9 +114,28 @@
     
     // Save
     if ( bFirstSave )
-        [meetupData save];
+    {
+        NSError* error = [[NSError alloc] init];
+        [meetupData save:&error];
+        if ( error.code != 0 )
+        {
+            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"No internet" message:@"Save failed, check your connection and try again." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+            [alert show];
+            return false;
+        }
+        return true;
+    }
     else
-        [meetupData saveInBackground];
+    {
+        [meetupData saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if (error)
+            {
+                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"No internet" message:@"Be aware: the meetup or thread you recently edited wasn't saved due to lack of connection!" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+                [alert show];
+            }
+        }];
+        return true;
+    }
 }
 
 -(void) unpack:(PFObject*)data
@@ -355,12 +374,14 @@
         attendees = [[NSMutableArray alloc] initWithObjects:strId,nil];
     else
         [attendees addObject:str];
+    numAttendees++;
 }
 
 -(void)removeAttendee:(NSString*)str
 {
     if ( attendees )
         [attendees removeObjectIdenticalTo:str];
+    numAttendees--;
 }
 
 -(Boolean) passed

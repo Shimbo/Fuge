@@ -28,7 +28,7 @@
     if ( messageData )
         return;
         
-    messageData = [[PFObject alloc] initWithClassName:@"Message"];
+    messageData = [PFObject objectWithClassName:@"Message"];
 
     [messageData setObject:strUserFrom forKey:@"idUserFrom"];
     [messageData setObject:strUserTo forKey:@"idUserTo"];

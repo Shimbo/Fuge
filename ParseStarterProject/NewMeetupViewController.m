@@ -197,7 +197,13 @@
     // Saving meetup on server
     _meetup = [[Meetup alloc] init];
     [self populateMeetupWithData:_meetup];
-    [_meetup save];
+    Boolean bResult = [_meetup save];
+    
+    // Loading ended
+    [activityIndicator stopAnimating];
+    
+    if ( ! bResult )
+        return;
     
     // Adding to the list on client and creating comment
     [globalData addMeetup:_meetup];
@@ -206,9 +212,6 @@
     // Add to attending list and update meetup attending list (only on client)
     [globalData attendMeetup:_meetup.strId];
     [_meetup addAttendee:strCurrentUserId];
-    
-    // Loading ended
-    [activityIndicator stopAnimating];
     
     // Invites
     MeetupInviteViewController *inviteController = [[MeetupInviteViewController alloc]init];

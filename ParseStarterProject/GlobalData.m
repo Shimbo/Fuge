@@ -238,6 +238,8 @@ NSInteger sortByName(id num1, id num2, void *context)
                                      forKey:@"fbBirthday"];
             [[PFUser currentUser] setObject:[result objectForKey:@"gender"]
                                      forKey:@"fbGender"];
+            [[PFUser currentUser] setObject:[globalVariables currentVersion]
+                                     forKey:@"version"];
             [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                 
                 if ( error )
@@ -389,6 +391,9 @@ NSInteger sortByName(id num1, id num2, void *context)
                 [pushManager sendPushNewUser:PUSH_NEW_FBFRIEND idTo:[friendUser objectForKey:@"fbId"]];
             }
             
+            // Sorting FB friends
+            [[self getCircle:CIRCLE_FB] sort];
+            
             // Excluding FB friends from 2O friends
             NSMutableArray* temp2O = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
             if ( temp2O )
@@ -454,6 +459,9 @@ NSInteger sortByName(id num1, id num2, void *context)
                 [pushManager sendPushNewUser:PUSH_NEW_2OFRIEND idTo:[friend2OUser objectForKey:@"fbId"]];
             }
             
+            // Sorting 2O friends
+            [[self getCircle:CIRCLE_2O] sort];
+            
             // Pushes sent for all new users, turn it off
             [globalVariables pushToFriendsSent];
             
@@ -503,6 +511,9 @@ NSInteger sortByName(id num1, id num2, void *context)
             // Adding users
             for (PFUser *friendAnyUser in friendAnyUsers)
                 [self addPerson:friendAnyUser userCircle:CIRCLE_RANDOM];
+            
+            // Sorting random people
+            [[self getCircle:CIRCLE_RANDOM] sort];
         }
         
         // In any case, increment loading stage
@@ -749,7 +760,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 - (void)createInvite:(Meetup*)meetup objectTo:(Person*)recipient stringTo:(NSString*)strRecipient
 {
-    PFObject* invite = [[PFObject alloc] initWithClassName:@"Invite"];
+    PFObject* invite = [PFObject objectWithClassName:@"Invite"];
     
     // Id, fromStr, fromId
     [invite setObject:meetup.strId forKey:@"meetupId"];
@@ -800,7 +811,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 -(void)createCommentForMeetup:(Meetup*)meetup commentType:(CommentType)type commentText:(NSString*)text
 {
     // Creating comment about meetup creation in db
-    PFObject* comment = [[PFObject alloc] initWithClassName:@"Comment"];
+    PFObject* comment = [PFObject objectWithClassName:@"Comment"];
     NSMutableString* strComment = [[NSMutableString alloc] initWithFormat:@""];
     NSNumber* trueNum = [[NSNumber alloc] initWithInt:1];
     NSNumber* typeNum = [[NSNumber alloc] initWithInt:meetup.meetupType];
@@ -808,7 +819,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     switch (type)
     {
         case COMMENT_CREATED:
-            [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
+            [strComment appendString:[pCurrentUser objectForKey:@"fbName"]];
             if (meetup.meetupType == TYPE_MEETUP)
                 [strComment appendString:@" created the meetup: "];
             else
@@ -817,7 +828,7 @@ NSInteger sortByName(id num1, id num2, void *context)
             [comment setObject:trueNum forKey:@"system"];
             break;
         case COMMENT_SAVED:
-            [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
+            [strComment appendString:[pCurrentUser objectForKey:@"fbName"]];
             if (meetup.meetupType == TYPE_MEETUP)
                 [strComment appendString:@" changed meetup details."];
             else
@@ -825,7 +836,7 @@ NSInteger sortByName(id num1, id num2, void *context)
             [comment setObject:trueNum forKey:@"system"];
             break;
         case COMMENT_JOINED:
-            [strComment appendString:[[PFUser currentUser] objectForKey:@"fbName"]];
+            [strComment appendString:[pCurrentUser objectForKey:@"fbName"]];
             [strComment appendString:@" joined the event."];
             [comment setObject:trueNum forKey:@"system"];
             break;
@@ -838,7 +849,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     
     [comment setObject:strCurrentUserId forKey:@"userId"];
     [comment setObject:strCurrentUserName forKey:@"userName"];
-    [comment setObject:[PFUser currentUser] forKey:@"userData"];
+    [comment setObject:pCurrentUser forKey:@"userData"];
     [comment setObject:meetup.strSubject forKey:@"meetupSubject"];
     [comment setObject:meetup.strId forKey:@"meetupId"];
     if ( meetup.meetupData )
@@ -849,14 +860,13 @@ NSInteger sortByName(id num1, id num2, void *context)
     //[comment.ACL setPublicReadAccess:true];
     
     [comment saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        PFObject* temp = meetup.meetupData;
         if ( error )
             NSLog(@"error:%@", error);
     }];
     
     // Add comment to the list of threads
     [self addComment:comment];
-    
-    // TODO: Send to everybody around (using public/2ndO filter, send checkbox and geo-query) push about the meetup
     
     // Subscription
     [globalData subscribeToThread:meetup.strId];
@@ -980,6 +990,9 @@ NSInteger sortByName(id num1, id num2, void *context)
     for ( NSDictionary* venue in venues )
         if ([recentVenue.venueId compare:[venue objectForKey:@"id"]] == NSOrderedSame)
             return;
+    
+    if ( venues.count >= MAX_RECENT_VENUES_COUNT )
+        [venues removeObjectAtIndex:0];
     
     [venues addObject:recentVenue.fsVenue];
     

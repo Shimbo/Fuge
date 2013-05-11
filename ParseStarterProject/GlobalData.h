@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "GlobalVariables.h"
 #import "Circle.h"
 #import "Meetup.h"
 #import "Message.h"
@@ -29,8 +30,6 @@ static NSString *const kLoadingInboxFailed = @"kLoadingInboxFailed";
 static NSString *const kAppRestored = @"kAppRestored";
 
 #define globalData [GlobalData sharedInstance]
-#define strCurrentUserId [[PFUser currentUser] objectForKey:@"fbId"]
-#define strCurrentUserName [[PFUser currentUser] objectForKey:@"fbName"]
 
 typedef enum ELoadingSection
 {
@@ -77,7 +76,7 @@ typedef  enum EMeetupCommentType
     
     // Inbox and notifications
     NSArray             *newUsers;
-    NSArray             *invites;
+    NSMutableArray      *invites;
     NSMutableArray      *messages;
     NSMutableArray      *comments;
     NSUInteger          nInboxUnreadCount;
@@ -155,6 +154,7 @@ typedef  enum EMeetupCommentType
 - (void)postInboxUnreadCountDidUpdate;
 - (NSUInteger)getInboxUnreadCount;
 - (void) updateConversation:(NSDate*)date count:(NSUInteger)msgCount thread:(NSString*)strThread;
+- (Boolean) getConversationPresence:(NSString*)strThread;
 - (NSDate*) getConversationDate:(NSString*)strThread;
 - (NSUInteger) getConversationCount:(NSString*)strThread;
 - (PFObject*)getInviteForMeetup:(NSString*)strId;

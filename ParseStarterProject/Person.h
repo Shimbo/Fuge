@@ -11,7 +11,7 @@
     NSString *strName;
     NSString *strAge;
     NSString *strGender;
-    NSString *strDistance;
+    NSNumber *distance;
     NSString *strRole;
     NSString *strArea;
     NSString *strCircle;
@@ -30,7 +30,7 @@
 @property (nonatomic, retain) NSString *strName;
 @property (nonatomic, retain) NSString *strAge;
 @property (nonatomic, retain) NSString *strGender;
-@property (nonatomic, retain) NSString *strDistance;
+@property (nonatomic, retain) NSNumber *distance;
 @property (nonatomic, retain) NSString *strRole;
 @property (nonatomic, retain) NSString *strArea;
 @property (nonatomic, retain) NSString *strCircle;
@@ -50,6 +50,7 @@
 -(NSString*)imageURL;
 -(NSString*)largeImageURL;
 
+-(NSString*)distanceString;
 
 +(NSString*)imageURLWithId:(NSString*)fbId;
 +(NSString*)largeImageURLWithId:(NSString*)fbId;

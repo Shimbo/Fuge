@@ -140,7 +140,7 @@
 	Person *person = [circle getPersons][indexPath.row];
     [personCell.personImage loadImageFromURL:person.imageURL];
     personCell.personName.text = person.strName;
-    personCell.personDistance.text = person.strDistance;
+    personCell.personDistance.text = [person distanceString];
     personCell.personRole.text = person.strRole;
     personCell.personArea.text = person.strArea;
 

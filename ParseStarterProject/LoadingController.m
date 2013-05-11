@@ -91,7 +91,7 @@ static Boolean bRotating = true;
             
             float minVersion = [[system objectForKey:@"minVersion"] floatValue];
             float curVersion = [[system objectForKey:@"curVersion"] floatValue];
-            float thisVersion = [[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"] floatValue];
+            float thisVersion = [[globalVariables currentVersion] floatValue];
             if ( thisVersion < minVersion )
             {
                 UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"New version is out!" message:@"You're running old version of the application. Please, update first." delegate:ctrl cancelButtonTitle:@"OK" otherButtonTitles:nil,nil];

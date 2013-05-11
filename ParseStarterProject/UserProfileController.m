@@ -38,9 +38,9 @@
     // UI
     buttonProfile = [[UIBarButtonItem alloc] initWithTitle:@"Fb Profile" style:UIBarButtonItemStylePlain target:self action:@selector(profileClicked)];
     [self.navigationItem setRightBarButtonItem:buttonProfile];
-        
+    textView.editable = FALSE;
+    
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
 }
 
 - (void)didReceiveMemoryWarning
@@ -72,6 +72,8 @@
     
     [messageHistory setText:stringHistory];
     messagesCount = messages.count;
+    
+    textView.editable = TRUE;
 }
 
 -(void) setPerson:(Person*)person
@@ -83,7 +85,7 @@
     [profileImage loadImageFromURL:person.largeImageURL];
     
     // Distance and circle
-    NSString* strDistance = [[NSString alloc] initWithFormat:@"%@ away", person.strDistance];
+    NSString* strDistance = [[NSString alloc] initWithFormat:@"%@ away", [person distanceString]];
     [labelDistance setText:strDistance];
     [labelCircle setText:person.strCircle];
     

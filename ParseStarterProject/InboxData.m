@@ -208,8 +208,6 @@ NSInteger sort2(id item1, id item2, void *context)
         
         [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingInboxComplete
                                                            object:nil];
-        [self postInboxUnreadCountDidUpdate];
-        
         // TODO: this call is an overkill, but don't know how to update new unread count other way, now we're calculating it with all other stuff upon load
         [self getInbox];
     }
@@ -433,6 +431,17 @@ NSInteger sort2(id item1, id item2, void *context)
     [[PFUser currentUser] saveInBackground]; // TODO: here was Eventually
 }
 
+- (Boolean) getConversationPresence:(NSString*)strThread
+{
+    NSMutableDictionary* conversations = [[PFUser currentUser] objectForKey:@"messageCounts"];
+    if ( ! conversations )
+        return false;
+    NSNumber* num = [conversations valueForKey:strThread];
+    if ( ! num )
+        return false;
+    return true;
+}
+
 - (NSDate*) getConversationDate:(NSString*)strThread
 {
     NSMutableDictionary* conversations = [[PFUser currentUser] objectForKey:@"messageDates"];
@@ -454,7 +463,7 @@ NSInteger sort2(id item1, id item2, void *context)
 
 -(PFObject*)getInviteForMeetup:(NSString*)strId
 {
-    for (PFObject* invite in [self getUniqueInvites])
+    for (PFObject* invite in invites)
         if ( [strId compare:[invite objectForKey:@"meetupId"]] == NSOrderedSame )
             return invite;
     return nil;
@@ -469,6 +478,16 @@ NSInteger sort2(id item1, id item2, void *context)
     NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:status];
     [invite setObject:inviteStatus forKey:@"status"];
     [invite saveInBackground];
+    
+    // Update inbox badge
+    if ( nInboxUnreadCount > 0 )    // just for sure
+        nInboxUnreadCount--;
+    [[NSNotificationCenter defaultCenter]postNotificationName:kInboxUnreadCountDidUpdate
+                                                       object:nil];
+    
+    // Remove accepted invite so we won't create two entities in inbox: invite and join comment
+    if ( status == INVITE_ACCEPTED )
+        [invites removeObject:invite];
 }
 
 

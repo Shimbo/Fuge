@@ -43,6 +43,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{94, 353}, {132, 44}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
+						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIAutoresizesSubviews">NO</bool>
@@ -222,7 +223,7 @@
 						<int key="IBUIContentMode">7</int>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-						<string key="IBUIText">Area</string>
+						<string key="IBUIText">Field</string>
 						<reference key="IBUITextColor" ref="175736557"/>
 						<nil key="IBUIHighlightedColor"/>
 						<int key="IBUIBaselineAdjustment">0</int>
@@ -247,7 +248,7 @@
 							<string key="NSString"/>
 						</object>
 						<int key="IBUIBorderStyle">3</int>
-						<string key="IBUIPlaceholder">or company</string>
+						<string key="IBUIPlaceholder">or institution/corp</string>
 						<bool key="IBUIAdjustsFontSizeToFit">YES</bool>
 						<float key="IBUIMinimumFontSize">17</float>
 						<object class="IBUITextInputTraits" key="IBUITextInputTraits">

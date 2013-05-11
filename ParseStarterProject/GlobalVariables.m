@@ -108,4 +108,10 @@ static GlobalVariables *sharedInstance = nil;
     return newString;
 }
 
+- (NSNumber*)currentVersion
+{
+    NSString* strData = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    return [NSNumber numberWithFloat:[strData floatValue]];
+}
+
 @end

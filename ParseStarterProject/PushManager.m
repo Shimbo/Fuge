@@ -63,20 +63,6 @@ static PushManager *sharedInstance = nil;
     [dicNewUserPushesSent setObject:@"Sent" forKey:strTo];
 }
 
-/*- (void)sendPushNewMessage:(NSInteger)pushType idTo:(NSString*)strTo
-{
-    NSString* strFrom = [[PFUser currentUser] objectForKey:@"fbName"];
-    NSString* strPush = @"Wrong push!";
-    switch (pushType)
-    {
-        case PUSH_NEW_MESSAGE:
-            strPush = [[NSString alloc] initWithFormat:@"New message from %@!", strFrom];
-            break;
-    }
-    NSString* strChannel = [[NSString alloc] initWithFormat:@"fb%@", strTo];
-    [PFPush sendPushMessageToChannelInBackground:strChannel withMessage:strPush];
-}*/
-
 - (void)initChannelsFirstTime:(NSString*)strId
 {
     NSString* strUserChannel =[[NSString alloc] initWithFormat:@"fb%@", strId];
@@ -94,14 +80,14 @@ static PushManager *sharedInstance = nil;
     [currentInstallation saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (error)
             NSLog(@"Sync Error:%@", error);
-    }]; // TODO: here was Eventually
+    }];
     [PFPush subscribeToChannelInBackground:strChannel target:self selector:@selector(subscribeFinished:error:)];
 }
 
 - (void)removeChannel:(NSString*)strChannel
 {
     [[PFInstallation currentInstallation] removeObject:strChannel forKey:@"channels"];
-    [[PFInstallation currentInstallation] saveInBackground]; // TODO: here was Eventually
+    [[PFInstallation currentInstallation] saveInBackground];
     [PFPush unsubscribeFromChannelInBackground:strChannel];
 }
 

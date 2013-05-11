@@ -95,7 +95,7 @@
 - (void)joinClicked
 {    
     // Creating attendee in db
-    PFObject* attendee = [[PFObject alloc] initWithClassName:@"Attendee"];
+    PFObject* attendee = [PFObject objectWithClassName:@"Attendee"];
     [attendee setObject:strCurrentUserId forKey:@"userId"];
     [attendee setObject:strCurrentUserName forKey:@"userName"];
     [attendee setObject:meetup.strId forKey:@"meetupId"];
@@ -103,7 +103,7 @@
     [attendee setObject:meetup.meetupData forKey:@"meetupData"];
     [attendee saveInBackground];
     
-    // Adding attendee to the meetup
+    // Adding attendee to the local copy of meetup
     [meetup addAttendee:strCurrentUserId];
     
     // Creating comment about joining in db
@@ -124,7 +124,6 @@
     // If it was opened from invite
     if ( invite )
     {
-        //[self dismissViewControllerAnimated:TRUE completion:nil];
         [self.navigationController popViewControllerAnimated:TRUE];
     }
     else
@@ -136,6 +135,7 @@
         [self updateButtons];
     }
     [self reloadAnnotation];
+    
     // Ask to add to calendar
     [meetup addToCalendar];
 }
@@ -234,7 +234,9 @@
 {
     [super viewDidLoad];
     
-    self.title = @"";//meetup.strSubject;
+    self.title = @"";
+    
+    textView.editable = FALSE;
     
     // Map
     CLLocationCoordinate2D loc = CLLocationCoordinate2DMake(meetup.location.latitude,meetup.location.longitude);
@@ -347,10 +349,13 @@
         [comments setText:stringComments];
         
         // Last read message date
-        if ( commentsList.count > 1 )
-            [globalData updateConversation:((PFObject*)commentsList[commentsList.count-1]).createdAt count:meetup.numComments thread:meetup.strId];
+        NSDate* commentDate = nil;
+        if ( commentsList.count > 0 )
+            commentDate = ((PFObject*)commentsList[commentsList.count-1]).createdAt;
+        [globalData updateConversation:commentDate count:meetup.numComments thread:meetup.strId];
         
         // Make new comment editable now
+        textView.editable = TRUE;
     }];
     [self reloadAnnotation];
 }
@@ -478,8 +483,7 @@ double animatedDistance;
         return;
     
     // Creating comment in db
-    [globalData createCommentForMeetup:meetup
-                           commentType:COMMENT_PLAIN
+    [globalData createCommentForMeetup:meetup commentType:COMMENT_PLAIN
                            commentText:textView.text];
     
     // Adding comment to the list
@@ -492,6 +496,8 @@ double animatedDistance;
     [comments setText:stringComments];
     
     [textView setText:@""];
+    
+    [self updateButtons];
 }
 
 

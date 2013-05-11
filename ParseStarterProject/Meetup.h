@@ -73,7 +73,7 @@ typedef enum kEMeetupPrivacy
 @property (nonatomic, copy) PFObject *meetupData;
 
 -(id) init;
--(void) save;
+-(Boolean) save;
 -(void) unpack:(PFObject*)data;
 
 -(id) initWithFbEvent:(NSDictionary*)eventData venue:(NSDictionary*)venueData;

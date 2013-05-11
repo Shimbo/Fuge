@@ -15,7 +15,7 @@
 }
 
 - (void)addPerson:(Person *)person {
-	[persons addObject:person];
+	[persons addObject:person];    
 }
 
 - (void)removePerson:(Person *)person{
@@ -30,8 +30,8 @@
 
 - (void)sort
 {
-	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"strName" ascending:YES];
-	NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:&sortDescriptor count:1];
+	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"distance" ascending:YES];
+	NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
 	[persons sortUsingDescriptors:sortDescriptors];
 }
 

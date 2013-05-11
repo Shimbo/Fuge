@@ -6,7 +6,7 @@
 
 @implementation Person
 
-@synthesize strId, strName, strAge, strGender, strDistance, strRole, strArea, strCircle, idCircle, personData,numUnreadMessages;
+@synthesize strId, strName, strAge, strGender, distance, strRole, strArea, strCircle, idCircle, personData,numUnreadMessages;
 
 + (void)initialize {
 	if (self == [Person class]) {
@@ -52,11 +52,10 @@
 - (void)updateLocation:(PFGeoPoint*)ptNewLocation
 {
     // Distance calculation
-    strDistance = @"";
+    distance = [NSNumber numberWithFloat:0.0f];
     PFGeoPoint *geoPointUser = [[PFUser currentUser] objectForKey:@"location"];
     PFGeoPoint *geoPointFriend = ptNewLocation;
     CLLocation* locationFriend = nil;
-    CLLocationDistance distance = 40000000.0f;
     
     if ( geoPointFriend )
     {
@@ -68,15 +67,13 @@
     {
         CLLocation* locationUser = [[CLLocation alloc] initWithLatitude:geoPointUser.latitude longitude:geoPointUser.longitude];
         
-        distance = [locationUser distanceFromLocation:locationFriend];
-        
-        if ( distance < 1000.0f )
-            strDistance = [[NSString alloc] initWithFormat:@"%.0f m", distance];
-        else if ( distance < 10000.0f )
-            strDistance = [[NSString alloc] initWithFormat:@"%.1f km", distance/1000.0f];
-        else
-            strDistance = [[NSString alloc] initWithFormat:@"%.0f km", distance/1000.0f];
+        distance = [NSNumber numberWithFloat:[locationUser distanceFromLocation:locationFriend]];        
     }
+}
+
+- (CLLocationCoordinate2D) getLocation
+{
+    return location;
 }
 
 - (void)changeCircle:(NSUInteger)nCircle
@@ -101,9 +98,15 @@
 
 
 
-
-
-
+-(NSString*)distanceString
+{
+    if ( [distance floatValue] < 1000.0f )
+        return [[NSString alloc] initWithFormat:@"%.0f m", [distance floatValue]];
+    else if ( [distance floatValue] < 10000.0f )
+        return [[NSString alloc] initWithFormat:@"%.1f km", [distance floatValue]/1000.0f];
+    else
+        return [[NSString alloc] initWithFormat:@"%.0f km", [distance floatValue]/1000.0f];
+}
 
 
 
@@ -170,10 +173,5 @@
 {
     location = loc;
 }*/
-
-- (CLLocationCoordinate2D) getLocation
-{
-    return location;
-}
 
 @end
