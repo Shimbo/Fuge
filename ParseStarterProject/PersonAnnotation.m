@@ -22,7 +22,8 @@
                         person.strRole,
                         person.strArea.length?@",":@"",
                         person.strArea ];
-        self.coordinate = person.getLocation;
+        if ( person.getLocation )
+            self.coordinate = CLLocationCoordinate2DMake(person.getLocation.latitude, person.getLocation.longitude);
         self.person = person;
     }
     return self;

@@ -18,7 +18,7 @@
     
     NSUInteger  numUnreadMessages;
     
-    CLLocationCoordinate2D location;
+    PFGeoPoint* location;
     
     NSUInteger idCircle;
     
@@ -45,6 +45,7 @@
 - (id)initEmpty:(NSUInteger)nCircle;
 
 - (void)updateLocation:(PFGeoPoint*)ptNewLocation;
+- (void)calculateDistance;
 - (void)changeCircle:(NSUInteger)nCircle;
 
 -(NSString*)imageURL;
@@ -57,6 +58,6 @@
 
 
 //- (void) setLocation:(CLLocationCoordinate2D) loc;
-- (CLLocationCoordinate2D) getLocation;
+- (PFGeoPoint*) getLocation;
 
 @end

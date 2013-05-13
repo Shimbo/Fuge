@@ -45,7 +45,7 @@ typedef enum kEMeetupPrivacy
     
     NSUInteger  numComments;
     NSUInteger  numAttendees;
-    NSMutableArray* attendies;
+    NSMutableArray* attendees;
     
     Boolean     bFacebookEvent;
     

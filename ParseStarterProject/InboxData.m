@@ -248,7 +248,8 @@ NSInteger sort2(id item1, id item2, void *context)
             for ( PFObject* inviteNew in objects )
             {
                 // Already subscribed
-                if ( [globalData isSubscribedToThread:[inviteNew objectForKey:@"meetupId"]])
+                if ( [globalData isSubscribedToThread:[inviteNew objectForKey:@"meetupId"]]
+                    || [globalData isAttendingMeetup:[inviteNew objectForKey:@"meetupId"]] )
                 {
                     // Saving as duplicate
                     NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_DUPLICATE];
@@ -258,7 +259,8 @@ NSInteger sort2(id item1, id item2, void *context)
                 }
                 
                 // Expired
-                if ( [[inviteNew objectForKey:@"expirationDate"] compare:[NSDate date]] == NSOrderedAscending )
+                Boolean bExpired = [[inviteNew objectForKey:@"expirationDate"] compare:[NSDate date]] == NSOrderedAscending;
+                if ( bExpired )
                 {
                     NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_EXPIRED];
                     [inviteNew setObject:inviteStatus forKey:@"status"];

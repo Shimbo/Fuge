@@ -3,6 +3,7 @@
 #import "ParseStarterProjectAppDelegate.h"
 #import "PersonView.h"
 #import "Circle.h"
+#import "LocationManager.h"
 
 @implementation Person
 
@@ -29,6 +30,8 @@
         idCircle = nCircle;
         
         // Location
+        location = nil;
+        distance = nil;
         [self updateLocation:[user objectForKey:@"location"]];
         
         // Age calculations
@@ -49,29 +52,30 @@
 	return self;
 }
 
-- (void)updateLocation:(PFGeoPoint*)ptNewLocation
+- (void)calculateDistance
 {
     // Distance calculation
-    distance = [NSNumber numberWithFloat:0.0f];
-    PFGeoPoint *geoPointUser = [[PFUser currentUser] objectForKey:@"location"];
-    PFGeoPoint *geoPointFriend = ptNewLocation;
-    CLLocation* locationFriend = nil;
+    PFGeoPoint* geoPointUser = [locManager getPosition];
     
-    if ( geoPointFriend )
+    if ( ! location || ! geoPointUser )
     {
-        locationFriend = [[CLLocation alloc] initWithLatitude:geoPointFriend.latitude longitude:geoPointFriend.longitude];
-        location = locationFriend.coordinate;
+        distance = nil;
+        return;
     }
     
-    if ( geoPointUser && geoPointFriend )
-    {
-        CLLocation* locationUser = [[CLLocation alloc] initWithLatitude:geoPointUser.latitude longitude:geoPointUser.longitude];
-        
-        distance = [NSNumber numberWithFloat:[locationUser distanceFromLocation:locationFriend]];        
-    }
+    distance = [NSNumber numberWithDouble:
+                [geoPointUser distanceInKilometersTo:location]*1000.0f];
 }
 
-- (CLLocationCoordinate2D) getLocation
+- (void)updateLocation:(PFGeoPoint*)ptNewLocation
+{
+    if ( ptNewLocation )
+        location = ptNewLocation;
+    
+    [self calculateDistance];
+}
+
+- (PFGeoPoint*) getLocation
 {
     return location;
 }
@@ -100,7 +104,9 @@
 
 -(NSString*)distanceString
 {
-    if ( [distance floatValue] < 1000.0f )
+    if ( ! distance )
+        return @"";
+    else if ( [distance floatValue] < 1000.0f )
         return [[NSString alloc] initWithFormat:@"%.0f m", [distance floatValue]];
     else if ( [distance floatValue] < 10000.0f )
         return [[NSString alloc] initWithFormat:@"%.1f km", [distance floatValue]/1000.0f];

@@ -262,14 +262,7 @@
         if ( [meetup.strOwnerId compare:strCurrentUserId ] != NSOrderedSame )
         {
             // Joined or not
-            Boolean bJoined = false;
-            if ( meetup.attendees )
-                for ( NSString* str in meetup.attendees )
-                    if ( [str compare:strCurrentUserId] == NSOrderedSame )
-                    {
-                        bJoined = true;
-                        break;
-                    }
+            Boolean bJoined = [globalData isAttendingMeetup:meetup.strId];
             
             if ( ! bJoined )    // Or thread as thread can't be joined
             {

@@ -31,7 +31,7 @@ static LocationManager *sharedInstance = nil;
     self = [super init];
     
     if (self) {
-        geoPoint = nil;
+        geoPoint = geoPointOld = nil;
         locationManager = [[CLLocationManager alloc] init];
         locationManager.delegate = self;
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
@@ -50,21 +50,35 @@ static LocationManager *sharedInstance = nil;
     
     if (newLocation.horizontalAccuracy < 0) return;
     
-    NSTimeInterval locationAge = -[newLocation.timestamp timeIntervalSinceNow];
+    /*NSTimeInterval locationAge = -[newLocation.timestamp timeIntervalSinceNow];
     if (locationAge > 5.0)
     {
+    }*/
+    
+    // New location
+    CLLocationCoordinate2D coord = newLocation.coordinate;
+    geoPoint = [PFGeoPoint geoPointWithLatitude:coord.latitude longitude:coord.longitude];
+    
+    // Store in PFUser and get the result
+    Boolean bResult = [globalData setUserPosition:geoPoint];
+    
+    // Distance calculation
+    float fDistance;
+    if ( geoPointOld )
+        fDistance = [geoPoint distanceInKilometersTo:geoPointOld];
+    else
+        fDistance = 10000000.0f;
+    
+    // If location was saved and distance is more than it should, save data
+    if ( fDistance > LOCATION_UPDATE_KILOMETERS && bResult )
+    {
+        geoPointOld = geoPoint;
+        [pCurrentUser saveInBackground];
+        NSLog(@"Location updated");
     }
     
-    CLLocationCoordinate2D coord = newLocation.coordinate;
-    
-    geoPoint = [PFGeoPoint geoPointWithLatitude:coord.latitude
-                                                  longitude:coord.longitude];
-    
-    [globalData setUserPosition:geoPoint];
-    
+    // Let's try not to stop
     //[locationManager stopUpdatingLocation];
-    
-    NSLog(@"Location updated");
 }
 
 - (void)locationManager: (CLLocationManager *)manager

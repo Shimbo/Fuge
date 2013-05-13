@@ -6,6 +6,7 @@
 //
 //
 
+#import <Parse/Parse.h>
 #import <Foundation/Foundation.h>
 
 #define pushManager [PushManager sharedInstance]
@@ -26,10 +27,16 @@ enum EPushType
 + (id)sharedInstance;
 
 - (void)sendPushNewUser:(NSInteger)pushType idTo:(NSString*)strTo;
+- (void)sendPushNewMessage:(NSString*)userId text:(NSString*)strText;
+- (void)sendPushAttendingMeetup:(NSString*)meetupId;
+- (void)sendPushCommentedMeetup:(NSString*)meetupId;
+- (void)sendPushInviteForMeetup:(NSString*)meetupId user:(NSString*)userId;
+- (void)sendPushCreatedMeetup:(NSString*)meetupId;
+
 // All other pushes are cloud-based
 //- (void)sendPushNewMessage:(NSInteger)pushType idTo:(NSString*)strTo;
 
-- (void)initChannelsFirstTime:(NSString*)strId;
+- (void)initChannelsForTheFirstTime:(NSString*)strId;
 - (void)addChannel:(NSString*)strChannel;
 - (void)removeChannel:(NSString*)strChannel;
 

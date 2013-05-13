@@ -12,6 +12,7 @@
 #import "FSVenue.h"
 #import "LocationManager.h"
 #import "ParseStarterProjectAppDelegate.h"
+#import "PushManager.h"
 
 @implementation Meetup
 
@@ -123,6 +124,11 @@
             [alert show];
             return false;
         }
+        
+        // Send push if not private
+        if ( privacy == MEETUP_PUBLIC )
+            [pushManager sendPushCreatedMeetup:strId];
+        
         return true;
     }
     else

@@ -18,6 +18,7 @@
 {
     CLLocationManager*  locationManager;
     PFGeoPoint          *geoPoint;
+    PFGeoPoint          *geoPointOld;
 }
 
 + (id)sharedInstance;

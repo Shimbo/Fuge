@@ -254,7 +254,7 @@ NSInteger sortByName(id num1, id num2, void *context)
                     [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMainComplete object:nil];
                     
                     // Push channels initialization
-                    [pushManager initChannelsFirstTime:[result objectForKey:@"id"]];
+                    [pushManager initChannelsForTheFirstTime:[result objectForKey:@"id"]];
                     
                     // FB friends, 2O friends, fb friends not installed the app
                     [self reloadFriendsInBackground];
@@ -629,7 +629,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         if (error) {
             NSLog(@"Error: %@", [error localizedDescription]);
         } else {
-            NSLog(@"Result: %@", result);
+            //NSLog(@"Result: %@", result);
             
             NSArray* data = [result objectForKey:@"data"];
             NSArray* events = [((NSDictionary*) data[0]) objectForKey:@"fql_result_set"];
@@ -795,6 +795,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [invite saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if ( error )
             NSLog(@"Uh oh. An error occurred: %@", error);
+        [pushManager sendPushInviteForMeetup:meetup.strId user:strTo];
     }];
 }
 
@@ -813,6 +814,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     // Creating comment about meetup creation in db
     PFObject* comment = [PFObject objectWithClassName:@"Comment"];
     NSMutableString* strComment = [[NSMutableString alloc] initWithFormat:@""];
+    Boolean bSystem = false;
     NSNumber* trueNum = [[NSNumber alloc] initWithInt:1];
     NSNumber* typeNum = [[NSNumber alloc] initWithInt:meetup.meetupType];
     
@@ -825,7 +827,7 @@ NSInteger sortByName(id num1, id num2, void *context)
             else
                 [strComment appendString:@" created the thread: "];
             [strComment appendString:meetup.strSubject];
-            [comment setObject:trueNum forKey:@"system"];
+            bSystem = true;
             break;
         case COMMENT_SAVED:
             [strComment appendString:[pCurrentUser objectForKey:@"fbName"]];
@@ -833,12 +835,12 @@ NSInteger sortByName(id num1, id num2, void *context)
                 [strComment appendString:@" changed meetup details."];
             else
                 [strComment appendString:@" changed thread details."];
-            [comment setObject:trueNum forKey:@"system"];
+            bSystem = true;
             break;
         case COMMENT_JOINED:
             [strComment appendString:[pCurrentUser objectForKey:@"fbName"]];
             [strComment appendString:@" joined the event."];
-            [comment setObject:trueNum forKey:@"system"];
+            bSystem = true;
             break;
         case COMMENT_PLAIN:
             [strComment appendString:text];
@@ -847,6 +849,8 @@ NSInteger sortByName(id num1, id num2, void *context)
             break;
     }
     
+    if ( bSystem )
+        [comment setObject:trueNum forKey:@"system"];
     [comment setObject:strCurrentUserId forKey:@"userId"];
     [comment setObject:strCurrentUserName forKey:@"userName"];
     [comment setObject:pCurrentUser forKey:@"userData"];
@@ -860,7 +864,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     //[comment.ACL setPublicReadAccess:true];
     
     [comment saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        PFObject* temp = meetup.meetupData;
+        //PFObject* temp = meetup.meetupData;
         if ( error )
             NSLog(@"error:%@", error);
     }];
@@ -870,6 +874,10 @@ NSInteger sortByName(id num1, id num2, void *context)
     
     // Subscription
     [globalData subscribeToThread:meetup.strId];
+    
+    // Send push if not system
+    if ( ! bSystem )
+        [pushManager sendPushCommentedMeetup:meetup.strId];
 }
 
 
@@ -891,7 +899,10 @@ NSInteger sortByName(id num1, id num2, void *context)
     // Attend
     [attending addObject:strMeetup];
     [[PFUser currentUser] setObject:attending forKey:@"attending"];
-    [[PFUser currentUser] saveInBackground]; // TODO: here was Eventually
+    [[PFUser currentUser] saveInBackground];
+    
+    // Push notification to all attendees
+    [pushManager sendPushAttendingMeetup:strMeetup];
 }
 
 - (void) unattendMeetup:(NSString*)strMeetup
@@ -1024,10 +1035,21 @@ NSInteger sortByName(id num1, id num2, void *context)
     return false;
 }
 
-- (void) setUserPosition:(PFGeoPoint*)geoPoint
+- (Boolean) setUserPosition:(PFGeoPoint*)geoPoint
 {
-    if ( [[PFUser currentUser] isAuthenticated] && geoPoint )
-        [[PFUser currentUser] setObject:geoPoint forKey:@"location"];
+    if ( [pCurrentUser isAuthenticated] && geoPoint )
+    {
+        // Setting own coords
+        [pCurrentUser setObject:geoPoint forKey:@"location"];
+        
+        // Recalculating distances
+        for ( Circle* circle in [circles allValues] )
+            for ( Person* person in [circle getPersons] )
+                 [person calculateDistance];
+        
+        return true;
+    }
+    return false;
 }
 
 - (void) removeUserFromNew:(NSString*)strUser

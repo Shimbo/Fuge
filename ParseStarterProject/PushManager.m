@@ -8,7 +8,7 @@
 
 #import "PushManager.h"
 #import <Parse/Parse.h>
-#import "GlobalVariables.h"
+#import "GlobalData.h"
 
 @implementation PushManager
 
@@ -57,17 +57,160 @@ static PushManager *sharedInstance = nil;
             break;
     }
     
-    NSString* strChannel =[[NSString alloc] initWithFormat:@"fb%@", strTo];
+    NSString* strChannel = [NSString stringWithFormat:@"fb%@", strTo];
+    NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
+                          @"New friend!",   @"title",
+                          strPush,          @"alert",
+                          strCurrentUserId, @"user",
+                          @"Increment",     @"badge",
+                          nil];
     
-    [PFPush sendPushMessageToChannelInBackground:strChannel withMessage:strPush];
+    PFPush *push = [[PFPush alloc] init];
+    [push setChannel:strChannel];
+    [push setData:data];
+    [push sendPushInBackground];
+    
     [dicNewUserPushesSent setObject:@"Sent" forKey:strTo];
 }
 
-- (void)initChannelsFirstTime:(NSString*)strId
+- (void)sendPushNewMessage:(NSString*)userId text:(NSString*)strText
+{
+    NSString* strChannel = [NSString stringWithFormat:@"fb%@", userId];
+    NSString* strPush = [NSString stringWithFormat:@"%@: %@", [globalVariables trimName:strCurrentUserName], strText];
+    NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
+                          @"New message!",  @"title",
+                          strPush,          @"alert",
+                          userId,           @"user",
+                          @"Increment",     @"badge",
+                          nil];
+    
+    PFPush *push = [[PFPush alloc] init];
+    [push setChannel:strChannel];
+    [push setData:data];
+    [push sendPushInBackground];
+}
+
+
+- (void)sendPushAttendingMeetup:(NSString*)meetupId
+{
+    Meetup* meetup = [globalData getMeetupById:meetupId];
+    if ( ! meetup )
+        return;
+    
+    // Excluding the case where you just created it
+    if ( [meetup.strOwnerId compare:strCurrentUserId] == NSOrderedSame )
+        return;
+    
+    PFQuery *pushQuery = [PFInstallation query];
+    [pushQuery whereKey:@"ownerId" containedIn:meetup.attendees];
+    [pushQuery whereKey:@"ownerId" notEqualTo:strCurrentUserId];
+    
+    NSString* strText = [NSString stringWithFormat:@"%@ joined meetup %@", [globalVariables trimName:strCurrentUserName], meetup.strSubject];
+    
+    PFPush *push = [[PFPush alloc] init];
+    [push setQuery:pushQuery];
+    NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
+                          @"New attendee!", @"title",
+                          strText,          @"alert",
+                          meetupId,         @"meetup",
+                          @"Increment",     @"badge",
+                          nil];
+    [push setData:data];
+    [push sendPushInBackground];
+}
+
+- (void)sendPushCommentedMeetup:(NSString*)meetupId
+{
+    Meetup* meetup = [globalData getMeetupById:meetupId];
+    if ( ! meetup )
+        return;
+    
+    PFQuery *pushQuery = [PFInstallation query];
+    [pushQuery whereKey:@"ownerId" containedIn:meetup.attendees];
+    [pushQuery whereKey:@"ownerId" notEqualTo:strCurrentUserId];
+    
+    NSString* strText = [NSString stringWithFormat:@"%@ left a comment in %@", [globalVariables trimName:strCurrentUserName], meetup.strSubject];
+    
+    PFPush *push = [[PFPush alloc] init];
+    [push setQuery:pushQuery];
+    NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
+                          @"New comment!",  @"title",
+                          strText,          @"alert",
+                          meetupId,         @"meetup",
+                          @"Increment",     @"badge",
+                          nil];
+    [push setData:data];
+    [push sendPushInBackground];
+}
+
+- (void)sendPushInviteForMeetup:(NSString*)meetupId user:(NSString*)userId
+{
+    Meetup* meetup = [globalData getMeetupById:meetupId];
+    if ( ! meetup )
+        return;
+    
+    NSString* strChannel = [NSString stringWithFormat:@"fb%@", userId];
+    NSString* strText = [NSString stringWithFormat:@"%@ invited you to %@", [globalVariables trimName:strCurrentUserName], meetup.strSubject];
+    NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
+                          @"New comment!",  @"title",
+                          strText,          @"alert",
+                          meetupId,         @"meetup",
+                          @"Increment",     @"badge",
+                          nil];
+    
+    PFPush *push = [[PFPush alloc] init];
+    [push setChannel:strChannel];
+    [push setData:data];
+    [push sendPushInBackground];
+}
+
+- (void)sendPushCreatedMeetup:(NSString*)meetupId
+{
+    Meetup* meetup = [globalData getMeetupById:meetupId];
+    if ( ! meetup )
+        return;
+    
+    PFQuery *userQuery = [PFUser query];
+    userQuery.limit = 1000;
+    [userQuery whereKey:@"fbId" notEqualTo:strCurrentUserId];
+    [userQuery whereKey:@"location" nearGeoPoint:meetup.location withinKilometers:PUSH_DISCOVERY_KILOMETERS];
+    
+    PFQuery *pushQuery = [PFInstallation query];
+    [pushQuery whereKey:@"ownerData" matchesQuery:userQuery];
+    
+    NSString* strText;
+    NSString* strTitle;
+    if ( meetup.meetupType == TYPE_MEETUP )
+    {
+        strText = [NSString stringWithFormat:@"%@ just created a meetup nearby: %@", [globalVariables trimName:strCurrentUserName], meetup.strSubject];
+        strTitle = @"New meetup!";
+    }
+    else
+    {
+        strText = [NSString stringWithFormat:@"%@ just created a thread nearby: %@", [globalVariables trimName:strCurrentUserName], meetup.strSubject];
+        strTitle = @"New thread!";
+    }
+    
+    PFPush *push = [[PFPush alloc] init];
+    [push setQuery:pushQuery];
+    NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
+                          strTitle,         @"title",
+                          strText,          @"alert",
+                          meetupId,         @"meetup",
+    //                      @"Increment",     @"badge", // Don't increment as not inbox event
+                          nil];
+    [push setData:data];
+    [push expireAfterTimeInterval:PUSH_DISCOVERY_EXPIRATION];
+    [push sendPushInBackground];
+}
+
+- (void)initChannelsForTheFirstTime:(NSString*)strId
 {
     NSString* strUserChannel =[[NSString alloc] initWithFormat:@"fb%@", strId];
     [[PFInstallation currentInstallation] addUniqueObject:strUserChannel forKey:@"channels"];
     [[PFInstallation currentInstallation] addUniqueObject:@"" forKey:@"channels"];
+    [[PFInstallation currentInstallation] setObject:strId forKey:@"ownerId"];
+    [[PFInstallation currentInstallation] setObject:pCurrentUser forKey:@"ownerData"];
     [[PFInstallation currentInstallation] saveInBackground];
     [PFPush subscribeToChannelInBackground:@"" target:self selector:@selector(subscribeFinished:error:)];
     [PFPush subscribeToChannelInBackground:strUserChannel target:self selector:@selector(subscribeFinished:error:)];

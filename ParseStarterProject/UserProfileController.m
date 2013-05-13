@@ -236,6 +236,9 @@ double animatedDistance;
     // Adding to inbox
     [globalData addMessage:newMessage];
     
+    // Sending push
+    [pushManager sendPushNewMessage:newMessage.strUserTo text:newMessage.strText];
+    
     // Start animating
     [self.activityIndicator startAnimating];
     textView.editable = NO;
