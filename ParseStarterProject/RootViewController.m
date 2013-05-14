@@ -16,7 +16,7 @@
 #import "GlobalVariables.h"
 #import "GlobalData.h"
 
-#import "ParseStarterProjectAppDelegate.h"
+#import "AppDelegate.h"
 #import "AsyncImageView.h"
 
 #import "TestFlightSDK/TestFlight.h"

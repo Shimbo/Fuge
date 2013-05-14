@@ -7,7 +7,7 @@
 //
 
 #import <Parse/Parse.h>
-#import "ParseStarterProjectAppDelegate.h"
+#import "AppDelegate.h"
 #import "LeftMenuController.h"
 #import "ProfileViewController.h"
 #include "RootViewController.h"

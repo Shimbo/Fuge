@@ -48,6 +48,8 @@
 - (void)calculateDistance;
 - (void)changeCircle:(NSUInteger)nCircle;
 
+- (Boolean)isOutdated;
+
 -(NSString*)imageURL;
 -(NSString*)largeImageURL;
 

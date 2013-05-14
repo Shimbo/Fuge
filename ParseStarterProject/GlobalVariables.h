@@ -22,6 +22,9 @@
 // Location update distance (to call save for PFUser
 #define LOCATION_UPDATE_KILOMETERS  0.5f
 
+// Pins
+#define PERSON_OUTDATED_TIME        3600*6
+
 // Pushes
 #define PUSH_DISCOVERY_KILOMETERS   100
 #define PUSH_DISCOVERY_EXPIRATION   3600*24

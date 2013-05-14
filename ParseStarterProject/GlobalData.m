@@ -947,11 +947,11 @@ NSInteger sortByName(id num1, id num2, void *context)
     // Subscribe
     [subscriptions addObject:strThread];
     [[PFUser currentUser] setObject:subscriptions forKey:@"subscriptions"];
-    [[PFUser currentUser] saveInBackground]; // TODO: here was Eventually
+    [[PFUser currentUser] saveInBackground]; // CHECK: here was Eventually
     
     // Pushes
-    NSString* strChannel = [[NSString alloc] initWithFormat:@"mt%@", strThread];
-    [pushManager addChannel:strChannel];
+    //NSString* strChannel = [[NSString alloc] initWithFormat:@"mt%@", strThread];
+    //[pushManager addChannel:strChannel];
 }
 
 - (void) unsubscribeToThread:(NSString*)strThread
@@ -1027,6 +1027,27 @@ NSInteger sortByName(id num1, id num2, void *context)
     }
     return result;
 }
+
+/*- (void) addPersonToSeenList:(NSString*)strId
+{
+    NSMutableArray* arraySeenList = [pCurrentUser objectForKey:@"seenPersons"];
+    if ( ! arraySeenList )
+        arraySeenList = [[NSMutableArray alloc] initWithObjects:strId,nil];
+    else
+        [arraySeenList addObject:strId];
+    [pCurrentUser setObject:arraySeenList forKey:@"seenPersons"];
+    [pCurrentUser saveInBackground];
+    return;
+}
+
+- (Boolean) isPersonSeen:(NSString*)strId
+{
+    NSMutableArray* arraySeenList = [pCurrentUser objectForKey:@"seenPersons"];
+    if ( arraySeenList )
+        if ( [arraySeenList containsObject:strId] ) // NOT TESTED
+            return true;
+    return false;
+}*/
 
 - (Boolean) isUserAdmin
 {

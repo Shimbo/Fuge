@@ -1,5 +1,5 @@
 #import <Parse/Parse.h>
-#import "ParseStarterProjectAppDelegate.h"
+#import "AppDelegate.h"
 #import "RootViewController.h"
 #import "Circle.h"
 #import "GlobalData.h"

@@ -11,7 +11,7 @@
 #import "GlobalVariables.h"
 #import "FSVenue.h"
 #import "LocationManager.h"
-#import "ParseStarterProjectAppDelegate.h"
+#import "AppDelegate.h"
 #import "PushManager.h"
 
 @implementation Meetup

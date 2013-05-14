@@ -7,7 +7,7 @@
 //
 
 #import "ImageLoader.h"
-#import "ParseStarterProjectAppDelegate.h"
+#import "AppDelegate.h"
 #import "JMImageCache.h"
 #import "UIImage+Circled.h"
 

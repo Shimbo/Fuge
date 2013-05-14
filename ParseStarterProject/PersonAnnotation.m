@@ -25,6 +25,9 @@
         if ( person.getLocation )
             self.coordinate = CLLocationCoordinate2DMake(person.getLocation.latitude, person.getLocation.longitude);
         self.person = person;
+        self.pinColor = PinBlue;
+        if ( [person isOutdated] )
+            self.pinColor = PinGray;
     }
     return self;
 }

@@ -7,7 +7,7 @@
 //
 
 #import "MainViewController.h"
-#import "ParseStarterProjectAppDelegate.h"
+#import "AppDelegate.h"
 #import "CustomBadge.h"
 #import "GlobalData.h"
 

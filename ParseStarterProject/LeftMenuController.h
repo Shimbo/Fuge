@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import "ParseStarterProjectAppDelegate.h"
+#import "AppDelegate.h"
 @class MapViewController;
 
 @class CustomBadge;

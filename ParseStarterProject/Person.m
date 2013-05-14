@@ -1,9 +1,10 @@
 
 #import "Person.h"
-#import "ParseStarterProjectAppDelegate.h"
+#import "AppDelegate.h"
 #import "PersonView.h"
 #import "Circle.h"
 #import "LocationManager.h"
+#import "GlobalVariables.h"
 
 @implementation Person
 
@@ -99,7 +100,12 @@
     return self;
 }
 
-
+- (Boolean)isOutdated
+{
+    if ( [personData.updatedAt compare:[NSDate dateWithTimeIntervalSinceNow:-PERSON_OUTDATED_TIME]] == NSOrderedAscending )
+        return true;
+    return false;
+}
 
 
 -(NSString*)distanceString

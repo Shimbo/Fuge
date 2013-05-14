@@ -2,7 +2,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import "ParseStarterProjectAppDelegate.h"
+#import "AppDelegate.h"
 
 int main(int argc, char *argv[])
 {
