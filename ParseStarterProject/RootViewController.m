@@ -159,7 +159,7 @@
         
         NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithObjectsAndKeys: person.strId, @"to", nil];
         
-        [FBWebDialogs presentRequestsDialogModallyWithSession:nil message:@"Invite your friends to the app!" title:nil parameters:params handler:nil];
+        [FBWebDialogs presentRequestsDialogModallyWithSession:nil message:FB_INVITE_MESSAGE title:nil parameters:params handler:nil];
     }
     else {
         UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];

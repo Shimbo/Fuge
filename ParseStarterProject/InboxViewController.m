@@ -152,6 +152,26 @@
 	return inboxCell;
 }
 
+- (void)openPersonWindow:(Person*)person
+{
+    UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
+    [self.navigationController pushViewController:userProfileController animated:YES];
+    [userProfileController setPerson:person];
+}
+
+- (void)openMeetupWindow:(Meetup*)meetup invite:(Boolean)bInvite
+{
+    // Loading window
+    if ( ! meetup )
+        return;
+    
+    MeetupViewController *meetupController = [[MeetupViewController alloc] initWithNibName:@"MeetupView" bundle:nil];
+    [meetupController setMeetup:meetup];
+    if ( bInvite )  // Already responded
+        [meetupController setInvite];
+    [self.navigationController pushViewController:meetupController animated:YES];
+}
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     NSInteger nRow = indexPath.row;
@@ -167,83 +187,84 @@
     if ( item.type == INBOX_ITEM_INVITE || item.type == INBOX_ITEM_COMMENT )
     {
         Meetup* meetup = [globalData getMeetupById:[item.data objectForKey:@"meetupId"]];
+        Boolean bInvite = ( ! item.misc && item.type == INBOX_ITEM_INVITE );
         
-        // Fetching if needed
-        if ( ! meetup )
+        if ( meetup)
+            [self openMeetupWindow:meetup invite:bInvite];
+        else // Fetching if needed
         {
             PFObject *meetupData = [item.data objectForKey:@"meetupData"];
-            NSError* error;
-            [meetupData fetchIfNeeded:&error];
-            
-            // TODO: add loading
-            if ( ! error )
-            {
-                meetup = [[Meetup alloc] init];
-                [meetup unpack:meetupData];
-                [globalData addMeetup:meetup];
-            }
-            else
-            {
-                // TODO: propper error handling here and nearby (show alert)
-            }
-        }
-        
-        // Loading window
-        if ( meetup )
-        {
-            MeetupViewController *meetupController = [[MeetupViewController alloc] initWithNibName:@"MeetupView" bundle:nil];
-            [meetupController setMeetup:meetup];
-            if ( ! item.misc && item.type == INBOX_ITEM_INVITE )  // Already responded
-                [meetupController setInvite];
-            [self.navigationController pushViewController:meetupController animated:YES];
-            
-            //self.navigationItem.leftItemsSupplementBackButton = true;
-            //UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:meetupController];
-            //[self.navigationController presentViewController:navigation animated:YES completion:nil];
+            [self.activityIndicator startAnimating];
+            self.navigationController.view.userInteractionEnabled = FALSE;
+            [meetupData fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                if ( ! error )
+                {
+                    Meetup* newMeetup = [[Meetup alloc] init];
+                    [newMeetup unpack:meetupData];
+                    [globalData addMeetup:newMeetup];
+                    [self openMeetupWindow:newMeetup invite:bInvite];
+                }
+                else
+                {
+                    UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"No connection!" message:@"There were problems loading the thread or meetup you selected. Please, check your internet connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                    [message show];
+                }
+                [self.activityIndicator stopAnimating];
+                self.navigationController.view.userInteractionEnabled = TRUE;
+            }];
         }
     }
     else if ( item.type == INBOX_ITEM_MESSAGE )
     {
         // Retrieving person data
         Message* message = item.data;
-        [message fetchUserIfNeeded];
-        
         PFUser* personData;
+        NSString* strId;
         if ( [message.strUserFrom compare:strCurrentUserId] == NSOrderedSame )
+        {
             personData = message.objUserTo;
+            strId = message.strUserTo;
+        }
         else
+        {
             personData = message.objUserFrom;
+            strId = message.strUserFrom;
+        }
         
-        // Trying to get this person if in one of our circles
-        NSString* strId = [personData objectForKey:@"fbId"];
         Person* person = [globalData getPersonById:strId];
         
-        // Creating person if not
-        if ( ! person )
-            person = [[Person alloc] init:personData circle:CIRCLE_RANDOM];
-        
-        // Opening profile
         if ( person )
+            [self openPersonWindow:person];
+        else // fetching if needed
         {
-            UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
-            [self.navigationController pushViewController:userProfileController animated:YES];
-            [userProfileController setPerson:person];
+            [self.activityIndicator startAnimating];
+            self.navigationController.view.userInteractionEnabled = FALSE;
+            [personData fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                if ( ! error )
+                {
+                    Person* personNew = [[Person alloc] init:personData circle:CIRCLE_RANDOM];
+                    [self openPersonWindow:personNew];
+                }
+                else
+                {
+                    UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"No connection!" message:@"There were problems loading the person you selected. Please, check your internet connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                    [message show];
+                }
+                [self.activityIndicator stopAnimating];
+                self.navigationController.view.userInteractionEnabled = TRUE;
+            }];
         }
     }
     else if ( item.type == INBOX_ITEM_NEWUSER )
     {
+        // This person is always fetched as we already loaded it to find out that it's new
         Person* person = item.data;
         
         // Removing from new
         [globalData removeUserFromNew:person.strId];
         
         // Opening profile
-        if ( person )
-        {
-            UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
-            [self.navigationController pushViewController:userProfileController animated:YES];
-            [userProfileController setPerson:person];
-        }
+        [self openPersonWindow:person];
     }
     
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];

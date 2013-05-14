@@ -62,13 +62,4 @@
     strNameUserTo = [messageData objectForKey:@"nameUserTo"];
 }
 
--(void) fetchUserIfNeeded
-{
-    NSError* error;
-    if ( [strUserFrom compare:strCurrentUserId] == NSOrderedSame )
-        [objUserTo fetchIfNeeded:&error];
-    else
-        [objUserFrom fetchIfNeeded:&error];
-}
-
 @end

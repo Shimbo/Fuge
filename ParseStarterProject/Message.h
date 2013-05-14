@@ -36,6 +36,5 @@
 -(id) init;
 -(void) save:(id)t selector:(SEL)s;
 -(void) unpack:(PFObject*)data;
--(void) fetchUserIfNeeded;
 
 @end

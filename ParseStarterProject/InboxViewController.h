@@ -8,7 +8,6 @@
 
 #import "MainViewController.h"
 
-// TODO: move all this stuff to InboxViewItem file
 enum EInboxItemType
 {
     INBOX_ITEM_INVITE   = 0,
@@ -27,7 +26,7 @@ enum EInboxItemType
 @property (strong, nonatomic) NSString *toId;
 @property (strong, nonatomic) NSString *subject;
 @property (strong, nonatomic) NSString *message;
-@property (strong, nonatomic) NSString *misc;   // TODO: rename to status
+@property (strong, nonatomic) NSString *misc;
 @property (strong, nonatomic) NSDate *dateTime;
 @end
 

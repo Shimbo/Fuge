@@ -430,7 +430,7 @@ NSInteger sort2(id item1, id item2, void *context)
     [[PFUser currentUser] setObject:conversations forKey:@"messageCounts"];
     
     // Save
-    [[PFUser currentUser] saveInBackground]; // TODO: here was Eventually
+    [[PFUser currentUser] saveInBackground]; // CHECK: here was Eventually
 }
 
 - (Boolean) getConversationPresence:(NSString*)strThread

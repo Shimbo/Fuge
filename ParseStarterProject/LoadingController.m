@@ -43,10 +43,6 @@ static Boolean bRotating = true;
     return self;
 }
 
-// Versions
-// TODO 2: call AppStore
-// TODO 4: actually, just show a label (where news should be) and button Update.
-
 - (void)loadSequencePart0
 {
     // Facebook
@@ -86,6 +82,7 @@ static Boolean bRotating = true;
         else
         {
             Boolean bShowAppStoreButton = false;
+            Boolean bShowPopup = false;
             
             PFObject* system = object;
             
@@ -93,25 +90,19 @@ static Boolean bRotating = true;
             float curVersion = [[system objectForKey:@"curVersion"] floatValue];
             float thisVersion = [[globalVariables currentVersion] floatValue];
             if ( thisVersion < minVersion )
-            {
-                UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"New version is out!" message:@"You're running old version of the application. Please, update first." delegate:ctrl cancelButtonTitle:@"OK" otherButtonTitles:nil,nil];
-                [message show];
-                //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms://itunes.com/apps/cut-the-rope"]];
                 bShowAppStoreButton = TRUE;
-            }
             else if ( thisVersion < curVersion )
             {
+                bShowPopup = TRUE;
                 UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"New version is out!" message:@"You're running old version of the application. We recommend you updating the application." delegate:ctrl cancelButtonTitle:@"OK" otherButtonTitles:@"Later",nil];
                 [message show];
-                //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms://itunes.com/apps/cut-the-rope"]];
-                //return NO;
             }
             
             if ( bShowAppStoreButton )
             {
-                // TODO: TODONOW: Do some UI stuff
+                [self oldVersion];
             }
-            else
+            else if ( ! bShowPopup )
             {
                 bVersionChecked = true;
                 [ctrl performSelector:@selector(loadSequencePart2) withObject:nil afterDelay:0.01f];
@@ -262,6 +253,19 @@ static Boolean bRotating = true;
     _descriptionText.text = @"Looks like you haven’t finished \n login process or wasn’t able to do so. \n Please, try again!";
 }
 
+- (void) oldVersion
+{
+    bAnimation = false;
+    _loginButton.hidden = TRUE;
+    _retryButton.hidden = TRUE;
+    _updateButton.hidden = FALSE;
+    _descriptionText.hidden = FALSE;
+    _titleText.hidden = FALSE;
+    _miscText.hidden = TRUE;
+    _titleText.text = @"Outdated version!";
+    _descriptionText.text = @"What age did you come from? Why\n still using this version instead\n of a new and shiny one?";
+}
+
 - (IBAction)loginDown:(id)sender {
     
     // Activity indicator
@@ -331,7 +335,23 @@ static Boolean bRotating = true;
         [self performSelector:@selector(loadSequencePart1) withObject:nil afterDelay:0.01f];
 }
 
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if ( buttonIndex == 0 )
+    {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:APP_STORE_PATH]];
+        [self performSelector:@selector(loadSequencePart1) withObject:nil afterDelay:0.01f];
+    }
+    else
+    {
+        bVersionChecked = true;
+        [self performSelector:@selector(loadSequencePart2) withObject:nil afterDelay:0.01f];
+    }
+}
+
+
 - (IBAction)updateDown:(id)sender {
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:APP_STORE_PATH]];
 }
 
 - (void)dealloc{

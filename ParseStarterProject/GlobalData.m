@@ -470,7 +470,7 @@ NSInteger sortByName(id num1, id num2, void *context)
             [globalVariables pushToFriendsSent];
             
             // Save user data as it's useful for other users to find 2O friends
-            [[PFUser currentUser] saveInBackground]; // // TODO: here was Eventually - ?
+            [[PFUser currentUser] saveInBackground]; // CHECK: here was Eventually - ?
         }
         
         // FB friends out of the app
@@ -928,7 +928,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         }
     }
     [[PFUser currentUser] setObject:attending forKey:@"attending"];
-    [[PFUser currentUser] saveInBackground]; // TODO: here was Eventually
+    [[PFUser currentUser] saveInBackground]; // CHECK: here was Eventually
 }
 
 - (Boolean) isAttendingMeetup:(NSString*)strMeetup
@@ -977,7 +977,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         }
     }
     [[PFUser currentUser] setObject:subscriptions forKey:@"subscriptions"];
-    [[PFUser currentUser] saveInBackground]; // TODO: here was Eventually
+    [[PFUser currentUser] saveInBackground]; // CHECK: here was Eventually
     
     // Pushes
     [pushManager removeChannel:strThread];
@@ -997,7 +997,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 - (void) addRecentInvites:(NSArray*)recentInvites
 {
     [[PFUser currentUser] addUniqueObjectsFromArray:recentInvites forKey:@"recentInvites"];
-    [[PFUser currentUser] saveInBackground]; // TODO: here was Eventually
+    [[PFUser currentUser] saveInBackground]; // CHECK: here was Eventually
 }
 
 - (void) addRecentVenue:(FSVenue*)recentVenue
@@ -1017,7 +1017,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [venues addObject:recentVenue.fsVenue];
     
     [[PFUser currentUser] setObject:venues forKey:@"recentVenues"];
-    [[PFUser currentUser] saveInBackground]; // TODO: here was Eventually
+    [[PFUser currentUser] saveInBackground]; // CHECK: here was Eventually
 }
 
 - (NSArray*) getRecentPersons

@@ -48,6 +48,12 @@
 // Text view for outcoming messages
 #define TEXT_VIEW_MAX_LINES         9
 
+// App store path
+#define APP_STORE_PATH              @"http://itunes.apple.com/app/id378458261"
+
+// Viral
+#define FB_INVITE_MESSAGE           @"Discover new friends and local activities!"
+
 @interface GlobalVariables : NSObject
 {
     Boolean bNewUser;

@@ -67,9 +67,6 @@
     return YES;
 }
 
-
-
-// TODONOW: check it (add some variable for login right away)
 -(void)userDidLogout{
     LoadingController *loadingViewController = [[LoadingController alloc] initWithNibName:@"LoadingController" bundle:nil];
     loadingViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
