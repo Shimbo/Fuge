@@ -44,7 +44,9 @@
 
 // Zoom parameters
 #define MAX_ZOOM_LEVEL              19
-#define MAX_LINES                   9
+
+// Text view for outcoming messages
+#define TEXT_VIEW_MAX_LINES         9
 
 @interface GlobalVariables : NSObject
 {

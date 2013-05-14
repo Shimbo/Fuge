@@ -38,11 +38,18 @@
     
     // Creating invites
     if ( meetup )
-    {
         for ( Person* person in [self selectedPersons])
-            [globalData createInvite:meetup objectTo:nil stringTo:person.strId];
-        // TODO for Misha: try to find appropriate PFUser* for this strId to make invite protected for existing users
-    }
+            [globalData createInvite:meetup stringTo:person.strId];
+    
+    // Facebook invites
+    NSMutableString* strInvitations = [NSMutableString stringWithString:@""];
+    for ( Person* person in [self selectedPersons])
+        if ( person.idCircle == CIRCLE_FBOTHERS )
+            [strInvitations appendFormat:@"%@,", person.strId];
+    if ( strInvitations.length > 0 )
+        [strInvitations substringToIndex:strInvitations.length-2];
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithObjectsAndKeys:strInvitations, @"to", nil];
+    [FBWebDialogs presentRequestsDialogModallyWithSession:nil message:@"Invite your friends to the app!" title:nil parameters:params handler:nil];
     
     // Saving recent
     NSMutableArray* arrayRecentIds = [[NSMutableArray alloc] init];

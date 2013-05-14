@@ -392,7 +392,9 @@ NSInteger sortByName(id num1, id num2, void *context)
             }
             
             // Sorting FB friends
-            [[self getCircle:CIRCLE_FB] sort];
+            Circle* circleFB = [self getCircle:CIRCLE_FB];
+            if ( circleFB )
+                [circleFB sort];
             
             // Excluding FB friends from 2O friends
             NSMutableArray* temp2O = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
@@ -460,7 +462,9 @@ NSInteger sortByName(id num1, id num2, void *context)
             }
             
             // Sorting 2O friends
-            [[self getCircle:CIRCLE_2O] sort];
+            Circle* circle2O = [self getCircle:CIRCLE_2O];
+            if ( circle2O )
+                [circle2O sort];
             
             // Pushes sent for all new users, turn it off
             [globalVariables pushToFriendsSent];
@@ -513,7 +517,9 @@ NSInteger sortByName(id num1, id num2, void *context)
                 [self addPerson:friendAnyUser userCircle:CIRCLE_RANDOM];
             
             // Sorting random people
-            [[self getCircle:CIRCLE_RANDOM] sort];
+            Circle* circleRandom = [self getCircle:CIRCLE_RANDOM];
+            if ( circleRandom )
+                [circleRandom sort];
         }
         
         // In any case, increment loading stage
@@ -525,7 +531,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 {
     NSMutableArray *friendIds = [[[PFUser currentUser] objectForKey:@"fbFriends"] mutableCopy];
     
-    Circle *fbCircle = [globalData getCircle:CIRCLE_FBOTHERS];
+    Circle *fbCircle = [self getCircle:CIRCLE_FBOTHERS];
     
     NSMutableArray *array = [NSMutableArray arrayWithCapacity:30];
     
@@ -555,6 +561,10 @@ NSInteger sortByName(id num1, id num2, void *context)
             }
         }
     }
+    
+    // Sorting 2O friends
+    if ( fbCircle )
+        [fbCircle sort];
 }
 
 
@@ -629,7 +639,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         if (error) {
             NSLog(@"Error: %@", [error localizedDescription]);
         } else {
-            //NSLog(@"Result: %@", result);
+            NSLog(@"Result: %@", result);
             
             NSArray* data = [result objectForKey:@"data"];
             NSArray* events = [((NSDictionary*) data[0]) objectForKey:@"fql_result_set"];
@@ -758,8 +768,10 @@ NSInteger sortByName(id num1, id num2, void *context)
 #pragma mark -
 #pragma mark Invites
 
-- (void)createInvite:(Meetup*)meetup objectTo:(Person*)recipient stringTo:(NSString*)strRecipient
+- (void)createInvite:(Meetup*)meetup stringTo:(NSString*)strRecipient
 {
+    Person* recipient = [self getPersonById:strRecipient];
+    
     PFObject* invite = [PFObject objectWithClassName:@"Invite"];
     
     // Id, fromStr, fromId
@@ -772,10 +784,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [invite setObject:strCurrentUserId forKey:@"idUserFrom"];
     [invite setObject:strCurrentUserName forKey:@"nameUserFrom"];
     [invite setObject:[PFUser currentUser] forKey:@"objUserFrom"];
-    NSString* strTo = strRecipient;
-    if ( recipient )
-        strTo = recipient.strId;
-    [invite setObject:strTo forKey:@"idUserTo"];
+    [invite setObject:strRecipient forKey:@"idUserTo"];
     NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_NEW];
     [invite setObject:inviteStatus forKey:@"status"];
     
@@ -795,7 +804,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [invite saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if ( error )
             NSLog(@"Uh oh. An error occurred: %@", error);
-        [pushManager sendPushInviteForMeetup:meetup.strId user:strTo];
+        [pushManager sendPushInviteForMeetup:meetup.strId user:strRecipient];
     }];
 }
 

@@ -156,10 +156,10 @@
     
     // Empty profile, should open invite window
     if ( person.idCircle == CIRCLE_FBOTHERS ) {
-        //NSMutableDictionary* params = [NSMutableDictionary dictionaryWithObjectsAndKeys:                                       @"Check out this awesome app.",  @"message", nil];
         
-        //[[PFFacebookUtils facebook] dialog:@"apprequests" andParams:params andDelegate:nil];
-        //TODO: INVITE
+        NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithObjectsAndKeys: person.strId, @"to", nil];
+        
+        [FBWebDialogs presentRequestsDialogModallyWithSession:nil message:@"Invite your friends to the app!" title:nil parameters:params handler:nil];
     }
     else {
         UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
