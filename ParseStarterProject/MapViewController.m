@@ -336,8 +336,8 @@
         if ( [view.annotation isMemberOfClass:[PersonAnnotation class]] )
         {
             UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
-            [self.navigationController pushViewController:userProfileController animated:YES];
             [userProfileController setPerson:((PersonAnnotation*) view.annotation).person];
+            [self.navigationController pushViewController:userProfileController animated:YES];
         }
         
         if ( [view.annotation isMemberOfClass:[MeetupAnnotation class]]||

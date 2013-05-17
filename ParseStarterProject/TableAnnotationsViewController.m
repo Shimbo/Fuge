@@ -173,8 +173,8 @@
     {
         if (((PersonAnnotation*) obj).person.isCurrentUser == NO) {
             UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
-            [self.navigationController pushViewController:userProfileController animated:YES];
             [userProfileController setPerson:((PersonAnnotation*) obj).person];
+            [self.navigationController pushViewController:userProfileController animated:YES];
         }
         else{
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
