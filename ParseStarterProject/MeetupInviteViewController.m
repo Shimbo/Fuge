@@ -55,7 +55,9 @@
     
     // Saving recent
     NSMutableArray* arrayRecentIds = [[NSMutableArray alloc] init];
-    [arrayRecentIds addObjectsFromArray:[[self selectedPersons] valueForKeyPath:@"strId"]];
+    for ( Person* person in [self selectedPersons])
+        if ( person.idCircle != CIRCLE_FBOTHERS )
+                [arrayRecentIds addObject:person.strId];
     [globalData addRecentInvites:arrayRecentIds];
     
     // Adding to calendar here

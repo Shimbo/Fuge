@@ -368,7 +368,7 @@ NSInteger sort2(id item1, id item2, void *context)
     NSArray* subscriptions = [[PFUser currentUser] objectForKey:@"subscriptions"];
     [messagesQuery whereKey:@"meetupId" containedIn:subscriptions];
     messagesQuery.limit = 1000;
-    [messagesQuery orderByAscending:@"createdAt"];
+    [messagesQuery orderByDescending:@"createdAt"];
     //[messagesQuery whereKey:@"system" notEqualTo:[NSNumber numberWithInt:1]];
     
     // TODO: add here later another query limitation by date (like 10 last days) to not push server too hard. It will be like pages, loading every 10 previous days or so.
@@ -484,8 +484,7 @@ NSInteger sort2(id item1, id item2, void *context)
     // Update inbox badge
     if ( nInboxUnreadCount > 0 )    // just for sure
         nInboxUnreadCount--;
-    [[NSNotificationCenter defaultCenter]postNotificationName:kInboxUnreadCountDidUpdate
-                                                       object:nil];
+    [self postInboxUnreadCountDidUpdate];
     
     // Remove accepted invite so we won't create two entities in inbox: invite and join comment
     if ( status == INVITE_ACCEPTED )

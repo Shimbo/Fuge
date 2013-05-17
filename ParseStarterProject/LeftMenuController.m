@@ -15,6 +15,7 @@
 #import "StatsViewController.h"
 #import "GlobalData.h"
 #import "CustomBadge.h"
+#import "UserProfileController.h"
 
 
 @implementation LeftMenuController
@@ -38,8 +39,8 @@
 {
     [super viewDidLoad];
     
-    NSArray* items = @[@"Inbox",@"Map",@"People",@"Profile",@"Logout"];
-    NSArray* selectors = @[@"showInbox",@"showMap",@"showCicles",@"showUser",@"logout"];
+    NSArray* items = @[@"Inbox", @"Map", @"People", @"Profile", @"Logout"];
+    NSArray* selectors = @[@"showInbox", @"showMap", @"showCicles", @"showUser", @"logout"];
     _items = [[NSMutableArray alloc] initWithArray:items];
     _selectors = [[NSMutableArray alloc] initWithArray:selectors];
     
@@ -95,6 +96,47 @@
     UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Logout" message:@"Are you sure you want to logout? " delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
     [alert show];
 }
+
+/*- (void)openPersonWindow:(Person*)person
+{
+    UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
+    [userProfileController setPerson:person];
+    [self.navigationController pushViewController:userProfileController animated:YES];
+}
+
+
+-(void)showFeedback{
+    
+    // Retrieving person data
+    Person* person = [globalData getPersonById:FEEDBACK_BOT_ID];
+    
+    if ( person )
+        [self openPersonWindow:person];
+    else // fetching if needed
+    {
+        [activityIndicator startAnimating];
+        self.navigationController.view.userInteractionEnabled = FALSE;
+        
+        PFQuery *userQuery = [PFUser query];
+        [userQuery whereKey:@"fbId" equalTo:FEEDBACK_BOT_ID];
+        [userQuery getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+            
+            if ( error )
+            {
+                UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Problem, chief" message:@"There were problems loading data. Please, check your internet connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [message show];
+            }
+            else
+            {
+                Person* personNew = [globalData addPerson:(PFUser*)object userCircle:CIRCLE_RANDOM];
+                if ( personNew )
+                    [self openPersonWindow:personNew];
+            }
+            [activityIndicator stopAnimating];
+            self.navigationController.view.userInteractionEnabled = TRUE;
+        }];
+    }
+}*/
 
 -(void)showStats{
     StatsViewController *statsViewController = [[StatsViewController alloc] initWithNibName:@"StatsViewController" bundle:nil];

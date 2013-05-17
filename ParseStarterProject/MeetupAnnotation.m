@@ -31,11 +31,15 @@
         self.title = meetup.strSubject;
         if ( meetup.meetupType == TYPE_MEETUP )
         {
+            // Check if we have any attendees
+            NSUInteger nAttendeesCount = 0;
+            if ( meetup.attendees )
+                nAttendeesCount = meetup.attendees.count;
+            
             // Don't trim name for Facebook events as organizers are not people
-            if ( meetup.bFacebookEvent )
-                self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Attending: %d", meetup.strOwnerName, meetup.numAttendees ];
-            else
-                self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Attending: %d", [globalVariables trimName:meetup.strOwnerName], meetup.numAttendees ];
+            NSString* strName = meetup.bFacebookEvent ? meetup.strOwnerName : [globalVariables trimName:meetup.strOwnerName];
+            
+            self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Attending: %d", strName, nAttendeesCount ];
         }
         else
             self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Comments: %d", [globalVariables trimName:meetup.strOwnerName], meetup.numComments ];

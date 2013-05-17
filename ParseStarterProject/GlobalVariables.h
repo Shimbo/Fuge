@@ -51,6 +51,9 @@
 // App store path
 #define APP_STORE_PATH              @"http://itunes.apple.com/app/id378458261"
 
+// Feedback bot ID
+#define FEEDBACK_BOT_ID             @"100004580194936"
+
 // Viral
 #define FB_INVITE_MESSAGE           @"Discover new friends and local activities!"
 

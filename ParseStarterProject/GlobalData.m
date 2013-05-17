@@ -221,7 +221,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     // Current user data
     FBRequest *request = [FBRequest requestForMe];
     [request startWithCompletionHandler:^(FBRequestConnection *connection,
-                                          id result, NSError *error) {
+                                          NSDictionary<FBGraphUser> *user, NSError *error) {
         if ( error )
         {
             NSLog(@"Uh oh. An error occurred: %@", error);
@@ -230,17 +230,17 @@ NSInteger sortByName(id num1, id num2, void *context)
         else
         {
             // Store the current user's Facebook ID on the user
-            [[PFUser currentUser] setObject:[result objectForKey:@"id"]
-                                     forKey:@"fbId"];
-            [[PFUser currentUser] setObject:[result objectForKey:@"name"]
-                                     forKey:@"fbName"];
-            [[PFUser currentUser] setObject:[result objectForKey:@"birthday"]
-                                     forKey:@"fbBirthday"];
-            [[PFUser currentUser] setObject:[result objectForKey:@"gender"]
+            [pCurrentUser setObject:user.id forKey:@"fbId"];
+            [pCurrentUser setObject:user.name forKey:@"fbName"];
+            [pCurrentUser setObject:user.birthday forKey:@"fbBirthday"];
+            if ( [user objectForKey:@"gender"] )
+                [pCurrentUser setObject:[user objectForKey:@"gender"]
                                      forKey:@"fbGender"];
-            [[PFUser currentUser] setObject:[globalVariables currentVersion]
+            if ( [user objectForKey:@"email"] )
+                pCurrentUser.email = [user objectForKey:@"email"];
+            [pCurrentUser setObject:[globalVariables currentVersion]
                                      forKey:@"version"];
-            [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            [pCurrentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                 
                 if ( error )
                 {
@@ -254,7 +254,7 @@ NSInteger sortByName(id num1, id num2, void *context)
                     [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMainComplete object:nil];
                     
                     // Push channels initialization
-                    [pushManager initChannelsForTheFirstTime:[result objectForKey:@"id"]];
+                    [pushManager initChannelsForTheFirstTime:user.id];
                     
                     // FB friends, 2O friends, fb friends not installed the app
                     [self reloadFriendsInBackground];
@@ -314,12 +314,13 @@ NSInteger sortByName(id num1, id num2, void *context)
 #pragma mark Friends
 
 
-- (void)addPerson:(PFUser*)user userCircle:(NSUInteger)circleUser
+- (Person*)addPerson:(PFUser*)user userCircle:(NSUInteger)circleUser
 {
-    // Same user
     NSString *strId = [user objectForKey:@"fbId"];
+    
+    // Same user
     if ( [strId compare:[ [PFUser currentUser] objectForKey:@"fbId"] ] == NSOrderedSame )
-        return;
+        return nil;
     
     // Already added users: only update location
     Person* person = [self getPersonById:strId];
@@ -334,14 +335,15 @@ NSInteger sortByName(id num1, id num2, void *context)
         }
         // Updating location
         [person updateLocation:[user objectForKey:@"location"]];
-        return;
+        return person;
     }
     
     // Adding new person
     person = [[Person alloc] init:user circle:circleUser];
-    
     Circle *circle = [globalData getCircle:circleUser];
     [circle addPerson:person];
+    
+    return person;
 }
 
 // Load friends in background
@@ -364,6 +366,8 @@ NSInteger sortByName(id num1, id num2, void *context)
     
     // FB friends query
     PFQuery *friendQuery = [PFUser query];
+    friendQuery.limit = 1000;
+    [friendQuery orderByDescending:@"updatedAt"];
     [friendQuery whereKey:@"fbId" containedIn:friendIds];
     [friendQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
     [friendQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
@@ -396,15 +400,16 @@ NSInteger sortByName(id num1, id num2, void *context)
             if ( circleFB )
                 [circleFB sort];
             
-            // Excluding FB friends from 2O friends
+            // Excluding FB friends and user himself from 2O friends
             NSMutableArray* temp2O = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
             if ( temp2O )
-                [temp2O removeObjectsInArray:friendIds];   // To exclude FB friends from 2O
-            else
             {
-                temp2O = [[NSMutableArray alloc] initWithCapacity:30];
-                [[PFUser currentUser] setObject:temp2O forKey:@"fbFriends2O"];
+                [temp2O removeObjectsInArray:friendIds];
+                [temp2O removeObject:strCurrentUserId];
             }
+            else
+                temp2O = [[NSMutableArray alloc] initWithCapacity:30];
+            [[PFUser currentUser] setObject:temp2O forKey:@"fbFriends2O"];
             
             // Creating new friends list
             if ( oldFriendsFb )
@@ -439,6 +444,8 @@ NSInteger sortByName(id num1, id num2, void *context)
     // Second circle friends query
     NSMutableArray *friend2OIds = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
     PFQuery *friend2OQuery = [PFUser query];
+    friend2OQuery.limit = 1000;
+    [friend2OQuery orderByDescending:@"updatedAt"];
     [friend2OQuery whereKey:@"fbId" containedIn:friend2OIds];
     [friend2OQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
     [friend2OQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
@@ -484,6 +491,8 @@ NSInteger sortByName(id num1, id num2, void *context)
 {
     // Query
     PFQuery *friendAnyQuery = [PFUser query];
+    friendAnyQuery.limit = 100;
+    [friendAnyQuery orderByDescending:@"updatedAt"];
     
     // We could load based on player location or map rect if he moved the map later
     if ( ! southWest )
@@ -699,8 +708,8 @@ NSInteger sortByName(id num1, id num2, void *context)
     NSNumber* privacyTypePrivate = [[NSNumber alloc] initWithInt:MEETUP_PRIVATE];
     [meetupAnyQuery whereKey:@"privacy" notEqualTo:privacyTypePrivate];
     
-    // Ascending order by creation date
-    [meetupAnyQuery orderByAscending:@"createdAt"];
+    // Ascending order by expiration date (to get most earliest meetups)
+    [meetupAnyQuery orderByAscending:@"meetupDate"];
     
     // Query for public/2O meetups
     [meetupAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
@@ -720,15 +729,24 @@ NSInteger sortByName(id num1, id num2, void *context)
         [self incrementMapLoadingStage];
     }];
     
-    // Query for events that user was subscribed to (to show also private and remote events/threads) - this query calls only for first request, not for the map reloads
-    NSArray* subscriptions = [[PFUser currentUser] objectForKey:@"subscriptions"];
-    if ( ! southWest && subscriptions && subscriptions.count > 0 )
+    // Query for events that user was subscribed to (to show also private and remote events/threads) - this query calls only for first request, not for the map reloads. Plus all invites!
+    NSMutableArray* subscriptions = [[PFUser currentUser] objectForKey:@"subscriptions"];
+    if ( ! subscriptions )
+        subscriptions = [[NSMutableArray alloc] initWithCapacity:30];
+    for ( PFObject* invite in invites )
+    {
+        NSString* strId = [invite objectForKey:@"meetupId"];
+        if ( strId )
+            [subscriptions addObject:strId];
+    }
+    if ( subscriptions.count > 0 )
     {
         meetupAnyQuery = [PFQuery queryWithClassName:@"Meetup"];
         meetupAnyQuery.limit = 1000;
+        [meetupAnyQuery orderByAscending:@"meetupDate"];
         [meetupAnyQuery whereKey:@"meetupDateExp" greaterThan:dateHide];
         [meetupAnyQuery whereKey:@"meetupId" containedIn:subscriptions];
-
+        
         // Query for public/2O meetups
         [meetupAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
         {

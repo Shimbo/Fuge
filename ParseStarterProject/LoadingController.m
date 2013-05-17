@@ -56,6 +56,7 @@ static Boolean bRotating = true;
     
     // Zoom in animated
     _backgroundImage.alpha = 0.0f;
+    _backgroundImage.hidden = FALSE;
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
     [UIView setAnimationDuration:1.0];
@@ -273,7 +274,7 @@ static Boolean bRotating = true;
     nAnimationStage = 0;
     [self hideAll];
     
-    NSArray *permissionsArray = @[ @"user_about_me", @"user_relationships", @"user_birthday", @"user_location"];
+    NSArray *permissionsArray = @[ @"user_about_me", @"user_relationships", @"user_birthday", @"user_location", @"email"];
     __weak LoadingController *ctrl = self;
     [PFFacebookUtils logInWithPermissions:permissionsArray
                                     block:^(PFUser *user, NSError *error)
@@ -309,19 +310,17 @@ static Boolean bRotating = true;
             sleep(1);
             nRetries++;
         }
-        // TODO: set text "Updating position"? check for failure normally
-        // Check also what to do if user blocked loction services
-        [globalData setUserPosition:[locManager getPosition]];
+        
+        PFGeoPoint* location = [locManager getPosition];
+        if ( location )
+            [globalData setUserPosition:location];
          
         // Continue to next window
         bAnimation = false;
-        //self.view.userInteractionEnabled = YES;
         
+        // Start loading data
         if ( [PFUser currentUser] )
-        {
-            // Start loading data
             [globalData loadData];
-        }
     }];
 }
 

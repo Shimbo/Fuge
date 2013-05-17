@@ -163,8 +163,8 @@
     }
     else {
         UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
-        [self.navigationController pushViewController:userProfileController animated:YES];
         [userProfileController setPerson:person];
+        [self.navigationController pushViewController:userProfileController animated:YES];
     }
     
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];

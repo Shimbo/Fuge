@@ -44,8 +44,8 @@ typedef enum kEMeetupPrivacy
     NSUInteger  durationSeconds;
     
     NSUInteger  numComments;
-    NSUInteger  numAttendees;
     NSMutableArray* attendees;
+    NSMutableArray* decliners;
     
     Boolean     bFacebookEvent;
     
@@ -65,8 +65,8 @@ typedef enum kEMeetupPrivacy
 @property (nonatomic, assign) EMeetupPrivacy privacy;
 @property (nonatomic, assign) EMeetupType meetupType;
 @property (nonatomic, assign) NSUInteger numComments;
-@property (nonatomic, assign) NSUInteger numAttendees;
 @property (nonatomic, copy) NSMutableArray* attendees;
+@property (nonatomic, copy) NSMutableArray* decliners;
 @property (nonatomic, assign) NSUInteger durationSeconds;
 @property (nonatomic, assign) Boolean bFacebookEvent;
 

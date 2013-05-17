@@ -106,7 +106,7 @@
     {
         [dateTime setDate:_meetup.dateTime];
         [subject setText:_meetup.strSubject];
-        [notifySwitch setOn:_meetup.privacy];
+        [notifySwitch setOn:(! _meetup.privacy)];
         [location setTitle:_meetup.strVenue forState:UIControlStateNormal];
     }
     else
@@ -115,8 +115,8 @@
             [dateTime setDate:dateDefault];
         else
             [dateTime setDate:dateMax];
-        if ( invitee )  // Private meetup created from user profile, turn on privacy
-            [notifySwitch setOn:TRUE];
+        if ( invitee )  // Private meetup created from user profile, turn off publicity
+            [notifySwitch setOn:FALSE];
     }
     
     if ( meetupType == TYPE_THREAD )
@@ -165,7 +165,7 @@
     meetup.strOwnerId = (NSString *) [[PFUser currentUser] objectForKey:@"fbId"];
     meetup.strOwnerName = (NSString *) [[PFUser currentUser] objectForKey:@"fbName"];
     meetup.strSubject = subject.text;
-    meetup.privacy = notifySwitch.isOn;
+    meetup.privacy = notifySwitch.isOn ? MEETUP_PUBLIC : MEETUP_PRIVATE;
     meetup.dateTime = [dateTime date];
     
     if ( self.selectedVenue )
@@ -238,6 +238,16 @@
     }
     [self presentViewController:venueNavViewController
                        animated:YES completion:nil];
+}
+
+- (IBAction)privacyChanged:(id)sender {
+    if ( [pCurrentUser.createdAt compare:[NSDate date]] == NSOrderedDescending )
+    {
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Too early" message:@"Public meetups are available only for experienced users, registered at least a week ago. Try creating private meetup and invite your friends, so you will become familiar with how it works." delegate:self cancelButtonTitle:@"Alright" otherButtonTitles:nil, nil];
+        [alert show];
+        [notifySwitch setOn:FALSE animated:TRUE];
+        notifySwitch.enabled = FALSE;
+    }
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField

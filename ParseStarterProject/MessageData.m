@@ -190,13 +190,13 @@ NSInteger sort(id message1, id message2, void *context)
     messageQuery1.limit = 1000;
     [messageQuery1 whereKey:@"idUserFrom" equalTo:strCurrentUserId ];
     [messageQuery1 whereKey:@"idUserTo" equalTo:person.strId ];
-    [messageQuery1 orderByAscending:@"createdAt"];
+    [messageQuery1 orderByDescending:@"createdAt"];
     
     PFQuery *messageQuery2 = [PFQuery queryWithClassName:@"Message"];
     messageQuery2.limit = 1000;
     [messageQuery2 whereKey:@"idUserFrom" equalTo:person.strId ];
     [messageQuery2 whereKey:@"idUserTo" equalTo:strCurrentUserId ];
-    [messageQuery2 orderByAscending:@"createdAt"];
+    [messageQuery2 orderByDescending:@"createdAt"];
     
     [messageQuery1 findObjectsInBackgroundWithBlock:^(NSArray *messages1, NSError* error) {
         [messageQuery2 findObjectsInBackgroundWithBlock:^(NSArray *messages2, NSError* error) {
@@ -210,7 +210,10 @@ NSInteger sort(id message1, id message2, void *context)
             
             // Last read message date
             if ( [sortedArray count] > 0 )
+            {
                 [globalData updateConversation:((PFObject*)sortedArray[0]).createdAt count:[sortedArray count] thread:person.strId];
+                [globalData postInboxUnreadCountDidUpdate];
+            }
         }];
     }];
 }

@@ -42,7 +42,7 @@
     [[PFUser currentUser] setObject:boolDiscovery forKey:@"profileDiscoverable"];
     [[PFUser currentUser] setObject:labelRoles.text forKey:@"profileRole"];
     [[PFUser currentUser] setObject:areaEdit.text forKey:@"profileArea"];
-    [[PFUser currentUser] saveInBackground]; // TODO: here was Eventually
+    [[PFUser currentUser] saveInBackground]; // CHECK: here was Eventually
 }
 
 - (void)viewDidDisappear:(BOOL)animated

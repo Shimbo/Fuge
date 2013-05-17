@@ -155,8 +155,8 @@
 - (void)openPersonWindow:(Person*)person
 {
     UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
-    [self.navigationController pushViewController:userProfileController animated:YES];
     [userProfileController setPerson:person];
+    [self.navigationController pushViewController:userProfileController animated:YES];
 }
 
 - (void)openMeetupWindow:(Meetup*)meetup invite:(Boolean)bInvite
@@ -242,8 +242,9 @@
             [personData fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
                 if ( ! error )
                 {
-                    Person* personNew = [[Person alloc] init:personData circle:CIRCLE_RANDOM];
-                    [self openPersonWindow:personNew];
+                    Person* personNew = [globalData addPerson:personData userCircle:CIRCLE_RANDOM];
+                    if ( personNew )
+                        [self openPersonWindow:personNew];
                 }
                 else
                 {

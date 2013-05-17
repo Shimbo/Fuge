@@ -18,6 +18,7 @@
     RootViewController *_rootViewController;
     MapViewController *_mapViewController;
     CustomBadge *_inboxBadge;
+    IBOutlet UIActivityIndicatorView *activityIndicator;
 }
 
 @property(nonatomic,weak)ParseStarterProjectAppDelegate *appDelegate;

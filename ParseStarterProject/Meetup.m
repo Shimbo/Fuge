@@ -16,7 +16,7 @@
 
 @implementation Meetup
 
-@synthesize strId,strOwnerId,strOwnerName,strSubject,dateTime,privacy,meetupType,location,strVenue,strAddress,meetupData,numComments,numAttendees,attendees,dateTimeExp,durationSeconds,bFacebookEvent;
+@synthesize strId,strOwnerId,strOwnerName,strSubject,dateTime,privacy,meetupType,location,strVenue,strAddress,meetupData,numComments,attendees,decliners,dateTimeExp,durationSeconds,bFacebookEvent;
 
 -(id) init
 {
@@ -24,7 +24,8 @@
         meetupType = TYPE_THREAD;
         meetupData = nil;
         attendees = nil;
-        numComments = numAttendees = 0;
+        decliners = nil;
+        numComments = 0;
         durationSeconds = 3600;
         strAddress = @"";
         bFacebookEvent = false;
@@ -68,7 +69,6 @@
         strVenue = [venueData objectForKey:@"name"];
     strAddress = [venueLocation objectForKey:@"street"];
     
-    numAttendees = [[eventData objectForKey:@"attending_count"] intValue];
     dateTimeExp = [NSDate dateWithTimeInterval:3600*24*7 sinceDate:dateTime];
     
     return self;
@@ -108,6 +108,8 @@
     [meetupData setObject:strSubject forKey:@"subject"];
     [meetupData setObject:[NSNumber numberWithInt:privacy] forKey:@"privacy"];
     [meetupData setObject:dateTime forKey:@"meetupDate"];
+    NSDate* dateToHide = [NSDate dateWithTimeInterval:3600*24 sinceDate:dateTime];
+    [meetupData setObject:dateToHide forKey:@"meetupDateExp"];
     [meetupData setObject:location forKey:@"location"];
     [meetupData setObject:strVenue forKey:@"venue"];
     [meetupData setObject:strAddress forKey:@"address"];
@@ -160,8 +162,8 @@
     strVenue = [meetupData objectForKey:@"venue"];
     strAddress = [meetupData objectForKey:@"address"];
     numComments = [[meetupData objectForKey:@"numComments"] integerValue];
-    numAttendees = [[meetupData objectForKey:@"numAttendees"] integerValue];
     attendees = [meetupData objectForKey:@"attendees"];
+    decliners = [meetupData objectForKey:@"decliners"];
     durationSeconds = [[meetupData objectForKey:@"duration"] integerValue];
 }
 
@@ -380,14 +382,12 @@
         attendees = [[NSMutableArray alloc] initWithObjects:strId,nil];
     else
         [attendees addObject:str];
-    numAttendees++;
 }
 
 -(void)removeAttendee:(NSString*)str
 {
     if ( attendees )
         [attendees removeObjectIdenticalTo:str];
-    numAttendees--;
 }
 
 -(Boolean) passed

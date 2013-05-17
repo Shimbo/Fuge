@@ -113,6 +113,8 @@ typedef  enum EMeetupCommentType
 - (void)addMeetup:(Meetup*)meetup;
 // New comment created in meetup window
 - (void)addComment:(PFObject*)comment;
+// Person added somehow (opened from unread pm for example)
+- (Person*)addPerson:(PFUser*)user userCircle:(NSUInteger)circleUser;
 
 // Global data, loading in foreground
 - (void)loadData;

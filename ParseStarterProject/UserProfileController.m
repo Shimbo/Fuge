@@ -40,6 +40,22 @@
     [self.navigationItem setRightBarButtonItem:buttonProfile];
     textView.editable = FALSE;
     
+    [globalData loadThread:personThis target:self selector:@selector(callback:)];
+    
+    [profileImage loadImageFromURL:personThis.largeImageURL];
+    
+    // Distance and circle
+    NSString* strDistance = [[NSString alloc] initWithFormat:@"%@ away", [personThis distanceString]];
+    [labelDistance setText:strDistance];
+    [labelCircle setText:personThis.strCircle];
+    
+    if ( [personThis.strCircle compare:@""] == NSOrderedSame )
+        addButton.hidden = NO;
+    else
+        addButton.hidden = YES;
+    
+    personThis.numUnreadMessages = 0;
+    
     [super viewDidLoad];
 }
 
@@ -79,22 +95,6 @@
 -(void) setPerson:(Person*)person
 {
     personThis = person;
-    
-    [globalData loadThread:person target:self selector:@selector(callback:)];
-    
-    [profileImage loadImageFromURL:person.largeImageURL];
-    
-    // Distance and circle
-    NSString* strDistance = [[NSString alloc] initWithFormat:@"%@ away", [person distanceString]];
-    [labelDistance setText:strDistance];
-    [labelCircle setText:person.strCircle];
-    
-    if ( [person.strCircle compare:@""] == NSOrderedSame )
-        addButton.hidden = NO;
-    else
-        addButton.hidden = YES;
-    
-    person.numUnreadMessages = 0;
 }
 
 
@@ -260,6 +260,7 @@ double animatedDistance;
 
 - (IBAction)meetButtonDown:(id)sender {
     NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupViewController" bundle:nil];
+    [newMeetupViewController setType:TYPE_MEETUP];
     [newMeetupViewController setInvitee:personThis];
     UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:newMeetupViewController];
     [self.navigationController presentViewController:navigation

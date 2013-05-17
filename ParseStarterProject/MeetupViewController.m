@@ -93,18 +93,22 @@
 }
 
 - (void)joinClicked
-{    
+{
+    // Rudimentary code
     // Creating attendee in db
-    PFObject* attendee = [PFObject objectWithClassName:@"Attendee"];
+    /*PFObject* attendee = [PFObject objectWithClassName:@"Attendee"];
     [attendee setObject:strCurrentUserId forKey:@"userId"];
     [attendee setObject:strCurrentUserName forKey:@"userName"];
     [attendee setObject:meetup.strId forKey:@"meetupId"];
     [attendee setObject:meetup.strSubject forKey:@"meetupSubject"];
     [attendee setObject:meetup.meetupData forKey:@"meetupData"];
-    [attendee saveInBackground];
+    [attendee saveInBackground];*/
     
-    // Adding attendee to the local copy of meetup
-    [meetup addAttendee:strCurrentUserId];
+    // Add to attending list
+    [globalData attendMeetup:meetup.strId];
+    
+    // Update invite
+    [globalData updateInvite:meetup.strId attending:INVITE_ACCEPTED];
     
     // Creating comment about joining in db
     [globalData createCommentForMeetup:meetup commentType:COMMENT_JOINED commentText:nil];
@@ -115,11 +119,8 @@
     [stringComments appendString:@"    You joined the event!\n"];
     [comments setText:stringComments];
     
-    // Add to attending list
-    [globalData attendMeetup:meetup.strId];
-    
-    // Update invite
-    [globalData updateInvite:meetup.strId attending:INVITE_ACCEPTED];
+    // Adding attendee to the local copy of meetup
+    [meetup addAttendee:strCurrentUserId];
     
     // If it was opened from invite
     if ( invite )
@@ -317,6 +318,7 @@
     
     // Loading comments
     PFQuery *commentsQuery = [PFQuery queryWithClassName:@"Comment"];
+    commentsQuery.limit = 1000;
     [commentsQuery whereKey:@"meetupId" equalTo:meetup.strId];
     [commentsQuery orderByAscending:@"createdAt"];
     [commentsQuery findObjectsInBackgroundWithBlock:^(NSArray *commentsList, NSError* error)
@@ -346,6 +348,9 @@
         if ( commentsList.count > 0 )
             commentDate = ((PFObject*)commentsList[commentsList.count-1]).createdAt;
         [globalData updateConversation:commentDate count:meetup.numComments thread:meetup.strId];
+        
+        // Update badge number for unread messages
+        [globalData postInboxUnreadCountDidUpdate];
         
         // Make new comment editable now
         textView.editable = TRUE;

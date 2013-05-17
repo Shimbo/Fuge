@@ -29,6 +29,7 @@
 @property (nonatomic,strong)FSVenue* selectedVenue;
 
 - (IBAction)venueButtonDown:(id)sender;
+- (IBAction)privacyChanged:(id)sender;
 
 -(void) setMeetup:(Meetup*)m;
 -(void) setInvitee:(Person*)i;

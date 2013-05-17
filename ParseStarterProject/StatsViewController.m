@@ -47,8 +47,8 @@
     NSNumber *commentCount = [[NSNumber alloc] initWithInt:[query countObjects]];
     query = [PFQuery queryWithClassName:@"Invite"];
     NSNumber *inviteCount = [[NSNumber alloc] initWithInt:[query countObjects]];
-    query = [PFQuery queryWithClassName:@"Attendee"];
-    NSNumber *attendeeCount = [[NSNumber alloc] initWithInt:[query countObjects]];
+    //query = [PFQuery queryWithClassName:@"Attendee"];
+    //NSNumber *attendeeCount = [[NSNumber alloc] initWithInt:[query countObjects]];
     
     [labels appendString:@"User count: "];
     [stats appendString:[userCount stringValue]];
@@ -66,8 +66,8 @@
     [stats appendString:[inviteCount stringValue]];
     [stats appendString:@"\n"];
     [labels appendString:@"\nAttendee count: "];
-    [stats appendString:[attendeeCount stringValue]];
-    [stats appendString:@"\n\n"];
+    //[stats appendString:[attendeeCount stringValue]];
+    //[stats appendString:@"\n\n"];
     
     // Averages
     NSNumber *averageMeetups = [[NSNumber alloc] initWithDouble:([meetupCount doubleValue] / [userCount doubleValue])];
@@ -90,10 +90,10 @@
     [stats appendString:[[NSString alloc] initWithFormat:@"%.1f", [averageInvites doubleValue]]];
     [stats appendString:@"\n"];
     
-    NSNumber *averageAttendees = [[NSNumber alloc] initWithDouble:([attendeeCount doubleValue] / [userCount doubleValue])];
-    [labels appendString:@"\nAverage attendees per user: "];
-    [stats appendString:[[NSString alloc] initWithFormat:@"%.1f", [averageAttendees doubleValue]]];
-    [stats appendString:@"\n\n"];
+    //NSNumber *averageAttendees = [[NSNumber alloc] initWithDouble:([attendeeCount doubleValue] / [userCount doubleValue])];
+    //[labels appendString:@"\nAverage attendees per user: "];
+    //[stats appendString:[[NSString alloc] initWithFormat:@"%.1f", [averageAttendees doubleValue]]];
+    //[stats appendString:@"\n\n"];
     
     NSNumber *averageThreadSize = [[NSNumber alloc] initWithDouble:([commentCount doubleValue] / [meetupCount doubleValue])];
     [labels appendString:@"\n\nAverage thread comments: "];
@@ -105,10 +105,10 @@
     [stats appendString:[[NSString alloc] initWithFormat:@"%.1f", [averageThreadInvites doubleValue]]];
     [stats appendString:@"\n"];
     
-    NSNumber *averageThreadAttendees = [[NSNumber alloc] initWithDouble:([attendeeCount doubleValue] / [meetupCount doubleValue])];
+    /*NSNumber *averageThreadAttendees = [[NSNumber alloc] initWithDouble:([attendeeCount doubleValue] / [meetupCount doubleValue])];
     [labels appendString:@"\nAverage meetup attendees: "];
     [stats appendString:[[NSString alloc] initWithFormat:@"%.1f", [averageThreadAttendees doubleValue]]];
-    [stats appendString:@"\n"];
+    [stats appendString:@"\n"];*/
     
     [_statsText setText:labels];
     [_statsNumbers setText:stats];

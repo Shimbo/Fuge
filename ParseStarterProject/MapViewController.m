@@ -189,7 +189,7 @@
     // Navigation bar
     [self.navigationItem setHidesBackButton:true animated:false];
     self.navigationItem.rightBarButtonItems = @[
-                                                [[UIBarButtonItem alloc] initWithTitle:@"New thread" style:UIBarButtonItemStyleBordered target:self action:@selector(newThreadClicked)],                                                                                                                                                                                                                 [[UIBarButtonItem alloc] initWithTitle:@"New meetup" style:UIBarButtonItemStyleBordered target:self action:@selector(newMeetupClicked)]];
+                                                /*[[UIBarButtonItem alloc] initWithTitle:@"New thread" style:UIBarButtonItemStyleBordered target:self action:@selector(newThreadClicked)],*/                                                                                                                                                                                                                 [[UIBarButtonItem alloc] initWithTitle:@"New meetup" style:UIBarButtonItemStyleBordered target:self action:@selector(newMeetupClicked)]];
     
     // Setting user location
     PFGeoPoint *geoPointUser = [[PFUser currentUser] objectForKey:@"location"];
