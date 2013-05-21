@@ -108,7 +108,7 @@
     [meetupData setObject:strSubject forKey:@"subject"];
     [meetupData setObject:[NSNumber numberWithInt:privacy] forKey:@"privacy"];
     [meetupData setObject:dateTime forKey:@"meetupDate"];
-    NSDate* dateToHide = [NSDate dateWithTimeInterval:3600*24 sinceDate:dateTime];
+    NSDate* dateToHide = [NSDate dateWithTimeInterval:HIDE_GRAY_PIN_TIME sinceDate:dateTime];
     [meetupData setObject:dateToHide forKey:@"meetupDateExp"];
     [meetupData setObject:location forKey:@"location"];
     [meetupData setObject:strVenue forKey:@"venue"];
@@ -126,10 +126,6 @@
             [alert show];
             return false;
         }
-        
-        // Send push if not private
-        if ( privacy == MEETUP_PUBLIC )
-            [pushManager sendPushCreatedMeetup:strId];
         
         return true;
     }

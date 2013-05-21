@@ -164,15 +164,20 @@ static PushManager *sharedInstance = nil;
     [push sendPushInBackground];
 }
 
-- (void)sendPushCreatedMeetup:(NSString*)meetupId
+- (void)sendPushCreatedMeetup:(NSString*)meetupId ignore:(NSArray*)ignoreList
 {
     Meetup* meetup = [globalData getMeetupById:meetupId];
     if ( ! meetup )
         return;
     
+    NSMutableArray* ignoreIds = [[NSMutableArray alloc] initWithObjects:strCurrentUserId, nil];
+    if ( ignoreList )
+        for ( Person* person in ignoreList )
+            [ignoreIds addObject:person.strId];
+    
     PFQuery *userQuery = [PFUser query];
     userQuery.limit = 1000;
-    [userQuery whereKey:@"fbId" notEqualTo:strCurrentUserId];
+    [userQuery whereKey:@"fbId" notContainedIn:ignoreIds];
     [userQuery whereKey:@"location" nearGeoPoint:meetup.location withinKilometers:PUSH_DISCOVERY_KILOMETERS];
     
     PFQuery *pushQuery = [PFInstallation query];

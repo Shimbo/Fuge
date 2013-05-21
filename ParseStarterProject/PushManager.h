@@ -31,7 +31,7 @@ enum EPushType
 - (void)sendPushAttendingMeetup:(NSString*)meetupId;
 - (void)sendPushCommentedMeetup:(NSString*)meetupId;
 - (void)sendPushInviteForMeetup:(NSString*)meetupId user:(NSString*)userId;
-- (void)sendPushCreatedMeetup:(NSString*)meetupId;
+- (void)sendPushCreatedMeetup:(NSString*)meetupId ignore:(NSArray*)ignoreList;
 
 // All other pushes are cloud-based
 //- (void)sendPushNewMessage:(NSInteger)pushType idTo:(NSString*)strTo;

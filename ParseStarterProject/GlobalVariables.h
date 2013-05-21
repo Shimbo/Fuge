@@ -34,6 +34,9 @@
 // Not to overload with data
 #define MAX_ANNOTATIONS_ON_THE_MAP  200
 
+// Time before grey pins will be hidden by default
+#define HIDE_GRAY_PIN_TIME          3600
+
 // To keep recent venues list clean
 #define MAX_RECENT_VENUES_COUNT     5
 

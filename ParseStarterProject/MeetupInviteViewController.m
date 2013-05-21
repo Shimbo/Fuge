@@ -13,6 +13,7 @@
 #import "GlobalData.h"
 #import "PersonInviteCell.h"
 #import "MeetupInviteSearch.h"
+#import "PushManager.h"
 
 @implementation MeetupInviteViewController
 - (id)init
@@ -59,6 +60,11 @@
         if ( person.idCircle != CIRCLE_FBOTHERS )
                 [arrayRecentIds addObject:person.strId];
     [globalData addRecentInvites:arrayRecentIds];
+    
+    // Push for everybody NOT invited
+    if ( bNewMeetup )
+        if ( meetup.privacy == MEETUP_PUBLIC )
+            [pushManager sendPushCreatedMeetup:meetup.strId ignore:[self selectedPersons]];
     
     // Adding to calendar here
     [self dismissViewControllerAnimated:YES completion:^{
