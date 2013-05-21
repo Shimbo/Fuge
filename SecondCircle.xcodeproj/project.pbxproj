@@ -1150,8 +1150,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1171,8 +1171,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = SecondCircle;
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "C514DF5B-ED56-4FCA-8E3A-15E0E5BB2AE1";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C514DF5B-ED56-4FCA-8E3A-15E0E5BB2AE1";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
 				WRAPPER_EXTENSION = app;
@@ -1204,8 +1204,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = SecondCircle;
-				PROVISIONING_PROFILE = "8307A363-80CD-4621-8D22-4F4BC61EB8E1";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "8307A363-80CD-4621-8D22-4F4BC61EB8E1";
+				PROVISIONING_PROFILE = "C514DF5B-ED56-4FCA-8E3A-15E0E5BB2AE1";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C514DF5B-ED56-4FCA-8E3A-15E0E5BB2AE1";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
