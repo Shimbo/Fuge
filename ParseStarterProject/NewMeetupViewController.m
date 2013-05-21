@@ -70,7 +70,12 @@
     
     // Title
     if ( meetupType == TYPE_MEETUP )
-        self.title = @"Meetup";
+    {
+        if (_meetup)
+            self.title = @"Meetup";
+        else
+            self.title = @"New meetup";
+    }
     else
         self.title = @"Thread";
     
@@ -210,7 +215,7 @@
     [globalData createCommentForMeetup:_meetup commentType:COMMENT_CREATED commentText:nil];
     
     // Add to attending list and update meetup attending list (only on client)
-    [globalData attendMeetup:_meetup.strId];
+    [globalData attendMeetup:_meetup];
     [_meetup addAttendee:strCurrentUserId];
     
     // Invites

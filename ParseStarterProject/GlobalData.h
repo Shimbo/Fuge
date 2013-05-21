@@ -132,8 +132,8 @@ typedef  enum EMeetupCommentType
 - (Boolean) isUserAdmin;
 - (Boolean) setUserPosition:(PFGeoPoint*)geoPoint;
 - (void) removeUserFromNew:(NSString*)strUser;
-- (void) attendMeetup:(NSString*)strMeetup;
-- (void) unattendMeetup:(NSString*)strMeetup;
+- (void) attendMeetup:(Meetup*)meetup;
+- (void) unattendMeetup:(Meetup*)meetup;
 - (Boolean) isAttendingMeetup:(NSString*)strThread;
 - (void) subscribeToThread:(NSString*)strThread;
 - (void) unsubscribeToThread:(NSString*)strThread;

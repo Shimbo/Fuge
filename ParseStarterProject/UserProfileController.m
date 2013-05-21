@@ -15,14 +15,12 @@
 #include "Message.h"
 
 @implementation UserProfileController
-@synthesize buttonProfile;
-
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        self.title = NSLocalizedString(@"Messages", @"Messages");
+        self.title = NSLocalizedString(@"", @"");
         messagesCount = 0;
     }
     return self;
@@ -33,26 +31,42 @@
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
 }
 
+- (void)meetClicked{
+    NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupViewController" bundle:nil];
+    [newMeetupViewController setType:TYPE_MEETUP];
+    [newMeetupViewController setInvitee:personThis];
+    UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:newMeetupViewController];
+    [self.navigationController presentViewController:navigation animated:YES completion:nil];
+}
+
 - (void)viewDidLoad
 {
     // UI
-    buttonProfile = [[UIBarButtonItem alloc] initWithTitle:@"Fb Profile" style:UIBarButtonItemStylePlain target:self action:@selector(profileClicked)];
-    [self.navigationItem setRightBarButtonItem:buttonProfile];
+    /*buttonProfile = [[UIBarButtonItem alloc] initWithTitle:@"Fb Profile" style:UIBarButtonItemStylePlain target:self action:@selector(profileClicked)];
+    [self.navigationItem setRightBarButtonItem:buttonProfile];*/
+    
+    self.navigationItem.rightBarButtonItems = @[
+                                                [[UIBarButtonItem alloc] initWithTitle:@"Meet" style:UIBarButtonItemStylePlain target:self action:@selector(meetClicked)],                                                                                                                                                                                                                 [[UIBarButtonItem alloc] initWithTitle:@"FB Profile" style:UIBarButtonItemStylePlain target:self action:@selector(profileClicked)]];
+    
+    
     textView.editable = FALSE;
     
+    // Comments
     [globalData loadThread:personThis target:self selector:@selector(callback:)];
     
-    [profileImage loadImageFromURL:personThis.largeImageURL];
+    //[profileImage loadImageFromURL:personThis.largeImageURL];
     
-    // Distance and circle
-    NSString* strDistance = [[NSString alloc] initWithFormat:@"%@ away", [personThis distanceString]];
-    [labelDistance setText:strDistance];
-    [labelCircle setText:personThis.strCircle];
+    // Avatar
+    profileImageView.profileID = personThis.strId;
+    profileImageView.pictureCropping = FBProfilePictureCroppingSquare;
     
-    if ( [personThis.strCircle compare:@""] == NSOrderedSame )
-        addButton.hidden = NO;
-    else
-        addButton.hidden = YES;
+    // Labels
+    labelFriendName.text = personThis.strName;
+    labelDistance.text = [[NSString alloc] initWithFormat:@"%@ away", [personThis distanceString]];
+    labelTimePassed.text = [[NSString alloc] initWithFormat:@"%@ ago", [personThis timeString]];
+    labelCircle.text = personThis.strCircle;
+    labelFriendsInCommon.text = [NSString stringWithFormat:@"%d friends in common", [personThis getFriendsInCommonCount]];
+
     
     personThis.numUnreadMessages = 0;
     
@@ -106,12 +120,13 @@
 
 - (void)viewDidUnload {
     messageHistory = nil;
-    profileImage = nil;
     labelDistance = nil;
     labelCircle = nil;
-    addButton = nil;
-    ignoreButton = nil;
     [self setActivityIndicator:nil];
+    profileImageView = nil;
+    labelFriendsInCommon = nil;
+    labelFriendName = nil;
+    labelTimePassed = nil;
     [super viewDidUnload];
 }
 
@@ -247,12 +262,7 @@ double animatedDistance;
 
 
 
-- (IBAction)addButtonDown:(id)sender {
-    UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"WIP" message:@"'Add to second sircle' method will be implemented later, thanks." delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
-    [errorAlert show];
-}
-
-- (IBAction)ignoreButtonDown:(id)sender {
+/*- (IBAction)ignoreButtonDown:(id)sender {
     UIAlertView* confirmationView = [[UIAlertView alloc] initWithTitle:@"Confirmation" message:@"Are you sure you want to block this user? You won't receive any notifications." delegate:self cancelButtonTitle:NSLocalizedString(@"No", @"") otherButtonTitles:NSLocalizedString(@"Yes", @""),nil];
     
 	[confirmationView show];
@@ -266,7 +276,7 @@ double animatedDistance;
     [self.navigationController presentViewController:navigation
                                             animated:YES completion:nil];
     
-}
+}*/
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {

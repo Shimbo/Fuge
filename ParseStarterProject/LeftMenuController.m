@@ -65,11 +65,14 @@
     }
     [self showViewController:_rootViewController];
 }
+
 -(void)showUser{
-    ProfileViewController *profileViewController = [[ProfileViewController alloc] initWithNibName:@"ProfileView" bundle:nil];
+    if (!_profileViewController) {
+        _profileViewController = [[ProfileViewController alloc] initWithNibName:@"ProfileView" bundle:nil];
+    }
     if (_mapViewController)
-        profileViewController.main = YES;
-    [self showViewController:profileViewController];
+        _profileViewController.main = YES;
+    [self showViewController:_profileViewController];
 }
 
 -(void)prepareMap
@@ -149,6 +152,7 @@
         [PFUser logOut];
         _mapViewController = nil;
         _rootViewController = nil;
+        _profileViewController = nil;
         [self.appDelegate userDidLogout];
     }
 }

@@ -15,24 +15,19 @@
 {
     Person* personThis;
     IBOutlet UITextView *messageHistory;
-    IBOutlet AsyncImageView *profileImage;
     UIBarButtonItem *buttonProfile;
+    IBOutlet UILabel *labelFriendName;
     IBOutlet UILabel *labelDistance;
     IBOutlet UILabel *labelCircle;
-    
-    IBOutlet UIButton *addButton;
-    IBOutlet UIButton *ignoreButton;
+    IBOutlet UILabel *labelFriendsInCommon;
+    IBOutlet UILabel *labelTimePassed;
     
     NSUInteger  messagesCount;
+    IBOutlet FBProfilePictureView *profileImageView;
 }
 
-@property (nonatomic, strong) UIBarButtonItem *buttonProfile;
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
 -(void) setPerson:(Person*)person;
-
-- (IBAction)addButtonDown:(id)sender;
-- (IBAction)ignoreButtonDown:(id)sender;
-- (IBAction)meetButtonDown:(id)sender;
 
 @end

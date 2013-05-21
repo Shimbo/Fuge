@@ -891,7 +891,6 @@ NSInteger sortByName(id num1, id num2, void *context)
     //[comment.ACL setPublicReadAccess:true];
     
     [comment saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        //PFObject* temp = meetup.meetupData;
         if ( error )
             NSLog(@"error:%@", error);
     }];
@@ -912,7 +911,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 #pragma mark Misc
 
 
-- (void) attendMeetup:(NSString*)strMeetup
+- (void) attendMeetup:(Meetup*)meetup
 {
     NSMutableArray* attending = [[PFUser currentUser] objectForKey:@"attending"];
     if ( ! attending )
@@ -920,26 +919,36 @@ NSInteger sortByName(id num1, id num2, void *context)
     
     // Check if already attending
     for (NSString* str in attending)
-        if ( [str compare:strMeetup] == NSOrderedSame )
+        if ( [str compare:meetup.strId] == NSOrderedSame )
             return;
     
     // Attend
-    [attending addObject:strMeetup];
+    [attending addObject:meetup.strId];
     [[PFUser currentUser] setObject:attending forKey:@"attending"];
     [[PFUser currentUser] saveInBackground];
     
     // Push notification to all attendees
-    [pushManager sendPushAttendingMeetup:strMeetup];
+    [pushManager sendPushAttendingMeetup:meetup.strId];
+    
+    // Attendee in db (to store the data and update counters)
+    PFObject* attendee = [PFObject objectWithClassName:@"Attendee"];
+    [attendee setObject:strCurrentUserId forKey:@"userId"];
+    [attendee setObject:strCurrentUserName forKey:@"userName"];
+    [attendee setObject:pCurrentUser forKey:@"userData"];
+    [attendee setObject:meetup.strId forKey:@"meetupId"];
+    [attendee setObject:meetup.strSubject forKey:@"meetupSubject"];
+    [attendee setObject:meetup.meetupData forKey:@"meetupData"];
+    [attendee saveInBackground];
 }
 
-- (void) unattendMeetup:(NSString*)strMeetup
+- (void) unattendMeetup:(Meetup*)meetup
 {
     NSMutableArray* attending = [[PFUser currentUser] objectForKey:@"attending"];
     if ( ! attending )
         attending = [[NSMutableArray alloc] init];
     for (NSString* str in attending)
     {
-        if ( [str compare:strMeetup] == NSOrderedSame )
+        if ( [str compare:meetup.strId] == NSOrderedSame )
         {
             [attending removeObject:str];
             break;

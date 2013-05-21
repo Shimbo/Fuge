@@ -94,18 +94,8 @@
 
 - (void)joinClicked
 {
-    // Rudimentary code
-    // Creating attendee in db
-    /*PFObject* attendee = [PFObject objectWithClassName:@"Attendee"];
-    [attendee setObject:strCurrentUserId forKey:@"userId"];
-    [attendee setObject:strCurrentUserName forKey:@"userName"];
-    [attendee setObject:meetup.strId forKey:@"meetupId"];
-    [attendee setObject:meetup.strSubject forKey:@"meetupSubject"];
-    [attendee setObject:meetup.meetupData forKey:@"meetupData"];
-    [attendee saveInBackground];*/
-    
-    // Add to attending list
-    [globalData attendMeetup:meetup.strId];
+    // Add to attending list and save attendee in DB
+    [globalData attendMeetup:meetup];
     
     // Update invite
     [globalData updateInvite:meetup.strId attending:INVITE_ACCEPTED];

@@ -15,6 +15,8 @@
 #define strCurrentUserId [[PFUser currentUser] objectForKey:@"fbId"]
 #define strCurrentUserName [[PFUser currentUser] objectForKey:@"fbName"]
 
+#define meetupIcons @[@"iconMeetup", @"iconThread", @"iconThread", @"iconThread", @"iconThread", @"iconThread", @"iconThread"]
+
 // Query distance to discover
 #define RANDOM_PERSON_KILOMETERS    50000
 #define RANDOM_EVENT_KILOMETERS     50000

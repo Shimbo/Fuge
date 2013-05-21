@@ -10,6 +10,7 @@
 
 #import "AppDelegate.h"
 @class MapViewController;
+@class ProfileViewController;
 
 @class CustomBadge;
 @interface LeftMenuController : UIViewController<UIAlertViewDelegate>{
@@ -17,6 +18,7 @@
     NSMutableArray *_selectors;
     RootViewController *_rootViewController;
     MapViewController *_mapViewController;
+    ProfileViewController *_profileViewController;
     CustomBadge *_inboxBadge;
     IBOutlet UIActivityIndicatorView *activityIndicator;
 }

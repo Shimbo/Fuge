@@ -120,7 +120,45 @@
         return [[NSString alloc] initWithFormat:@"%.0f km", [distance floatValue]/1000.0f];
 }
 
+-(NSString*)timeString
+{
+    if ( ! personData )
+        return @"";
+    NSTimeInterval interval = [[NSDate date] timeIntervalSince1970] - [personData.updatedAt timeIntervalSince1970];
+    
+    // Multiplying by 2 to get at least 2 hours, 2 days, etc. (to get rid of singular forms)
+    if ( interval < 60.0f*2.0f )
+        return [[NSString alloc] initWithFormat:@"%.0f seconds", interval];
+    else if ( interval < 60.0f*60.0f*2.0f )
+        return [[NSString alloc] initWithFormat:@"%.0f minutes", interval/60.0f];
+    else if ( interval < 60.0f*60.0f*24.0f*2.0f )
+        return [[NSString alloc] initWithFormat:@"%.0f hours", interval/(60.0f*60.0f)];
+    else if ( interval < 60.0f*60.0f*24.0f*7.0f*2.0f )
+        return [[NSString alloc] initWithFormat:@"%.0f days", interval/(60.0f*60.0f*24.0f)];
+    else if ( interval < 60.0f*60.0f*24.0f*30.0f*2.0f )
+        return [[NSString alloc] initWithFormat:@"%.0f weeks", interval/(60.0f*60.0f*24.0f*7.0f)];
+    else if ( interval < 60.0f*60.0f*24.0f*30.0f*12.0f*2.0f )
+        return [[NSString alloc] initWithFormat:@"%.0f months", interval/(60.0f*60.0f*24.0f*30.0f)];
+    else
+        return [[NSString alloc] initWithFormat:@"%.0f years", interval/(60.0f*60.0f*24.0f*30.0f*12.0f)];
+}
 
+- (NSUInteger)getFriendsInCommonCount
+{
+    NSArray* pCurrentUserFriends = [pCurrentUser objectForKey:@"fbFriends"];
+    if ( ! pCurrentUserFriends )
+        return 0;
+    
+    NSArray* pThatUserFriends = [personData objectForKey:@"fbFriends"];
+    if ( ! pThatUserFriends )
+        return 0;
+    
+    NSMutableSet* set1 = [NSMutableSet setWithArray:pCurrentUserFriends];
+    NSMutableSet* set2 = [NSMutableSet setWithArray:pThatUserFriends];
+    [set1 intersectSet:set2];
+    NSArray* result = [set1 allObjects];
+    return result.count;
+}
 
 +(NSString*)imageURLWithId:(NSString*)fbId
 {

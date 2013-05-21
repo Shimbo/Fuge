@@ -48,6 +48,8 @@
 - (void)calculateDistance;
 - (void)changeCircle:(NSUInteger)nCircle;
 
+- (NSUInteger)getFriendsInCommonCount;
+
 - (Boolean)isOutdated;
 
 -(NSString*)imageURL;
@@ -55,9 +57,10 @@
 
 -(NSString*)distanceString;
 
+-(NSString*)timeString;
+
 +(NSString*)imageURLWithId:(NSString*)fbId;
 +(NSString*)largeImageURLWithId:(NSString*)fbId;
-
 
 //- (void) setLocation:(CLLocationCoordinate2D) loc;
 - (PFGeoPoint*) getLocation;

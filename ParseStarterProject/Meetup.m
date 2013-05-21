@@ -373,7 +373,7 @@
     if ( ! ptLocation )
         return;
     self.location = ptLocation;
-    self.strVenue = [[NSString alloc] initWithFormat:@"Lat: %f.3, lon: %f.3", ptLocation.latitude, ptLocation.longitude];
+    self.strVenue = [[NSString alloc] initWithFormat:@"Lat: %.3f, lon: %.3f", ptLocation.latitude, ptLocation.longitude];
 }
 
 -(void)addAttendee:(NSString*)str

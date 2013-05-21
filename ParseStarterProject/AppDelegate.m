@@ -31,6 +31,8 @@
     
     bFirstActivation = true;
     
+    [FBProfilePictureView class];
+    
     // Testflight
 #ifndef RELEASE
     [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
