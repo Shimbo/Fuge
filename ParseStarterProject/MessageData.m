@@ -9,6 +9,7 @@
 #import "GlobalData.h"
 #import "GlobalVariables.h"
 #import "Message.h"
+#import "TestFlight.h"
 
 @implementation GlobalData (Messages)
 
@@ -186,6 +187,16 @@ NSInteger sort(id message1, id message2, void *context)
 
 - (void)loadThread:(Person*)person target:(id)target selector:(SEL)callback
 {
+    if ( ! person || ! person.strId )
+    {
+        // TODO: temporary logs
+        if ( ! person )
+            TFLog( @"Null person!" );
+        else
+            TFLog( @"Null person id!" );
+        return;
+    }
+    
     PFQuery *messageQuery1 = [PFQuery queryWithClassName:@"Message"];
     messageQuery1.limit = 1000;
     [messageQuery1 whereKey:@"idUserFrom" equalTo:strCurrentUserId ];
@@ -198,18 +209,29 @@ NSInteger sort(id message1, id message2, void *context)
     [messageQuery2 whereKey:@"idUserTo" equalTo:strCurrentUserId ];
     [messageQuery2 orderByDescending:@"createdAt"];
     
-    [messageQuery1 findObjectsInBackgroundWithBlock:^(NSArray *messages1, NSError* error) {
-        [messageQuery2 findObjectsInBackgroundWithBlock:^(NSArray *messages2, NSError* error) {
+    [messageQuery1 findObjectsInBackgroundWithBlock:^(NSArray *messages1, NSError* error1) {
+        
+        [messageQuery2 findObjectsInBackgroundWithBlock:^(NSArray *messages2, NSError* error2) {
             
-            NSMutableSet *set = [NSMutableSet setWithArray:messages1];
-            [set addObjectsFromArray:messages2];
-            NSArray *array = [set allObjects];
-            NSArray *sortedArray = [array sortedArrayUsingFunction:sort context:NULL];
+            NSError* error = nil;
+            NSArray *sortedArray = nil;
+            if ( error1 )
+                error = error1;
+            else
+                error = error2;
             
-            [target performSelector:callback withObject:sortedArray];
+            if ( ! error1 && ! error2 )
+            {
+                NSMutableSet *set = [NSMutableSet setWithArray:messages1];
+                [set addObjectsFromArray:messages2];
+                NSArray *array = [set allObjects];
+                sortedArray = [array sortedArrayUsingFunction:sort context:NULL];
+            }
+            
+            [target performSelector:callback withObject:sortedArray withObject:error];
             
             // Last read message date
-            if ( [sortedArray count] > 0 )
+            if ( sortedArray && [sortedArray count] > 0 )
             {
                 [globalData updateConversation:((PFObject*)sortedArray[0]).createdAt count:[sortedArray count] thread:person.strId];
                 [globalData postInboxUnreadCountDidUpdate];

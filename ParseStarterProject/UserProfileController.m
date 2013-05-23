@@ -41,9 +41,7 @@
 
 - (void)viewDidLoad
 {
-    // UI
-    /*buttonProfile = [[UIBarButtonItem alloc] initWithTitle:@"Fb Profile" style:UIBarButtonItemStylePlain target:self action:@selector(profileClicked)];
-    [self.navigationItem setRightBarButtonItem:buttonProfile];*/
+    [super viewDidLoad];
     
     self.navigationItem.rightBarButtonItems = @[
                                                 [[UIBarButtonItem alloc] initWithTitle:@"Meet" style:UIBarButtonItemStylePlain target:self action:@selector(meetClicked)],                                                                                                                                                                                                                 [[UIBarButtonItem alloc] initWithTitle:@"FB Profile" style:UIBarButtonItemStylePlain target:self action:@selector(profileClicked)]];
@@ -52,7 +50,7 @@
     textView.editable = FALSE;
     
     // Comments
-    [globalData loadThread:personThis target:self selector:@selector(callback:)];
+    [globalData loadThread:personThis target:self selector:@selector(callback:error:)];
     
     //[profileImage loadImageFromURL:personThis.largeImageURL];
     
@@ -66,11 +64,8 @@
     labelTimePassed.text = [[NSString alloc] initWithFormat:@"%@ ago", [personThis timeString]];
     labelCircle.text = personThis.strCircle;
     labelFriendsInCommon.text = [NSString stringWithFormat:@"%d friends in common", [personThis getFriendsInCommonCount]];
-
     
     personThis.numUnreadMessages = 0;
-    
-    [super viewDidLoad];
 }
 
 - (void)didReceiveMemoryWarning
@@ -79,8 +74,14 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void) callback:(NSArray*)messages
+-(void) callback:(NSArray*)messages error:(NSError *)error
 {
+    if (error || ! messages )
+    {
+        [messageHistory setText:@"Messages loading failed, no connection."];
+        return;
+    }
+        
     NSMutableString* stringHistory = [[NSMutableString alloc] initWithFormat:@""];
     
     for ( int n = 0; n < messages.count; n++ )
@@ -196,8 +197,15 @@ double animatedDistance;
 
 - (void) callbackMessageSave:(NSNumber *)result error:(NSError *)error
 {
-    // Creating push - update, now moved to cloud
-    //[pushManager sendPushNewMessage:PUSH_NEW_MESSAGE idTo:personThis.strId];
+    [self.activityIndicator stopAnimating];
+    textView.editable = YES;
+    
+    if ( error )
+    {
+        UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"No connection" message:@"Message send failed, check your internet connection or try again later." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [errorAlert show];
+        return;
+    }
     
     // Updating history
     NSMutableString* stringHistory = [[NSMutableString alloc] initWithFormat:@""];
@@ -212,14 +220,18 @@ double animatedDistance;
     range.location = range.length = 0;
     [messageHistory scrollRangeToVisible:range];
     
-    // Emptying message
+    // Emptying message field
     [textView setText:@""];
-    textView.editable = YES;
+    
     // Updating conversation
     messagesCount++;
     [globalData updateConversation:nil count:messagesCount thread:personThis.strId];
     
-    [self.activityIndicator stopAnimating];
+    // Adding to inbox
+    [globalData addMessage:currentMessage];
+    
+    // Sending push
+    [pushManager sendPushNewMessage:currentMessage.strUserTo text:currentMessage.strText];
 }
 
 -(void) keyboardWillShow:(NSNotification *)note{
@@ -238,21 +250,15 @@ double animatedDistance;
         return;
     
     // Adding message with callback on save
-    Message* newMessage = [[Message alloc] init];
-    newMessage.strUserFrom = strCurrentUserId;
-    newMessage.strUserTo = personThis.strId;
-    newMessage.strText = textView.text;
-    newMessage.objUserFrom = [PFUser currentUser];
-    newMessage.objUserTo = personThis.personData;
-    newMessage.strNameUserFrom = strCurrentUserName;
-    newMessage.strNameUserTo = personThis.strName;
-    [newMessage save:self selector:@selector(callbackMessageSave:error:)];
-    
-    // Adding to inbox
-    [globalData addMessage:newMessage];
-    
-    // Sending push
-    [pushManager sendPushNewMessage:newMessage.strUserTo text:newMessage.strText];
+    currentMessage = [[Message alloc] init];
+    currentMessage.strUserFrom = strCurrentUserId;
+    currentMessage.strUserTo = personThis.strId;
+    currentMessage.strText = textView.text;
+    currentMessage.objUserFrom = [PFUser currentUser];
+    currentMessage.objUserTo = personThis.personData;
+    currentMessage.strNameUserFrom = strCurrentUserName;
+    currentMessage.strNameUserTo = personThis.strName;
+    [currentMessage save:self selector:@selector(callbackMessageSave:error:)];
     
     // Start animating
     [self.activityIndicator startAnimating];
