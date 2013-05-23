@@ -50,7 +50,6 @@ static Boolean bRotating = true;
     
     // ACL
     PFACL *defaultACL = [PFACL ACL];
-    // If you would like all objects to be private by default, remove this line.
     [defaultACL setPublicReadAccess:YES];
     [PFACL setDefaultACL:defaultACL withAccessForCurrentUser:YES];
     

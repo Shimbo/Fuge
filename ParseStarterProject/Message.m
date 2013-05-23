@@ -40,10 +40,6 @@
     
     dateCreated = [NSDate date];
     
-    // Protection (read only for both, write for nobody owner)
-    //meetupData.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
-    //[meetupData.ACL setPublicReadAccess:true];
-    
     [messageData saveInBackgroundWithTarget:t selector:s];
 }
 

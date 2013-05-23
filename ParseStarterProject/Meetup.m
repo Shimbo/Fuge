@@ -98,10 +98,7 @@
         [meetupData setObject:strId forKey:@"meetupId"];
         [meetupData setObject:strOwnerId forKey:@"userFromId"];
         [meetupData setObject:strOwnerName forKey:@"userFromName"];
-        
-        // Protection (read only for all, write for owner)
-        //meetupData.ACL = [PFACL ACLWithUser:[PFUser currentUser]];
-        //[meetupData.ACL setPublicReadAccess:true];
+        [meetupData setObject:pCurrentUser forKey:@"userFromData"];
     }
     
     // Subject, privacy, date, timestamp, location

@@ -821,8 +821,12 @@ NSInteger sortByName(id num1, id num2, void *context)
     
     [invite saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if ( error )
-            NSLog(@"Uh oh. An error occurred: %@", error);
-        [pushManager sendPushInviteForMeetup:meetup.strId user:strRecipient];
+        {
+            UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"No connection" message:@"One of the recent invites was not sent, check your internet connection or try again later." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [errorAlert show];
+        }
+        else
+            [pushManager sendPushInviteForMeetup:meetup.strId user:strRecipient];
     }];
 }
 
