@@ -15,6 +15,9 @@
 #import "LocationManager.h"
 
 @implementation NewMeetupViewController
+{
+    UIDatePicker *datePicker;
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -23,29 +26,21 @@
         _meetup = nil;
         invitee = nil;
         self.navigationItem.leftItemsSupplementBackButton = true;
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(keyboardWillShow:)
-                                                     name:UIKeyboardWillShowNotification
-                                                   object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(keyboardWillHide:)
-                                                     name:UIKeyboardWillHideNotification
-                                                   object:nil];
+//        [[NSNotificationCenter defaultCenter] addObserver:self
+//                                                 selector:@selector(keyboardWillShow:)
+//                                                     name:UIKeyboardWillShowNotification
+//                                                   object:nil];
+//        
+//        [[NSNotificationCenter defaultCenter] addObserver:self
+//                                                 selector:@selector(keyboardWillHide:)
+//                                                     name:UIKeyboardWillHideNotification
+//                                                   object:nil];
     }
     return self;
 }
 
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter]removeObserver:self];
-}
-
--(void) keyboardWillShow:(NSNotification *)note{
-    dateTime.userInteractionEnabled = NO;
-}
-
--(void) keyboardWillHide:(NSNotification *)note{
-    dateTime.userInteractionEnabled = YES;
 }
 
 -(void) setMeetup:(Meetup*)m
@@ -93,39 +88,84 @@
     }
     [self.navigationItem setRightBarButtonItem:button];
     
-    // Defaults
-    NSDateComponents* deltaCompsMin = [[NSDateComponents alloc] init];
-    [deltaCompsMin setMinute:15];
-    NSDate* dateMin = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsMin toDate:[NSDate date] options:0];
-    NSDateComponents* deltaCompsDefault = [[NSDateComponents alloc] init];
-    [deltaCompsDefault setMinute:30];
-    NSDate* dateDefault = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsDefault toDate:[NSDate date] options:0];
-    NSDateComponents* deltaCompsMax = [[NSDateComponents alloc] init];
-    [deltaCompsMax setDay:7];
-    NSDate* dateMax = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsMax toDate:[NSDate date] options:0];
-    
-    [dateTime setMinimumDate:dateMin];
-    [dateTime setMaximumDate:dateMax];
-    
     if ( _meetup )
     {
-        [dateTime setDate:_meetup.dateTime];
         [subject setText:_meetup.strSubject];
         [notifySwitch setOn:(! _meetup.privacy)];
         [location setTitle:_meetup.strVenue forState:UIControlStateNormal];
     }
     else
     {
-        if ( meetupType == TYPE_MEETUP )
-            [dateTime setDate:dateDefault];
-        else
-            [dateTime setDate:dateMax];
         if ( invitee )  // Private meetup created from user profile, turn off publicity
             [notifySwitch setOn:FALSE];
     }
     
-    if ( meetupType == TYPE_THREAD )
-        dateTime.hidden = TRUE;
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
+    [self.view addGestureRecognizer:tap];
+}
+
+- (void)tap:(UITapGestureRecognizer *)sender
+{
+    [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        datePicker.originY = self.view.height;
+    } completion:^(BOOL finished) {
+        datePicker = nil;
+    }];
+}
+
+- (void)dateChanged:(UIDatePicker *)picker
+{
+    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    dateFormatter.dateFormat = @"dd.MM.yyyy HH:mm";
+    [self.dateBtn setTitle:[dateFormatter stringFromDate:picker.date] forState:UIControlStateNormal];
+    _meetup.dateTime = picker.date;
+}
+
+- (IBAction)selectDateBtn:(id)sender
+{
+    if (!datePicker) {
+        datePicker = [UIDatePicker new];
+        [datePicker addTarget:self action:@selector(dateChanged:) forControlEvents:UIControlEventValueChanged];
+        [self.view addSubview:datePicker];
+        datePicker.originY = self.view.height;
+        datePicker.datePickerMode = UIDatePickerModeDateAndTime;
+        NSDateFormatter *dateFormatter = [NSDateFormatter new];
+        dateFormatter.dateFormat = @"dd.MM.yyyy hh:mm:ss";
+        datePicker.date = [dateFormatter dateFromString:@"06.01.2013 3:59:35"];
+        datePicker.minuteInterval = 15;
+        
+        NSDateComponents* deltaCompsMin = [[NSDateComponents alloc] init];
+        [deltaCompsMin setMinute:15];
+        NSDate* dateMin = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsMin toDate:[NSDate date] options:0];
+        NSDateComponents* deltaCompsDefault = [[NSDateComponents alloc] init];
+        [deltaCompsDefault setMinute:30];
+        NSDate* dateDefault = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsDefault toDate:[NSDate date] options:0];
+        NSDateComponents* deltaCompsMax = [[NSDateComponents alloc] init];
+        [deltaCompsMax setDay:7];
+        NSDate* dateMax = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsMax toDate:[NSDate date] options:0];
+        
+        [datePicker setMinimumDate:dateMin];
+        [datePicker setMaximumDate:dateMax];
+        
+        if ( _meetup )
+        {
+            [datePicker setDate:_meetup.dateTime];
+        }
+        else
+        {
+            if ( meetupType == TYPE_MEETUP )
+                [datePicker setDate:dateDefault];
+            else
+                [datePicker setDate:dateMax];
+        }
+        
+        if ( meetupType == TYPE_THREAD )
+            datePicker.hidden = TRUE;
+    }
+    [self.view endEditing:YES];
+    [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        datePicker.originY = self.view.height - datePicker.height;
+    } completion:^(BOOL finished) {}];
 }
 
 -(void)hideKeyBoard{
@@ -171,7 +211,7 @@
     meetup.strOwnerName = (NSString *) [[PFUser currentUser] objectForKey:@"fbName"];
     meetup.strSubject = subject.text;
     meetup.privacy = notifySwitch.isOn ? MEETUP_PUBLIC : MEETUP_PRIVATE;
-    meetup.dateTime = [dateTime date];
+    meetup.dateTime = [datePicker date];
     
     if ( self.selectedVenue )
     {
@@ -265,4 +305,8 @@
     [subject resignFirstResponder];
 }
 
+- (void)viewDidUnload {
+    [self setDateBtn:nil];
+    [super viewDidUnload];
+}
 @end

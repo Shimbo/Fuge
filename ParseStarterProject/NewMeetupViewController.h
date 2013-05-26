@@ -16,7 +16,6 @@
 @interface NewMeetupViewController : UIViewController <UITextFieldDelegate>
 {
     IBOutlet UITextField *subject;
-    IBOutlet UIDatePicker *dateTime;
     IBOutlet UIButton *location;
     IBOutlet UISwitch *notifySwitch;
     IBOutlet UIActivityIndicatorView *activityIndicator;
@@ -27,6 +26,7 @@
 }
 
 @property (nonatomic,strong)FSVenue* selectedVenue;
+@property (weak, nonatomic) IBOutlet UIButton *dateBtn;
 
 - (IBAction)venueButtonDown:(id)sender;
 - (IBAction)privacyChanged:(id)sender;
