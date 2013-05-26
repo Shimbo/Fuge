@@ -69,7 +69,7 @@
     {
         // UI
         [self.activityIndicator startAnimating];
-        self.navigationController.view.userInteractionEnabled = FALSE;
+        _tableView.userInteractionEnabled = FALSE;
     }
 }
 
@@ -77,16 +77,17 @@
 {
     // UI
     [self.activityIndicator startAnimating];
-    self.navigationController.view.userInteractionEnabled = FALSE;
+    _tableView.userInteractionEnabled = FALSE;
     
     // Loading
-    [globalData reloadInboxInBackground];
+    if ( [globalData getLoadingStatus:LOADING_INBOX] != LOAD_STARTED )
+        [globalData reloadInboxInBackground];
 }
 
 - (void) refreshData {
     
     [self.activityIndicator stopAnimating];
-    self.navigationController.view.userInteractionEnabled = TRUE;
+    _tableView.userInteractionEnabled = TRUE;
     
     inbox = [globalData getInbox];
     
@@ -96,7 +97,7 @@
 
 - (void) loadingFailed {
     [self.activityIndicator stopAnimating];
-    self.navigationController.view.userInteractionEnabled = TRUE;
+    _tableView.userInteractionEnabled = TRUE;
 }
 
 

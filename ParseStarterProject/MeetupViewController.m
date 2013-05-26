@@ -123,6 +123,8 @@
         buttons[MB_JOIN] = [NSNumber numberWithInt:0];
         buttons[MB_LEAVE] = [NSNumber numberWithInt:1];
         buttons[MB_CALENDAR] = [NSNumber numberWithInt:1];
+        if ( meetup.privacy == MEETUP_PUBLIC )
+            buttons[MB_INVITE] = [NSNumber numberWithInt:1];
         [self updateButtons];
     }
     [self reloadAnnotation];
@@ -278,7 +280,8 @@
                     buttons[MB_SUBSCRIBE] = buttonOn;
                 else
                 {
-                    buttons[MB_INVITE] = buttonOn;
+                    if ( meetup.privacy == MEETUP_PUBLIC )
+                        buttons[MB_INVITE] = buttonOn;
                     buttons[MB_LEAVE] = buttonOn;
                     buttons[MB_CALENDAR] = buttonOn;
                 }
@@ -313,37 +316,44 @@
     [commentsQuery orderByAscending:@"createdAt"];
     [commentsQuery findObjectsInBackgroundWithBlock:^(NSArray *commentsList, NSError* error)
     {
-        NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
-        for (NSDictionary *comment in commentsList)
+        if ( error )
         {
-            NSNumber* nSystem = [comment objectForKey:@"system"];
-            NSString* strUserName = [comment objectForKey:@"userName"];
-            if ( ! nSystem )   // Not system comment
-            {
-                [stringComments appendString:@"    "];
-                [stringComments appendString:strUserName];
-                [stringComments appendString:@": "];
-            }
-            else
-            {
-                [stringComments appendString:@"    "];
-            }
-            [stringComments appendString:[comment objectForKey:@"comment"]];
-            [stringComments appendString:@"\n"];
+            [comments setText:@"Comments loading failed, no connection."];
         }
-        [comments setText:stringComments];
-        
-        // Last read message date
-        NSDate* commentDate = nil;
-        if ( commentsList.count > 0 )
-            commentDate = ((PFObject*)commentsList[commentsList.count-1]).createdAt;
-        [globalData updateConversation:commentDate count:meetup.numComments thread:meetup.strId];
-        
-        // Update badge number for unread messages
-        [globalData postInboxUnreadCountDidUpdate];
-        
-        // Make new comment editable now
-        textView.editable = TRUE;
+        else
+        {
+            NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
+            for (NSDictionary *comment in commentsList)
+            {
+                NSNumber* nSystem = [comment objectForKey:@"system"];
+                NSString* strUserName = [comment objectForKey:@"userName"];
+                if ( ! nSystem )   // Not system comment
+                {
+                    [stringComments appendString:@"    "];
+                    [stringComments appendString:strUserName];
+                    [stringComments appendString:@": "];
+                }
+                else
+                {
+                    [stringComments appendString:@"    "];
+                }
+                [stringComments appendString:[comment objectForKey:@"comment"]];
+                [stringComments appendString:@"\n"];
+            }
+            [comments setText:stringComments];
+            
+            // Last read message date
+            NSDate* commentDate = nil;
+            if ( commentsList.count > 0 )
+                commentDate = ((PFObject*)commentsList[commentsList.count-1]).createdAt;
+            [globalData updateConversation:commentDate count:meetup.numComments thread:meetup.strId];
+            
+            // Update badge number for unread messages
+            [globalData postInboxUnreadCountDidUpdate];
+            
+            // Make new comment editable now
+            textView.editable = TRUE;
+        }
     }];
     [self reloadAnnotation];
 }

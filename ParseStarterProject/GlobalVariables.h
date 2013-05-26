@@ -45,7 +45,7 @@
 #define DISTANCE_FOR_JOIN_PERSON_AND_MEETUP     100 //in meters
 
 // Merging pins
-#define DISTANCE_FOR_GROUPING_PINS              500000 //in meters
+#define DISTANCE_FOR_GROUPING_PINS              50000 //in meters
 
 // Zoom parameters
 #define MAX_ZOOM_LEVEL              19

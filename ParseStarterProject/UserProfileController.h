@@ -11,6 +11,7 @@
 #import "GrowingTextViewController.h"
 
 @class AsyncImageView;
+@class Message;
 @interface UserProfileController : GrowingTextViewController <UIAlertViewDelegate>
 {
     Person* personThis;
@@ -24,6 +25,8 @@
     
     NSUInteger  messagesCount;
     IBOutlet FBProfilePictureView *profileImageView;
+    
+    Message*    currentMessage;
 }
 
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
