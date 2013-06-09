@@ -125,7 +125,13 @@ static Boolean bRotating = true;
     }
     else
     {
-        [globalData loadData];
+        __weak LoadingController *ctrl = self;
+        [pCurrentUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+            if ( error )
+                [ctrl noInternet];
+            else
+                [globalData loadData];
+        }];
     }
 }
 

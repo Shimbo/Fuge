@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Igor Khmurets/Alexander Lednik. All rights reserved.
 //
 
-#import "MyCategories.h"
+#import "UIDefs.h"
 
 @implementation NSObject (PerformBlockAfterDelay)
 

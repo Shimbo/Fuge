@@ -307,10 +307,12 @@
     
     // Setting location and date labels
     [labelLocation setText:meetup.strVenue];
-    NSString *dateString = [NSDateFormatter localizedStringFromDate:meetup.dateTime
-                                                          dateStyle:NSDateFormatterMediumStyle
-                                                          timeStyle:NSDateFormatterShortStyle];
-    [labelDate setText:dateString];
+    
+    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateStyle:NSDateFormatterMediumStyle];
+    [formatter setTimeStyle:NSDateFormatterShortStyle];
+    [formatter setDoesRelativeDateFormatting:TRUE];
+    [labelDate setText:[formatter stringFromDate:meetup.dateTime]];
     
     // Loading comments
     PFQuery *commentsQuery = [PFQuery queryWithClassName:@"Comment"];

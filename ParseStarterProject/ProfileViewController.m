@@ -22,6 +22,8 @@
     if (self) {
         // Custom initialization
         self.main = NO;
+        popover = nil;
+        actionSheet = nil;
     }
     return self;
 }
@@ -103,11 +105,6 @@
         [areaEdit setText:@""];
     
     selection = 0;
-    
-    // Another version of drop-down menu
-    /*UIActionSheet *action = [[UIActionSheet alloc] initWithTitle:@"A title here"                                                        delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Dismiss"
-        otherButtonTitles:@"One option", @"Another option", @"Another option", @"Another option", @"Another option", @"Another option", @"Another option", @"Another option", @"Another option", @"Another option", @"Another option", @"Another option", @"Another option", @"Another option", @"Another option", @"Another option", @"Another option", @"Another option", @"Another option",nil];
-    [action  showInView:self.view];*/
 }
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
@@ -143,66 +140,52 @@
 
 - (IBAction) showSearchWhereOptions {
 
-    // create action sheet
-    
-    actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:nil cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
-    
-    [actionSheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
-    
-    // create frame for picker view
-    
-    CGRect pickerFrame = CGRectMake(0, 40, 0, 0);
-    
-    // create picker view
-    
+    // Picker view
+    CGRect pickerFrame = CGRectMake(0, 40, 320, 445);
     UIPickerView *pickerView = [[UIPickerView alloc] initWithFrame:pickerFrame];
-    
     pickerView.showsSelectionIndicator = YES;
-    
     pickerView.dataSource = self;
-    
     pickerView.delegate = self;
-    
-    // set selected option to what was previously selected
-    
     [pickerView selectRow:selection inComponent:0 animated:NO];
     
-    // add picker view to action sheet
-    
-    [actionSheet addSubview:pickerView];
-    
-    // create close button to hide action sheet
-    
+    // Close button
     UISegmentedControl *closeButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"Close"]];
-    
     closeButton.momentary = YES;
-    
-    closeButton.frame = CGRectMake(260, 7.0f, 50.0f, 30.0f);
-    
+    closeButton.frame = CGRectMake(260, 7, 50, 30);
     closeButton.segmentedControlStyle = UISegmentedControlStyleBar;
-    
     closeButton.tintColor = [UIColor blackColor];
+    [closeButton addTarget:self action:@selector(dismissPopup) forControlEvents:UIControlEventValueChanged];
     
-    // link close button to our dismissActionSheet method
-    
-    [closeButton addTarget:self action:@selector(dismissActionSheet) forControlEvents:UIControlEventValueChanged];
-    
-    [actionSheet addSubview:closeButton];
-    
-    // show action sheet
-    
-    [actionSheet showInView:[[UIApplication sharedApplication] keyWindow]];
-    
-    [actionSheet setBounds:CGRectMake(0, 0, 320, 485)];
-    
+    if ( IPAD )
+    {
+        // View and VC
+        UIView *view = [[UIView alloc] init];
+        [view addSubview:pickerView];
+        [view addSubview:closeButton];
+        UIViewController *vc = [[UIViewController alloc] init];
+        [vc setView:view];
+        [vc setContentSizeForViewInPopover:CGSizeMake(320, 260)];
+        
+        popover = [[UIPopoverController alloc] initWithContentViewController:vc];
+        [popover presentPopoverFromRect:buttonRoles.bounds inView:buttonRoles permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    }
+    else
+    {
+        actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:nil cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+        [actionSheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
+        [actionSheet addSubview:pickerView];
+        [actionSheet addSubview:closeButton];
+        [actionSheet showInView:[[UIApplication sharedApplication] keyWindow]];
+        [actionSheet setBounds:CGRectMake(0, 0, 320, 485)];
+    }
 }
 
-- (void) dismissActionSheet {
+- (void) dismissPopup {
     
-    // hide action sheet
-    
-    [actionSheet dismissWithClickedButtonIndex:0 animated:YES];
-    
+    if ( IPAD )
+        [popover dismissPopoverAnimated:TRUE];
+    else
+        [actionSheet dismissWithClickedButtonIndex:0 animated:YES];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
