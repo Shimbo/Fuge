@@ -111,6 +111,11 @@
     
     [self.attendedPersons addObject:person];
 }
+
+-(NSUInteger)numAttendedPersons {
+    return self.attendedPersons.count;
+}
+
 @end
 
 

@@ -32,6 +32,7 @@ typedef enum kPinPrivacy{
 @property (nonatomic, strong) NSString *strId;
 @property (nonatomic, assign) PinPrivacy pinPrivacy;
 @property (nonatomic, readonly)NSUInteger numUnreadCount;
+@property (nonatomic, readonly)NSUInteger numAttendedPersons;
 
 -(void)addPerson:(Person*)person;
 - (void)configureAnnotation;
