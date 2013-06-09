@@ -16,5 +16,4 @@
 
 +(SCAnnotationView*)constructAnnotationViewForAnnotation:(id)annotation
                                                   forMap:(MKMapView*)mapView;
--(void)prepareForAnnotation:(id)ann;
 @end

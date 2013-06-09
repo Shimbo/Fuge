@@ -76,6 +76,9 @@
     }];
 }
 
+- (void)prepareForReuse{
+    _personImage.image = nil;
+}
 
 @end
 
@@ -97,11 +100,19 @@
     }
     return self;
 }
--(void)loadImageWithURL:(NSString*)url{
-    [_contentView loadImageWithURL:url];
-}
+
 -(void)prepareForAnnotation:(PersonAnnotation*)annotation{
+    
+}
+
+- (void)setAnnotation:(id<MKAnnotation>)annotation {
+    [super setAnnotation:annotation];
     [_contentView prepareForAnnotation:annotation];
+}
+
+- (void)prepareForReuse{
+    [super prepareForReuse];
+    [_contentView prepareForReuse];
 }
 
 

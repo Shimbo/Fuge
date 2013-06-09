@@ -208,8 +208,9 @@
     return self;
 }
 
--(void)prepareForAnnotation:(MeetupAnnotation*)ann{
-    [_contentView prepareForAnnotation:ann];
+- (void)setAnnotation:(id<MKAnnotation>)annotation {
+    [super setAnnotation:annotation];
+    [_contentView prepareForAnnotation:annotation];
 }
 
 

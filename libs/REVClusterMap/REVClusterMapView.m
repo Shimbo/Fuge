@@ -201,10 +201,11 @@
     {
         NSMutableArray *arr = [self.annotations mutableCopy];
         [arr removeObject:self.userLocation];
-        [super removeAnnotations:arr];
+        
         self.showsUserLocation = self.showsUserLocation;
-            NSArray *add = [_manager clusterAnnotationsForZoomLevel:zoomLevel];
-            [super addAnnotations:add];
+        NSArray *add = [_manager clusterAnnotationsForZoomLevel:zoomLevel];
+        [super removeAnnotations:arr];
+        [super addAnnotations:add];
     }
     
 

@@ -22,6 +22,7 @@
 
 -(void)loadImageWithURL:(NSString*)url;
 -(void)prepareForAnnotation:(PersonAnnotation*)annotation;
+- (void)prepareForReuse;
 @end
 
 
@@ -29,6 +30,5 @@
     PersonPin *_contentView;
 }
 
--(void)loadImageWithURL:(NSString*)url;
 -(void)prepareForAnnotation:(PersonAnnotation*)annotation;
 @end

@@ -396,7 +396,6 @@
     if (annotation != mapView.userLocation)
     {
         pinView = [SCAnnotationView constructAnnotationViewForAnnotation:annotation forMap:mV];
-        [pinView prepareForAnnotation:(MeetupAnnotation*)annotation];
         pinView.canShowCallout = YES;
     }
     else {

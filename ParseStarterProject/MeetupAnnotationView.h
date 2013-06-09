@@ -30,5 +30,4 @@
     MeetupPin *_contentView;
 }
 
--(void)prepareForAnnotation:(MeetupAnnotation*)ann;
 @end

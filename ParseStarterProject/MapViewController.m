@@ -310,8 +310,6 @@
         SCAnnotationView *pinView;
         pinView = [SCAnnotationView constructAnnotationViewForAnnotation:annotation
                                                                   forMap:mV];
-        [pinView prepareForAnnotation:annotation];
-        
         if (_userLocation != annotation) {
             UIButton *btnView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
             pinView.rightCalloutAccessoryView = btnView;

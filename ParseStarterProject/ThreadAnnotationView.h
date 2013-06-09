@@ -28,5 +28,4 @@
     ThreadPin *_contentView;
 }
 
--(void)prepareForAnnotation:(ThreadAnnotation*)ann;
 @end
