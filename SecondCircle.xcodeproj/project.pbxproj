@@ -166,6 +166,8 @@
 		4CAE597716F8A53200A69CA0 /* StatsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CAE597516F8A53200A69CA0 /* StatsViewController.m */; };
 		4CAE597816F8A53200A69CA0 /* StatsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CAE597616F8A53200A69CA0 /* StatsViewController.xib */; };
 		4CBAA0DD17099F44003C091F /* PersonInviteCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CBAA0DC17099F44003C091F /* PersonInviteCell.xib */; };
+		4CDEEB161764D0E600C0A41D /* bg~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4CDEEB141764D0E600C0A41D /* bg~ipad.png */; };
+		4CDEEB171764D0E600C0A41D /* bg@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4CDEEB151764D0E600C0A41D /* bg@2x~ipad.png */; };
 		4CE307FD16BF424600F427DE /* PushManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CE307FC16BF424600F427DE /* PushManager.m */; };
 		4CFE78C8166BBA7900E1BF72 /* FilterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CFE78C6166BBA7900E1BF72 /* FilterViewController.m */; };
 		4CFE78C9166BBA7900E1BF72 /* FilterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CFE78C7166BBA7900E1BF72 /* FilterView.xib */; };
@@ -409,6 +411,8 @@
 		4CAE597516F8A53200A69CA0 /* StatsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatsViewController.m; sourceTree = "<group>"; };
 		4CAE597616F8A53200A69CA0 /* StatsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StatsViewController.xib; sourceTree = "<group>"; };
 		4CBAA0DC17099F44003C091F /* PersonInviteCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PersonInviteCell.xib; sourceTree = "<group>"; };
+		4CDEEB141764D0E600C0A41D /* bg~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "bg~ipad.png"; path = "resources/bg~ipad.png"; sourceTree = "<group>"; };
+		4CDEEB151764D0E600C0A41D /* bg@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "bg@2x~ipad.png"; path = "resources/bg@2x~ipad.png"; sourceTree = "<group>"; };
 		4CE307FB16BF424600F427DE /* PushManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushManager.h; sourceTree = "<group>"; };
 		4CE307FC16BF424600F427DE /* PushManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushManager.m; sourceTree = "<group>"; };
 		4CFE78C5166BBA7900E1BF72 /* FilterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterViewController.h; sourceTree = "<group>"; };
@@ -528,6 +532,8 @@
 			children = (
 				97E170E0174E8F1B00BA0094 /* bg.png */,
 				97E170D5174D3C1F00BA0094 /* bg@2x.png */,
+				4CDEEB141764D0E600C0A41D /* bg~ipad.png */,
+				4CDEEB151764D0E600C0A41D /* bg@2x~ipad.png */,
 				4C706F031723F1E300C35E82 /* Icon@2x.png */,
 				4C706F011723F1DC00C35E82 /* Icon.png */,
 				4C706EFF1723F1A400C35E82 /* Icon-72@2x.png */,
@@ -1016,6 +1022,8 @@
 				471984AB172EB9A800A5FE8E /* MessageEntrySendButtonPressed@2x.png in Resources */,
 				97E170D7174D3C1F00BA0094 /* bg@2x.png in Resources */,
 				97E170E2174E8F1B00BA0094 /* bg.png in Resources */,
+				4CDEEB161764D0E600C0A41D /* bg~ipad.png in Resources */,
+				4CDEEB171764D0E600C0A41D /* bg@2x~ipad.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
