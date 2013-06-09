@@ -25,4 +25,5 @@
 @property (nonatomic, assign) PinColor pinColor;
 @property (nonatomic, assign) CGFloat time;
 
+- (BOOL)canGroup;
 @end

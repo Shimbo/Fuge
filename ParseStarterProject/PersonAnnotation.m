@@ -40,4 +40,8 @@
     return _person.imageURL;
 }
 
+
+- (BOOL)canGroup{
+    return CAN_GROUP_PERSON;
+}
 @end

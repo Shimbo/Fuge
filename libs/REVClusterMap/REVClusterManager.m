@@ -83,9 +83,14 @@
     _pins = pins;
 
     NSMutableArray* clusteredBlocks = [NSMutableArray arrayWithCapacity:40];
+    NSMutableArray* notClusteredPins = [NSMutableArray arrayWithCapacity:10];
     CGFloat max = [dist[@(zoomLevel)] floatValue];
     for (REVClusterPin *pin in pins)
     {
+        if (![pin canGroup]) {
+            [notClusteredPins addObject:pin];
+            continue;
+        }
         CLLocation *l1 = [[CLLocation alloc]initWithLatitude:pin.coordinate.latitude
                                                    longitude:pin.coordinate.longitude];
         
@@ -102,9 +107,12 @@
     }
     
     //create New Pins
-    NSMutableArray *newPins = [NSMutableArray arrayWithCapacity:clusteredBlocks.count];
+    NSMutableArray *newPins = [NSMutableArray arrayWithCapacity:clusteredBlocks.count+
+                               notClusteredPins.count];
     for ( REVClusterBlock *block in clusteredBlocks )
         [newPins addObject:[block getClusteredAnnotation]];
+    
+    [newPins addObjectsFromArray:notClusteredPins];
         
     _cache[@(zoomLevel)] = newPins;
     return newPins;

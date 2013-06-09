@@ -116,11 +116,19 @@
     return self.attendedPersons.count;
 }
 
+- (BOOL)canGroup{
+    return CAN_GROUP_MEETUP;
+}
+
 @end
 
 
 
 
 @implementation ThreadAnnotation
+
+- (BOOL)canGroup{
+    return CAN_GROUP_THREAD;
+}
 
 @end

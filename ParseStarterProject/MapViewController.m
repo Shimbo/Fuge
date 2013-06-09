@@ -177,10 +177,10 @@
     [_locationManager startUpdatingLocation];
     
     if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized) {
-        _userLocation = [[PersonAnnotation alloc] init];
+        
         Person *p = [[Person alloc]init:[PFUser currentUser] circle:0];
         p.isCurrentUser = YES;
-        _userLocation.person = p;
+        _userLocation = [[PersonAnnotation alloc] initWithPerson:p];
         _userLocation.title = [[PFUser currentUser] objectForKey:@"fbName"];
         _userLocation.subtitle = @"This is you.";
         

@@ -60,7 +60,25 @@ static inline NSMutableDictionary *updatedImages() {
 }
 
 -(UIImage*)getImage:(NSString*)url{
-    return [_imageCache objectForKey:url];
+    UIImage *image = [_imageCache objectForKey:url];
+    if (!image) {
+        image = [_imageCache imageFromDiskForKey:url];
+        if (image) {
+            
+            [self setImage:image url:url];
+            
+            if (self.loadPolicy == CFAsyncReturnCacheDataAndUpdateCachedImageOnce) {
+                NSMutableDictionary *d = updatedImages();
+                if (!d[url]){
+                    d[url] = @"";
+                    needToPassImageToBlock = NO;
+                    [self makeRequestWithURL:_urlString];
+                }
+            }
+            
+        }
+    }
+    return image;
 }
 
 -(void)setImage:(UIImage*)image url:(NSString*)url {
@@ -88,31 +106,8 @@ static inline NSMutableDictionary *updatedImages() {
     }
     
     _handler = handler;
-    
-    NSString *s = [_urlString copy];
-    [_imageCache imageFromDiskForKey:_urlString block:^(UIImage *image) {
-        if (image)
-            [_imageCache setObject:image
-                            forKey:_urlString
-                              cost:image.size.width*image.size.height*image.scale];
-        if (_urlString.hash != s.hash)
-            return;
-        
-        if (image){
-            [self sendImageToBlockOnMainQueue:image];
-            if (self.loadPolicy == CFAsyncReturnCacheDataAndUpdateCachedImageOnce) {
-                NSMutableDictionary *d = updatedImages();
-                if (!d[url]){
-                    d[url] = @"";
-                    needToPassImageToBlock = NO;
-                    [self makeRequestWithURL:_urlString];
-                }
-            }
-        }else{
-            needToPassImageToBlock = YES;
-            [self makeRequestWithURL:_urlString];
-        }
-    }];
+    needToPassImageToBlock = YES;
+    [self makeRequestWithURL:_urlString];
 }
 
 -(void)sendImageToBlockOnMainQueue:(UIImage*)image{

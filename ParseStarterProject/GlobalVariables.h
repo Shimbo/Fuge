@@ -64,6 +64,10 @@
 // Viral
 #define FB_INVITE_MESSAGE           @"Discover new friends and local activities!"
 
+#define CAN_GROUP_PERSON           NO
+#define CAN_GROUP_MEETUP           YES
+#define CAN_GROUP_THREAD           YES
+
 @interface GlobalVariables : NSObject
 {
     Boolean bNewUser;
