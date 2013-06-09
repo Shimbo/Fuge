@@ -90,6 +90,20 @@
 
 }
 
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    if ([_selectedAnnotation isKindOfClass:[MeetupAnnotation class]]) {
+        MeetupAnnotation *meetupAnnotation = (MeetupAnnotation *)_selectedAnnotation;
+        [meetupAnnotation configureAnnotation];
+         int index = [self.annotations indexOfObject:meetupAnnotation];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+        [self.tableView reloadRowsAtIndexPaths:@[indexPath]
+                              withRowAnimation:UITableViewRowAnimationNone];
+        _selectedAnnotation = nil;
+    }
+
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -168,12 +182,12 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    id<MKAnnotation> obj = self.annotations[indexPath.row];
-    if ( [obj isMemberOfClass:[PersonAnnotation class]])
+    _selectedAnnotation = self.annotations[indexPath.row];
+    if ( [_selectedAnnotation isMemberOfClass:[PersonAnnotation class]])
     {
-        if (((PersonAnnotation*) obj).person.isCurrentUser == NO) {
+        if (((PersonAnnotation*) _selectedAnnotation).person.isCurrentUser == NO) {
             UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
-            [userProfileController setPerson:((PersonAnnotation*) obj).person];
+            [userProfileController setPerson:((PersonAnnotation*) _selectedAnnotation).person];
             [self.navigationController pushViewController:userProfileController animated:YES];
         }
         else{
@@ -182,7 +196,7 @@
 
     }else{
         MeetupViewController *meetupController = [[MeetupViewController alloc] initWithNibName:@"MeetupView" bundle:nil];
-        [meetupController setMeetup:((MeetupAnnotation*) obj).meetup];
+        [meetupController setMeetup:((MeetupAnnotation*) _selectedAnnotation).meetup];
         [self.navigationController pushViewController:meetupController animated:YES];
     }
 }

@@ -8,7 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TableAnnotationsViewController : UITableViewController
+@class REVClusterPin;
+@interface TableAnnotationsViewController : UITableViewController {
+    REVClusterPin *_selectedAnnotation;
+}
 
+@property (nonatomic,strong)NSMutableArray *objects;
 @property (nonatomic,strong)NSMutableArray *annotations;
 @end

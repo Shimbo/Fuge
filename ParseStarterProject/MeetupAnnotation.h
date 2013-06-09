@@ -34,6 +34,7 @@ typedef enum kPinPrivacy{
 @property (nonatomic, readonly)NSUInteger numUnreadCount;
 
 -(void)addPerson:(Person*)person;
+- (void)configureAnnotation;
 
 @end
 

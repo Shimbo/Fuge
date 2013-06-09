@@ -107,7 +107,7 @@
             _back.image = [UIImage imageNamed:@"meetPinGray.png"];
             break;
         default:
-            NSLog(@"Color Error");
+            _back.image = nil;
             break;
     }
     [_back sizeToFit];
@@ -159,6 +159,10 @@
 }
 
 -(void)loadImageWithURL:(NSString*)url{
+    if (!url) {
+        _personImage.image = nil;
+        return;
+    }
     if (!_imageLoader) {
         _imageLoader = [[ImageLoader alloc]initForCircleImages];
         _imageLoader.cachPolicy = CFAsyncCachePolicyDiskAndMemory;

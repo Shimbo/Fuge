@@ -79,7 +79,7 @@
             im = [UIImage imageNamed:@"threadPinGray.png"];
             break;
         default:
-            NSLog(@"Color Error");
+            im = nil;
             break;
     }
     _back.image = im;

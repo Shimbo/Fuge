@@ -12,76 +12,81 @@
 
 @implementation MeetupAnnotation
 
+- (void)configureAnnotation {
+    switch ( self.meetup.privacy )
+    {
+        case MEETUP_PUBLIC:
+            self.pinPrivacy = PinPublic;
+            break;
+            
+        case MEETUP_PRIVATE:
+            self.pinPrivacy = PinPrivate;
+            break;
+    }
+    
+    self.title = self.meetup.strSubject;
+    if ( self.meetup.meetupType == TYPE_MEETUP )
+    {
+        // Check if we have any attendees
+        NSUInteger nAttendeesCount = 0;
+        if ( self.meetup.attendees )
+            nAttendeesCount = self.meetup.attendees.count;
+        
+        // Don't trim name for Facebook events as organizers are not people
+        NSString* strName = self.meetup.bFacebookEvent ? self.meetup.strOwnerName : [globalVariables trimName:self.meetup.strOwnerName];
+        
+        self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Attending: %d", strName, nAttendeesCount ];
+    }
+    else
+        self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Comments: %d", [globalVariables trimName:self.meetup.strOwnerName], self.meetup.numComments ];
+    self.strId = self.meetup.strId;
+    
+    CLLocationCoordinate2D coord;
+    coord.latitude = self.meetup.location.latitude;
+    coord.longitude = self.meetup.location.longitude;
+    self.coordinate = coord;
+    
+    
+    
+    BOOL passed = [self.meetup hasPassed]; // grey?
+    BOOL attorsubsc; // orange or just blue?
+    if (!passed) {
+        if ( self.meetup.meetupType == TYPE_MEETUP )
+            attorsubsc = [globalData isAttendingMeetup:self.meetup.strId];
+        else {
+            attorsubsc = [globalData isSubscribedToThread:self.meetup.strId];
+            
+            // all read threads are passed as well
+            if ( [globalData getConversationPresence:self.meetup.strId] )
+            {
+                NSUInteger nComments = [globalData getConversationCount:self.meetup.strId];
+                if ( nComments == self.meetup.numComments )
+                    passed = true;
+            }
+        }
+    }
+    
+    self.pinColor = PinBlue;
+    if (passed) {
+        self.pinColor = PinGray;
+    }else if (attorsubsc){
+        self.pinColor = PinOrange;
+    }
+    
+    Boolean typeMeetup = (self.meetup.meetupType == TYPE_MEETUP); // meetup or thread
+    if ( typeMeetup && ! passed ) // Show timer from 0 to 1 where 1 is max, 0 is min
+    {
+        self.time = [self.meetup getTimerTill];
+    }
+}
+
 - (id)initWithMeetup:(Meetup*)meetup
 {
     self = [super init];
     if (self) {
-        
-        switch ( meetup.privacy )
-        {
-            case MEETUP_PUBLIC:
-                self.pinPrivacy = PinPublic;
-                break;
-                
-            case MEETUP_PRIVATE:
-                self.pinPrivacy = PinPrivate;
-                break;
-        }
-        
-        self.title = meetup.strSubject;
-        if ( meetup.meetupType == TYPE_MEETUP )
-        {
-            // Check if we have any attendees
-            NSUInteger nAttendeesCount = 0;
-            if ( meetup.attendees )
-                nAttendeesCount = meetup.attendees.count;
-            
-            // Don't trim name for Facebook events as organizers are not people
-            NSString* strName = meetup.bFacebookEvent ? meetup.strOwnerName : [globalVariables trimName:meetup.strOwnerName];
-            
-            self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Attending: %d", strName, nAttendeesCount ];
-        }
-        else
-            self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Comments: %d", [globalVariables trimName:meetup.strOwnerName], meetup.numComments ];
-        self.strId = meetup.strId;
-        
-        CLLocationCoordinate2D coord;
-        coord.latitude = meetup.location.latitude;
-        coord.longitude = meetup.location.longitude;
-        self.coordinate = coord;
-        
         self.meetup = meetup;
-        
-        BOOL passed = [meetup hasPassed]; // grey?
-        BOOL attorsubsc; // orange or just blue?
-        if (!passed) {
-            if ( meetup.meetupType == TYPE_MEETUP )
-                attorsubsc = [globalData isAttendingMeetup:meetup.strId];
-            else {
-                attorsubsc = [globalData isSubscribedToThread:meetup.strId];
-                
-                // all read threads are passed as well
-                if ( [globalData getConversationPresence:meetup.strId] )
-                {
-                    NSUInteger nComments = [globalData getConversationCount:meetup.strId];
-                    if ( nComments == meetup.numComments )
-                        passed = true;
-                }
-            }
-        }
-        
-        self.pinColor = PinBlue;
-        if (passed) {
-            self.pinColor = PinGray;
-        }else if (attorsubsc){
-            self.pinColor = PinOrange;
-        }
-        
-        Boolean typeMeetup = (meetup.meetupType == TYPE_MEETUP); // meetup or thread
-        if ( typeMeetup && ! passed ) // Show timer from 0 to 1 where 1 is max, 0 is min
-        {
-            self.time = [meetup getTimerTill];
-        }
+        [self configureAnnotation];
+
     }
     return self;
 }

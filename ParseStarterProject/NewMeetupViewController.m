@@ -106,9 +106,13 @@
 
 - (void)tap:(UITapGestureRecognizer *)sender
 {
+    location.userInteractionEnabled = NO;
+    self.view.userInteractionEnabled = NO;
     [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         datePicker.originY = self.view.height;
     } completion:^(BOOL finished) {
+        location.userInteractionEnabled = YES;
+        self.view.userInteractionEnabled = YES;
         datePicker = nil;
     }];
 }
@@ -163,9 +167,14 @@
             datePicker.hidden = TRUE;
     }
     [self.view endEditing:YES];
+    location.userInteractionEnabled = NO;
+    self.view.userInteractionEnabled = NO;
     [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         datePicker.originY = self.view.height - datePicker.height;
-    } completion:^(BOOL finished) {}];
+    } completion:^(BOOL finished) {
+        location.userInteractionEnabled = YES;
+        self.view.userInteractionEnabled = YES;
+    }];
 }
 
 -(void)hideKeyBoard{
