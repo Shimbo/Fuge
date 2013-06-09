@@ -126,11 +126,21 @@
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
     tap.cancelsTouchesInView = NO;
+    tap.delegate = self;
     [self.view addGestureRecognizer:tap];
+}
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer{
+    CGPoint p = [gestureRecognizer locationInView:datePicker];
+    if (p.y > 0) {
+        return NO;
+    }
+    return YES;
 }
 
 - (void)tap:(UITapGestureRecognizer *)sender
 {
+
     location.userInteractionEnabled = NO;
     self.view.userInteractionEnabled = NO;
     [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
