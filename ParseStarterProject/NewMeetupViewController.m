@@ -101,6 +101,7 @@
         [notifySwitch setOn:(! meetup.privacy)];
         [location setTitle:meetup.strVenue forState:UIControlStateNormal];
         meetupDate = meetup.dateTime;
+        [self dateChanged:nil];
     }
     else
     {
@@ -115,12 +116,16 @@
             [deltaCompsDefault setDay:7];
         NSDate* dateDefault = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsDefault toDate:[NSDate date] options:0];
         meetupDate = dateDefault;
+        
+        // Set focus on text view
+        [subject becomeFirstResponder];
     }
     
     if ( meetupType == TYPE_THREAD )
         dateBtn.hidden = TRUE;
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
+    tap.cancelsTouchesInView = NO;
     [self.view addGestureRecognizer:tap];
 }
 
@@ -139,12 +144,13 @@
 
 - (void)dateChanged:(UIDatePicker *)picker
 {
+    if ( picker )
+        meetupDate = picker.date;
     NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
     [formatter setDateStyle:NSDateFormatterMediumStyle];
     [formatter setTimeStyle:NSDateFormatterShortStyle];
     [formatter setDoesRelativeDateFormatting:TRUE];
-    meetupDate = picker.date;
-    [dateBtn setTitle:[formatter stringFromDate:picker.date] forState:UIControlStateNormal];
+    [dateBtn setTitle:[formatter stringFromDate:meetupDate] forState:UIControlStateNormal];
 }
 
 - (IBAction)selectDateBtn:(id)sender
