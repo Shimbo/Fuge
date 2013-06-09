@@ -13,7 +13,8 @@
     
     IBOutlet UILabel*   labelRoles;
     NSMutableArray*     arrayRoles;
-    UIActionSheet*      actionSheet;
+    UIPopoverController* popover;
+    UIActionSheet*       actionSheet;
     NSInteger           selection;
     
     IBOutlet UIButton *buttonRoles;

@@ -15,16 +15,14 @@
 #import "LocationManager.h"
 
 @implementation NewMeetupViewController
-{
-    UIDatePicker *datePicker;
-}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        _meetup = nil;
+        meetup = nil;
         invitee = nil;
+        datePicker = nil;
         self.navigationItem.leftItemsSupplementBackButton = true;
 //        [[NSNotificationCenter defaultCenter] addObserver:self
 //                                                 selector:@selector(keyboardWillShow:)
@@ -43,9 +41,18 @@
     [[NSNotificationCenter defaultCenter]removeObserver:self];
 }
 
+-(void) removeDatePicker
+{
+    if ( datePicker )
+    {
+        [datePicker removeFromSuperview];
+        datePicker = nil;
+    }
+}
+
 -(void) setMeetup:(Meetup*)m
 {
-    _meetup = m;
+    meetup = m;
     meetupType = m.meetupType;
 }
 
@@ -66,7 +73,7 @@
     // Title
     if ( meetupType == TYPE_MEETUP )
     {
-        if (_meetup)
+        if (meetup)
             self.title = @"Meetup";
         else
             self.title = @"New meetup";
@@ -80,7 +87,7 @@
     [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelButtonDown)]];
     
     UIBarButtonItem *button = nil;
-    if (_meetup) {
+    if (meetup) {
         button = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(save)];
     }else{
         button = [[UIBarButtonItem alloc] initWithTitle:@"Next" style:UIBarButtonItemStylePlain target:self action:@selector(next)];
@@ -88,17 +95,30 @@
     }
     [self.navigationItem setRightBarButtonItem:button];
     
-    if ( _meetup )
+    if ( meetup )
     {
-        [subject setText:_meetup.strSubject];
-        [notifySwitch setOn:(! _meetup.privacy)];
-        [location setTitle:_meetup.strVenue forState:UIControlStateNormal];
+        [subject setText:meetup.strSubject];
+        [notifySwitch setOn:(! meetup.privacy)];
+        [location setTitle:meetup.strVenue forState:UIControlStateNormal];
+        meetupDate = meetup.dateTime;
     }
     else
     {
         if ( invitee )  // Private meetup created from user profile, turn off publicity
             [notifySwitch setOn:FALSE];
+        
+        // Default time
+        NSDateComponents* deltaCompsDefault = [[NSDateComponents alloc] init];
+        if (meetupType == TYPE_MEETUP)
+            [deltaCompsDefault setMinute:30];
+        else
+            [deltaCompsDefault setDay:7];
+        NSDate* dateDefault = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsDefault toDate:[NSDate date] options:0];
+        meetupDate = dateDefault;
     }
+    
+    if ( meetupType == TYPE_THREAD )
+        dateBtn.hidden = TRUE;
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
     [self.view addGestureRecognizer:tap];
@@ -115,10 +135,12 @@
 
 - (void)dateChanged:(UIDatePicker *)picker
 {
-    NSDateFormatter *dateFormatter = [NSDateFormatter new];
-    dateFormatter.dateFormat = @"dd.MM.yyyy HH:mm";
-    [self.dateBtn setTitle:[dateFormatter stringFromDate:picker.date] forState:UIControlStateNormal];
-    _meetup.dateTime = picker.date;
+    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateStyle:NSDateFormatterMediumStyle];
+    [formatter setTimeStyle:NSDateFormatterShortStyle];
+    [formatter setDoesRelativeDateFormatting:TRUE];
+    meetupDate = picker.date;
+    [dateBtn setTitle:[formatter stringFromDate:picker.date] forState:UIControlStateNormal];
 }
 
 - (IBAction)selectDateBtn:(id)sender
@@ -129,38 +151,19 @@
         [self.view addSubview:datePicker];
         datePicker.originY = self.view.height;
         datePicker.datePickerMode = UIDatePickerModeDateAndTime;
-        NSDateFormatter *dateFormatter = [NSDateFormatter new];
-        dateFormatter.dateFormat = @"dd.MM.yyyy hh:mm:ss";
-        datePicker.date = [dateFormatter dateFromString:@"06.01.2013 3:59:35"];
         datePicker.minuteInterval = 15;
         
         NSDateComponents* deltaCompsMin = [[NSDateComponents alloc] init];
         [deltaCompsMin setMinute:15];
         NSDate* dateMin = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsMin toDate:[NSDate date] options:0];
-        NSDateComponents* deltaCompsDefault = [[NSDateComponents alloc] init];
-        [deltaCompsDefault setMinute:30];
-        NSDate* dateDefault = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsDefault toDate:[NSDate date] options:0];
         NSDateComponents* deltaCompsMax = [[NSDateComponents alloc] init];
         [deltaCompsMax setDay:7];
         NSDate* dateMax = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsMax toDate:[NSDate date] options:0];
         
         [datePicker setMinimumDate:dateMin];
         [datePicker setMaximumDate:dateMax];
+        [datePicker setDate:meetupDate];
         
-        if ( _meetup )
-        {
-            [datePicker setDate:_meetup.dateTime];
-        }
-        else
-        {
-            if ( meetupType == TYPE_MEETUP )
-                [datePicker setDate:dateDefault];
-            else
-                [datePicker setDate:dateMax];
-        }
-        
-        if ( meetupType == TYPE_THREAD )
-            datePicker.hidden = TRUE;
     }
     [self.view endEditing:YES];
     [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
@@ -168,9 +171,21 @@
     } completion:^(BOOL finished) {}];
 }
 
--(void)hideKeyBoard{
-    [subject resignFirstResponder];
+- (IBAction)venueButton:(id)sender {
+//    [self removePopups];
+    if (!venueNavViewController) {
+        VenueSelectViewController *venueViewController = [[VenueSelectViewController alloc] initWithNibName:@"VenueSelectView" bundle:nil];
+        venueViewController.delegate = self;
+        venueNavViewController = [[UINavigationController alloc]initWithRootViewController:venueViewController];
+    }
+    [self presentViewController:venueNavViewController
+                       animated:YES completion:nil];
 }
+
+
+/*-(void)hideKeyBoard{
+    [subject resignFirstResponder];
+}*/
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
@@ -196,7 +211,7 @@
         return NO;
     }
     
-    if ( ! self.selectedVenue && ! _meetup && ! [locManager getPosition] )
+    if ( ! self.selectedVenue && ! meetup && ! [locManager getPosition] )
     {
         UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Not yet!" message:@"We were unable to retrieve your current location, please, select a venue for the meetup." delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
         [errorAlert show];
@@ -205,13 +220,13 @@
     return YES;
 }
 
--(void)populateMeetupWithData:(Meetup*)meetup{
+-(void)populateMeetupWithData{
     meetup.meetupType = meetupType;
     meetup.strOwnerId = (NSString *) [[PFUser currentUser] objectForKey:@"fbId"];
     meetup.strOwnerName = (NSString *) [[PFUser currentUser] objectForKey:@"fbName"];
     meetup.strSubject = subject.text;
     meetup.privacy = notifySwitch.isOn ? MEETUP_PUBLIC : MEETUP_PRIVATE;
-    meetup.dateTime = [datePicker date];
+    meetup.dateTime = meetupDate;
     
     if ( self.selectedVenue )
     {
@@ -227,12 +242,12 @@
         return;
     
     // Saving meetup on server
-    [self populateMeetupWithData:_meetup];
+    [self populateMeetupWithData];
     
-    [_meetup save];
+    [meetup save];
     
     // Creating comment
-    [globalData createCommentForMeetup:_meetup commentType:COMMENT_SAVED commentText:nil];
+    [globalData createCommentForMeetup:meetup commentType:COMMENT_SAVED commentText:nil];
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }
@@ -240,9 +255,9 @@
 - (void)nextInternal
 {
     // Saving meetup on server
-    _meetup = [[Meetup alloc] init];
-    [self populateMeetupWithData:_meetup];
-    Boolean bResult = [_meetup save];
+    meetup = [[Meetup alloc] init];
+    [self populateMeetupWithData];
+    Boolean bResult = [meetup save];
     
     // Loading ended
     [activityIndicator stopAnimating];
@@ -251,18 +266,18 @@
         return;
     
     // Adding to the list on client and creating comment
-    [globalData addMeetup:_meetup];
-    [globalData createCommentForMeetup:_meetup commentType:COMMENT_CREATED commentText:nil];
+    [globalData addMeetup:meetup];
+    [globalData createCommentForMeetup:meetup commentType:COMMENT_CREATED commentText:nil];
     
     // Add to attending list and update meetup attending list (only on client)
-    [globalData attendMeetup:_meetup];
-    [_meetup addAttendee:strCurrentUserId];
+    [globalData attendMeetup:meetup];
+    [meetup addAttendee:strCurrentUserId];
     
     // Invites
     MeetupInviteViewController *inviteController = [[MeetupInviteViewController alloc]init];
     if ( invitee ) // Add invitee if this window was ivoked from user profile
         [inviteController addInvitee:invitee];
-    [inviteController setMeetup:_meetup newMeetup:true];
+    [inviteController setMeetup:meetup newMeetup:true];
     [self.navigationController pushViewController:inviteController animated:YES];
 }
 
@@ -273,16 +288,6 @@
     [activityIndicator startAnimating];
     
     [self performSelector:@selector(nextInternal) withObject:nil afterDelay:0.01f];
-}
-
-- (IBAction)venueButtonDown:(id)sender {
-    if (!venueNavViewController) {
-        VenueSelectViewController *venueViewController = [[VenueSelectViewController alloc] initWithNibName:@"VenueSelectView" bundle:nil];
-        venueViewController.delegate = self;
-        venueNavViewController = [[UINavigationController alloc]initWithRootViewController:venueViewController];
-    }
-    [self presentViewController:venueNavViewController
-                       animated:YES completion:nil];
 }
 
 - (IBAction)privacyChanged:(id)sender {
@@ -306,7 +311,6 @@
 }
 
 - (void)viewDidUnload {
-    [self setDateBtn:nil];
     [super viewDidUnload];
 }
 @end
