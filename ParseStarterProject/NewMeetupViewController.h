@@ -13,7 +13,7 @@
 @class FSVenue;
 
 @class MeetupInviteViewController;
-@interface NewMeetupViewController : UIViewController <UITextFieldDelegate>
+@interface NewMeetupViewController : UIViewController <UITextFieldDelegate,UIGestureRecognizerDelegate>
 {
     IBOutlet UITextField *subject;
     IBOutlet UIButton *dateBtn;
