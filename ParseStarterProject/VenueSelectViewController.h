@@ -16,6 +16,7 @@
     CLLocationCoordinate2D _location;
     CLLocationManager* _locationManager;
     NSMutableArray *_recentVenues;
+    int _numberOfRequest;
 }
 
 @property (strong, nonatomic) IBOutlet UIView *headerView;

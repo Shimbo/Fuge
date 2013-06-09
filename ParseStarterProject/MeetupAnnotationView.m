@@ -13,57 +13,18 @@
 #import "Person.h"
 #import "ImageLoader.h"
 #import "UIImage+Circled.h"
-
-
-@interface TimerView : UIView
-@property (nonatomic,assign)CGFloat time;
-@property (nonatomic,strong)UIColor *timerColor;
-
-@end
-
-@implementation TimerView
-- (id)init
-{
-    self = [super initWithFrame:CGRectMake(6.4, 6.5, 37.2, 36.2)];
-    if (self) {
-        self.backgroundColor = [UIColor clearColor];
-    }
-    return self;
-}
-
--(void)drawRect:(CGRect)rect{
-    
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGRect allRect = CGRectMake(2.7, 2.8, rect.size.width-5.4, rect.size.height-5.5);
-	const CGFloat* c = CGColorGetComponents(_timerColor.CGColor);
-    CGContextSetStrokeColor(context, c); // white
-    float x = CGRectGetMidX(allRect);
-    float y = CGRectGetMidY(allRect);
-    CGContextMoveToPoint(context, x, y-allRect.size.height/2);
-    CGContextAddArc(context, x, y,
-                    allRect.size.height/2,
-                    -M_PI_2,
-                    2 * M_PI * (1 - _time) - M_PI_2,
-                    1);
-    CGContextSetLineWidth(context, 6.5);
-    CGContextSetLineCap(context, kCGLineCapButt);
-    CGContextDrawPath(context, kCGPathStroke);
-}
-
-
-@end
-
+#import "TimerView.h"
 
 
 
 @implementation MeetupPin
 
 -(void)setup{
-    _back = [[UIImageView alloc]initWithFrame:self.bounds];
+    _back = [[UIImageView alloc]init];
     [self addSubview:_back];
     
     _icon = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"iconMeetup.png"]];
-    _icon.center = CGPointMake(25, 24);
+    _icon.center = CGPointMake(24, 24);
     [self addSubview:_icon];
     
     _personImage = [[UIImageView alloc]initWithFrame:CGRectMake(12.5, 12, 25, 25)];
@@ -149,6 +110,7 @@
             NSLog(@"Color Error");
             break;
     }
+    [_back sizeToFit];
 }
 
 -(void)setPinColor:(PinColor)color{
@@ -235,7 +197,7 @@
     self = [super initWithAnnotation: annotation reuseIdentifier: reuseIdentifier];
     if (self != nil)
     {
-        self.frame = CGRectMake(0, 0, 50, 60);
+        self.frame = CGRectMake(0, 0, 49, 60);
         self.opaque = NO;
         self.centerOffset = CGPointMake(0, -22);
         _contentView = [[MeetupPin alloc]initWithFrame:self.bounds];

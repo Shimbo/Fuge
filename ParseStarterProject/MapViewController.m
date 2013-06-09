@@ -246,19 +246,14 @@
 -(void)joinPersonsAndMeetups{
     NSMutableArray *personsAnnotationForRemove = [NSMutableArray arrayWithCapacity:4];
     for (PersonAnnotation* per in _personsAnnotations) {
-        BOOL added = NO;
         for (MeetupAnnotation* meet in _meetupAnnotations) {
             if ([self isMeetupWillStartSoon:meet]&&
                 [self isPerson:per nearbyMeetup:meet]) {
                 [meet addPerson:per.person];
                 [personsAnnotationForRemove addObject:per];
-                added = YES;
                 break;
             }
         }
-        
-        if (added)
-            break;
     }
     [_personsAnnotations removeObjectsInArray:personsAnnotationForRemove];
 }

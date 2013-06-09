@@ -208,6 +208,12 @@
 }
 
 -(void)reloadAnnotation{
+    CLLocationCoordinate2D loc = CLLocationCoordinate2DMake(meetup.location.latitude,meetup.location.longitude);
+    MKCoordinateRegion reg = MKCoordinateRegionMakeWithDistance(loc, 200.0f, 200.0f);
+    mapView.showsUserLocation = NO;
+    [mapView setDelegate:self];
+    [mapView setRegion:reg animated:true];
+    
     if (currentAnnotation) {
         [mapView removeAnnotation:currentAnnotation];
     }
@@ -220,6 +226,7 @@
         [mapView addAnnotation:ann];
         currentAnnotation = ann;
     }
+    
 
 }
 
@@ -232,11 +239,7 @@
     textView.editable = FALSE;
     
     // Map
-    CLLocationCoordinate2D loc = CLLocationCoordinate2DMake(meetup.location.latitude,meetup.location.longitude);
-    MKCoordinateRegion reg = MKCoordinateRegionMakeWithDistance(loc, 200.0f, 200.0f);
-    mapView.showsUserLocation = NO;
-    [mapView setDelegate:self];
-    [mapView setRegion:reg animated:true];
+
     
     NSNumber* buttonOn = [NSNumber numberWithInt:1];
     
@@ -355,7 +358,7 @@
             textView.editable = TRUE;
         }
     }];
-    [self reloadAnnotation];
+//    [self reloadAnnotation];
 }
 
 
@@ -472,6 +475,11 @@ double animatedDistance;
 -(void) keyboardWillHide:(NSNotification *)note{
     [super keyboardWillHide:note];
     comments.userInteractionEnabled = YES;
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [self reloadAnnotation];
 }
 
 

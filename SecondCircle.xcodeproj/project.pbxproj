@@ -54,6 +54,7 @@
 		471EAC6016C0D435009F88F9 /* FSWebLogin.xib in Resources */ = {isa = PBXBuildFile; fileRef = 471EAC5916C0D3E0009F88F9 /* FSWebLogin.xib */; };
 		471EAC6116C0D43A009F88F9 /* poweredByFoursquare_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = 471EAC5A16C0D3E0009F88F9 /* poweredByFoursquare_gray.png */; };
 		471EAC6216C0D43A009F88F9 /* poweredByFoursquare_gray@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 471EAC5B16C0D3E0009F88F9 /* poweredByFoursquare_gray@2x.png */; };
+		4744E1741751F26600BEB737 /* TimerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4744E1731751F26500BEB737 /* TimerView.m */; };
 		476D1E2316A8273600077458 /* FSVenue.m in Sources */ = {isa = PBXBuildFile; fileRef = 476D1E2216A8273600077458 /* FSVenue.m */; };
 		477353241713F6CE004CA0D8 /* SCAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 477353231713F6CE004CA0D8 /* SCAnnotationView.m */; };
 		4773533217140853004CA0D8 /* REVClusterBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 4773532917140853004CA0D8 /* REVClusterBlock.m */; };
@@ -247,6 +248,8 @@
 		471EAC5916C0D3E0009F88F9 /* FSWebLogin.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FSWebLogin.xib; sourceTree = "<group>"; };
 		471EAC5A16C0D3E0009F88F9 /* poweredByFoursquare_gray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = poweredByFoursquare_gray.png; sourceTree = "<group>"; };
 		471EAC5B16C0D3E0009F88F9 /* poweredByFoursquare_gray@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "poweredByFoursquare_gray@2x.png"; sourceTree = "<group>"; };
+		4744E1721751F26500BEB737 /* TimerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimerView.h; sourceTree = "<group>"; };
+		4744E1731751F26500BEB737 /* TimerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimerView.m; sourceTree = "<group>"; };
 		476D1E2116A8273500077458 /* FSVenue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSVenue.h; sourceTree = "<group>"; };
 		476D1E2216A8273600077458 /* FSVenue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSVenue.m; sourceTree = "<group>"; };
 		477353221713F6CE004CA0D8 /* SCAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCAnnotationView.h; sourceTree = "<group>"; };
@@ -730,6 +733,8 @@
 				47B204021711861A00B756FA /* ThreadAnnotationView.m */,
 				477353221713F6CE004CA0D8 /* SCAnnotationView.h */,
 				477353231713F6CE004CA0D8 /* SCAnnotationView.m */,
+				4744E1721751F26500BEB737 /* TimerView.h */,
+				4744E1731751F26500BEB737 /* TimerView.m */,
 			);
 			name = "Map Annotations";
 			sourceTree = "<group>";
@@ -1074,6 +1079,7 @@
 				471984A2172EB9A800A5FE8E /* HPGrowingTextView.m in Sources */,
 				471984A3172EB9A800A5FE8E /* HPTextViewInternal.m in Sources */,
 				471984B0172EBA5200A5FE8E /* GrowingTextViewController.m in Sources */,
+				4744E1741751F26600BEB737 /* TimerView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1150,8 +1156,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1171,8 +1177,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = SecondCircle;
-				PROVISIONING_PROFILE = "C514DF5B-ED56-4FCA-8E3A-15E0E5BB2AE1";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C514DF5B-ED56-4FCA-8E3A-15E0E5BB2AE1";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
 				WRAPPER_EXTENSION = app;
@@ -1184,7 +1190,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1204,7 +1210,7 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = SecondCircle;
-				PROVISIONING_PROFILE = "C514DF5B-ED56-4FCA-8E3A-15E0E5BB2AE1";
+				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C514DF5B-ED56-4FCA-8E3A-15E0E5BB2AE1";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;

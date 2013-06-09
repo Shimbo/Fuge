@@ -11,6 +11,8 @@
 #import "REVClusterAnnotationView.h"
 #import "MainStyle.h"
 #import "REVClusterPin.h"
+#import "TimerView.h"
+
 
 
 @implementation REVClusterAnnotationView
@@ -32,6 +34,9 @@
         _label.font = [UIFont fontWithName:@"Helvetica" size:18];
         _label.textAlignment = NSTextAlignmentCenter;
         [self addSubview:_label];
+        
+        _timerView = [[TimerView alloc]init];
+        [self addSubview:_timerView];
     }
     return self;
 }
@@ -40,6 +45,23 @@
 {
     _label.hidden = NO;
     [_label setText:[NSString stringWithFormat:@"%d",num]];
+}
+
+-(void)updateTimerForColor:(PinColor)color{
+    switch (color) {
+        case PinBlue:
+            _timerView.timerColor = [MainStyle lightBlueColor];
+            break;
+        case PinOrange:
+            _timerView.timerColor = [MainStyle yellowColor];
+            break;
+        case PinGray:
+            _timerView.timerColor = [UIColor clearColor];
+            break;
+        default:
+            _timerView.timerColor = nil;
+            break;
+    }
 }
 
 -(void)setColor:(PinColor)color{
@@ -59,9 +81,22 @@
     }
 }
 
+-(void)setTime:(CGFloat)time{
+    _timerView.time = time;
+    if (_timerView.time == 0) {
+        _timerView.time = 0.00001;
+    }
+    if (_timerView.time == 1) {
+        _timerView.time = 0.99999;
+    }
+    [_timerView setNeedsDisplay];
+}
+
 -(void)prepareForAnnotation:(REVClusterPin*)annotation{
     [self setClusterNum:annotation.nodeCount];
     [self setColor:annotation.pinColor];
+    [self updateTimerForColor:annotation.pinColor];
+    [self setTime:annotation.time];
 }
 
 

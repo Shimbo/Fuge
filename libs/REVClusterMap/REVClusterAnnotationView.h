@@ -13,10 +13,12 @@
 #import "CustomBadge.h"
 
 @class REVClusterPin;
+@class TimerView;
 @interface REVClusterAnnotationView : MKAnnotationView <MKAnnotation> {
     CustomBadge *_badge;
     UIImageView *_backgroundImageView;
     UILabel *_label;
+    TimerView *_timerView;
 //    UIActivityIndicatorView *_activity;
 }
 @property (nonatomic, readonly) CLLocationCoordinate2D coordinate;

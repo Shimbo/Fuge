@@ -214,6 +214,12 @@
     CLLocationCoordinate2D neCoord;
     neCoord = [_mapView convertPoint:nePoint toCoordinateFromView:_mapView];
 
+    if (self.venuesForTable.count == 0) {
+        UIActivityIndicatorView *activity = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        activity.frame = CGRectMake(0, 0, 320, 40);
+        self.tableView.tableFooterView = activity;
+        [activity startAnimating];
+    }
     [Foursquare2 searchVenuesInBoundingQuadrangleS:@(swCoord.latitude)
                                                  w:@(swCoord.longitude)
                                                  n:@(neCoord.latitude)
@@ -278,14 +284,38 @@
 
 #pragma mark Table Delegate
 
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+
+    if ((tableView == self.searchDisplayController.searchResultsTableView
+         &&
+         self.venuesForSearch.count == 0)
+        ||
+        (tableView == self.tableView&&
+         self.venuesForTable.count == 0&&
+         indexPath.section == 1)){
+        return 0;
+    }
+    return 70;
+}
+
 -(NSArray*)getVenuesForTable:(UITableView*)tableView section:(NSUInteger)section{
     if (self.searchDisplayController.searchResultsTableView == tableView) {
-        return self.venuesForSearch;
+        if (self.venuesForSearch.count) {
+            return self.venuesForSearch;
+        }else{
+            return @[@""];
+        }
+        
     }else{
         if (section == 0) {
             return _recentVenues;
         }else
-            return self.venuesForTable;
+            if (self.venuesForTable.count) {
+                return self.venuesForTable;
+            }else{
+                return @[@""];
+            }
+        
     }
 }
 
@@ -313,7 +343,26 @@
     return [self getVenuesForTable:tableView section:section].count;
 }
 
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    if ((tableView == self.searchDisplayController.searchResultsTableView
+        &&
+        self.venuesForSearch.count == 0)
+        ||
+        (tableView == self.tableView&&
+         self.venuesForTable.count == 0&&
+         indexPath.section == 1)) {
+        static NSString *cleanCellIdent = @"cleanCell";
+        UITableViewCell *ccell = [tableView dequeueReusableCellWithIdentifier:cleanCellIdent];
+        if (ccell == nil) {
+            ccell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cleanCellIdent];
+            ccell.userInteractionEnabled = NO;
+        }
+        return ccell;
+        
+    }
+    
     static NSString *ident = @"VenueCell";
     VenueCell *cell = [tableView dequeueReusableCellWithIdentifier:ident];
     FSVenue *venue = [self getVenuesForTable:tableView section:indexPath.section][indexPath.row];
@@ -335,8 +384,19 @@
     self.venuesForSearch = nil;
 }
 
+
 -(void)searchForString:(NSString*)string{
     CLLocation *curLoc = self.mapView.userLocation.location;
+    NSString *searchString = [string copy];
+    if (_numberOfRequest == 0 && self.venuesForSearch.count == 0) {
+        UIActivityIndicatorView *activity = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        activity.frame = CGRectMake(0, 0, 320, 40);
+        self.searchDisplayController.searchResultsTableView.tableFooterView = activity;
+        [activity startAnimating];
+        
+    }
+
+    _numberOfRequest++;
     [Foursquare2 searchVenuesNearByLatitude:@(curLoc.coordinate.latitude)
                                   longitude:@(curLoc.coordinate.longitude)
                                  accuracyLL:nil
@@ -347,6 +407,16 @@
                                      intent:intentCheckin
                                      radius:nil
                                    callback:^(BOOL success, id result) {
+                                       _numberOfRequest--;
+                                       if (_numberOfRequest == 0) {
+                                           self.searchDisplayController.searchResultsTableView.tableFooterView = nil;
+                                       }
+                                    
+                                       if (![searchString isEqualToString:self.searchDisplayController.searchBar.text]){
+                                           return;
+                                       }else{
+                                           self.searchDisplayController.searchResultsTableView.tableFooterView = nil;
+                                       }
                                        if (success) {
                                            NSArray *a = [self convertToObjects:result[@"response"][@"venues"]];
                                            self.venuesForSearch = a;
