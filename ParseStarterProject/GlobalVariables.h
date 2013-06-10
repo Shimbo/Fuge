@@ -73,6 +73,7 @@
     Boolean bNewUser;
     Boolean bSendPushToFriends;
     NSMutableDictionary* settings;
+    NSMutableArray*     arrayRoles;
 }
 
 - (Boolean)isNewUser;
@@ -89,5 +90,8 @@
 - (NSNumber*)currentVersion;
 
 - (NSString*)trimName:(NSString*)name;
+
+- (NSMutableArray*)getRoles;
+- (NSString*)roleByNumber:(NSUInteger)number;
 
 @end

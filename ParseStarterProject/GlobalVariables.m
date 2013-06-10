@@ -31,11 +31,23 @@ static GlobalVariables *sharedInstance = nil;
         bNewUser = FALSE;
         bSendPushToFriends = FALSE;
         settings = nil;
+        
+        // DO NOT change the order, server size uses this numeration
+        arrayRoles = [[NSMutableArray alloc] init];
+        [arrayRoles addObject:@"CEO"];
+        [arrayRoles addObject:@"CTO"];
+        [arrayRoles addObject:@"Product lead"];
+        [arrayRoles addObject:@"Engineer"];
+        [arrayRoles addObject:@"Designer"];
+        [arrayRoles addObject:@"Marketing"];
+        [arrayRoles addObject:@"Finance"];
+        [arrayRoles addObject:@"Consultant"];
+        [arrayRoles addObject:@"Teacher"];
+        [arrayRoles addObject:@"Other"];
     }
     
     return self;
 }
-
 
 // We don't want to allocate a new instance, so return the current one.
 + (id)allocWithZone:(NSZone*)zone {
@@ -48,7 +60,17 @@ static GlobalVariables *sharedInstance = nil;
 }
 
 
+- (NSMutableArray*)getRoles
+{
+    return arrayRoles;
+}
 
+- (NSString*) roleByNumber:(NSUInteger)number
+{
+    if ( number >= arrayRoles.count )
+        return @"Unknown";
+    return arrayRoles[number];
+}
 
 - (Boolean)isNewUser
 {

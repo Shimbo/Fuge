@@ -23,6 +23,7 @@
         meetup = nil;
         invitee = nil;
         datePicker = nil;
+        durationPicker = nil;
         self.navigationItem.leftItemsSupplementBackButton = true;
 //        [[NSNotificationCenter defaultCenter] addObserver:self
 //                                                 selector:@selector(keyboardWillShow:)
@@ -39,15 +40,6 @@
 
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter]removeObserver:self];
-}
-
--(void) removeDatePicker
-{
-    if ( datePicker )
-    {
-        [datePicker removeFromSuperview];
-        datePicker = nil;
-    }
 }
 
 -(void) setMeetup:(Meetup*)m
@@ -101,6 +93,9 @@
         [notifySwitch setOn:(! meetup.privacy)];
         [location setTitle:meetup.strVenue forState:UIControlStateNormal];
         meetupDate = meetup.dateTime;
+        meetupDurationDays = meetup.durationSeconds / (24*3600);
+        meetupDurationHours = (meetup.durationSeconds % (24*3600))/3600;
+        [self updateDurationText];
         [self dateChanged:nil];
     }
     else
@@ -116,6 +111,8 @@
             [deltaCompsDefault setDay:7];
         NSDate* dateDefault = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsDefault toDate:[NSDate date] options:0];
         meetupDate = dateDefault;
+        meetupDurationDays = 0;
+        meetupDurationHours = 1;
         
         // Set focus on text view
         [subject becomeFirstResponder];
@@ -131,24 +128,48 @@
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer{
-    CGPoint p = [gestureRecognizer locationInView:datePicker];
-    if (p.y > 0) {
-        return NO;
+    if ( datePicker )
+    {
+        CGPoint p = [gestureRecognizer locationInView:datePicker];
+        if (p.y > 0) {
+            return NO;
+        }
     }
+    if ( durationPicker )
+    {
+        CGPoint p = [gestureRecognizer locationInView:durationPicker];
+        if (p.y > 0) {
+            return NO;
+        }
+    }
+    if ( ! durationPicker && ! datePicker )
+        return NO;
     return YES;
 }
 
 - (void)tap:(UITapGestureRecognizer *)sender
 {
-
+    // Updating data, removing pickers
     location.userInteractionEnabled = NO;
     self.view.userInteractionEnabled = NO;
     [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-        datePicker.originY = self.view.height;
+        if ( datePicker )
+            datePicker.originY = self.view.height;
+        if ( durationPicker )
+            durationPicker.originY = self.view.height;
     } completion:^(BOOL finished) {
         location.userInteractionEnabled = YES;
         self.view.userInteractionEnabled = YES;
-        datePicker = nil;
+        if ( datePicker && datePicker.originY == self.view.height )
+        {
+            [datePicker removeFromSuperview];
+            datePicker = nil;
+        }
+        if ( durationPicker && durationPicker.originY == self.view.height )
+        {
+            [durationPicker removeFromSuperview];
+            durationPicker = nil;
+        }
     }];
 }
 
@@ -170,6 +191,7 @@
         [datePicker addTarget:self action:@selector(dateChanged:) forControlEvents:UIControlEventValueChanged];
         [self.view addSubview:datePicker];
         datePicker.originY = self.view.height;
+        datePicker.originX = self.view.width/2 - datePicker.width/2;
         datePicker.datePickerMode = UIDatePickerModeDateAndTime;
         datePicker.minuteInterval = 15;
         
@@ -184,16 +206,95 @@
         [datePicker setMaximumDate:dateMax];
         [datePicker setDate:meetupDate];
         
+        [self.view endEditing:YES];
+        location.userInteractionEnabled = NO;
+        self.view.userInteractionEnabled = NO;
+        [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+            datePicker.originY = self.view.height - datePicker.height;
+        } completion:^(BOOL finished) {
+            location.userInteractionEnabled = YES;
+            self.view.userInteractionEnabled = YES;
+        }];
     }
-    [self.view endEditing:YES];
-    location.userInteractionEnabled = NO;
-    self.view.userInteractionEnabled = NO;
-    [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-        datePicker.originY = self.view.height - datePicker.height;
-    } completion:^(BOOL finished) {
-        location.userInteractionEnabled = YES;
-        self.view.userInteractionEnabled = YES;
-    }];
+}
+
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
+    return 2;
+}
+
+// returns the # of rows in each component..
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+    if ( component == 0 )
+        return 7;
+    else
+        return 23;
+}
+
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
+    switch ( component )
+    {
+        case 0: if (row == 0) return @"0 days"; else if (row == 1) return @"1 day"; else return [NSString stringWithFormat:@"%d days", row];
+        case 1: if (row == 0) return @"0 hours"; else if (row == 1) return @"1 hour"; else return [NSString stringWithFormat:@"%d hours", row];
+    }
+    return nil;
+}
+
+- (void)updateDurationText
+{
+    NSString* strDuration;
+    if ( meetupDurationDays == 0 )
+        strDuration = [NSString stringWithFormat:@"%@",
+                       [self pickerView:durationPicker titleForRow:meetupDurationHours forComponent:1]];
+    else if ( meetupDurationHours == 0 )
+        strDuration = [NSString stringWithFormat:@"%@",
+                       [self pickerView:durationPicker titleForRow:meetupDurationDays forComponent:0]];
+    
+    else
+        strDuration = [NSString stringWithFormat:@"%@ and %@",
+                       [self pickerView:durationPicker titleForRow:meetupDurationDays forComponent:0],
+                       [self pickerView:durationPicker titleForRow:meetupDurationHours forComponent:1]];
+    
+    [durationBtn setTitle:strDuration forState:UIControlStateNormal];
+}
+
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
+{
+    // Preventing 0 days and 0 hours situation
+    if ( [durationPicker selectedRowInComponent:0] == 0 &&
+        [durationPicker selectedRowInComponent:1] == 0 )
+    {
+        [durationPicker selectRow:0 inComponent:0 animated:TRUE];
+        [durationPicker selectRow:1 inComponent:1 animated:TRUE];
+    }
+    
+    meetupDurationDays = [durationPicker selectedRowInComponent:0];
+    meetupDurationHours = [durationPicker selectedRowInComponent:1];
+    [self updateDurationText];
+}
+
+- (IBAction)durationButton:(id)sender {
+    if (!durationPicker) {
+        durationPicker = [UIPickerView new];
+        [self.view addSubview:durationPicker];
+        durationPicker.originY = self.view.height;
+        durationPicker.originX = self.view.width/2 - durationPicker.width/2;
+        durationPicker.showsSelectionIndicator = TRUE;
+        durationPicker.delegate = self;
+        durationPicker.dataSource = self;
+        
+        [durationPicker selectRow:meetupDurationDays inComponent:0 animated:FALSE];
+        [durationPicker selectRow:meetupDurationHours inComponent:1 animated:FALSE];
+        
+        [self.view endEditing:YES];
+        location.userInteractionEnabled = NO;
+        self.view.userInteractionEnabled = NO;
+        [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+            durationPicker.originY = self.view.height - durationPicker.height;
+        } completion:^(BOOL finished) {
+            location.userInteractionEnabled = YES;
+            self.view.userInteractionEnabled = YES;
+        }];
+    }
 }
 
 - (IBAction)venueButton:(id)sender {
@@ -252,6 +353,7 @@
     meetup.strSubject = subject.text;
     meetup.privacy = notifySwitch.isOn ? MEETUP_PUBLIC : MEETUP_PRIVATE;
     meetup.dateTime = meetupDate;
+    meetup.durationSeconds = meetupDurationDays*24*3600 + meetupDurationHours*3600;
     
     if ( self.selectedVenue )
     {
@@ -336,6 +438,7 @@
 }
 
 - (void)viewDidUnload {
+    durationBtn = nil;
     [super viewDidUnload];
 }
 @end

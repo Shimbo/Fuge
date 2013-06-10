@@ -565,7 +565,6 @@ NSInteger sortByName(id num1, id num2, void *context)
                 Person* person = [[Person alloc] initEmpty:CIRCLE_FBOTHERS];
                 person.strName = [friendObject objectForKey:@"name"];
                 person.strId = strId;
-                person.strRole = @"Invite!";
                 [fbCircle addPerson:person];
             }
         }

@@ -13,17 +13,20 @@
 @class FSVenue;
 
 @class MeetupInviteViewController;
-@interface NewMeetupViewController : UIViewController <UITextFieldDelegate,UIGestureRecognizerDelegate>
+@interface NewMeetupViewController : UIViewController <UITextFieldDelegate,UIGestureRecognizerDelegate, UIPickerViewDelegate, UIPickerViewDataSource>
 {
     IBOutlet UITextField *subject;
     IBOutlet UIButton *dateBtn;
+    IBOutlet UIButton *durationBtn;
     IBOutlet UIButton *location;
     IBOutlet UISwitch *notifySwitch;
     IBOutlet UIActivityIndicatorView *activityIndicator;
     UINavigationController *venueNavViewController;
-    UIActionSheet *actionSheet;
     UIDatePicker *datePicker;
+    UIPickerView *durationPicker;
     NSDate* meetupDate;
+    NSUInteger meetupDurationDays;
+    NSUInteger meetupDurationHours;
     Meetup* meetup;
     Person* invitee;
     NSUInteger meetupType;
@@ -32,6 +35,7 @@
 @property (nonatomic,strong) FSVenue* selectedVenue;
 
 - (IBAction)selectDateBtn:(id)sender;
+- (IBAction)durationButton:(id)sender;
 - (IBAction)venueButton:(id)sender;
 - (IBAction)privacyChanged:(id)sender;
 

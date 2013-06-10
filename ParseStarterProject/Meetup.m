@@ -26,7 +26,6 @@
         attendees = nil;
         decliners = nil;
         numComments = 0;
-        durationSeconds = 3600;
         strAddress = @"";
         bFacebookEvent = false;
     }
@@ -49,7 +48,6 @@
     
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
-    
     
     NSString* strStartDate = [eventData objectForKey:@"start_time"];
     dateTime = [dateFormatter dateFromString:strStartDate];

@@ -42,7 +42,7 @@
 {
     NSNumber *boolDiscovery = [NSNumber numberWithBool:discoverySwitch.on];
     [[PFUser currentUser] setObject:boolDiscovery forKey:@"profileDiscoverable"];
-    [[PFUser currentUser] setObject:labelRoles.text forKey:@"profileRole"];
+    [[PFUser currentUser] setObject:[NSNumber numberWithInt:selection] forKey:@"profileRole"];
     [[PFUser currentUser] setObject:areaEdit.text forKey:@"profileArea"];
     [[PFUser currentUser] saveInBackground]; // CHECK: here was Eventually
 }
@@ -77,17 +77,6 @@
         buttonSave.hidden = TRUE;
     else
         self.navigationItem.leftBarButtonItem = nil;
-    arrayRoles = [[NSMutableArray alloc] init];
-    [arrayRoles addObject:@"CEO"];
-    [arrayRoles addObject:@"CTO"];
-    [arrayRoles addObject:@"Product lead"];
-    [arrayRoles addObject:@"Engineer"];
-    [arrayRoles addObject:@"Designer"];
-    [arrayRoles addObject:@"Marketing"];
-    [arrayRoles addObject:@"Finance"];
-    [arrayRoles addObject:@"Consultant"];
-    [arrayRoles addObject:@"Teacher"];
-    [arrayRoles addObject:@"Other"];
     
     if ( [[PFUser currentUser] objectForKey:@"profileDiscoverable"] )
         [discoverySwitch setOn:[[[PFUser currentUser] objectForKey:@"profileDiscoverable"] boolValue]];
@@ -95,16 +84,15 @@
         [discoverySwitch setOn:TRUE];
 
     if ( [[PFUser currentUser] objectForKey:@"profileRole"] )
-        [labelRoles setText:[[PFUser currentUser] objectForKey:@"profileRole"]];
+        selection = [[pCurrentUser objectForKey:@"profileRole"] integerValue];
     else
-        [labelRoles setText:@"Other"];
+        selection = [globalVariables getRoles].count-1;
+    [labelRoles setText:[globalVariables roleByNumber:selection]];
     
     if ( [[PFUser currentUser] objectForKey:@"profileArea"] )
         [areaEdit setText:[[PFUser currentUser] objectForKey:@"profileArea"]];
     else
         [areaEdit setText:@""];
-    
-    selection = 0;
 }
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
@@ -115,13 +103,13 @@
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
     
-    return [arrayRoles count];
+    return [globalVariables getRoles].count;
     
 }
 
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
     
-    return [arrayRoles objectAtIndex:row];
+    return [globalVariables roleByNumber:row];
     
 }
 
@@ -131,7 +119,7 @@
     
     // update label text to show selected option
     
-    labelRoles.text = [arrayRoles objectAtIndex:row];
+    labelRoles.text = [[globalVariables getRoles] objectAtIndex:row];
     
     // keep track of selected option (for next time we open the picker)
     

@@ -19,7 +19,7 @@
         self.title = person.strName;
         self.subtitle = [[NSString alloc] initWithFormat:
                         @"%@%@ %@",
-                        person.strRole,
+                        [globalVariables getRoles][[person.role integerValue]],
                         person.strArea.length?@",":@"",
                         person.strArea ];
         if ( person.getLocation )

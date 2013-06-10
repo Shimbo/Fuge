@@ -8,7 +8,7 @@
 
 @implementation Person
 
-@synthesize strId, strName, strAge, strGender, distance, strRole, strArea, strCircle, idCircle, personData,numUnreadMessages;
+@synthesize strId, strName, strAge, strGender, distance, role, strArea, strCircle, idCircle, personData,numUnreadMessages;
 
 + (void)initialize {
 	if (self == [Person class]) {
@@ -25,7 +25,7 @@
         strId = [user objectForKey:@"fbId"];
         strName = [user objectForKey:@"fbName"];
         strGender = [user objectForKey:@"fbGender"];
-        strRole = [user objectForKey:@"profileRole"];
+        role = [user objectForKey:@"profileRole"];
         strArea = [user objectForKey:@"profileArea"];
         strCircle = [Circle getPersonType:nCircle];
         idCircle = nCircle;

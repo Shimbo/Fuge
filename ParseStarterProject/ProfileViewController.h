@@ -12,7 +12,6 @@
 @interface ProfileViewController : MainViewController <UIPickerViewDelegate, UIPickerViewDataSource, UIActionSheetDelegate, UITextFieldDelegate> {
     
     IBOutlet UILabel*   labelRoles;
-    NSMutableArray*     arrayRoles;
     UIPopoverController* popover;
     UIActionSheet*       actionSheet;
     NSInteger           selection;
