@@ -759,17 +759,17 @@ NSInteger sortByName(id num1, id num2, void *context)
                 NSArray *meetupsData = objects;
                 
                 // Later we're updating subscription removing deleted and expired objects
-                NSMutableArray* newSubscriptions = [[NSMutableArray alloc] initWithCapacity:meetupsData.count];
+//                NSMutableArray* newSubscriptions = [[NSMutableArray alloc] initWithCapacity:meetupsData.count];
                 for (PFObject *meetupData in meetupsData)
                 {
                     Meetup* result = [self addMeetupWithData:meetupData];
-                    NSString* strMeetupId = [meetupData objectForKey:@"meetupId"];
+/*                    NSString* strMeetupId = [meetupData objectForKey:@"meetupId"];
                     if ( ! result )
                         [self unsubscribeToThread:strMeetupId];
                     else
-                        [newSubscriptions addObject:strMeetupId];
+                        [newSubscriptions addObject:strMeetupId];*/
                 }
-                [[PFUser currentUser] setObject:newSubscriptions forKey:@"subscriptions"];
+//                [[PFUser currentUser] setObject:newSubscriptions forKey:@"subscriptions"];
             }
             
             // In any case, increment loading stage
