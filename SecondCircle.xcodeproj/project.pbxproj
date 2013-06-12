@@ -112,7 +112,6 @@
 		47C74040172C04F200087C2A /* AnnotationCellMeetup.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47C7403E172C04F200087C2A /* AnnotationCellMeetup.xib */; };
 		47C74041172C04F200087C2A /* AnnotationCellThread.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47C7403F172C04F200087C2A /* AnnotationCellThread.xib */; };
 		47D7CE3A170EB1FA00988F6A /* pinPerson@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 47D7CE39170EB1FA00988F6A /* pinPerson@2x.png */; };
-		4998650515BF305000803E05 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4998650415BF305000803E05 /* StoreKit.framework */; };
 		4C057322166AE74D00EF6FAD /* FacebookLogin.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C057321166AE74D00EF6FAD /* FacebookLogin.png */; };
 		4C057326166AEF4800EF6FAD /* ProfileView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C057325166AEF4800EF6FAD /* ProfileView.xib */; };
 		4C05732A166AEF9B00EF6FAD /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C057328166AEF9B00EF6FAD /* ProfileViewController.m */; };
@@ -447,7 +446,6 @@
 				6372FF561613CC42002132AF /* Social.framework in Frameworks */,
 				6372FF531613CC3C002132AF /* Accounts.framework in Frameworks */,
 				6332375415E438E900AE2736 /* libsqlite3.dylib in Frameworks */,
-				4998650515BF305000803E05 /* StoreKit.framework in Frameworks */,
 				743D7B6D157DA60100084B67 /* CoreGraphics.framework in Frameworks */,
 				099CCEAD13F9E3760039A464 /* libz.1.1.3.dylib in Frameworks */,
 				09BEF34C13D51C3F001BBCDB /* Security.framework in Frameworks */,
@@ -911,6 +909,16 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0500;
+				TargetAttributes = {
+					09ABC06C13A1D52D009C3FCF = {
+						DevelopmentTeam = WDEGJM2L33;
+						SystemCapabilities = {
+							com.apple.InAppPurchase = {
+								enabled = 0;
+							};
+						};
+					};
+				};
 			};
 			buildConfigurationList = 09ABC06713A1D52D009C3FCF /* Build configuration list for PBXProject "SecondCircle" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1182,7 +1190,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1202,8 +1210,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = SecondCircle;
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "C514DF5B-ED56-4FCA-8E3A-15E0E5BB2AE1";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C514DF5B-ED56-4FCA-8E3A-15E0E5BB2AE1";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
 				WRAPPER_EXTENSION = app;
@@ -1235,7 +1243,7 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = SecondCircle;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "C514DF5B-ED56-4FCA-8E3A-15E0E5BB2AE1";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C514DF5B-ED56-4FCA-8E3A-15E0E5BB2AE1";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
