@@ -34,6 +34,7 @@
 {
     [super viewDidLoad];
     self.mapView.userTrackingMode = MKUserTrackingModeNone;
+    self.mapView.rotateEnabled = FALSE;
     // Do any additional setup after loading the view from its nib.
     UINib *nib = [UINib nibWithNibName:@"VenueCell" bundle:nil];
     [self.tableView registerNib:nib forCellReuseIdentifier:@"VenueCell"];

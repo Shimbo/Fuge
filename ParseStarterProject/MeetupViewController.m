@@ -239,7 +239,7 @@
     textView.editable = FALSE;
     
     // Map
-
+    mapView.rotateEnabled = FALSE;
     
     NSNumber* buttonOn = [NSNumber numberWithInt:1];
     

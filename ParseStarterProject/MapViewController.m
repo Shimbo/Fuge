@@ -170,6 +170,7 @@
     [mapView setScrollEnabled:YES];
     [mapView setDelegate:self];
     mapView.showsUserLocation = NO;
+    mapView.rotateEnabled = FALSE;
     
     _locationManager = [[CLLocationManager alloc]init];
     _locationManager.delegate = self;
