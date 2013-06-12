@@ -66,11 +66,12 @@ NSInteger sort2(id item1, id item2, void *context)
             if ( [pObject.parseClassName compare:@"Invite"] == NSOrderedSame )
             {
                 // Already accepted or declined invite
+                NSDate* expirationDate = [pObject objectForKey:@"expirationDate"];
                 if ( [[pObject objectForKey:@"status"] integerValue] == INVITE_ACCEPTED )
                     item.misc = @"Accepted!";
                 else if ( [[pObject objectForKey:@"status"] integerValue] == INVITE_DECLINED )
                     item.misc = @"Declined.";
-                else if ( [[pObject objectForKey:@"expirationDate"] compare:[NSDate date]] == NSOrderedAscending )
+                else if ( [expirationDate compare:[NSDate date]] == NSOrderedAscending )
                     item.misc = @"Expired.";
                 else item.misc = nil;
                 
@@ -259,7 +260,8 @@ NSInteger sort2(id item1, id item2, void *context)
                 }
                 
                 // Expired
-                Boolean bExpired = [[inviteNew objectForKey:@"expirationDate"] compare:[NSDate date]] == NSOrderedAscending;
+                NSDate* expirationDate = [inviteNew objectForKey:@"expirationDate"];
+                Boolean bExpired = [expirationDate compare:[NSDate date]] == NSOrderedAscending;
                 if ( bExpired )
                 {
                     NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_EXPIRED];

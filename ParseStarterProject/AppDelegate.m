@@ -35,7 +35,7 @@
     
     // Testflight
 #ifndef RELEASE
-    [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
+    //[TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
 #endif
     @try {
         [TestFlight takeOff:@"d42a1f02-bb75-4c1e-896e-e0e4f41daf17"];
