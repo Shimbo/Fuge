@@ -81,6 +81,7 @@ NSInteger sort2(id item1, id item2, void *context)
                 item.message = [pObject objectForKey:@"meetupSubject"];
                 item.data = object;
                 item.dateTime = pObject.createdAt;
+                item.meetup = [globalData getMeetupById:[pObject objectForKey:@"meetupId"]];
                 
                 NSUInteger meetupType = [[pObject objectForKey:@"type"] integerValue];
                 if ( meetupType == TYPE_MEETUP )
@@ -100,6 +101,7 @@ NSInteger sort2(id item1, id item2, void *context)
                 item.misc = nil;
                 item.data = pObject;
                 item.dateTime = pObject.createdAt;
+                item.meetup = [globalData getMeetupById:[pObject objectForKey:@"meetupId"]];
                 [tempArray addObject:item];
             }
         }

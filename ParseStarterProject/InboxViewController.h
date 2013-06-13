@@ -17,17 +17,17 @@ enum EInboxItemType
 };
 
 @class AsyncImageView;
+@class Meetup;
 @interface InboxViewItem : NSObject
 @property (nonatomic) NSUInteger type;
 @property (strong, nonatomic) id data;
-//@property (strong, nonatomic) AsyncImageView *iconImage;
-//@property (strong, nonatomic) AsyncImageView *mainImage;
 @property (strong, nonatomic) NSString *fromId;
 @property (strong, nonatomic) NSString *toId;
 @property (strong, nonatomic) NSString *subject;
 @property (strong, nonatomic) NSString *message;
 @property (strong, nonatomic) NSString *misc;
 @property (strong, nonatomic) NSDate *dateTime;
+@property (strong, nonatomic) Meetup *meetup;
 @end
 
 @interface InboxViewController : MainViewController {

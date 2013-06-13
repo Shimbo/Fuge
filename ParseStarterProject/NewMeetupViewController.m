@@ -360,7 +360,7 @@
         [meetup populateWithVenue:self.selectedVenue];
         [globalData addRecentVenue:self.selectedVenue];
     }
-    else
+    else if ( meetup.strVenueId.length == 0 ) // to preserve previously selected venues
         [meetup populateWithCoords];
 }
 

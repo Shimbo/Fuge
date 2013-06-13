@@ -40,21 +40,39 @@
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </label>
-                    <view contentMode="scaleToFill" id="20" customClass="AsyncImageView">
-                        <rect key="frame" x="271" y="10" width="40" height="40"/>
+                    <view contentMode="scaleToFill" id="20" customClass="MeetupPin">
+                        <rect key="frame" x="270" y="0.0" width="50" height="60"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </view>
                 </subviews>
                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
             </view>
             <connections>
-                <outlet property="iconImage" destination="20" id="21"/>
                 <outlet property="mainImage" destination="4" id="22"/>
                 <outlet property="message" destination="15" id="24"/>
                 <outlet property="misc" destination="17" id="25"/>
+                <outlet property="pinImage" destination="20" id="Cya-8x-o30"/>
                 <outlet property="subject" destination="11" id="26"/>
             </connections>
         </tableViewCell>
     </objects>
+    <classes>
+        <class className="AsyncImageView" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/AsyncImageView.h"/>
+        </class>
+        <class className="InboxCell" superclassName="UITableViewCell">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/InboxCell.h"/>
+            <relationships>
+                <relationship kind="outlet" name="mainImage" candidateClass="AsyncImageView"/>
+                <relationship kind="outlet" name="message" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="misc" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="pinImage" candidateClass="MeetupPin"/>
+                <relationship kind="outlet" name="subject" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+        <class className="MeetupPin" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/MeetupPin.h"/>
+        </class>
+    </classes>
 </document>

@@ -756,9 +756,6 @@
 			children = (
 				47C74033172BFA6C00087C2A /* TableAnnotationsViewController.h */,
 				47C74034172BFA6C00087C2A /* TableAnnotationsViewController.m */,
-				47C7403C172BFB1E00087C2A /* AnnotationCellPerson.xib */,
-				47C7403E172C04F200087C2A /* AnnotationCellMeetup.xib */,
-				47C7403F172C04F200087C2A /* AnnotationCellThread.xib */,
 				47C74039172BFAF900087C2A /* AnnotationCell.h */,
 				47C7403A172BFAF900087C2A /* AnnotationCell.m */,
 			);
@@ -841,6 +838,9 @@
 				47BDBC9116EA268F008B12CF /* MeetupInviteViewController.xib */,
 				4CAE597616F8A53200A69CA0 /* StatsViewController.xib */,
 				4CA3F06417170D8A00271E7A /* LoadingController.xib */,
+				47C7403C172BFB1E00087C2A /* AnnotationCellPerson.xib */,
+				47C7403E172C04F200087C2A /* AnnotationCellMeetup.xib */,
+				47C7403F172C04F200087C2A /* AnnotationCellThread.xib */,
 			);
 			name = XIB;
 			sourceTree = "<group>";

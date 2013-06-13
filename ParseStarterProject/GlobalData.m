@@ -762,7 +762,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 //                NSMutableArray* newSubscriptions = [[NSMutableArray alloc] initWithCapacity:meetupsData.count];
                 for (PFObject *meetupData in meetupsData)
                 {
-                    Meetup* result = [self addMeetupWithData:meetupData];
+                    /*Meetup* result =*/ [self addMeetupWithData:meetupData];
 /*                    NSString* strMeetupId = [meetupData objectForKey:@"meetupId"];
                     if ( ! result )
                         [self unsubscribeToThread:strMeetupId];

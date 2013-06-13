@@ -35,6 +35,7 @@ typedef enum kEMeetupPrivacy
     NSString    *strOwnerName;
     NSString    *strSubject;
     NSString    *strVenue;
+    NSString    *strVenueId;
     NSString    *strAddress;
     NSDate      *dateTime;
     NSDate      *dateTimeExp;
@@ -61,6 +62,7 @@ typedef enum kEMeetupPrivacy
 @property (nonatomic, copy) NSDate *dateTimeExp;
 @property (nonatomic, copy) PFGeoPoint *location;
 @property (nonatomic, copy) NSString *strVenue;
+@property (nonatomic, copy) NSString *strVenueId;
 @property (nonatomic, copy) NSString *strAddress;
 @property (nonatomic, assign) EMeetupPrivacy privacy;
 @property (nonatomic, assign) EMeetupType meetupType;

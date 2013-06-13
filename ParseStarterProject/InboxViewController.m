@@ -13,6 +13,7 @@
 #import "AsyncImageView.h"
 #import "MeetupViewController.h"
 #import "UserProfileController.h"
+#import "MeetupAnnotationView.h"
 
 @implementation InboxViewItem
 @end
@@ -145,6 +146,14 @@
     inboxCell.message.text = item.message;
     inboxCell.misc.text = item.misc;
     inboxCell.mainImage.shoulCacheCircledImage = YES;
+    if ( item.meetup )
+    {
+        MeetupAnnotation* temp = [[MeetupAnnotation alloc] initWithMeetup:item.meetup];
+        inboxCell.pinImage = [[MeetupPin alloc] init];
+        [inboxCell.pinImage prepareForAnnotation:temp];
+    }
+    else
+        inboxCell.pinImage = nil;
     if ( [item.fromId compare:strCurrentUserId] == NSOrderedSame && item.type != INBOX_ITEM_COMMENT )
         [inboxCell.mainImage loadImageFromURL:[Person imageURLWithId:item.toId]];
     else

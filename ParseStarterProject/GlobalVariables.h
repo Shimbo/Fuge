@@ -36,15 +36,12 @@
 // Not to overload with data
 #define MAX_ANNOTATIONS_ON_THE_MAP  200
 
-// Time before grey pins will be hidden by default
-#define HIDE_GRAY_PIN_TIME          3600
-
 // To keep recent venues list clean
 #define MAX_RECENT_VENUES_COUNT     5
 
 // Merging meetups with persons
 #define TIME_FOR_JOIN_PERSON_AND_MEETUP         0.95 //in %
-#define DISTANCE_FOR_JOIN_PERSON_AND_MEETUP     100 //in meters
+#define DISTANCE_FOR_JOIN_PERSON_AND_MEETUP     200 //in meters
 
 // Merging pins
 #define DISTANCE_FOR_GROUPING_PINS              500000 //in meters

@@ -16,7 +16,7 @@
 
 @implementation Meetup
 
-@synthesize strId,strOwnerId,strOwnerName,strSubject,dateTime,privacy,meetupType,location,strVenue,strAddress,meetupData,numComments,attendees,decliners,dateTimeExp,durationSeconds,bFacebookEvent;
+@synthesize strId,strOwnerId,strOwnerName,strSubject,dateTime,privacy,meetupType,location,strVenue,strVenueId,strAddress,meetupData,numComments,attendees,decliners,dateTimeExp,durationSeconds,bFacebookEvent;
 
 -(id) init
 {
@@ -27,6 +27,7 @@
         decliners = nil;
         numComments = 0;
         strAddress = @"";
+        strVenueId = @"";
         bFacebookEvent = false;
     }
     
@@ -103,10 +104,11 @@
     [meetupData setObject:strSubject forKey:@"subject"];
     [meetupData setObject:[NSNumber numberWithInt:privacy] forKey:@"privacy"];
     [meetupData setObject:dateTime forKey:@"meetupDate"];
-    NSDate* dateToHide = [NSDate dateWithTimeInterval:HIDE_GRAY_PIN_TIME sinceDate:dateTime];
+    NSDate* dateToHide = [NSDate dateWithTimeInterval:durationSeconds sinceDate:dateTime];
     [meetupData setObject:dateToHide forKey:@"meetupDateExp"];
     [meetupData setObject:location forKey:@"location"];
     [meetupData setObject:strVenue forKey:@"venue"];
+    [meetupData setObject:strVenueId forKey:@"venueId"];
     [meetupData setObject:strAddress forKey:@"address"];
     [meetupData setObject:[NSNumber numberWithInt:durationSeconds] forKey:@"duration"];
     
@@ -151,6 +153,7 @@
     dateTimeExp = [meetupData objectForKey:@"meetupDateExp"];
     location = [meetupData objectForKey:@"location"];
     strVenue = [meetupData objectForKey:@"venue"];
+    strVenueId = [meetupData objectForKey:@"venueId"];
     strAddress = [meetupData objectForKey:@"address"];
     numComments = [[meetupData objectForKey:@"numComments"] integerValue];
     attendees = [meetupData objectForKey:@"attendees"];
@@ -334,6 +337,7 @@
         self.location = [PFGeoPoint geoPointWithLatitude:[venue.lat doubleValue]
                                                  longitude:[venue.lon doubleValue]];
         self.strVenue = venue.name;
+        self.strVenueId = venue.venueId;
         if ( venue.address )
             self.strAddress = venue.address;
         if ( venue.city )
