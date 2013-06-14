@@ -59,7 +59,7 @@
     profileImageView.pictureCropping = FBProfilePictureCroppingSquare;
     
     // Labels
-    labelFriendName.text = personThis.strName;
+    labelFriendName.text = [personThis fullName];
     labelDistance.text = [[NSString alloc] initWithFormat:@"%@ away", [personThis distanceString]];
     labelTimePassed.text = [[NSString alloc] initWithFormat:@"%@ ago", [personThis timeString]];
     labelCircle.text = personThis.strCircle;
@@ -91,7 +91,7 @@
         if ( [ personThis.strId compare:[ message objectForKey:@"idUserFrom"] ] == NSOrderedSame )
         {
             [stringHistory appendString:@"    "];
-            [stringHistory appendString:personThis.strName];
+            [stringHistory appendString:personThis.strFirstName];
             [stringHistory appendString:@": "];
         }
         else
@@ -256,8 +256,8 @@ double animatedDistance;
     currentMessage.strText = textView.text;
     currentMessage.objUserFrom = [PFUser currentUser];
     currentMessage.objUserTo = personThis.personData;
-    currentMessage.strNameUserFrom = strCurrentUserName;
-    currentMessage.strNameUserTo = personThis.strName;
+    currentMessage.strNameUserFrom = [globalVariables fullUserName];
+    currentMessage.strNameUserTo = [personThis fullName];
     [currentMessage save:self selector:@selector(callbackMessageSave:error:)];
     
     // Start animating

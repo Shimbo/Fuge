@@ -349,7 +349,7 @@
 -(void)populateMeetupWithData{
     meetup.meetupType = meetupType;
     meetup.strOwnerId = (NSString *) [[PFUser currentUser] objectForKey:@"fbId"];
-    meetup.strOwnerName = (NSString *) [[PFUser currentUser] objectForKey:@"fbName"];
+    meetup.strOwnerName = [globalVariables fullUserName];
     meetup.strSubject = subject.text;
     meetup.privacy = notifySwitch.isOn ? MEETUP_PUBLIC : MEETUP_PRIVATE;
     meetup.dateTime = meetupDate;

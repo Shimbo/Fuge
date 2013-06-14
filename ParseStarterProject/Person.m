@@ -8,7 +8,7 @@
 
 @implementation Person
 
-@synthesize strId, strName, strAge, strGender, distance, role, strArea, strCircle, idCircle, personData,numUnreadMessages;
+@synthesize strId, strFirstName, strLastName, strAge, strGender, distance, role, strArea, strCircle, idCircle, personData,numUnreadMessages;
 
 + (void)initialize {
 	if (self == [Person class]) {
@@ -23,7 +23,8 @@
         
         // Data parsing
         strId = [user objectForKey:@"fbId"];
-        strName = [user objectForKey:@"fbName"];
+        strFirstName = [user objectForKey:@"fbNameFirst"];
+        strLastName = [user objectForKey:@"fbNameLast"];
         strGender = [user objectForKey:@"fbGender"];
         role = [user objectForKey:@"profileRole"];
         strArea = [user objectForKey:@"profileArea"];
@@ -181,6 +182,15 @@
 //    return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", fbId ? fbId : strId];
 }
 
+-(NSString*)shortName
+{
+    return [globalVariables shortName:strFirstName last:strLastName];
+}
+
+-(NSString*)fullName
+{
+    return [globalVariables fullName:strFirstName last:strLastName];
+}
 
 /*
 - (UIImage *)getImage {

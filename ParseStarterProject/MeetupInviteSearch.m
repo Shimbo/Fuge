@@ -40,7 +40,7 @@
 	PersonInviteCell *personCell = (PersonInviteCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	// Get the time zones for the region for the section
 	Person *person = self.searchResult[indexPath.row];
-    personCell.personName.text = person.strName;
+    personCell.personName.text = [person fullName];
     [personCell.personImage loadImageFromURL:person.imageURL];
     if ([self.selected objectForKey:person.strId]) {
         personCell.accessoryType = UITableViewCellAccessoryCheckmark;

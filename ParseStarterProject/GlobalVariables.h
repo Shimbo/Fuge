@@ -13,7 +13,8 @@
 
 #define pCurrentUser [PFUser currentUser]
 #define strCurrentUserId [[PFUser currentUser] objectForKey:@"fbId"]
-#define strCurrentUserName [[PFUser currentUser] objectForKey:@"fbName"]
+#define strCurrentUserFirstName [[PFUser currentUser] objectForKey:@"fbNameFirst"]
+#define strCurrentUserLastName [[PFUser currentUser] objectForKey:@"fbNameLast"]
 
 #define IPAD (UI_USER_INTERFACE_IDIOM()==UIUserInterfaceIdiomPad)
 
@@ -87,6 +88,10 @@
 - (NSNumber*)currentVersion;
 
 - (NSString*)trimName:(NSString*)name;
+- (NSString*)shortName:(NSString*)firstName last:(NSString*)lastName;
+- (NSString*)fullName:(NSString*)firstName last:(NSString*)lastName;
+- (NSString*)shortUserName;
+- (NSString*)fullUserName;
 
 - (NSMutableArray*)getRoles;
 - (NSString*)roleByNumber:(NSUInteger)number;

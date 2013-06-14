@@ -32,18 +32,18 @@ static GlobalVariables *sharedInstance = nil;
         bSendPushToFriends = FALSE;
         settings = nil;
         
-        // DO NOT change the order, server size uses this numeration
+        // DO NOT change the order, server side uses this numeration
         arrayRoles = [[NSMutableArray alloc] init];
-        [arrayRoles addObject:@"CEO"];
-        [arrayRoles addObject:@"CTO"];
-        [arrayRoles addObject:@"Product lead"];
+        [arrayRoles addObject:@"Other"];
         [arrayRoles addObject:@"Engineer"];
         [arrayRoles addObject:@"Designer"];
         [arrayRoles addObject:@"Marketing"];
+        [arrayRoles addObject:@"Product lead"];
+        [arrayRoles addObject:@"CEO"];
+        [arrayRoles addObject:@"CTO"];
         [arrayRoles addObject:@"Finance"];
         [arrayRoles addObject:@"Consultant"];
         [arrayRoles addObject:@"Teacher"];
-        [arrayRoles addObject:@"Other"];
     }
     
     return self;
@@ -128,6 +128,34 @@ static GlobalVariables *sharedInstance = nil;
     NSRange range = [name rangeOfString:@" "];
     NSString* newString = [NSString stringWithFormat:@"%@.", [name substringToIndex:range.location+2]];
     return newString;
+}
+
+- (NSString*)shortName:(NSString*)firstName last:(NSString*)lastName
+{
+    if ( ! lastName || lastName.length == 0 )
+        return firstName;
+    if ( ! firstName || firstName.length == 0 )
+        return lastName;
+    return [NSString stringWithFormat:@"%@ %@.", firstName, [lastName substringToIndex:1]];
+}
+
+- (NSString*)fullName:(NSString*)firstName last:(NSString*)lastName
+{
+    if ( ! lastName || lastName.length == 0 )
+        return firstName;
+    if ( ! firstName || firstName.length == 0 )
+        return lastName;
+    return [NSString stringWithFormat:@"%@ %@", firstName, lastName];
+}
+
+- (NSString*)shortUserName
+{
+    return [self shortName:strCurrentUserFirstName last:strCurrentUserLastName];
+}
+
+- (NSString*)fullUserName
+{
+    return [self fullName:strCurrentUserFirstName last:strCurrentUserLastName];
 }
 
 - (NSNumber*)currentVersion

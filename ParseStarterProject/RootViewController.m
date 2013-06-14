@@ -139,7 +139,7 @@
 	Circle* circle = [globalData getCircleByNumber:indexPath.section];
 	Person *person = [circle getPersons][indexPath.row];
     [personCell.personImage loadImageFromURL:person.imageURL];
-    personCell.personName.text = person.strName;
+    personCell.personName.text = [person fullName];
     personCell.personDistance.text = [person distanceString];
     if ( person.idCircle == CIRCLE_FBOTHERS )
         personCell.personRole.text = @"Invite!";

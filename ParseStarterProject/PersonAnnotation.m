@@ -16,7 +16,7 @@
 {
     self = [super init];
     if (self) {
-        self.title = person.strName;
+        self.title = [person shortName];
         NSString* strRole = person.role ? [globalVariables getRoles][[person.role integerValue]] : @"";
         self.subtitle = [[NSString alloc] initWithFormat:
                         @"%@%@%@",

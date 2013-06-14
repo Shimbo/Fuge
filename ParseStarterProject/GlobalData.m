@@ -231,7 +231,8 @@ NSInteger sortByName(id num1, id num2, void *context)
         {
             // Store the current user's Facebook ID on the user
             [pCurrentUser setObject:user.id forKey:@"fbId"];
-            [pCurrentUser setObject:user.name forKey:@"fbName"];
+            [pCurrentUser setObject:user.first_name forKey:@"fbNameFirst"];
+            [pCurrentUser setObject:user.last_name forKey:@"fbNameLast"];
             [pCurrentUser setObject:user.birthday forKey:@"fbBirthday"];
             if ( [user objectForKey:@"gender"] )
                 [pCurrentUser setObject:[user objectForKey:@"gender"]
@@ -563,7 +564,7 @@ NSInteger sortByName(id num1, id num2, void *context)
             if ( [strId compare:strIdFb] == NSOrderedSame )
             {
                 Person* person = [[Person alloc] initEmpty:CIRCLE_FBOTHERS];
-                person.strName = [friendObject objectForKey:@"name"];
+                person.strFirstName = [friendObject objectForKey:@"name"];
                 person.strId = strId;
                 [fbCircle addPerson:person];
             }
@@ -799,7 +800,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [invite setObject:meetup.strSubject forKey:@"meetupSubject"];
     
     [invite setObject:strCurrentUserId forKey:@"idUserFrom"];
-    [invite setObject:strCurrentUserName forKey:@"nameUserFrom"];
+    [invite setObject:[globalVariables fullUserName] forKey:@"nameUserFrom"];
     [invite setObject:[PFUser currentUser] forKey:@"objUserFrom"];
     [invite setObject:strRecipient forKey:@"idUserTo"];
     NSNumber *inviteStatus = [[NSNumber alloc] initWithInt:INVITE_NEW];
@@ -844,33 +845,28 @@ NSInteger sortByName(id num1, id num2, void *context)
     // Creating comment about meetup creation in db
     PFObject* comment = [PFObject objectWithClassName:@"Comment"];
     NSMutableString* strComment = [[NSMutableString alloc] initWithFormat:@""];
-    Boolean bSystem = false;
-    NSNumber* trueNum = [[NSNumber alloc] initWithInt:1];
     NSNumber* typeNum = [[NSNumber alloc] initWithInt:meetup.meetupType];
     
     switch (type)
     {
         case COMMENT_CREATED:
-            [strComment appendString:[pCurrentUser objectForKey:@"fbName"]];
+            [strComment appendString:[globalVariables fullUserName]];
             if (meetup.meetupType == TYPE_MEETUP)
                 [strComment appendString:@" created the meetup: "];
             else
                 [strComment appendString:@" created the thread: "];
             [strComment appendString:meetup.strSubject];
-            bSystem = true;
             break;
         case COMMENT_SAVED:
-            [strComment appendString:[pCurrentUser objectForKey:@"fbName"]];
+            [strComment appendString:[globalVariables fullUserName]];
             if (meetup.meetupType == TYPE_MEETUP)
                 [strComment appendString:@" changed meetup details."];
             else
                 [strComment appendString:@" changed thread details."];
-            bSystem = true;
             break;
         case COMMENT_JOINED:
-            [strComment appendString:[pCurrentUser objectForKey:@"fbName"]];
+            [strComment appendString:[globalVariables fullUserName]];
             [strComment appendString:@" joined the event."];
-            bSystem = true;
             break;
         case COMMENT_PLAIN:
             [strComment appendString:text];
@@ -879,10 +875,9 @@ NSInteger sortByName(id num1, id num2, void *context)
             break;
     }
     
-    if ( bSystem )
-        [comment setObject:trueNum forKey:@"system"];
+    [comment setObject:[NSNumber numberWithInt:type] forKey:@"system"];
     [comment setObject:strCurrentUserId forKey:@"userId"];
-    [comment setObject:strCurrentUserName forKey:@"userName"];
+    [comment setObject:[globalVariables fullUserName] forKey:@"userName"];
     [comment setObject:pCurrentUser forKey:@"userData"];
     [comment setObject:meetup.strSubject forKey:@"meetupSubject"];
     [comment setObject:meetup.strId forKey:@"meetupId"];
@@ -904,8 +899,8 @@ NSInteger sortByName(id num1, id num2, void *context)
     // Subscription
     [globalData subscribeToThread:meetup.strId];
     
-    // Send push if not system
-    if ( ! bSystem )
+    // Send push for normal comment
+    if ( type == COMMENT_PLAIN )
         [pushManager sendPushCommentedMeetup:meetup.strId];
 }
 
@@ -936,7 +931,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     // Attendee in db (to store the data and update counters)
     PFObject* attendee = [PFObject objectWithClassName:@"Attendee"];
     [attendee setObject:strCurrentUserId forKey:@"userId"];
-    [attendee setObject:strCurrentUserName forKey:@"userName"];
+    [attendee setObject:[globalVariables fullUserName] forKey:@"userName"];
     [attendee setObject:pCurrentUser forKey:@"userData"];
     [attendee setObject:meetup.strId forKey:@"meetupId"];
     [attendee setObject:meetup.strSubject forKey:@"meetupSubject"];

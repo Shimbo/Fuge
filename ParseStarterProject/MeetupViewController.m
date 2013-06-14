@@ -332,7 +332,7 @@
             {
                 NSNumber* nSystem = [comment objectForKey:@"system"];
                 NSString* strUserName = [comment objectForKey:@"userName"];
-                if ( ! nSystem )   // Not system comment
+                if ( ! nSystem || [nSystem intValue] == 0 )   // Not a system comment
                 {
                     [stringComments appendString:@"    "];
                     [stringComments appendString:strUserName];
@@ -496,7 +496,7 @@ double animatedDistance;
     // Adding comment to the list
     NSMutableString* stringComments = [[NSMutableString alloc] initWithString:comments.text];
     [stringComments appendString:@"    "];
-    [stringComments appendString:strCurrentUserName];
+    [stringComments appendString:[globalVariables fullUserName]];
     [stringComments appendString:@": "];
     [stringComments appendString:textView.text];
     [stringComments appendString:@"\n"];

@@ -8,7 +8,8 @@
 @interface Person : NSObject {
     
     NSString *strId;
-    NSString *strName;
+    NSString *strFirstName;
+    NSString *strLastName;
     NSString *strAge;
     NSString *strGender;
     NSNumber *distance;
@@ -27,7 +28,8 @@
 }
 
 @property (nonatomic, retain) NSString *strId;
-@property (nonatomic, retain) NSString *strName;
+@property (nonatomic, retain) NSString *strFirstName;
+@property (nonatomic, retain) NSString *strLastName;
 @property (nonatomic, retain) NSString *strAge;
 @property (nonatomic, retain) NSString *strGender;
 @property (nonatomic, retain) NSNumber *distance;
@@ -61,6 +63,9 @@
 
 +(NSString*)imageURLWithId:(NSString*)fbId;
 +(NSString*)largeImageURLWithId:(NSString*)fbId;
+
+-(NSString*)shortName;
+-(NSString*)fullName;
 
 //- (void) setLocation:(CLLocationCoordinate2D) loc;
 - (PFGeoPoint*) getLocation;

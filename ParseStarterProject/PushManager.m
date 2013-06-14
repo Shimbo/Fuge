@@ -45,7 +45,7 @@ static PushManager *sharedInstance = nil;
     if ( [dicNewUserPushesSent objectForKey:strTo] )
         return;
     
-    NSString* strName = [[PFUser currentUser] objectForKey:@"fbName"];
+    NSString* strName = [globalVariables fullUserName];
     NSString* strPush = @"Wrong push! Error codename: Cleopatra.";
     switch (pushType)
     {
@@ -76,7 +76,7 @@ static PushManager *sharedInstance = nil;
 - (void)sendPushNewMessage:(NSString*)userId text:(NSString*)strText
 {
     NSString* strChannel = [NSString stringWithFormat:@"fb%@", userId];
-    NSString* strPush = [NSString stringWithFormat:@"%@: %@", [globalVariables trimName:strCurrentUserName], strText];
+    NSString* strPush = [NSString stringWithFormat:@"%@: %@", [globalVariables shortUserName], strText];
     NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
                           @"New message!",  @"title",
                           strPush,          @"alert",
@@ -105,7 +105,7 @@ static PushManager *sharedInstance = nil;
     [pushQuery whereKey:@"ownerId" containedIn:meetup.attendees];
     [pushQuery whereKey:@"ownerId" notEqualTo:strCurrentUserId];
     
-    NSString* strText = [NSString stringWithFormat:@"%@ joined meetup %@", [globalVariables trimName:strCurrentUserName], meetup.strSubject];
+    NSString* strText = [NSString stringWithFormat:@"%@ joined meetup %@", [globalVariables shortUserName], meetup.strSubject];
     
     PFPush *push = [[PFPush alloc] init];
     [push setQuery:pushQuery];
@@ -129,7 +129,7 @@ static PushManager *sharedInstance = nil;
     [pushQuery whereKey:@"ownerId" containedIn:meetup.attendees];
     [pushQuery whereKey:@"ownerId" notEqualTo:strCurrentUserId];
     
-    NSString* strText = [NSString stringWithFormat:@"%@ left a comment in %@", [globalVariables trimName:strCurrentUserName], meetup.strSubject];
+    NSString* strText = [NSString stringWithFormat:@"%@ left a comment in %@", [globalVariables shortUserName], meetup.strSubject];
     
     PFPush *push = [[PFPush alloc] init];
     [push setQuery:pushQuery];
@@ -150,7 +150,7 @@ static PushManager *sharedInstance = nil;
         return;
     
     NSString* strChannel = [NSString stringWithFormat:@"fb%@", userId];
-    NSString* strText = [NSString stringWithFormat:@"%@ invited you to %@", [globalVariables trimName:strCurrentUserName], meetup.strSubject];
+    NSString* strText = [NSString stringWithFormat:@"%@ invited you to %@", [globalVariables shortUserName], meetup.strSubject];
     NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
                           @"New comment!",  @"title",
                           strText,          @"alert",
@@ -187,12 +187,12 @@ static PushManager *sharedInstance = nil;
     NSString* strTitle;
     if ( meetup.meetupType == TYPE_MEETUP )
     {
-        strText = [NSString stringWithFormat:@"%@ just created a meetup nearby: %@", [globalVariables trimName:strCurrentUserName], meetup.strSubject];
+        strText = [NSString stringWithFormat:@"%@ just created a meetup nearby: %@", [globalVariables shortUserName], meetup.strSubject];
         strTitle = @"New meetup!";
     }
     else
     {
-        strText = [NSString stringWithFormat:@"%@ just created a thread nearby: %@", [globalVariables trimName:strCurrentUserName], meetup.strSubject];
+        strText = [NSString stringWithFormat:@"%@ just created a thread nearby: %@", [globalVariables shortUserName], meetup.strSubject];
         strTitle = @"New thread!";
     }
     

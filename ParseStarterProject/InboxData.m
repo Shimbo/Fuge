@@ -113,7 +113,7 @@ NSInteger sort2(id item1, id item2, void *context)
             item.fromId = pObject.strId;
             item.toId = pObject.strId;
             item.subject = [[NSString alloc] initWithFormat:@"New %@ joined the app!", pObject.strCircle];
-            item.message = pObject.strName;
+            item.message = [pObject fullName];
             item.misc = nil;
             item.data = pObject;
             item.dateTime = nil;

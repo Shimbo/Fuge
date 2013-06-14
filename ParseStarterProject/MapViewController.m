@@ -182,8 +182,8 @@
         Person *p = [[Person alloc]init:[PFUser currentUser] circle:0];
         p.isCurrentUser = YES;
         _userLocation = [[PersonAnnotation alloc] initWithPerson:p];
-        _userLocation.title = [[PFUser currentUser] objectForKey:@"fbName"];
-        _userLocation.subtitle = @"This is you.";
+        _userLocation.title = [globalVariables shortUserName];
+        _userLocation.subtitle = @"This is you";
         
     }
     
