@@ -87,7 +87,7 @@
             _timerView.timerColor = [MainStyle yellowColor];
             break;
         case PinGray:
-            _timerView.timerColor = [UIColor clearColor];
+            _timerView.timerColor = [MainStyle lightGrayColor];
             break;
         default:
             _timerView.timerColor = nil;

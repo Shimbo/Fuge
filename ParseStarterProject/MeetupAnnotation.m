@@ -46,28 +46,24 @@
     coord.longitude = self.meetup.location.longitude;
     self.coordinate = coord;
     
-    
-    
     BOOL passed = [self.meetup hasPassed]; // grey?
+    BOOL read = false;
+    
     BOOL attorsubsc; // orange or just blue?
     if (!passed) {
         if ( self.meetup.meetupType == TYPE_MEETUP )
             attorsubsc = [globalData isAttendingMeetup:self.meetup.strId];
-        else {
+        else
             attorsubsc = [globalData isSubscribedToThread:self.meetup.strId];
-            
-            // all read threads are passed as well
+        
+        // all read threads are passed as well
+        if ( ! attorsubsc )
             if ( [globalData getConversationPresence:self.meetup.strId] )
-            {
-                NSUInteger nComments = [globalData getConversationCount:self.meetup.strId];
-                if ( nComments == self.meetup.numComments )
-                    passed = true;
-            }
-        }
+                read = true;
     }
     
     self.pinColor = PinBlue;
-    if (passed) {
+    if (passed || read) {
         self.pinColor = PinGray;
     }else if (attorsubsc){
         self.pinColor = PinOrange;

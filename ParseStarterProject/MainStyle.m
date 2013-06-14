@@ -43,4 +43,12 @@
                             blue:143/255.0
                            alpha:1];
 }
+
++(UIColor*)lightGrayColor{
+    return [UIColor colorWithRed:190/255.0
+                           green:190/255.0
+                            blue:190/255.0
+                           alpha:1];
+}
+
 @end
