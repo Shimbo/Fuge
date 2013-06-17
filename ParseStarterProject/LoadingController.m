@@ -38,6 +38,7 @@ static Boolean bRotating = true;
         bAnimation = true;
         nAnimationStage = 0;
         _backgroundImage.alpha = 0.0f;
+        
         [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:NO];
     }
     return self;
@@ -54,6 +55,8 @@ static Boolean bRotating = true;
     [PFACL setDefaultACL:defaultACL withAccessForCurrentUser:YES];
     
     // Zoom in animated
+    _whiteImage.hidden = FALSE;
+    _whiteImage.transform = CGAffineTransformScale(CGAffineTransformIdentity, 3.0, 3.0);
     _backgroundImage.alpha = 0.0f;
     _backgroundImage.hidden = FALSE;
     [UIView beginAnimations:nil context:NULL];
@@ -218,65 +221,151 @@ static Boolean bRotating = true;
 
 - (void) hideAll
 {
-    _loginButton.hidden = TRUE;
-    _retryButton.hidden = TRUE;
-    _descriptionText.hidden = TRUE;
-    _titleText.hidden = TRUE;
-    _miscText.hidden = TRUE;
+    bAnimation = true;
+    nAnimationStage = 0;
+    
+    _loginButton.alpha = 1.0f;
+    _retryButton.alpha = 1.0f;
+    _updateButton.alpha = 1.0f;
+    _descriptionText.alpha = 1.0f;
+    _titleText.alpha = 1.0f;
+    _miscText.alpha = 1.0f;
+    _whiteImage.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.0, 1.0);
+    
+    [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
+        _loginButton.centerY += 200;
+        _retryButton.centerY += 200;
+        _updateButton.centerY += 200;
+        _descriptionText.centerY -= 200;
+        _titleText.centerY -= 200;
+        _miscText.centerY += 200;
+        _loginButton.alpha = 0.0f;
+        _retryButton.alpha = 0.0f;
+        _updateButton.alpha = 0.0f;
+        _descriptionText.alpha = 0.0f;
+        _titleText.alpha = 0.0f;
+        _miscText.alpha = 0.0f;
+        _whiteImage.transform = CGAffineTransformScale(CGAffineTransformIdentity, 3.0, 3.0);
+    }
+    completion: ^(BOOL finished) {
+        _loginButton.hidden = TRUE;
+        _retryButton.hidden = TRUE;
+        _descriptionText.hidden = TRUE;
+        _titleText.hidden = TRUE;
+        _miscText.hidden = TRUE;
+        _loginButton.centerY -= 200;
+        _retryButton.centerY -= 200;
+        _updateButton.centerY -= 200;
+        _descriptionText.centerY += 200;
+        _titleText.centerY += 200;
+        _miscText.centerY -= 200;
+    }];
+}
+
+- (void) showAll
+{
+    bAnimation = false;
+    
+    _loginButton.centerY += 200;
+    _retryButton.centerY += 200;
+    _updateButton.centerY += 200;
+    _descriptionText.centerY -= 200;
+    _titleText.centerY -= 200;
+    _miscText.centerY += 200;
+    _loginButton.alpha = 0;
+    _retryButton.alpha = 0;
+    _updateButton.alpha = 0;
+    _descriptionText.alpha = 0;
+    _titleText.alpha = 0;
+    _miscText.alpha = 0;
+    _whiteImage.transform = CGAffineTransformScale(CGAffineTransformIdentity, 3.0, 3.0);
+    
+    [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
+        _loginButton.centerY -= 200;
+        _retryButton.centerY -= 200;
+        _updateButton.centerY -= 200;
+        _descriptionText.centerY += 200;
+        _titleText.centerY += 200;
+        _miscText.centerY -= 200;
+        _loginButton.alpha = 1.0f;
+        _retryButton.alpha = 1.0f;
+        _updateButton.alpha = 1.0f;
+        _descriptionText.alpha = 1.0f;
+        _titleText.alpha = 1.0f;
+        _miscText.alpha = 1.0f;
+        _whiteImage.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.0, 1.0);
+    }
+    completion: ^(BOOL finished) {
+    }];
 }
 
 - (void) notLoggedIn
 {
-    bAnimation = false;
+    _retryButton.hidden = TRUE;
     _loginButton.hidden = FALSE;
+    _updateButton.hidden = TRUE;
+    
     _descriptionText.hidden = FALSE;
     _titleText.hidden = FALSE;
     _miscText.hidden = FALSE;
-    _titleText.text = @"Welcome stranger!";
-    _descriptionText.text = @"ThisApp is a location-based people \n discovery and messaging service. \n If sounds a bit complicated, betta try!";
+    
+    _titleText.text = @"Welcome!";
+    _descriptionText.text = @"Fuge is a mobile discovery service for\npeople and activities nearby. Please, keep\nin mind that we're still in early beta.";
+    
+    [self showAll];
 }
 
 - (void) noInternet
 {
-    bAnimation = false;
     _loginButton.hidden = TRUE;
     _retryButton.hidden = FALSE;
+    _updateButton.hidden = TRUE;
+    
     _descriptionText.hidden = FALSE;
     _titleText.hidden = FALSE;
     _miscText.hidden = TRUE;
+    
     _titleText.text = @"Ooups!";
     _descriptionText.text = @"It seems like you don’t have internet \n connection at the moment. Try \n again if you’re so confident!";
+    
+    [self showAll];
 }
 
 - (void) loginFailed
 {
-    bAnimation = false;
     _loginButton.hidden = FALSE;
+    _retryButton.hidden = TRUE;
+    _updateButton.hidden = TRUE;
+    
     _descriptionText.hidden = FALSE;
     _titleText.hidden = FALSE;
     _miscText.hidden = FALSE;
+    
     _titleText.text = @"Ooups!";
     _descriptionText.text = @"Looks like you haven’t finished \n login process or wasn’t able to do so. \n Please, try again!";
+    
+    [self showAll];
 }
 
 - (void) oldVersion
 {
-    bAnimation = false;
     _loginButton.hidden = TRUE;
     _retryButton.hidden = TRUE;
     _updateButton.hidden = FALSE;
+    
     _descriptionText.hidden = FALSE;
     _titleText.hidden = FALSE;
     _miscText.hidden = TRUE;
+    
     _titleText.text = @"Outdated version!";
     _descriptionText.text = @"What age did you come from? Why\n still using this version instead\n of a new and shiny one?";
+    
+    [self showAll];
 }
 
 - (IBAction)loginDown:(id)sender {
     
     // Activity indicator
-    bAnimation = true;
-    nAnimationStage = 0;
     [self hideAll];
     
     NSArray *permissionsArray = @[ @"user_about_me", @"user_relationships", @"user_birthday", @"user_location", @"email"];
@@ -330,8 +419,6 @@ static Boolean bRotating = true;
 }
 
 - (IBAction)retryDown:(id)sender {
-    bAnimation = true;
-    nAnimationStage = 0;
     [self hideAll];
     if ( bVersionChecked )
         [self performSelector:@selector(loadSequencePart2) withObject:nil afterDelay:0.01f];
@@ -360,5 +447,9 @@ static Boolean bRotating = true;
 
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter]removeObserver:self];
+}
+- (void)viewDidUnload {
+    [self setWhiteImage:nil];
+    [super viewDidUnload];
 }
 @end

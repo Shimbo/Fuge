@@ -32,7 +32,7 @@
 {
     NSString* strKey = @"distance";
     if ( idCircle == CIRCLE_FBOTHERS )
-        strKey = @"strName";
+        strKey = @"strFirstName";
 	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:strKey ascending:YES];
 	NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
 	[persons sortUsingDescriptors:sortDescriptors];

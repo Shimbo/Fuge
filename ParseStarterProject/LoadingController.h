@@ -21,6 +21,7 @@
 @property (strong, nonatomic) IBOutlet UITextView *descriptionText;
 @property (strong, nonatomic) IBOutlet UILabel *miscText;
 @property (strong, nonatomic) IBOutlet UIImageView *backgroundImage;
+@property (strong, nonatomic) IBOutlet UIImageView *whiteImage;
 
 - (IBAction)loginDown:(id)sender;
 - (IBAction)retryDown:(id)sender;
