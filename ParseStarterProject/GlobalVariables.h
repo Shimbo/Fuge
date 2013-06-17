@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <Parse/Parse.h>
 
+//#define IOS7_ENABLE
+
 #define globalVariables [GlobalVariables sharedInstance]
 
 #define pCurrentUser [PFUser currentUser]

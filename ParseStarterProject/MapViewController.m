@@ -170,7 +170,9 @@
     [mapView setScrollEnabled:YES];
     [mapView setDelegate:self];
     mapView.showsUserLocation = NO;
+#ifdef IOS7_ENABLE
     mapView.rotateEnabled = FALSE;
+#endif
     
     _locationManager = [[CLLocationManager alloc]init];
     _locationManager.delegate = self;
