@@ -12,6 +12,11 @@
 
 
 @implementation REVClusterPin
-@synthesize title,coordinate,subtitle;
+@synthesize title,coordinate,subtitle,nodes,nodeCount,pinColor,time;
+
+- (BOOL)canGroup
+{
+    return TRUE;
+}
 
 @end

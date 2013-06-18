@@ -52,6 +52,7 @@ static Boolean bRotating = true;
     // ACL
     PFACL *defaultACL = [PFACL ACL];
     [defaultACL setPublicReadAccess:YES];
+    [defaultACL setWriteAccess:TRUE forRoleWithName:@"Moderator"];
     [PFACL setDefaultACL:defaultACL withAccessForCurrentUser:YES];
     
     // Zoom in animated
@@ -133,7 +134,19 @@ static Boolean bRotating = true;
             if ( error )
                 [ctrl noInternet];
             else
-                [globalData loadData];
+            {
+                Boolean bBanned = FALSE;
+                if ( [pCurrentUser objectForKey:@"banExpDate"] )
+                {
+                    NSDate* date = [pCurrentUser objectForKey:@"banExpDate"];
+                    if ( [date compare:[NSDate date]] == NSOrderedDescending )
+                        bBanned = TRUE;
+                }
+                if ( bBanned )
+                    [ctrl bannedUser];
+                else
+                    [globalData loadData];
+            }
         }];
     }
 }
@@ -326,7 +339,7 @@ static Boolean bRotating = true;
     _miscText.hidden = TRUE;
     
     _titleText.text = @"Ooups!";
-    _descriptionText.text = @"It seems like you don’t have internet \n connection at the moment. Try \n again if you’re so confident!";
+    _descriptionText.text = @"It seems like you don’t have internet \n connection at the moment. Try \n again when you will get some!";
     
     [self showAll];
 }
@@ -362,6 +375,30 @@ static Boolean bRotating = true;
     
     [self showAll];
 }
+
+- (void) bannedUser
+{
+    _loginButton.hidden = TRUE;
+    _retryButton.hidden = TRUE;
+    _updateButton.hidden = TRUE;
+    
+    _descriptionText.hidden = FALSE;
+    _titleText.hidden = FALSE;
+    _miscText.hidden = FALSE;
+    
+    _titleText.text = @"You are banned!";
+    _miscText.text = @"Don't mess up next time!";
+    
+    NSDate* expirationDate = [pCurrentUser objectForKey:@"banExpDate"];
+    NSTimeInterval interval = [expirationDate timeIntervalSinceDate:[NSDate date]];
+    NSInteger daysLeft = interval / (3600*24) + 1;
+    NSString* strDays = daysLeft == 1 ? @"day" : @"days";
+    
+    _descriptionText.text = [NSString stringWithFormat:@"So, you've got a ban. What a shame.\nWas it spam or rudeness? Whatever.\nYour ban will expire in %d %@.", daysLeft, strDays];
+    
+    [self showAll];
+}
+
 
 - (IBAction)loginDown:(id)sender {
     

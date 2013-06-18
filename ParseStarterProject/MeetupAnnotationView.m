@@ -23,7 +23,7 @@
     _back = [[UIImageView alloc]init];
     [self addSubview:_back];
     
-    _icon = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"iconMeetup.png"]];
+    _icon = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"iconMtGeneric.png"]];
     _icon.center = CGPointMake(24, 24);
     [self addSubview:_icon];
     

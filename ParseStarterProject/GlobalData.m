@@ -436,6 +436,24 @@ NSInteger sortByName(id num1, id num2, void *context)
             
             // 2O friends
             [self load2OFriendsInBackground:friends];
+            
+            // Admin role creation, DEV CODE, don't uncomment!
+            /*PFACL* adminACL = [PFACL ACLWithUser:pCurrentUser];
+            [adminACL setReadAccess:TRUE forUserId:@"n6cZJLJJnW"];
+            [adminACL setWriteAccess:TRUE forUserId:@"n6cZJLJJnW"];
+            PFRole* role = [PFRole roleWithName:@"Admin" acl:adminACL];
+            [role.users addObject:pCurrentUser];
+            [role.users addObject:[self getPersonById:@"1377492801"].personData];
+            [role save];*/
+            
+            /*PFACL* moderatorACL = [PFACL ACLWithUser:pCurrentUser];
+            [moderatorACL setReadAccess:TRUE forUserId:@"n6cZJLJJnW"];
+            [moderatorACL setWriteAccess:TRUE forUserId:@"n6cZJLJJnW"];
+            PFRole* role = [PFRole roleWithName:@"Moderator" acl:moderatorACL];
+            [role.users addObject:pCurrentUser];
+            [role.users addObject:[self getPersonById:@"1377492801"].personData];
+            [role.users addObject:[self getPersonById:@"1302078057"].personData];
+            [role save];*/
         }
     }];
 }

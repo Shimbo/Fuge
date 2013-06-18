@@ -27,9 +27,15 @@
     // Already saved
     if ( messageData )
         return;
-        
+    
     messageData = [PFObject objectWithClassName:@"Message"];
-
+    
+    PFACL* messageACL = [PFACL ACLWithUser:pCurrentUser];
+    [messageACL setReadAccess:TRUE forUser:objUserTo];
+    [messageACL setReadAccess:TRUE forRoleWithName:@"Moderator"];
+    [messageACL setWriteAccess:TRUE forRoleWithName:@"Moderator"];
+    [messageData setACL:messageACL];
+    
     [messageData setObject:strUserFrom forKey:@"idUserFrom"];
     [messageData setObject:strUserTo forKey:@"idUserTo"];
     [messageData setObject:strText forKey:@"text"];
