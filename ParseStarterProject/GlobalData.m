@@ -520,7 +520,8 @@ NSInteger sortByName(id num1, id num2, void *context)
         if ( ! ptUser )
             ptUser = [locManager getDefaultPosition];
         
-        [friendAnyQuery whereKey:@"location" nearGeoPoint:ptUser withinKilometers:RANDOM_PERSON_KILOMETERS];
+        NSUInteger nDistance = [globalVariables isUserAdmin] ? RANDOM_PERSON_KILOMETERS_ADMIN : RANDOM_PERSON_KILOMETERS_NORMAL;
+        [friendAnyQuery whereKey:@"location" nearGeoPoint:ptUser withinKilometers:nDistance];
     }
     else
     {
@@ -702,7 +703,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 - (void)loadMeetupsInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast
 {
     PFQuery *meetupAnyQuery = [PFQuery queryWithClassName:@"Meetup"];
-    meetupAnyQuery.limit = 1000;
+    meetupAnyQuery.limit = 100;
     
     // Location filter
     if ( ! southWest )
@@ -710,8 +711,9 @@ NSInteger sortByName(id num1, id num2, void *context)
         PFGeoPoint* ptUser = [[PFUser currentUser] objectForKey:@"location"];
         if ( ! ptUser )
             ptUser = [locManager getDefaultPosition];
-
-        [meetupAnyQuery whereKey:@"location" nearGeoPoint:ptUser withinKilometers:RANDOM_EVENT_KILOMETERS];
+        
+        NSUInteger nDistance = [globalVariables isUserAdmin] ? RANDOM_EVENT_KILOMETERS_ADMIN : RANDOM_EVENT_KILOMETERS_NORMAL;
+        [meetupAnyQuery whereKey:@"location" nearGeoPoint:ptUser withinKilometers:nDistance];
     }
     else
     {

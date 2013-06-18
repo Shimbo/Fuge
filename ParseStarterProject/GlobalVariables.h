@@ -23,8 +23,11 @@
 #define meetupIcons @[@"iconMtGeneric", @"iconMtMovie", @"iconMtMusic", @"iconMtSports", @"iconMtGames", @"iconMtStudy"]
 
 // Query distance to discover
-#define RANDOM_PERSON_KILOMETERS    50000
-#define RANDOM_EVENT_KILOMETERS     50000
+#define RANDOM_PERSON_KILOMETERS_NORMAL    50
+#define RANDOM_EVENT_KILOMETERS_NORMAL     50
+#define RANDOM_PERSON_KILOMETERS_ADMIN     50000
+#define RANDOM_EVENT_KILOMETERS_ADMIN      50000
+
 
 // Location update distance (to call save for PFUser
 #define LOCATION_UPDATE_KILOMETERS  0.5f
