@@ -510,7 +510,10 @@ NSInteger sortByName(id num1, id num2, void *context)
 {
     // Query
     PFQuery *friendAnyQuery = [PFUser query];
-    friendAnyQuery.limit = 100;
+    if ( [globalVariables isUserAdmin] )
+        friendAnyQuery.limit = 1000;
+    else
+        friendAnyQuery.limit = 100;
     [friendAnyQuery orderByDescending:@"updatedAt"];
     
     // We could load based on player location or map rect if he moved the map later
@@ -703,7 +706,10 @@ NSInteger sortByName(id num1, id num2, void *context)
 - (void)loadMeetupsInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast
 {
     PFQuery *meetupAnyQuery = [PFQuery queryWithClassName:@"Meetup"];
-    meetupAnyQuery.limit = 100;
+    if ( [globalVariables isUserAdmin] )
+        meetupAnyQuery.limit = 1000;
+    else
+        meetupAnyQuery.limit = 100;
     
     // Location filter
     if ( ! southWest )
