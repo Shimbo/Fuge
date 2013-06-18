@@ -129,7 +129,6 @@ typedef  enum EMeetupCommentType
 - (NSArray*) getRecentVenues;
 //- (void) addPersonToSeenList:(NSString*)strId;    // not used as rudimental yet
 //- (Boolean) isPersonSeen:(NSString*)strId;
-- (Boolean) isUserAdmin;
 - (Boolean) setUserPosition:(PFGeoPoint*)geoPoint;
 - (void) removeUserFromNew:(NSString*)strUser;
 - (void) attendMeetup:(Meetup*)meetup;

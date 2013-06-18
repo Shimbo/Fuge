@@ -164,4 +164,11 @@ static GlobalVariables *sharedInstance = nil;
     return [NSNumber numberWithFloat:[strData floatValue]];
 }
 
+- (Boolean) isUserAdmin
+{
+    if ([[PFUser currentUser] objectForKey:@"admin"])
+        return true;
+    return false;
+}
+
 @end

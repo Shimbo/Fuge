@@ -55,6 +55,9 @@
 // Text view for outcoming messages
 #define TEXT_VIEW_MAX_LINES         9
 
+// Otherwise not showing at all
+#define MAX_DAYS_TILL_MEETUP        7
+
 // App store path
 #define APP_STORE_PATH              @"http://itunes.apple.com/app/id662139655"
 
@@ -88,6 +91,8 @@
 + (id)sharedInstance;
 
 - (NSNumber*)currentVersion;
+
+- (Boolean) isUserAdmin;
 
 - (NSString*)trimName:(NSString*)name;
 - (NSString*)shortName:(NSString*)firstName last:(NSString*)lastName;

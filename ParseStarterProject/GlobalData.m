@@ -718,9 +718,15 @@ NSInteger sortByName(id num1, id num2, void *context)
         [meetupAnyQuery whereKey:@"location" withinGeoBoxFromSouthwest:southWest toNortheast:northEast];
     }
     
-    // Date-time filter
-    NSDate* dateHide = [NSDate date];
-    [meetupAnyQuery whereKey:@"meetupDateExp" greaterThan:dateHide];
+    // Expired meetups
+    NSDate* dateLate = [NSDate date];
+    [meetupAnyQuery whereKey:@"meetupDateExp" greaterThan:dateLate];
+    
+    // Meetups too far in the future
+    NSDateComponents* deltaCompsMax = [[NSDateComponents alloc] init];
+    [deltaCompsMax setDay:MAX_DAYS_TILL_MEETUP];
+    NSDate* dateEarly = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsMax toDate:[NSDate date] options:0];
+    [meetupAnyQuery whereKey:@"meetupDate" lessThan:dateEarly];
     
     // Privacy filter
     NSNumber* privacyTypePrivate = [[NSNumber alloc] initWithInt:MEETUP_PRIVATE];
@@ -762,7 +768,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         meetupAnyQuery = [PFQuery queryWithClassName:@"Meetup"];
         meetupAnyQuery.limit = 1000;
         [meetupAnyQuery orderByAscending:@"meetupDate"];
-        [meetupAnyQuery whereKey:@"meetupDateExp" greaterThan:dateHide];
+        [meetupAnyQuery whereKey:@"meetupDateExp" greaterThan:dateLate];
         [meetupAnyQuery whereKey:@"meetupId" containedIn:subscriptions];
         
         // Query for public/2O meetups
@@ -1101,12 +1107,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     return false;
 }*/
 
-- (Boolean) isUserAdmin
-{
-    if ([[PFUser currentUser] objectForKey:@"admin"])
-        return true;
-    return false;
-}
+
 
 - (Boolean) setUserPosition:(PFGeoPoint*)geoPoint
 {

@@ -188,8 +188,7 @@
 {
     if (!datePicker) {
         datePicker = [UIDatePicker new];
-        [datePicker addTarget:self action:@selector(dateChanged:) forControlEvents:UIControlEventValueChanged];
-        [self.view addSubview:datePicker];
+        
         datePicker.originY = self.view.height;
         datePicker.originX = self.view.width/2 - datePicker.width/2;
         datePicker.datePickerMode = UIDatePickerModeDateAndTime;
@@ -199,12 +198,19 @@
         [deltaCompsMin setMinute:15];
         NSDate* dateMin = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsMin toDate:[NSDate date] options:0];
         NSDateComponents* deltaCompsMax = [[NSDateComponents alloc] init];
-        [deltaCompsMax setDay:7];
+        
+        if ( [globalVariables isUserAdmin] )
+            [deltaCompsMax setDay:60];
+        else
+            [deltaCompsMax setDay:7];
         NSDate* dateMax = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsMax toDate:[NSDate date] options:0];
         
         [datePicker setMinimumDate:dateMin];
         [datePicker setMaximumDate:dateMax];
         [datePicker setDate:meetupDate];
+        
+        [datePicker addTarget:self action:@selector(dateChanged:) forControlEvents:UIControlEventValueChanged];
+        [self.view addSubview:datePicker];
         
         [self.view endEditing:YES];
         location.userInteractionEnabled = NO;

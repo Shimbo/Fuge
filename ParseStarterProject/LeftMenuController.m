@@ -44,7 +44,7 @@
     _items = [[NSMutableArray alloc] initWithArray:items];
     _selectors = [[NSMutableArray alloc] initWithArray:selectors];
     
-    if ( [globalData isUserAdmin])
+    if ( [globalVariables isUserAdmin])
     {
         [_items addObject:@"Stats"];
         [_selectors addObject:@"showStats"];
