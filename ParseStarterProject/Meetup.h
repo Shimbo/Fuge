@@ -41,6 +41,7 @@ typedef enum kEMeetupPrivacy
     NSDate      *dateTimeExp;
     PFGeoPoint  *location;
     EMeetupPrivacy  privacy;
+    NSUInteger  iconNumber;
     
     NSUInteger  durationSeconds;
     
@@ -71,6 +72,7 @@ typedef enum kEMeetupPrivacy
 @property (nonatomic, copy) NSMutableArray* decliners;
 @property (nonatomic, assign) NSUInteger durationSeconds;
 @property (nonatomic, assign) Boolean bFacebookEvent;
+@property (nonatomic, assign) NSUInteger iconNumber;
 
 @property (nonatomic, copy) PFObject *meetupData;
 

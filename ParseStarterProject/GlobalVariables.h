@@ -20,7 +20,7 @@
 
 #define IPAD (UI_USER_INTERFACE_IDIOM()==UIUserInterfaceIdiomPad)
 
-#define meetupIcons @[@"iconMeetup", @"iconThread", @"iconThread", @"iconThread", @"iconThread", @"iconThread", @"iconThread"]
+#define meetupIcons @[@"iconMtGeneric", @"iconMtMovie", @"iconMtMusic", @"iconMtSports", @"iconMtGames", @"iconMtStudy"]
 
 // Query distance to discover
 #define RANDOM_PERSON_KILOMETERS    50000
@@ -56,7 +56,7 @@
 #define TEXT_VIEW_MAX_LINES         9
 
 // App store path
-#define APP_STORE_PATH              @"http://itunes.apple.com/app/id378458261"
+#define APP_STORE_PATH              @"http://itunes.apple.com/app/id662139655"
 
 // Feedback bot ID
 #define FEEDBACK_BOT_ID             @"100004580194936"

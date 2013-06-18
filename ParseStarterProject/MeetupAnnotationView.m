@@ -125,7 +125,13 @@
     else if ( meetup.bFacebookEvent )
         _icon.image = [UIImage imageNamed:@"iconFacebook.png"];
     else
-        _icon.image = [UIImage imageNamed:@"iconMeetup.png"];
+    {
+        NSUInteger icon = meetup.iconNumber;
+        if ( icon >= meetupIcons.count )
+            icon = 0;
+        NSString* strName = meetupIcons[icon];
+        _icon.image = [UIImage imageNamed:strName];
+    }
 }
 
 -(void)setTime:(CGFloat)time{

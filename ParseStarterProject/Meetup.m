@@ -16,7 +16,7 @@
 
 @implementation Meetup
 
-@synthesize strId,strOwnerId,strOwnerName,strSubject,dateTime,privacy,meetupType,location,strVenue,strVenueId,strAddress,meetupData,numComments,attendees,decliners,dateTimeExp,durationSeconds,bFacebookEvent;
+@synthesize strId,strOwnerId,strOwnerName,strSubject,dateTime,privacy,meetupType,location,strVenue,strVenueId,strAddress,meetupData,numComments,attendees,decliners,dateTimeExp,durationSeconds,bFacebookEvent,iconNumber;
 
 -(id) init
 {
@@ -29,6 +29,7 @@
         strAddress = @"";
         strVenueId = @"";
         bFacebookEvent = false;
+        iconNumber = 0;
     }
     
     return self;
@@ -111,6 +112,7 @@
     [meetupData setObject:strVenueId forKey:@"venueId"];
     [meetupData setObject:strAddress forKey:@"address"];
     [meetupData setObject:[NSNumber numberWithInt:durationSeconds] forKey:@"duration"];
+    [meetupData setObject:[NSNumber numberWithInt:iconNumber] forKey:@"icon"];
     
     // Save
     if ( bFirstSave )
@@ -159,6 +161,7 @@
     attendees = [meetupData objectForKey:@"attendees"];
     decliners = [meetupData objectForKey:@"decliners"];
     durationSeconds = [[meetupData objectForKey:@"duration"] integerValue];
+    iconNumber = [[meetupData objectForKey:@"icon"] integerValue];
 }
 
 -(NSUInteger)getUnreadMessagesCount
