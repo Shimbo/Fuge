@@ -32,8 +32,8 @@
         if ( self.meetup.attendees )
             nAttendeesCount = self.meetup.attendees.count;
         
-        // Don't trim name for Facebook events as organizers are not people
-        NSString* strName = self.meetup.bFacebookEvent ? self.meetup.strOwnerName : [globalVariables trimName:self.meetup.strOwnerName];
+        // Don't trim name for imported events as organizers are not people
+        NSString* strName = self.meetup.bImportedEvent ? self.meetup.strOwnerName : [globalVariables trimName:self.meetup.strOwnerName];
         
         self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Attending: %d", strName, nAttendeesCount ];
     }

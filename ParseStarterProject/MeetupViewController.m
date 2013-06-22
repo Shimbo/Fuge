@@ -248,8 +248,8 @@
     // Time check
     Boolean bPassed = [meetup passed];
     
-    // Facebook or not
-    if ( meetup.bFacebookEvent )
+    // Facebook/EB/etc or not
+    if ( meetup.bImportedEvent )
     {
         if ( ! bPassed )
             buttons[MB_CALENDAR] = buttonOn;

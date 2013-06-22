@@ -24,6 +24,13 @@ typedef enum kEMeetupPrivacy
     MEETUP_PUBLIC   = 0,
     MEETUP_PRIVATE  = 1
 }EMeetupPrivacy;
+
+typedef enum kEImportedType
+{
+    IMPORTED_FACEBOOK    = 0,
+    IMPORTED_EVENTBRITE  = 1
+}EImportedType;
+
 @class FSVenue;
 
 @interface Meetup : NSObject <EKEventEditViewDelegate, UIAlertViewDelegate>
@@ -49,7 +56,8 @@ typedef enum kEMeetupPrivacy
     NSMutableArray* attendees;
     NSMutableArray* decliners;
     
-    Boolean     bFacebookEvent;
+    Boolean     bImportedEvent;
+    NSUInteger  importedType;
     
     // Write only during save method and loading
     PFObject*   meetupData;
@@ -71,8 +79,9 @@ typedef enum kEMeetupPrivacy
 @property (nonatomic, copy) NSMutableArray* attendees;
 @property (nonatomic, copy) NSMutableArray* decliners;
 @property (nonatomic, assign) NSUInteger durationSeconds;
-@property (nonatomic, assign) Boolean bFacebookEvent;
 @property (nonatomic, assign) NSUInteger iconNumber;
+@property (nonatomic, assign) Boolean bImportedEvent;
+@property (nonatomic, assign) NSUInteger importedType;
 
 @property (nonatomic, copy) PFObject *meetupData;
 
@@ -80,7 +89,8 @@ typedef enum kEMeetupPrivacy
 -(Boolean) save;
 -(void) unpack:(PFObject*)data;
 
--(id) initWithFbEvent:(NSDictionary*)eventData venue:(NSDictionary*)venueData;
+-(id) initWithFbEvent:(NSDictionary*)data;
+-(id) initWithEbEvent:(NSDictionary*)eventData;
 
 -(Boolean) addedToCalendar;
 -(void) addToCalendar;

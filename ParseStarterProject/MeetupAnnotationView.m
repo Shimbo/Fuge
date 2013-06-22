@@ -122,8 +122,14 @@
 -(void)setPinIcon:(Meetup*)meetup{
     if ( meetup.privacy == MEETUP_PRIVATE )
         _icon.image = [UIImage imageNamed:@"iconPrivate.png"];
-    else if ( meetup.bFacebookEvent )
-        _icon.image = [UIImage imageNamed:@"iconFacebook.png"];
+    else if ( meetup.bImportedEvent )
+    {
+        switch ( meetup.importedType )
+        {
+        case IMPORTED_FACEBOOK: _icon.image = [UIImage imageNamed:@"iconFacebook.png"]; break;
+        case IMPORTED_EVENTBRITE: _icon.image = [UIImage imageNamed:@"iconEventbrite.png"]; break;
+        }
+    }
     else
     {
         NSUInteger icon = meetup.iconNumber;

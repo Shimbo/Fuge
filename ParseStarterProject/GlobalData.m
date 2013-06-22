@@ -13,6 +13,8 @@
 #import "FSVenue.h"
 #import "Message.h"
 #import "LocationManager.h"
+#import "FacebookLoader.h"
+#import "EventbriteLoader.h"
 
 @implementation GlobalData
 
@@ -265,6 +267,9 @@ NSInteger sortByName(id num1, id num2, void *context)
                     
                     // FB Meetups
                     [self loadFBMeetups];
+                    
+                    // EB Meetups
+                    [self loadEBMeetups];
                     
                     // Inbox
                     [self reloadInboxInBackground];
@@ -519,12 +524,8 @@ NSInteger sortByName(id num1, id num2, void *context)
     // We could load based on player location or map rect if he moved the map later
     if ( ! southWest )
     {
-        PFGeoPoint* ptUser = [[PFUser currentUser] objectForKey:@"location"];
-        if ( ! ptUser )
-            ptUser = [locManager getDefaultPosition];
-        
         NSUInteger nDistance = [globalVariables isUserAdmin] ? RANDOM_PERSON_KILOMETERS_ADMIN : RANDOM_PERSON_KILOMETERS_NORMAL;
-        [friendAnyQuery whereKey:@"location" nearGeoPoint:ptUser withinKilometers:nDistance];
+        [friendAnyQuery whereKey:@"location" nearGeoPoint:[globalVariables currentLocation] withinKilometers:nDistance];
     }
     else
     {
@@ -606,6 +607,9 @@ NSInteger sortByName(id num1, id num2, void *context)
 // This one is used by new meetup window
 - (void)addMeetup:(Meetup*)meetup
 {
+    if ( ! meetup )
+        return;
+    
     // Test if such meetup was already added
     if ( [self getMeetupById:meetup.strId ] )
         return;
@@ -653,54 +657,57 @@ NSInteger sortByName(id num1, id num2, void *context)
     return meetup;
 }
 
-// Under construction!
+static FacebookLoader* FBloader = nil;
+static EventbriteLoader* EBloader = nil;
+
+- (void)fbMeetupsCallback:(NSArray*)events
+{
+    [self incrementMapLoadingStage];
+
+    if ( ! events )
+        return;
+    
+    for ( NSDictionary* event in events )
+    {
+        Meetup* meetup = [[Meetup alloc] initWithFbEvent:event];
+        [self addMeetup:meetup];
+    }
+}
+
 - (void)loadFBMeetups
 {
-    NSString *query =
-    @"{"
-    @"'event_info':'SELECT eid, venue, name, start_time, end_time, creator, host, attending_count from event WHERE eid in (SELECT eid FROM event_member WHERE uid = me())',"
-    @"'event_venue':'SELECT name, location, page_id FROM page WHERE page_id IN (SELECT venue.id FROM #event_info)',"
-    @"}";
-    NSDictionary *queryParam = [NSDictionary dictionaryWithObjectsAndKeys:
-                                query, @"q", nil];
+    if ( bIsAdmin )
+    {
+        FBloader = [[FacebookLoader alloc] init];
+        [FBloader loadData:self selector:@selector(fbMeetupsCallback:)];
+    }
+    else
+        [self incrementMapLoadingStage];
+}
+
+- (void)ebMeetupsCallback:(NSArray*)events
+{
+    [self incrementMapLoadingStage];
     
-    [FBRequestConnection startWithGraphPath:@"/fql" parameters:queryParam
-                        HTTPMethod:@"GET" completionHandler:^(FBRequestConnection *connection,
-                        id result, NSError *error) {
-        if (error) {
-            NSLog(@"Error: %@", [error localizedDescription]);
-        } else {
-            NSLog(@"Result: %@", result);
-            
-            NSArray* data = [result objectForKey:@"data"];
-            NSArray* events = [((NSDictionary*) data[0]) objectForKey:@"fql_result_set"];
-            NSArray* venues = [((NSDictionary*) data[1]) objectForKey:@"fql_result_set"];
-            
-            for ( NSDictionary* event in events )
-            {
-                for ( NSDictionary* venue in venues )
-                {
-                    NSDictionary* eventVenue = [event objectForKey:@"venue"];
-                    if ( ! eventVenue )
-                        break;
-                    NSString* eventVenueId = [eventVenue objectForKey:@"id"];
-                    if ( ! eventVenueId )
-                        break;
-                    NSDictionary* venueLocation = [venue objectForKey:@"location"];
-                    if ( ! venueLocation )
-                        break;
-                    NSString* venueId = [venue objectForKey:@"page_id"];
-                    if ( ! venueId )
-                        break;
-                    if ( [eventVenueId compare:venueId] == NSOrderedSame )
-                    {
-                        Meetup* meetup = [[Meetup alloc] initWithFbEvent:event venue:venue];
-                        [self addMeetup:meetup];
-                    }
-                }
-            }
-        }
-    }];
+    if ( ! events )
+        return;
+    
+    for ( NSDictionary* event in events )
+    {
+        Meetup* meetup = [[Meetup alloc] initWithEbEvent:event];
+        [self addMeetup:meetup];
+    }
+}
+
+- (void)loadEBMeetups
+{
+    if ( bIsAdmin )
+    {
+        EBloader = [[EventbriteLoader alloc] init];
+        [EBloader loadData:self selector:@selector(ebMeetupsCallback:)];
+    }
+    else
+        [self incrementMapLoadingStage];
 }
 
 - (void)loadMeetupsInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast

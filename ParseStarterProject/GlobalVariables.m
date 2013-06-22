@@ -8,6 +8,7 @@
 
 #import "GlobalVariables.h"
 #import <Parse/Parse.h>
+#import "LocationManager.h"
 
 @implementation GlobalVariables
 
@@ -169,6 +170,14 @@ static GlobalVariables *sharedInstance = nil;
     if ([[PFUser currentUser] objectForKey:@"admin"])
         return true;
     return false;
+}
+
+- (PFGeoPoint*) currentLocation
+{
+    PFGeoPoint* ptUser = [[PFUser currentUser] objectForKey:@"location"];
+    if ( ! ptUser )
+        ptUser = [locManager getDefaultPosition];
+    return ptUser;
 }
 
 @end

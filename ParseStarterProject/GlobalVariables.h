@@ -17,6 +17,7 @@
 #define strCurrentUserId [[PFUser currentUser] objectForKey:@"fbId"]
 #define strCurrentUserFirstName [[PFUser currentUser] objectForKey:@"fbNameFirst"]
 #define strCurrentUserLastName [[PFUser currentUser] objectForKey:@"fbNameLast"]
+#define bIsAdmin [globalVariables isUserAdmin]
 
 #define IPAD (UI_USER_INTERFACE_IDIOM()==UIUserInterfaceIdiomPad)
 
@@ -96,6 +97,8 @@
 - (NSNumber*)currentVersion;
 
 - (Boolean) isUserAdmin;
+
+- (PFGeoPoint*) currentLocation;
 
 - (NSString*)trimName:(NSString*)name;
 - (NSString*)shortName:(NSString*)firstName last:(NSString*)lastName;

@@ -16,7 +16,7 @@
 
 @implementation Meetup
 
-@synthesize strId,strOwnerId,strOwnerName,strSubject,dateTime,privacy,meetupType,location,strVenue,strVenueId,strAddress,meetupData,numComments,attendees,decliners,dateTimeExp,durationSeconds,bFacebookEvent,iconNumber;
+@synthesize strId,strOwnerId,strOwnerName,strSubject,dateTime,privacy,meetupType,location,strVenue,strVenueId,strAddress,meetupData,numComments,attendees,decliners,dateTimeExp,durationSeconds,bImportedEvent,importedType,iconNumber;
 
 -(id) init
 {
@@ -28,18 +28,26 @@
         numComments = 0;
         strAddress = @"";
         strVenueId = @"";
-        bFacebookEvent = false;
+        bImportedEvent = false;
         iconNumber = 0;
     }
     
     return self;
 }
 
--(id) initWithFbEvent:(NSDictionary*)eventData venue:(NSDictionary*)venueData
+-(id) initWithFbEvent:(NSDictionary*)data
 {
     self = [self init];
     
-    bFacebookEvent = true;
+    NSDictionary* eventData = [data objectForKey:@"event"];
+    if ( ! eventData )
+        return nil;
+    NSDictionary* venueData = [data objectForKey:@"venue"];
+    if ( ! venueData )
+        return nil;
+    
+    bImportedEvent = true;
+    importedType = IMPORTED_FACEBOOK;
     meetupType = TYPE_MEETUP;
     privacy = MEETUP_PUBLIC;
     
@@ -69,15 +77,84 @@
         strVenue = [venueData objectForKey:@"name"];
     strAddress = [venueLocation objectForKey:@"street"];
     
-    dateTimeExp = [NSDate dateWithTimeInterval:3600*24*7 sinceDate:dateTime];
+    dateTimeExp = endDate;
     
     return self;
 }
 
+-(id) initWithEbEvent:(NSDictionary*)eventData
+{
+    self = [self init];
+    
+    bImportedEvent = true;
+    importedType = IMPORTED_EVENTBRITE;
+    meetupType = TYPE_MEETUP;
+    privacy = MEETUP_PUBLIC;
+    
+    strId = [ [NSString alloc] initWithFormat:@"ebmt_%@", [eventData objectForKey:@"id"]];
+    strOwnerId = @"";
+
+    NSDictionary* organizer = [eventData objectForKey:@"organizer"];
+    if ( organizer )
+    {
+        if ( [organizer objectForKey:@"name"] )
+            strOwnerName = [organizer objectForKey:@"name"];
+    }
+    else
+        strOwnerName = @"Unknown";
+    if ( [eventData objectForKey:@"title"] )
+        strSubject = [eventData objectForKey:@"title"];
+    else
+        strSubject = @"Unknown";
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    
+    NSString* strStartDate = [eventData objectForKey:@"start_date"];
+    if ( ! strStartDate )
+        return nil;
+    dateTime = [dateFormatter dateFromString:strStartDate];
+    if ( ! dateTime )
+        return nil;
+    NSString* strEndDate = [eventData objectForKey:@"end_date"];
+    if ( ! strEndDate )
+        return nil;
+    NSDate* endDate = [dateFormatter dateFromString:strEndDate];
+    if ( ! endDate )
+        return nil;
+    durationSeconds = [endDate timeIntervalSince1970] - [dateTime timeIntervalSince1970];
+    if ( durationSeconds > 3600*24*3 )  // Exclude events more than tree days in duration
+        return nil;
+    dateTimeExp = endDate;
+    
+    NSDictionary* venue = [eventData objectForKey:@"venue"];
+    if ( ! venue )
+        return nil;
+    if ( ! [venue objectForKey:@"Lat-Long"] )
+        return nil;
+    
+    NSString* strLat = [venue objectForKey:@"latitude"];
+    NSString* strLon = [venue objectForKey:@"longitude"];
+    if ( ! strLat || ! strLon )
+        return nil;
+    
+    double lat = [strLat doubleValue];
+    double lon = [strLon doubleValue];
+    location = [PFGeoPoint geoPointWithLatitude:lat longitude:lon];
+    
+    strVenue = [venue objectForKey:@"name"];
+    if ( ! strVenue || ! [strVenue isKindOfClass:[NSString class]] )
+        strVenue = [venue objectForKey:@"Lat-Long"];
+    strAddress = [venue objectForKey:@"address"];
+    
+    return self;
+}
+
+
 - (Boolean) save
 {
     // We're not changing or saving Facebook events nor creating our own as a copy
-    if ( bFacebookEvent )
+    if ( bImportedEvent )
         return true;
     
     NSNumber* timestamp = [[NSNumber alloc] initWithDouble:[dateTime timeIntervalSince1970]];
@@ -166,7 +243,7 @@
 
 -(NSUInteger)getUnreadMessagesCount
 {
-    if ( bFacebookEvent )
+    if ( bImportedEvent )
         return 0;
     NSUInteger nOldCount = [globalData getConversationCount:strId];
     return numComments - nOldCount;
