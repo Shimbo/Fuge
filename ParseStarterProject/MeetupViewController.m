@@ -226,8 +226,36 @@
         [mapView addAnnotation:ann];
         currentAnnotation = ann;
     }
-    
+}
 
+- (void)resizeComments
+{
+    // Resizing comments
+    NSUInteger newHeight = comments.contentSize.height;
+    CGRect frame = comments.frame;
+    frame.size.height = newHeight;
+    comments.frame = frame;
+    
+    // Resizing scroll view
+    [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width, comments.frame.origin.y + comments.frame.size.height)];
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+    // Resizing webView
+    NSUInteger newHeight= [[webView stringByEvaluatingJavaScriptFromString:@"document.body.scrollHeight"] floatValue];
+    CGRect frame = webView.frame;
+    frame.size.height = newHeight;
+    webView.frame = frame;
+    webView.scrollView.scrollEnabled = FALSE;
+    
+    // Moving comments down
+    CGRect textFrame = comments.frame;
+    textFrame.origin.y = webView.frame.origin.y + webView.frame.size.height;
+    comments.frame = textFrame;
+    
+    // Resizing scroll view
+    [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width, comments.frame.origin.y + comments.frame.size.height)];
 }
 
 - (void)viewDidLoad
@@ -316,6 +344,25 @@
     [formatter setDoesRelativeDateFormatting:TRUE];
     [labelDate setText:[formatter stringFromDate:meetup.dateTime]];
     
+    // Description
+    if ( meetup.strDescription )
+    {
+        NSMutableString *html = [NSMutableString stringWithString: @"<html><head><title></title></head><body>"];
+        [html appendString:meetup.strDescription];
+        [html appendString:@"</body></html>"];
+        [descriptionView loadHTMLString:html baseURL:nil];
+    }
+    else
+    {
+        // Hiding description view
+        descriptionView.hidden = TRUE;
+        
+        // Replacing description with comments
+        CGRect textFrame = comments.frame;
+        textFrame.origin.y = descriptionView.frame.origin.y;
+        comments.frame = textFrame;
+    }
+    
     // Loading comments
     PFQuery *commentsQuery = [PFQuery queryWithClassName:@"Comment"];
     commentsQuery.limit = 1000;
@@ -348,6 +395,7 @@
                 [stringComments appendString:@"\n"];
             }
             [comments setText:stringComments];
+            [self resizeComments];
             
             // Last read message date
             NSDate* commentDate = nil;
@@ -362,7 +410,6 @@
             textView.editable = TRUE;
         }
     }];
-//    [self reloadAnnotation];
 }
 
 
@@ -388,11 +435,10 @@
     mapView = nil;
     labelDate = nil;
     labelLocation = nil;
+    descriptionView = nil;
+    scrollView = nil;
     [super viewDidUnload];
 }
-
-
-
 
 -(MKAnnotationView *)mapView:(MKMapView *)mV viewForAnnotation:(id<MKAnnotation>)annotation
 {
@@ -408,68 +454,6 @@
     return pinView;
 }
 
-
-/*
-
-
-
-static const CGFloat KEYBOARD_ANIMATION_DURATION = 0.3;
-static const CGFloat MINIMUM_SCROLL_FRACTION = 0.2;
-static const CGFloat MAXIMUM_SCROLL_FRACTION = 0.8;
-static const CGFloat PORTRAIT_KEYBOARD_HEIGHT = 216;
-static const CGFloat LANDSCAPE_KEYBOARD_HEIGHT = 162;
-
-double animatedDistance;
-
-- (void)textViewDidBeginEditing:(UITextView *)textView
-{
-    CGRect textFieldRect = [self.view.window convertRect:textView.bounds
-                                                fromView:textView];
-    CGRect viewRect = [self.view.window convertRect:self.view.bounds
-                                           fromView:self.view];
-    
-    CGFloat midline = textFieldRect.origin.y + 0.5
-    * textFieldRect.size.height;
-    CGFloat numerator = midline - viewRect.origin.y
-    - MINIMUM_SCROLL_FRACTION * viewRect.size.height;
-    CGFloat denominator = (MAXIMUM_SCROLL_FRACTION - MINIMUM_SCROLL_FRACTION)
-    * viewRect.size.height;
-    CGFloat heightFraction = numerator / denominator;
-    
-    if (heightFraction < 0.0)
-    {
-        heightFraction = 0.0;
-    }
-    else if (heightFraction > 1.0)
-    {
-        heightFraction = 1.0;
-    }
-    
-    UIInterfaceOrientation orientation =
-    [[UIApplication sharedApplication] statusBarOrientation];
-    
-    if (orientation == UIInterfaceOrientationPortrait ||
-        orientation == UIInterfaceOrientationPortraitUpsideDown)
-    {
-        animatedDistance = floor(PORTRAIT_KEYBOARD_HEIGHT * heightFraction);
-    }
-    else
-    {
-        animatedDistance = floor(LANDSCAPE_KEYBOARD_HEIGHT * heightFraction);
-    }
-    
-    CGRect viewFrame = self.view.frame;
-    viewFrame.origin.y -= animatedDistance;
-    
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationBeginsFromCurrentState:YES];
-    [UIView setAnimationDuration:KEYBOARD_ANIMATION_DURATION];
-    
-    [self.view setFrame:viewFrame];
-    
-    [UIView commitAnimations];
-}
-*/
 -(void) keyboardWillShow:(NSNotification *)note{
     [super keyboardWillShow:note];
     comments.userInteractionEnabled = NO;
@@ -505,6 +489,8 @@ double animatedDistance;
     [comments setText:stringComments];
     
     [textView setText:@""];
+    
+    [self resizeComments];
     
     [self updateButtons];
 }

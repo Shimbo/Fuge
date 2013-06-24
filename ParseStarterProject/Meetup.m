@@ -16,7 +16,7 @@
 
 @implementation Meetup
 
-@synthesize strId,strOwnerId,strOwnerName,strSubject,dateTime,privacy,meetupType,location,strVenue,strVenueId,strAddress,meetupData,numComments,attendees,decliners,dateTimeExp,durationSeconds,bImportedEvent,importedType,iconNumber;
+@synthesize strId,strOwnerId,strOwnerName,strSubject,strDescription,dateTime,privacy,meetupType,location,strVenue,strVenueId,strAddress,meetupData,numComments,attendees,decliners,dateTimeExp,durationSeconds,bImportedEvent,importedType,iconNumber;
 
 -(id) init
 {
@@ -106,6 +106,8 @@
         strSubject = [eventData objectForKey:@"title"];
     else
         strSubject = @"Unknown";
+    if ( [eventData objectForKey:@"description"] )
+        strDescription = [eventData objectForKey:@"description"];
     
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];

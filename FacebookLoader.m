@@ -27,7 +27,7 @@
              NSLog(@"Error: %@", [error localizedDescription]);
              [target performSelector:callback withObject:nil];
          } else {
-             NSLog(@"Result: %@", result);
+             //NSLog(@"Result: %@", result);
              
              NSArray* data = [result objectForKey:@"data"];
              NSArray* events = [((NSDictionary*) data[0]) objectForKey:@"fql_result_set"];

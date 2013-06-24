@@ -28,13 +28,15 @@ enum EMeetupButtons
 #import "GrowingTextViewController.h"
 
 @interface MeetupViewController : GrowingTextViewController
-<UITextViewDelegate, MKMapViewDelegate>
+<UITextViewDelegate, MKMapViewDelegate, UIWebViewDelegate>
 {
     Meetup* meetup;
     IBOutlet UITextView *comments;
     IBOutlet MKMapView *mapView;
     IBOutlet UILabel *labelDate;
     IBOutlet UILabel *labelLocation;
+    IBOutlet UIWebView *descriptionView;
+    IBOutlet UIScrollView *scrollView;
     
     id delegate;
     NSMutableArray*    buttons;

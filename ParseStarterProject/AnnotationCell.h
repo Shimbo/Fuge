@@ -33,6 +33,8 @@
 @interface MeetupAnnotationCell : UITableViewCell<AnnotationCell>
 @property (strong, nonatomic) IBOutlet UILabel *title;
 @property (strong, nonatomic) IBOutlet UILabel *subtitle;
+@property (strong, nonatomic) IBOutlet UILabel *date;
+@property (strong, nonatomic) IBOutlet UILabel *attending;
 @property (strong, nonatomic) IBOutlet MeetupPin *annotation;
 
 @end

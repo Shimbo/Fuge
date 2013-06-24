@@ -28,8 +28,20 @@
 @implementation MeetupAnnotationCell
 
 -(void)prepareForAnnotation:(MeetupAnnotation*)annotation{
-    self.title.text = annotation.title;
-    self.subtitle.text = annotation.subtitle;
+    
+    Meetup* meetup = annotation.meetup;
+    
+    self.title.text = meetup.strSubject;
+    self.subtitle.text = [NSString stringWithFormat:@"By: %@", meetup.strOwnerName];
+    
+    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateStyle:NSDateFormatterMediumStyle];
+    [formatter setTimeStyle:NSDateFormatterShortStyle];
+    [formatter setDoesRelativeDateFormatting:TRUE];
+    
+    self.date.text = [formatter stringFromDate:meetup.dateTime];
+    self.attending.text = [NSString stringWithFormat:@"Attending: %d", annotation.meetup.attendees.count];
+     
     [self.annotation prepareForAnnotation:annotation];
 }
 

@@ -346,11 +346,9 @@
     }
 }
 
--(BOOL)fitMapViewForAnotations:(NSArray*)annotations{
+-(BOOL)fitMapViewForAnotations:(NSArray*)annotations onlyTest:(Boolean)test{
     if ([self.mapView isMaximumZoom])
         return NO;
-    
-
     
     MKMapRect zoomRect = MKMapRectNull;
     for (id <MKAnnotation> annotation in annotations){
@@ -362,7 +360,8 @@
 
     NSInteger newLevel = [self.mapView zoomLevelForMarRect:zoomRect];
     if (newLevel < MAX_ZOOM_LEVEL) {
-        [mapView setVisibleMapRect:zoomRect
+        if ( ! test )
+            [mapView setVisibleMapRect:zoomRect
                        edgePadding:UIEdgeInsetsMake(60, 30, 20, 30)
                           animated:YES];
         return YES;
@@ -376,13 +375,17 @@
     if ([view isKindOfClass:[REVClusterAnnotationView class]]) {
         REVClusterPin *pin = (REVClusterPin*)view.annotation;
         
-        if ([self fitMapViewForAnotations:pin.nodes] == NO) {
+        //if ([self fitMapViewForAnotations:pin.nodes onlyTest:true] == NO) {
             TableAnnotationsViewController *ctrl = [[TableAnnotationsViewController alloc]init];
             ctrl.annotations = pin.nodes;
             UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:ctrl];
             nav.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
             [self presentViewController:nav animated:YES completion:nil];
-        }
+        /*}
+        else
+        {
+            [self fitMapViewForAnotations:pin.nodes onlyTest:false];
+        }*/
     }
 }
 - (void)didReceiveMemoryWarning
