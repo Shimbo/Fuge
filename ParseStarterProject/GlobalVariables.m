@@ -31,7 +31,8 @@ static GlobalVariables *sharedInstance = nil;
     if (self) {
         bNewUser = FALSE;
         bSendPushToFriends = FALSE;
-        settings = nil;
+        personalSettings = nil;
+        globalSettings = nil;
         
         // DO NOT change the order, server side uses this numeration
         arrayRoles = [[NSMutableArray alloc] init];
@@ -97,15 +98,15 @@ static GlobalVariables *sharedInstance = nil;
 
 - (void) checkSettings
 {
-    if ( ! settings )
+    if ( ! personalSettings )
     {
-        settings = [[PFUser currentUser] objectForKey:@"settings"];
-        if ( ! settings )
+        personalSettings = [[PFUser currentUser] objectForKey:@"settings"];
+        if ( ! personalSettings )
         {
-            settings = [[NSMutableDictionary alloc] init];
+            personalSettings = [[NSMutableDictionary alloc] init];
             NSNumber* falseNum = [[NSNumber alloc] initWithBool:false];
-            [settings setValue:[falseNum stringValue] forKey:@"addToCalendar"];
-            [[PFUser currentUser] setObject:settings forKey:@"settings"];
+            [personalSettings setValue:[falseNum stringValue] forKey:@"addToCalendar"];
+            [[PFUser currentUser] setObject:personalSettings forKey:@"settings"];
         }
     }
 }
@@ -113,14 +114,14 @@ static GlobalVariables *sharedInstance = nil;
 - (Boolean)shouldAlwaysAddToCalendar
 {
     [self checkSettings];
-    return [[settings objectForKey:@"addToCalendar"] boolValue];
+    return [[personalSettings objectForKey:@"addToCalendar"] boolValue];
 }
 
 - (void)setToAlwaysAddToCalendar
 {
     NSNumber* trueNum = [[NSNumber alloc] initWithBool:true];
-    [settings setValue:[trueNum stringValue] forKey:@"addToCalendar"];
-    [[PFUser currentUser] setObject:settings forKey:@"settings"];
+    [personalSettings setValue:[trueNum stringValue] forKey:@"addToCalendar"];
+    [[PFUser currentUser] setObject:personalSettings forKey:@"settings"];
     [[PFUser currentUser] saveInBackground];
 }
 
@@ -178,6 +179,34 @@ static GlobalVariables *sharedInstance = nil;
     if ( ! ptUser )
         ptUser = [locManager getDefaultPosition];
     return ptUser;
+}
+
+- (void)setGlobalSettings:(NSDictionary*)settings
+{
+    globalSettings = settings;
+}
+
+- (id)getGlobalParam:(NSString*)key
+{
+    // We have the key stored in global data
+    if ( globalSettings )
+        if ( [globalSettings objectForKey:key] )
+            return [globalSettings objectForKey:key];
+    
+    // Show error
+    NSString* strError = [NSString stringWithFormat:@"The following key is missing in settings object! Key: %@", key];
+    UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Error, bad settings key" message:strError delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [errorAlert show];
+    
+    return nil;
+}
+
+- (NSUInteger)globalParam:(NSString*)key default:(NSUInteger)defaultResult
+{
+    NSNumber* num = [globalVariables getGlobalParam:key];
+    if ( ! num )
+        return defaultResult;
+    return [num integerValue];
 }
 
 @end

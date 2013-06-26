@@ -65,7 +65,7 @@ typedef  enum EMeetupCommentType
 }CommentType;
 
 #define INBOX_LOADED    3   // Number of stages in loading
-#define MAP_LOADED      5
+#define MAP_LOADED      3
 #define CIRCLES_LOADED  1
 
 @interface GlobalData : NSObject

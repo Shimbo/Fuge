@@ -657,8 +657,8 @@ NSInteger sortByName(id num1, id num2, void *context)
     return meetup;
 }
 
-static FacebookLoader* FBloader = nil;
-static EventbriteLoader* EBloader = nil;
+//static FacebookLoader* FBloader = nil;
+//static EventbriteLoader* EBloader = nil;
 
 - (void)fbMeetupsCallback:(NSArray*)events
 {
@@ -676,12 +676,12 @@ static EventbriteLoader* EBloader = nil;
 
 - (void)loadFBMeetups
 {
-    if ( bIsAdmin )
+    /*if ( bIsAdmin )
     {
         FBloader = [[FacebookLoader alloc] init];
         [FBloader loadData:self selector:@selector(fbMeetupsCallback:)];
     }
-    else
+    else*/
         [self incrementMapLoadingStage];
 }
 
@@ -701,12 +701,12 @@ static EventbriteLoader* EBloader = nil;
 
 - (void)loadEBMeetups
 {
-    if ( bIsAdmin )
+    /*if ( bIsAdmin )
     {
         EBloader = [[EventbriteLoader alloc] init];
         [EBloader loadData:self selector:@selector(ebMeetupsCallback:)];
     }
-    else
+    else*/
         [self incrementMapLoadingStage];
 }
 

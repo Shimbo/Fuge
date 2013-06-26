@@ -22,6 +22,24 @@
     return self;
 }
 
+-(id) initWithWelcomeMessage
+{
+    if (self = [self init]) {
+        
+        dateCreated = pCurrentUser.createdAt;
+        
+        strUserFrom = FEEDBACK_BOT_ID;
+        strUserTo = strCurrentUserId;
+        strText = WELCOME_MESSAGE;
+        objUserFrom = [PFUser objectWithoutDataWithObjectId:FEEDBACK_BOT_OBJECT];
+        objUserTo = pCurrentUser;
+        strNameUserFrom = @"Peter S.";
+        strNameUserTo = @"Unknown";
+    }
+    
+    return self;
+}
+
 - (void) save:(id)t selector:(SEL)s
 {
     // Already saved

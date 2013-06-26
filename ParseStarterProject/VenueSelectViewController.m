@@ -389,7 +389,9 @@
 
 
 -(void)searchForString:(NSString*)string{
-    CLLocation *curLoc = self.mapView.userLocation.location;
+    
+    CLLocationCoordinate2D curLoc = self.mapView.centerCoordinate;
+    
     NSString *searchString = [string copy];
     if (_numberOfRequest == 0 && self.venuesForSearch.count == 0) {
         UIActivityIndicatorView *activity = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
@@ -398,10 +400,12 @@
         [activity startAnimating];
         
     }
-
+    
+    //NSString *finalString = [string stringByReplacingOccurrencesOfString:@" " withString: @"+"];
+    
     _numberOfRequest++;
-    [Foursquare2 searchVenuesNearByLatitude:@(curLoc.coordinate.latitude)
-                                  longitude:@(curLoc.coordinate.longitude)
+    [Foursquare2 searchVenuesNearByLatitude:@(curLoc.latitude)
+                                  longitude:@(curLoc.longitude)
                                  accuracyLL:nil
                                    altitude:nil
                                 accuracyAlt:nil
@@ -410,23 +414,24 @@
                                      intent:intentCheckin
                                      radius:nil
                                    callback:^(BOOL success, id result) {
-                                       _numberOfRequest--;
-                                       if (_numberOfRequest == 0) {
-                                           self.searchDisplayController.searchResultsTableView.tableFooterView = nil;
-                                       }
-                                    
-                                       if (![searchString isEqualToString:self.searchDisplayController.searchBar.text]){
-                                           return;
-                                       }else{
-                                           self.searchDisplayController.searchResultsTableView.tableFooterView = nil;
-                                       }
-                                       if (success) {
-                                           NSArray *a = [self convertToObjects:result[@"response"][@"venues"]];
-                                           self.venuesForSearch = a;
-                                           [self.searchDisplayController.searchResultsTableView reloadData];
-                                       }
-
-                                   }];
+        _numberOfRequest--;
+        if (_numberOfRequest == 0) {
+            self.searchDisplayController.searchResultsTableView.tableFooterView = nil;
+        }
+        
+        if (![searchString isEqualToString:self.searchDisplayController.searchBar.text]){
+            return;
+        }else{
+            self.searchDisplayController.searchResultsTableView.tableFooterView = nil;
+        }
+        if (success) {
+            NSArray *a = [self convertToObjects:result[@"response"][@"venues"]];
+            self.venuesForSearch = a;
+            [self.searchDisplayController.searchResultsTableView reloadData];
+        }
+        else
+            NSLog(@"Foursquare error: %@", result);
+    }];
 }
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{

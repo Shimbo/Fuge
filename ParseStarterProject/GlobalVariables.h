@@ -24,10 +24,10 @@
 #define meetupIcons @[@"iconMtGeneric", @"iconMtMovie", @"iconMtMusic", @"iconMtSports", @"iconMtGames", @"iconMtStudy"]
 
 // Query distance to discover
-#define RANDOM_PERSON_KILOMETERS_NORMAL    50
-#define RANDOM_EVENT_KILOMETERS_NORMAL     50
-#define RANDOM_PERSON_KILOMETERS_ADMIN     50000
-#define RANDOM_EVENT_KILOMETERS_ADMIN      50000
+#define RANDOM_PERSON_KILOMETERS_NORMAL    [globalVariables globalParam:@"RandomPersonKilometersNormal" default:50]
+#define RANDOM_EVENT_KILOMETERS_NORMAL     [globalVariables globalParam:@"RandomEventKilometersNormal" default:50]
+#define RANDOM_PERSON_KILOMETERS_ADMIN     [globalVariables globalParam:@"RandomPersonKilometersAdmin" default:50000]
+#define RANDOM_EVENT_KILOMETERS_ADMIN      [globalVariables globalParam:@"RandomEventKilometersNormal" default:50000]
 
 
 // Location update distance (to call save for PFUser
@@ -37,21 +37,26 @@
 #define PERSON_OUTDATED_TIME        3600*6
 
 // Pushes
-#define PUSH_DISCOVERY_KILOMETERS   100
-#define PUSH_DISCOVERY_EXPIRATION   3600*24
+#define PUSH_DISCOVERY_KILOMETERS   [globalVariables globalParam:@"PushDiscoveryKilometers" default:100]
+#define PUSH_DISCOVERY_EXPIRATION   [globalVariables globalParam:@"PushDiscoveryExpiration" default:86400]
 
 // Not to overload with data
 #define MAX_ANNOTATIONS_ON_THE_MAP  200
 
 // To keep recent venues list clean
-#define MAX_RECENT_VENUES_COUNT     5
+#define MAX_RECENT_VENUES_COUNT     [globalVariables globalParam:@"MaxRecentVenueCount" default:5]
 
 // Merging meetups with persons
 #define TIME_FOR_JOIN_PERSON_AND_MEETUP         0.95 //in %
 #define DISTANCE_FOR_JOIN_PERSON_AND_MEETUP     200 //in meters
 
 // Merging pins
-#define DISTANCE_FOR_GROUPING_PINS              500000 //in meters
+#define DISTANCE_FOR_GROUPING_PINS  [globalVariables globalParam:@"DistanceForGroupingPins" default:500000]
+
+// Otherwise not showing at all
+#define MAX_DAYS_TILL_MEETUP        [globalVariables globalParam:@"MaxDaysTillMeetup" default:7]
+
+#define WELCOME_MESSAGE             (NSString*)[globalVariables getGlobalParam:@"WelcomeMessage"]
 
 // Zoom parameters
 #define MAX_ZOOM_LEVEL              19
@@ -59,14 +64,12 @@
 // Text view for outcoming messages
 #define TEXT_VIEW_MAX_LINES         9
 
-// Otherwise not showing at all
-#define MAX_DAYS_TILL_MEETUP        7
-
 // App store path
 #define APP_STORE_PATH              @"http://itunes.apple.com/app/id662139655"
 
 // Feedback bot ID
 #define FEEDBACK_BOT_ID             @"100004580194936"
+#define FEEDBACK_BOT_OBJECT         @"zQceZ994lt"
 
 // Viral
 #define FB_INVITE_MESSAGE           @"Discover new friends and local activities!"
@@ -79,9 +82,16 @@
 {
     Boolean bNewUser;
     Boolean bSendPushToFriends;
-    NSMutableDictionary* settings;
+    NSMutableDictionary* personalSettings;      // Personal settings (from PFUser)
+    NSDictionary*       globalSettings; // Global settings (from settings object)
     NSMutableArray*     arrayRoles;
 }
+
++ (id)sharedInstance;
+
+- (void)setGlobalSettings:(NSDictionary*)settings;
+- (id)getGlobalParam:(NSString*)key;
+- (NSUInteger)globalParam:(NSString*)key default:(NSUInteger)defaultResult;
 
 - (Boolean)isNewUser;
 - (void)setNewUser;
@@ -92,13 +102,9 @@
 - (Boolean)shouldAlwaysAddToCalendar;
 - (void)setToAlwaysAddToCalendar;
 
-+ (id)sharedInstance;
-
 - (NSNumber*)currentVersion;
-
-- (Boolean) isUserAdmin;
-
 - (PFGeoPoint*) currentLocation;
+- (Boolean) isUserAdmin;
 
 - (NSString*)trimName:(NSString*)name;
 - (NSString*)shortName:(NSString*)firstName last:(NSString*)lastName;

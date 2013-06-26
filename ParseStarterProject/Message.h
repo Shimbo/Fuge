@@ -34,6 +34,7 @@
 @property (nonatomic, copy) NSDate *dateCreated;
 
 -(id) init;
+-(id) initWithWelcomeMessage;
 -(void) save:(id)t selector:(SEL)s;
 -(void) unpack:(PFObject*)data;
 

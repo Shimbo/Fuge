@@ -109,6 +109,7 @@ static Boolean bRotating = true;
             else if ( ! bShowPopup )
             {
                 bVersionChecked = true;
+                [globalVariables setGlobalSettings:[system objectForKey:@"settings"]];
                 [ctrl performSelector:@selector(loadSequencePart2) withObject:nil afterDelay:0.01f];
             }
         }

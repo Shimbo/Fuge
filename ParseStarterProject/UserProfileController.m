@@ -81,8 +81,19 @@
         [messageHistory setText:@"Messages loading failed, no connection."];
         return;
     }
-        
+    
     NSMutableString* stringHistory = [[NSMutableString alloc] initWithFormat:@""];
+    
+    // Feedback message
+    if ( [personThis.strId compare:FEEDBACK_BOT_ID] == NSOrderedSame )
+    {
+        [stringHistory appendString:@"    "];
+        [stringHistory appendString:personThis.strFirstName];
+        [stringHistory appendString:@": "];
+        [stringHistory appendString:WELCOME_MESSAGE];
+        if ( messages.count != 0 )
+            [stringHistory appendString:@"\n"];
+    }
     
     for ( int n = 0; n < messages.count; n++ )
     {

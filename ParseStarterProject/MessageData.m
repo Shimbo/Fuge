@@ -36,9 +36,10 @@
         // Looking for already created thread
         Boolean bSuchUserAlreadyAdded = false;
         for (Message *messageOld in messagesUnique)
-            if ( ( [message.strUserFrom compare:messageOld.strUserFrom] == NSOrderedSame ) ||
-                ( [message.strUserTo compare:messageOld.strUserTo] == NSOrderedSame ) ||
-                ( [message.strUserFrom compare:messageOld.strUserTo ] == NSOrderedSame) )
+            if ( ( ( [message.strUserFrom compare:messageOld.strUserFrom] == NSOrderedSame ) &&
+                ( [message.strUserTo compare:messageOld.strUserTo] == NSOrderedSame ) ) ||
+                ( ( [message.strUserFrom compare:messageOld.strUserTo ] == NSOrderedSame) &&
+                ( [message.strUserTo compare:messageOld.strUserFrom ] == NSOrderedSame) ) )
             {
                 // Replacing with an older unread:
                 // checking date, if it's > than last read, but < than current, replace
@@ -170,6 +171,10 @@ NSInteger sort(id message1, id message2, void *context)
                     
                     // Creating array
                     messages = [[NSMutableArray alloc] init];
+                    
+                    // Welcome message
+                    Message* welcomeMessage = [[Message alloc] initWithWelcomeMessage];
+                    [self addMessage:welcomeMessage];
                     
                     // Loading it with data
                     for ( PFObject* messageData in sortedArray )
