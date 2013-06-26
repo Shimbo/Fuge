@@ -81,12 +81,43 @@
 
 - (NSUInteger)loadMeetupAndThreadAnnotations:(NSInteger)l
 {
-    int n = 0;
+    // Calculating date windows
+    NSDate* windowStart = [NSDate date];
+    NSDate* windowEnd = [NSDate date];
+    
+    // Changing day
+    NSDateComponents* comps = [[NSDateComponents alloc] init];
+    [comps setDay:daySelector];
+    NSDate* startDay = [[NSCalendar currentCalendar] dateByAddingComponents:comps toDate:[NSDate date] options:0];
+    if ( daySelector == 7 ) // whole week selected
+        [comps setDay:7];
+    else
+        [comps setDay:daySelector+1];
+    NSDate* endDay = [[NSCalendar currentCalendar] dateByAddingComponents:comps toDate:[NSDate date] options:0];
+    
+    // Calculating start date for this new day
+    comps = [[NSCalendar currentCalendar] components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:startDay];
+    [comps setHour:5];
+    [comps setMinute:0];
+    if ( daySelector > 0 && daySelector < 7 )
+        windowStart = [[NSCalendar currentCalendar] dateFromComponents:comps];
+    
+    // Calculating end date for this new day
+    comps = [[NSCalendar currentCalendar] components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:endDay];
+    [comps setHour:5];
+    [comps setMinute:0];
+    windowEnd = [[NSCalendar currentCalendar] dateFromComponents:comps];
+    
+    // Loading annotations
+    NSUInteger n = 0;
     for (Meetup *meetup in [globalData getMeetups])
     {
         if (meetup.meetupType == TYPE_MEETUP) {
-            MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
-            [_meetupAnnotations addObject:ann];
+            if ( ! meetup.hasPassed && [meetup isWithinTimeFrame:windowStart till:windowEnd] )
+            {
+                MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
+                [_meetupAnnotations addObject:ann];
+            }
         }else{
             ThreadAnnotation *ann = [[ThreadAnnotation alloc] initWithMeetup:meetup];
             [_threadAnnotations addObject:ann];
@@ -189,16 +220,19 @@
         
     }
     
-    // Navigation bar
+    // Navigation bar: new meetup
     [self.navigationItem setHidesBackButton:true animated:false];
-    self.navigationItem.rightBarButtonItems = @[
-                                                /*[[UIBarButtonItem alloc] initWithTitle:@"New thread" style:UIBarButtonItemStyleBordered target:self action:@selector(newThreadClicked)],*/                                                                                                                                                                                                                 [[UIBarButtonItem alloc] initWithTitle:@"New meetup" style:UIBarButtonItemStyleBordered target:self action:@selector(newMeetupClicked)]];
+    self.navigationItem.rightBarButtonItems = @[[[UIBarButtonItem alloc] initWithTitle:@"New meetup" style:UIBarButtonItemStyleBordered target:self action:@selector(newMeetupClicked)]];
+    
+    // Navigation bar: date selector
+    NSArray* oldLeft = self.navigationItem.leftBarButtonItems;
+    daySelectButton = [[UIBarButtonItem alloc] initWithTitle:@"Today" style:UIBarButtonItemStyleBordered target:self action:@selector(dateSelectorClicked)];
+    if ( oldLeft.count > 0 )
+        self.navigationItem.leftBarButtonItems = @[ oldLeft[0], daySelectButton ];
     
     // Setting user location
     PFGeoPoint *geoPointUser = [[PFUser currentUser] objectForKey:@"location"];
     float span = 0.05f;
-    
-
     
     // Default position
     if ( ! geoPointUser )
@@ -405,5 +439,117 @@
     [self.navigationController pushViewController:filterViewController animated:YES];
     //[self.navigationController setNavigationBarHidden:true animated:true];
 }
+
+
+#pragma mark -
+#pragma mark Picker View
+
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
+    
+    return 1;
+    
+}
+
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+    
+    return 8;
+}
+
+static NSMutableArray* dayButtonLabels = nil;
+
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
+    
+    NSMutableArray* selectionChoices = [NSMutableArray arrayWithCapacity:8];
+    
+    NSDateFormatter* theDateFormatter = [[NSDateFormatter alloc] init];
+    [theDateFormatter setFormatterBehavior:NSDateFormatterBehavior10_4];
+    [theDateFormatter setDateFormat:@"EEEE"];
+    
+    NSDateFormatter* theDateFormatter2 = [[NSDateFormatter alloc] init];
+    [theDateFormatter2 setFormatterBehavior:NSDateFormatterBehavior10_4];
+    [theDateFormatter2 setDateFormat:@"dd MMM"];
+    
+    if ( ! dayButtonLabels )
+        dayButtonLabels = [NSMutableArray arrayWithCapacity:7];
+    
+    for ( NSUInteger n = 0; n < 7; n++ )
+    {
+        NSDate* day = [NSDate dateWithTimeIntervalSinceNow:24*n*3600];
+        NSString *weekDay = [theDateFormatter stringFromDate:day];
+        if ( n == 0 )
+            weekDay = @"Today";
+        if ( n == 1 )
+            weekDay = @"Tomorrow";
+        [dayButtonLabels addObject:weekDay];
+        NSString* selection = [NSString stringWithFormat:@"%@, %@", weekDay, [theDateFormatter2 stringFromDate:day]];
+        [selectionChoices addObject:selection];
+    }
+    
+    [dayButtonLabels addObject:@"All week"];
+    [selectionChoices addObject:@"All week"];
+    
+    return selectionChoices[row];
+    
+}
+
+// this method runs whenever the user changes the selected list option
+
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
+    
+    daySelectButton.title = dayButtonLabels[ row ];    
+    daySelector = row;
+    [self reloadStatusChanged];
+}
+
+- (void) dateSelectorClicked {
+    
+    // Picker view
+    CGRect pickerFrame = CGRectMake(0, 40, 320, 445);
+    UIPickerView *pickerView = [[UIPickerView alloc] initWithFrame:pickerFrame];
+    pickerView.showsSelectionIndicator = YES;
+    pickerView.dataSource = self;
+    pickerView.delegate = self;
+    [pickerView selectRow:daySelector inComponent:0 animated:NO];
+    
+    // Close button
+    UISegmentedControl *closeButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"Close"]];
+    closeButton.momentary = YES;
+    closeButton.frame = CGRectMake(260, 7, 50, 30);
+    closeButton.segmentedControlStyle = UISegmentedControlStyleBar;
+    closeButton.tintColor = [UIColor blackColor];
+    [closeButton addTarget:self action:@selector(dismissPopup) forControlEvents:UIControlEventValueChanged];
+    
+    if ( IPAD )
+    {
+        // View and VC
+        UIView *view = [[UIView alloc] init];
+        [view addSubview:pickerView];
+        [view addSubview:closeButton];
+        UIViewController *vc = [[UIViewController alloc] init];
+        [vc setView:view];
+        [vc setContentSizeForViewInPopover:CGSizeMake(320, 260)];
+        
+        popover = [[UIPopoverController alloc] initWithContentViewController:vc];
+        [popover presentPopoverFromBarButtonItem:daySelectButton permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    }
+    else
+    {
+        actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:nil cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+        [actionSheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
+        [actionSheet addSubview:pickerView];
+        [actionSheet addSubview:closeButton];
+        [actionSheet showInView:[[UIApplication sharedApplication] keyWindow]];
+        [actionSheet setBounds:CGRectMake(0, 0, 320, 485)];
+    }
+}
+
+- (void) dismissPopup {
+    
+    if ( IPAD )
+        [popover dismissPopoverAnimated:TRUE];
+    else
+        [actionSheet dismissWithClickedButtonIndex:0 animated:YES];
+}
+
 
 @end

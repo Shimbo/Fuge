@@ -274,7 +274,7 @@
     NSNumber* buttonOn = [NSNumber numberWithInt:1];
     
     // Time check
-    Boolean bPassed = [meetup passed];
+    Boolean bPassed = meetup.hasPassed;
     
     // Facebook/EB/etc or not
     if ( meetup.bImportedEvent )

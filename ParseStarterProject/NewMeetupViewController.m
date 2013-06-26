@@ -233,7 +233,7 @@
     if ( component == 0 )
         return 7;
     else
-        return 23;
+        return 24;
 }
 
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{

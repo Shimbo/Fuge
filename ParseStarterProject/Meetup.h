@@ -102,12 +102,11 @@ typedef enum kEImportedType
 
 -(NSUInteger)getUnreadMessagesCount;
 -(Boolean)hasPassed;
+-(Boolean)isWithinTimeFrame:(NSDate*)windowStart till:(NSDate*)windowEnd;
 -(float)getTimerTill;
 
 // Only in local version, not on server (separate cloud code)
 -(void)addAttendee:(NSString*)str;
 -(void)removeAttendee:(NSString*)str;
-
--(Boolean) passed;
 
 @end

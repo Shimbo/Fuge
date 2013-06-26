@@ -57,7 +57,7 @@ static Boolean bRotating = true;
     
     // Zoom in animated
     _whiteImage.hidden = FALSE;
-    _whiteImage.transform = CGAffineTransformScale(CGAffineTransformIdentity, 3.0, 3.0);
+    _whiteImage.transform = CGAffineTransformScale(CGAffineTransformIdentity, 4.0, 4.0);
     _backgroundImage.alpha = 0.0f;
     _backgroundImage.hidden = FALSE;
     [UIView beginAnimations:nil context:NULL];
@@ -259,7 +259,7 @@ static Boolean bRotating = true;
         _descriptionText.alpha = 0.0f;
         _titleText.alpha = 0.0f;
         _miscText.alpha = 0.0f;
-        _whiteImage.transform = CGAffineTransformScale(CGAffineTransformIdentity, 3.0, 3.0);
+        _whiteImage.transform = CGAffineTransformScale(CGAffineTransformIdentity, 4.0, 4.0);
     }
     completion: ^(BOOL finished) {
         _loginButton.hidden = TRUE;
@@ -292,7 +292,7 @@ static Boolean bRotating = true;
     _descriptionText.alpha = 0;
     _titleText.alpha = 0;
     _miscText.alpha = 0;
-    _whiteImage.transform = CGAffineTransformScale(CGAffineTransformIdentity, 3.0, 3.0);
+    _whiteImage.transform = CGAffineTransformScale(CGAffineTransformIdentity, 4.0, 4.0);
     
     [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
         _loginButton.centerY -= 200;

@@ -11,7 +11,7 @@
 #import "MainViewController.h"
 #import "REVClusterMapView.h"
 @class PersonAnnotation;
-@interface MapViewController : MainViewController <MKMapViewDelegate,CLLocationManagerDelegate>
+@interface MapViewController : MainViewController <MKMapViewDelegate,CLLocationManagerDelegate,UIPickerViewDelegate, UIPickerViewDataSource, UIActionSheetDelegate>
 {
     IBOutlet REVClusterMapView *mapView;
     NSMutableArray *_personsAnnotations;
@@ -19,6 +19,11 @@
     NSMutableArray *_threadAnnotations;
     CLLocationManager *_locationManager;
     PersonAnnotation *_userLocation;
+
+    NSUInteger daySelector;
+    UIBarButtonItem*     daySelectButton;
+    UIPopoverController* popover;
+    UIActionSheet*       actionSheet;
 }
 
 @property (nonatomic, retain) IBOutlet REVClusterMapView *mapView;

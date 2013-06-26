@@ -253,9 +253,20 @@
 
 -(Boolean)hasPassed
 {
-    NSDate* currentTime = [NSDate date];
-    NSDate* meetupEnd = [dateTime dateByAddingTimeInterval:durationSeconds];
-    return [currentTime compare:meetupEnd] == NSOrderedDescending;
+    return [dateTime compare:[NSDate dateWithTimeIntervalSinceNow:
+                              -(NSTimeInterval)durationSeconds]] == NSOrderedAscending;
+}
+
+-(Boolean)isWithinTimeFrame:(NSDate*)windowStart till:(NSDate*)windowEnd
+{
+    NSDate* dateEnds = [dateTime dateByAddingTimeInterval:durationSeconds];
+    if ( [dateTime compare:windowStart] == NSOrderedAscending &&
+            [dateEnds compare:windowStart] == NSOrderedAscending )
+        return false;
+    if ( [dateTime compare:windowEnd] == NSOrderedDescending &&
+        [dateEnds compare:windowEnd] == NSOrderedDescending )
+        return false;
+    return true;
 }
 
 -(float)getTimerTill
@@ -465,12 +476,6 @@
 {
     if ( attendees )
         [attendees removeObjectIdenticalTo:str];
-}
-
--(Boolean) passed
-{
-    return [dateTime compare:[NSDate dateWithTimeIntervalSinceNow:
-                              -(NSTimeInterval)durationSeconds]] == NSOrderedAscending;
 }
 
 @end
