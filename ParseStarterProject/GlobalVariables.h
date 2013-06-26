@@ -21,7 +21,7 @@
 
 #define IPAD (UI_USER_INTERFACE_IDIOM()==UIUserInterfaceIdiomPad)
 
-#define meetupIcons @[@"iconMtGeneric", @"iconMtMovie", @"iconMtMusic", @"iconMtSports", @"iconMtGames", @"iconMtStudy"]
+#define meetupIcons @[@"iconMtGeneric", @"iconMtMovie", @"iconMtMusic", @"iconMtSports", @"iconMtGames", @"iconMtStudy", @"iconMtOutdoor", @"iconMtTheatre"]
 
 // Query distance to discover
 #define RANDOM_PERSON_KILOMETERS_NORMAL    [globalVariables globalParam:@"RandomPersonKilometersNormal" default:50]

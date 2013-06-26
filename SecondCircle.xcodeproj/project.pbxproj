@@ -163,6 +163,10 @@
 		4C7E3FED169A456B0065484F /* VenueSelectView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E3FEB169A456B0065484F /* VenueSelectView.xib */; };
 		4C8F7BCA177B58920015B2A8 /* white@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C8F7BC8177B58920015B2A8 /* white@2x~ipad.png */; };
 		4C8F7BCB177B58920015B2A8 /* white~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C8F7BC9177B58920015B2A8 /* white~ipad.png */; };
+		4C8F7BCE177B697C0015B2A8 /* iconMtOutdoor.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C8F7BCC177B697C0015B2A8 /* iconMtOutdoor.png */; };
+		4C8F7BCF177B697C0015B2A8 /* iconMtOutdoor@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C8F7BCD177B697C0015B2A8 /* iconMtOutdoor@2x.png */; };
+		4C8F7BD2177B69850015B2A8 /* iconMtTheatre.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C8F7BD0177B69850015B2A8 /* iconMtTheatre.png */; };
+		4C8F7BD3177B69850015B2A8 /* iconMtTheatre@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C8F7BD1177B69850015B2A8 /* iconMtTheatre@2x.png */; };
 		4C95ECB21770A59F00AC2C27 /* iconMtGames.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C95ECA81770A59F00AC2C27 /* iconMtGames.png */; };
 		4C95ECB31770A59F00AC2C27 /* iconMtGames@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C95ECA91770A59F00AC2C27 /* iconMtGames@2x.png */; };
 		4C95ECB41770A59F00AC2C27 /* iconMtMovie.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C95ECAA1770A59F00AC2C27 /* iconMtMovie.png */; };
@@ -428,6 +432,10 @@
 		4C7E3FEB169A456B0065484F /* VenueSelectView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VenueSelectView.xib; sourceTree = "<group>"; };
 		4C8F7BC8177B58920015B2A8 /* white@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "white@2x~ipad.png"; path = "resources/white@2x~ipad.png"; sourceTree = "<group>"; };
 		4C8F7BC9177B58920015B2A8 /* white~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "white~ipad.png"; path = "resources/white~ipad.png"; sourceTree = "<group>"; };
+		4C8F7BCC177B697C0015B2A8 /* iconMtOutdoor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMtOutdoor.png; sourceTree = "<group>"; };
+		4C8F7BCD177B697C0015B2A8 /* iconMtOutdoor@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconMtOutdoor@2x.png"; sourceTree = "<group>"; };
+		4C8F7BD0177B69850015B2A8 /* iconMtTheatre.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMtTheatre.png; sourceTree = "<group>"; };
+		4C8F7BD1177B69850015B2A8 /* iconMtTheatre@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconMtTheatre@2x.png"; sourceTree = "<group>"; };
 		4C95ECA81770A59F00AC2C27 /* iconMtGames.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMtGames.png; sourceTree = "<group>"; };
 		4C95ECA91770A59F00AC2C27 /* iconMtGames@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconMtGames@2x.png"; sourceTree = "<group>"; };
 		4C95ECAA1770A59F00AC2C27 /* iconMtMovie.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMtMovie.png; sourceTree = "<group>"; };
@@ -653,6 +661,10 @@
 				4C95ECAF1770A59F00AC2C27 /* iconMtSports@2x.png */,
 				4C95ECB01770A59F00AC2C27 /* iconMtStudy.png */,
 				4C95ECB11770A59F00AC2C27 /* iconMtStudy@2x.png */,
+				4C8F7BCC177B697C0015B2A8 /* iconMtOutdoor.png */,
+				4C8F7BCD177B697C0015B2A8 /* iconMtOutdoor@2x.png */,
+				4C8F7BD0177B69850015B2A8 /* iconMtTheatre.png */,
+				4C8F7BD1177B69850015B2A8 /* iconMtTheatre@2x.png */,
 				4C6C3A011727FE4000F5F1B3 /* iconThread.png */,
 				4C6C3A021727FE4000F5F1B3 /* iconThread@2x.png */,
 				4C6C39FF1727FE4000F5F1B3 /* iconFacebook.png */,
@@ -1107,6 +1119,10 @@
 				4C14CD9D1775E26000BC2533 /* iconEventbrite@2x.png in Resources */,
 				4C8F7BCA177B58920015B2A8 /* white@2x~ipad.png in Resources */,
 				4C8F7BCB177B58920015B2A8 /* white~ipad.png in Resources */,
+				4C8F7BCE177B697C0015B2A8 /* iconMtOutdoor.png in Resources */,
+				4C8F7BCF177B697C0015B2A8 /* iconMtOutdoor@2x.png in Resources */,
+				4C8F7BD2177B69850015B2A8 /* iconMtTheatre.png in Resources */,
+				4C8F7BD3177B69850015B2A8 /* iconMtTheatre@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

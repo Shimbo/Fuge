@@ -303,9 +303,13 @@
     
     // Persons and meetups adding
     NSUInteger nLimit = MAX_ANNOTATIONS_ON_THE_MAP;
-    nLimit -= [self loadPersonAnnotations:CIRCLE_FB limit:nLimit];
-    nLimit -= [self loadPersonAnnotations:CIRCLE_2O limit:nLimit];
-    nLimit -= [self loadPersonAnnotations:CIRCLE_RANDOM limit:nLimit];
+    
+    if ( daySelector == 0 ) // Show people only for "today" selection
+    {
+        nLimit -= [self loadPersonAnnotations:CIRCLE_FB limit:nLimit];
+        nLimit -= [self loadPersonAnnotations:CIRCLE_2O limit:nLimit];
+        nLimit -= [self loadPersonAnnotations:CIRCLE_RANDOM limit:nLimit];
+    }
     nLimit -= [self loadMeetupAndThreadAnnotations:nLimit];
     
     if (_userLocation)
