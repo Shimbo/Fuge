@@ -141,13 +141,11 @@
     [personCell.personImage loadImageFromURL:person.imageURL];
     personCell.personName.text = [person fullName];
     personCell.personDistance.text = [person distanceString];
+    personCell.personStatus.text = @"";
     if ( person.idCircle == CIRCLE_FBOTHERS )
-        personCell.personRole.text = @"Invite!";
-    else if ( person.role )
-        personCell.personRole.text = [globalVariables roleByNumber:[person.role integerValue]];
+        personCell.personStatus.text = @"Invite!";
     else
-        personCell.personRole.text = @"";
-    personCell.personArea.text = person.strArea;
+        personCell.personStatus.text = [person jobInfo];
     
 	return personCell;
 }

@@ -8,7 +8,7 @@
 
 @implementation Person
 
-@synthesize strId, strFirstName, strLastName, strAge, strGender, distance, role, strArea, strCircle, idCircle, personData,numUnreadMessages;
+@synthesize strId, strFirstName, strLastName, strAge, strGender, distance, /*role, strArea,*/ strEmployer, strPosition, strCircle, idCircle, personData, numUnreadMessages;
 
 + (void)initialize {
 	if (self == [Person class]) {
@@ -26,9 +26,9 @@
         strFirstName = [user objectForKey:@"fbNameFirst"];
         strLastName = [user objectForKey:@"fbNameLast"];
         strGender = [user objectForKey:@"fbGender"];
-        role = [user objectForKey:@"profileRole"];
-        strArea = [user objectForKey:@"profileArea"];
         strCircle = [Circle getPersonType:nCircle];
+        strEmployer = [user objectForKey:@"profileEmployer"];
+        strPosition = [user objectForKey:@"profilePosition"];
         idCircle = nCircle;
         
         // Location
@@ -190,6 +190,18 @@
 -(NSString*)fullName
 {
     return [globalVariables fullName:strFirstName last:strLastName];
+}
+
+-(NSString*)jobInfo
+{
+    NSString* strResult = @"";
+    if (strEmployer && strPosition && strEmployer.length > 0 && strPosition.length > 0 )
+        strResult = [NSString stringWithFormat:@"%@, %@", strPosition, strEmployer];
+    else if (strEmployer && strEmployer.length)
+        strResult = strEmployer;
+    else
+        strResult = strPosition;
+    return strResult;
 }
 
 /*

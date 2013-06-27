@@ -14,8 +14,8 @@
     NSString *strGender;
     NSNumber *distance;
     NSNumber *role;
-    NSString *strArea;
-    NSString *strCircle;
+    NSString* strEmployer;
+    NSString* strPosition;
     
     NSUInteger  numUnreadMessages;
     
@@ -33,8 +33,8 @@
 @property (nonatomic, retain) NSString *strAge;
 @property (nonatomic, retain) NSString *strGender;
 @property (nonatomic, retain) NSNumber *distance;
-@property (nonatomic, retain) NSNumber *role;
-@property (nonatomic, retain) NSString *strArea;
+@property (nonatomic, retain) NSString *strEmployer;
+@property (nonatomic, retain) NSString *strPosition;
 @property (nonatomic, retain) NSString *strCircle;
 @property (nonatomic) NSUInteger idCircle;
 @property (nonatomic, assign) NSUInteger numUnreadMessages;
@@ -67,7 +67,8 @@
 -(NSString*)shortName;
 -(NSString*)fullName;
 
-//- (void) setLocation:(CLLocationCoordinate2D) loc;
+-(NSString*)jobInfo;
+
 - (PFGeoPoint*) getLocation;
 
 @end

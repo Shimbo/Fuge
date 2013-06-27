@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1552</int>
-		<string key="IBDocument.SystemVersion">11G63</string>
+		<string key="IBDocument.SystemVersion">12E55</string>
 		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
-		<string key="IBDocument.AppKitVersion">1138.51</string>
-		<string key="IBDocument.HIToolboxVersion">569.00</string>
+		<string key="IBDocument.AppKitVersion">1187.39</string>
+		<string key="IBDocument.HIToolboxVersion">626.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 			<string key="NS.object.0">2083</string>
@@ -57,7 +57,7 @@
 							<object class="IBUILabel" id="674569172">
 								<reference key="NSNextResponder" ref="62755266"/>
 								<int key="NSvFlags">294</int>
-								<string key="NSFrame">{{10, 8}, {163, 21}}</string>
+								<string key="NSFrame">{{10, 8}, {171, 21}}</string>
 								<reference key="NSSuperview" ref="62755266"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="703923829"/>
@@ -89,7 +89,7 @@
 							<object class="IBUILabel" id="736565193">
 								<reference key="NSNextResponder" ref="62755266"/>
 								<int key="NSvFlags">294</int>
-								<string key="NSFrame">{{10, 32}, {105, 21}}</string>
+								<string key="NSFrame">{{10, 32}, {136, 21}}</string>
 								<reference key="NSSuperview" ref="62755266"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="588478525"/>
@@ -99,7 +99,7 @@
 								<int key="IBUIContentMode">7</int>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-								<string key="IBUIText">Label</string>
+								<string key="IBUIText">Status</string>
 								<reference key="IBUITextColor" ref="697078323"/>
 								<reference key="IBUIHighlightedColor" ref="596723611"/>
 								<int key="IBUIBaselineAdjustment">0</int>
@@ -127,7 +127,7 @@
 								<int key="IBUIContentMode">7</int>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-								<string key="IBUIText">Label</string>
+								<string key="IBUIText">9999 km</string>
 								<reference key="IBUITextColor" ref="697078323"/>
 								<reference key="IBUIHighlightedColor" ref="596723611"/>
 								<int key="IBUIBaselineAdjustment">0</int>
@@ -149,7 +149,7 @@
 								<int key="IBUIContentMode">7</int>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-								<string key="IBUIText">Label</string>
+								<string key="IBUIText">Role, etc</string>
 								<reference key="IBUITextColor" ref="697078323"/>
 								<reference key="IBUIHighlightedColor" ref="596723611"/>
 								<int key="IBUIBaselineAdjustment">0</int>
@@ -212,19 +212,19 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
-						<string key="label">personRole</string>
-						<reference key="source" ref="1059043895"/>
-						<reference key="destination" ref="736565193"/>
-					</object>
-					<int key="connectionID">18</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBCocoaTouchOutletConnection" key="connection">
-						<string key="label">personArea</string>
+						<string key="label">personInfo</string>
 						<reference key="source" ref="1059043895"/>
 						<reference key="destination" ref="588478525"/>
 					</object>
-					<int key="connectionID">19</int>
+					<int key="connectionID">20</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">personStatus</string>
+						<reference key="source" ref="1059043895"/>
+						<reference key="destination" ref="736565193"/>
+					</object>
+					<int key="connectionID">21</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -302,7 +302,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">19</int>
+			<int key="maxID">21</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -321,8 +321,10 @@
 						<string key="personArea">UILabel</string>
 						<string key="personDistance">UILabel</string>
 						<string key="personImage">AsyncImageView</string>
+						<string key="personInfo">UILabel</string>
 						<string key="personName">UILabel</string>
 						<string key="personRole">UILabel</string>
+						<string key="personStatus">UILabel</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="personArea">
@@ -337,12 +339,20 @@
 							<string key="name">personImage</string>
 							<string key="candidateClassName">AsyncImageView</string>
 						</object>
+						<object class="IBToOneOutletInfo" key="personInfo">
+							<string key="name">personInfo</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
 						<object class="IBToOneOutletInfo" key="personName">
 							<string key="name">personName</string>
 							<string key="candidateClassName">UILabel</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="personRole">
 							<string key="name">personRole</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="personStatus">
+							<string key="name">personStatus</string>
 							<string key="candidateClassName">UILabel</string>
 						</object>
 					</dictionary>

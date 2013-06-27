@@ -17,12 +17,7 @@
     self = [super init];
     if (self) {
         self.title = [person shortName];
-        NSString* strRole = person.role ? [globalVariables getRoles][[person.role integerValue]] : @"";
-        self.subtitle = [[NSString alloc] initWithFormat:
-                        @"%@%@%@",
-                        strRole,
-                        (person.strArea.length && strRole.length) ? @", ":@"",
-                        person.strArea ];
+        self.subtitle = [person jobInfo];
         if ( person.getLocation )
             self.coordinate = CLLocationCoordinate2DMake(person.getLocation.latitude, person.getLocation.longitude);
         self.person = person;

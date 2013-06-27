@@ -243,6 +243,28 @@ NSInteger sortByName(id num1, id num2, void *context)
                 pCurrentUser.email = [user objectForKey:@"email"];
             [pCurrentUser setObject:[globalVariables currentVersion]
                                      forKey:@"version"];
+            
+            
+            // Looking for job data
+            NSArray* work = [user objectForKey:@"work"];
+            if ( work && work.count > 0 )
+            {
+                NSDictionary* current = work[0];
+                if ( current )
+                {
+                    NSDictionary* employer = [current objectForKey:@"employer"];
+                    NSString* strEmployer = @"";
+                    NSString* strPosition = @"";
+                    if ( employer && [employer objectForKey:@"name"] )
+                        strEmployer = [employer objectForKey:@"name"];
+                    NSDictionary* position = [current objectForKey:@"position"];
+                    if ( position && [position objectForKey:@"name"] )
+                        strPosition = [position objectForKey:@"name"];
+                    [pCurrentUser setObject:strEmployer forKey:@"profileEmployer"];
+                    [pCurrentUser setObject:strPosition forKey:@"profilePosition"];
+                }
+            }
+            
             [pCurrentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                 
                 if ( error )

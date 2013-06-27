@@ -208,9 +208,9 @@ static Boolean bRotating = true;
     [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
     
     // Show profile window if it's new user
-    if ( [globalVariables isNewUser] )
-        [self proceedToProfile];
-    else
+    //if ( [globalVariables isNewUser] )
+    //    [self proceedToProfile];
+    //else
         [self proceedToMapWindow];
     
     [TestFlight passCheckpoint:@"Initialization main complete"];

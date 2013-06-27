@@ -6,7 +6,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *personDistance;
 @property (strong, nonatomic) IBOutlet AsyncImageView *personImage;
 @property (strong, nonatomic) IBOutlet UILabel *personName;
-@property (strong, nonatomic) IBOutlet UILabel *personRole;
-@property (strong, nonatomic) IBOutlet UILabel *personArea;
+@property (strong, nonatomic) IBOutlet UILabel *personInfo;
+@property (strong, nonatomic) IBOutlet UILabel *personStatus;
 
 @end
