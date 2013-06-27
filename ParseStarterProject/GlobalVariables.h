@@ -64,6 +64,8 @@
 // Text view for outcoming messages
 #define TEXT_VIEW_MAX_LINES         9
 
+#define MAX_MEETUP_SUBJECT_LENGTH   27
+
 // App store path
 #define APP_STORE_PATH              @"http://itunes.apple.com/app/id662139655"
 

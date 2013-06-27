@@ -141,7 +141,7 @@
     [personCell.personImage loadImageFromURL:person.imageURL];
     personCell.personName.text = [person fullName];
     personCell.personDistance.text = [person distanceString];
-    personCell.personStatus.text = @"";
+    personCell.personInfo.text = @"";
     if ( person.idCircle == CIRCLE_FBOTHERS )
         personCell.personStatus.text = @"Invite!";
     else

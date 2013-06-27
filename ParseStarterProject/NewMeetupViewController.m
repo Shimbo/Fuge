@@ -25,15 +25,6 @@
         datePicker = nil;
         durationPicker = nil;
         self.navigationItem.leftItemsSupplementBackButton = true;
-//        [[NSNotificationCenter defaultCenter] addObserver:self
-//                                                 selector:@selector(keyboardWillShow:)
-//                                                     name:UIKeyboardWillShowNotification
-//                                                   object:nil];
-//        
-//        [[NSNotificationCenter defaultCenter] addObserver:self
-//                                                 selector:@selector(keyboardWillHide:)
-//                                                     name:UIKeyboardWillHideNotification
-//                                                   object:nil];
     }
     return self;
 }
@@ -97,11 +88,17 @@
         meetupDurationHours = (meetup.durationSeconds % (24*3600))/3600;
         [self updateDurationText];
         [self dateChanged:nil];
+        [priceField setText:meetup.strPrice];
+        [imageURLField setText:meetup.strImageURL];
+        [originalURLField setText:meetup.strOriginalURL];
+        [descriptionText setText:meetup.strDescription];
     }
     else
     {
         if ( invitee )  // Private meetup created from user profile, turn off publicity
             [notifySwitch setOn:FALSE];
+        if ( bIsAdmin ) // Always public for admins by default
+            [notifySwitch setOn:TRUE];
         
         // Default time
         NSDateComponents* deltaCompsDefault = [[NSDateComponents alloc] init];
@@ -120,11 +117,36 @@
     
     if ( meetupType == TYPE_THREAD )
         dateBtn.hidden = TRUE;
+    if ( ! bIsAdmin )
+    {
+        priceText.hidden = TRUE;
+        priceField.hidden = TRUE;
+        imageURLField.hidden = TRUE;
+        originalURLField.hidden = TRUE;
+        descriptionText.hidden = TRUE;
+    }
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
     tap.cancelsTouchesInView = NO;
     tap.delegate = self;
     [self.view addGestureRecognizer:tap];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWasShown:)
+                                                 name:UIKeyboardDidShowNotification
+                                               object:self.view.window];
+    // register for keyboard notifications
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillBeHidden:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:self.view.window];
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    if ( textField != subject )
+        return YES;
+    NSUInteger newLength = [textField.text length] + [string length] - range.length;
+    return (newLength > MAX_MEETUP_SUBJECT_LENGTH) ? NO : YES;
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer{
@@ -360,6 +382,14 @@
     meetup.privacy = notifySwitch.isOn ? MEETUP_PUBLIC : MEETUP_PRIVATE;
     meetup.dateTime = meetupDate;
     meetup.durationSeconds = meetupDurationDays*24*3600 + meetupDurationHours*3600;
+    if ( priceField.text.length > 0 )
+        meetup.strPrice = priceField.text;
+    if ( imageURLField.text.length > 0 )
+        meetup.strImageURL = imageURLField.text;
+    if ( originalURLField.text.length > 0 )
+        meetup.strOriginalURL = originalURLField.text;
+    if ( descriptionText.text.length > 0 )
+        meetup.strDescription = descriptionText.text;
     
     if ( self.selectedVenue )
     {
@@ -436,15 +466,71 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     [subject resignFirstResponder];
+    [priceField resignFirstResponder];
+    [imageURLField resignFirstResponder];
+    [originalURLField resignFirstResponder];
+    [descriptionText resignFirstResponder];
     return true;
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
     [subject resignFirstResponder];
+    [priceField resignFirstResponder];
+    [imageURLField resignFirstResponder];
+    [originalURLField resignFirstResponder];
+    [descriptionText resignFirstResponder];
 }
 
 - (void)viewDidUnload {
     durationBtn = nil;
+    scrollView = nil;
+    priceField = nil;
+    imageURLField = nil;
+    originalURLField = nil;
+    descriptionText = nil;
+    priceText = nil;
     [super viewDidUnload];
 }
+
+// Called when the UIKeyboardDidShowNotification is sent.
+- (void)keyboardWasShown:(NSNotification*)aNotification
+{
+    NSDictionary* info = [aNotification userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbSize.height, 0.0);
+    scrollView.contentInset = contentInsets;
+    scrollView.scrollIndicatorInsets = contentInsets;
+    
+    // If active text field is hidden by keyboard, scroll it so it's visible
+    // Your application might not need or want this behavior.
+    CGRect aRect = self.view.frame;
+    aRect.size.height -= kbSize.height;
+    CGPoint origin = activeField.frame.origin;
+    origin.y += activeField.frame.size.height;
+    origin.y -= scrollView.contentOffset.y;
+    if (!CGRectContainsPoint(aRect, origin) ) {
+        CGPoint scrollPoint = CGPointMake(0.0, activeField.frame.origin.y+activeField.frame.size.height-(aRect.size.height));
+        [scrollView setContentOffset:scrollPoint animated:YES];
+    }
+}
+
+// Called when the UIKeyboardWillHideNotification is sent
+- (void)keyboardWillBeHidden:(NSNotification*)aNotification
+{
+    UIEdgeInsets contentInsets = UIEdgeInsetsZero;
+    scrollView.contentInset = contentInsets;
+    scrollView.scrollIndicatorInsets = contentInsets;
+}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    activeField = textField;
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    activeField = nil;
+}
+
 @end

@@ -16,7 +16,7 @@
 
 @implementation Meetup
 
-@synthesize strId,strOwnerId,strOwnerName,strSubject,strDescription,dateTime,privacy,meetupType,location,strVenue,strVenueId,strAddress,meetupData,numComments,attendees,decliners,dateTimeExp,durationSeconds,bImportedEvent,importedType,iconNumber;
+@synthesize strId,strOwnerId,strOwnerName,strSubject,strDescription,dateTime,privacy,meetupType,location,strVenue,strVenueId,strAddress,meetupData,numComments,attendees,decliners,dateTimeExp,durationSeconds,bImportedEvent,importedType,iconNumber,strPrice,strImageURL,strOriginalURL;
 
 -(id) init
 {
@@ -193,6 +193,15 @@
     [meetupData setObject:[NSNumber numberWithInt:durationSeconds] forKey:@"duration"];
     [meetupData setObject:[NSNumber numberWithInt:iconNumber] forKey:@"icon"];
     
+    if ( strDescription )
+        [meetupData setObject:strDescription forKey:@"description"];
+    if ( strPrice)
+        [meetupData setObject:strPrice forKey:@"price"];
+    if ( strImageURL)
+        [meetupData setObject:strImageURL forKey:@"imageURL"];
+    if ( strOriginalURL )
+        [meetupData setObject:strOriginalURL forKey:@"originalURL"];
+    
     // Save
     if ( bFirstSave )
     {
@@ -229,6 +238,10 @@
     strOwnerId = [meetupData objectForKey:@"userFromId"];
     strOwnerName = [meetupData objectForKey:@"userFromName"];
     strSubject = [meetupData objectForKey:@"subject"];
+    strDescription = [meetupData objectForKey:@"description"];
+    strPrice = [meetupData objectForKey:@"price"];
+    strImageURL = [meetupData objectForKey:@"imageURL"];
+    strOriginalURL = [meetupData objectForKey:@"originalURL"];
     privacy = [[meetupData objectForKey:@"privacy"] integerValue];
     dateTime = [meetupData objectForKey:@"meetupDate"];
     dateTimeExp = [meetupData objectForKey:@"meetupDateExp"];

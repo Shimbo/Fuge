@@ -30,6 +30,14 @@
     Meetup* meetup;
     Person* invitee;
     NSUInteger meetupType;
+    
+    IBOutlet UIScrollView *scrollView;
+    UITextField* activeField;
+    IBOutlet UILabel *priceText;
+    IBOutlet UITextField *priceField;
+    IBOutlet UITextField *imageURLField;
+    IBOutlet UITextField *originalURLField;
+    IBOutlet UITextField *descriptionText;
 }
 
 @property (nonatomic,strong) FSVenue* selectedVenue;

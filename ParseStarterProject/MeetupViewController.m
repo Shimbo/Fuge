@@ -345,10 +345,29 @@
     [labelDate setText:[formatter stringFromDate:meetup.dateTime]];
     
     // Description
-    if ( meetup.strDescription )
+    if ( meetup.strDescription || meetup.strPrice || meetup.strImageURL || meetup.strOriginalURL )
     {
         NSMutableString *html = [NSMutableString stringWithString: @"<html><head><title></title></head><body>"];
-        [html appendString:meetup.strDescription];
+        if ( meetup.strDescription )
+        {
+            [html appendString:meetup.strDescription];
+            [html appendString:@"<BR>"];
+        }
+        if ( meetup.strPrice )
+        {
+            [html appendString:[NSString stringWithFormat:@"Price: %@", meetup.strPrice]];
+            [html appendString:@"<BR>"];
+        }
+        if ( meetup.strImageURL )
+        {
+            NSUInteger n = self.view.width - 20;
+            [html appendString:[NSString stringWithFormat:@"<img style='max-width:%dpx' src='%@'>", n, meetup.strImageURL]];
+            [html appendString:@"<BR>"];
+        }
+        if ( meetup.strOriginalURL )
+        {
+            [html appendString:[NSString stringWithFormat:@"<center><a href='%@'>Click here to view original web-page.</a></center>", meetup.strOriginalURL]];
+        }
         [html appendString:@"</body></html>"];
         [descriptionView loadHTMLString:html baseURL:nil];
     }
@@ -362,6 +381,17 @@
         textFrame.origin.y = descriptionView.frame.origin.y;
         comments.frame = textFrame;
     }
+/*    for ( UIView* view in descriptionView.subviews )
+    {
+        if ( [view isKindOfClass:[UIScrollView class]] )
+            ((UIScrollView*)view).scrollEnabled = NO;
+        for ( UIView* view2 in view.subviews )
+            if ( [view2 isKindOfClass:[UIScrollView class]] )
+                ((UIScrollView*)view2).scrollEnabled = NO;
+
+    }*/
+    //descriptionView.scrollView.scrollEnabled = NO;
+    //descriptionView.scrollView.bounces = NO;
     
     // Loading comments
     PFQuery *commentsQuery = [PFQuery queryWithClassName:@"Comment"];
@@ -412,7 +442,14 @@
     }];
 }
 
-
+-(BOOL) webView:(UIWebView *)inWeb shouldStartLoadWithRequest:(NSURLRequest *)inRequest navigationType:(UIWebViewNavigationType)inType {
+    if ( inType == UIWebViewNavigationTypeLinkClicked ) {
+        [[UIApplication sharedApplication] openURL:[inRequest URL]];
+        return NO;
+    }
+    
+    return YES;
+}
 
 - (void)didReceiveMemoryWarning
 {

@@ -41,7 +41,7 @@ typedef enum kEImportedType
     NSString    *strOwnerId;
     NSString    *strOwnerName;
     NSString    *strSubject;
-    NSString    *strDescription;    // for exported meetups is be used as the first comment
+    NSString    *strDescription;
     NSString    *strVenue;
     NSString    *strVenueId;
     NSString    *strAddress;
@@ -50,6 +50,10 @@ typedef enum kEImportedType
     PFGeoPoint  *location;
     EMeetupPrivacy  privacy;
     NSUInteger  iconNumber;
+    
+    NSString    *strPrice;
+    NSString    *strImageURL;
+    NSString    *strOriginalURL;
     
     NSUInteger  durationSeconds;
     
@@ -84,6 +88,10 @@ typedef enum kEImportedType
 @property (nonatomic, assign) NSUInteger iconNumber;
 @property (nonatomic, assign) Boolean bImportedEvent;
 @property (nonatomic, assign) NSUInteger importedType;
+
+@property (nonatomic, copy) NSString *strPrice;
+@property (nonatomic, copy) NSString *strImageURL;
+@property (nonatomic, copy) NSString *strOriginalURL;
 
 @property (nonatomic, copy) PFObject *meetupData;
 

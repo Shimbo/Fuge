@@ -168,7 +168,8 @@ static GlobalVariables *sharedInstance = nil;
 
 - (Boolean) isUserAdmin
 {
-    if ([[PFUser currentUser] objectForKey:@"admin"])
+    if ( [pCurrentUser objectForKey:@"admin"] )
+        if ( [[pCurrentUser objectForKey:@"admin"] boolValue] == TRUE )
         return true;
     return false;
 }
