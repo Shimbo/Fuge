@@ -44,7 +44,7 @@
 #define MAX_ANNOTATIONS_ON_THE_MAP  200
 
 // To keep recent venues list clean
-#define MAX_RECENT_VENUES_COUNT     [globalVariables globalParam:@"MaxRecentVenueCount" default:5]
+#define MAX_RECENT_VENUES_COUNT     [globalVariables globalParam:@"MaxRecentVenuesCount" default:5]
 
 // Merging meetups with persons
 #define TIME_FOR_JOIN_PERSON_AND_MEETUP         0.95 //in %
@@ -57,6 +57,11 @@
 #define MAX_DAYS_TILL_MEETUP        [globalVariables globalParam:@"MaxDaysTillMeetup" default:7]
 
 #define WELCOME_MESSAGE             (NSString*)[globalVariables getGlobalParam:@"WelcomeMessage"]
+
+#define MEETUP_TEMPLATE_DESCRIPTION (NSString*)[globalVariables getGlobalParam:@"MeetupTemplateDescription"]
+#define MEETUP_TEMPLATE_PRICE       (NSString*)[globalVariables getGlobalParam:@"MeetupTemplatePrice"]
+#define MEETUP_TEMPLATE_IMAGE       (NSString*)[globalVariables getGlobalParam:@"MeetupTemplateImage"]
+#define MEETUP_TEMPLATE_URL         (NSString*)[globalVariables getGlobalParam:@"MeetupTemplateURL"]
 
 // Zoom parameters
 #define MAX_ZOOM_LEVEL              19

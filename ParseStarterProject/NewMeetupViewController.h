@@ -38,6 +38,8 @@
     IBOutlet UITextField *imageURLField;
     IBOutlet UITextField *originalURLField;
     IBOutlet UITextField *descriptionText;
+    
+    Boolean bLocationChanged, bDateChanged, bDurationChanged;
 }
 
 @property (nonatomic,strong) FSVenue* selectedVenue;

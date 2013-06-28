@@ -258,7 +258,7 @@
     [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width, comments.frame.origin.y + comments.frame.size.height)];
 }
 
-- (void)viewDidLoad
+- (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidLoad];
     
@@ -348,26 +348,38 @@
     if ( meetup.strDescription || meetup.strPrice || meetup.strImageURL || meetup.strOriginalURL )
     {
         NSMutableString *html = [NSMutableString stringWithString: @"<html><head><title></title></head><body>"];
-        if ( meetup.strDescription )
+        Boolean bWasSomethingBefore = false;
+        if ( meetup.strImageURL && meetup.strImageURL.length > 0 )
         {
-            [html appendString:meetup.strDescription];
-            [html appendString:@"<BR>"];
+            NSUInteger maxWidth = self.view.width - 20;
+            NSString* strHtml = [NSString stringWithFormat:MEETUP_TEMPLATE_IMAGE, maxWidth, meetup.strImageURL];
+            [html appendString:strHtml];
+            bWasSomethingBefore = true;
         }
-        if ( meetup.strPrice )
+        if ( meetup.strPrice && meetup.strPrice.length > 0 )
         {
-            [html appendString:[NSString stringWithFormat:@"Price: %@", meetup.strPrice]];
-            [html appendString:@"<BR>"];
+            if ( bWasSomethingBefore )
+                [html appendString:@"<BR>"];
+            NSString* strHtml = [NSString stringWithFormat:MEETUP_TEMPLATE_PRICE, meetup.strPrice];
+            [html appendString:strHtml];
+            bWasSomethingBefore = true;
         }
-        if ( meetup.strImageURL )
+        if ( meetup.strDescription && meetup.strDescription.length > 0 )
         {
-            NSUInteger n = self.view.width - 20;
-            [html appendString:[NSString stringWithFormat:@"<img style='max-width:%dpx' src='%@'>", n, meetup.strImageURL]];
-            [html appendString:@"<BR>"];
+            if ( bWasSomethingBefore )
+                [html appendString:@"<BR>"];
+            NSString* strHtml = [NSString stringWithFormat:MEETUP_TEMPLATE_DESCRIPTION, meetup.strDescription];
+            [html appendString:strHtml];
+            bWasSomethingBefore = true;
         }
-        if ( meetup.strOriginalURL )
+        /*if ( meetup.strOriginalURL )
         {
-            [html appendString:[NSString stringWithFormat:@"<center><a href='%@'>Click here to view original web-page.</a></center>", meetup.strOriginalURL]];
-        }
+            if ( bWasSomethingBefore )
+                [html appendString:@"<BR>"];
+            NSString* strHtml = [NSString stringWithFormat:MEETUP_TEMPLATE_URL, meetup.strOriginalURL];
+            [html appendString:strHtml];
+            bWasSomethingBefore = true;
+        }*/
         [html appendString:@"</body></html>"];
         [descriptionView loadHTMLString:html baseURL:nil];
     }
@@ -407,6 +419,14 @@
         else
         {
             NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
+            
+            if ( meetup.strOriginalURL && meetup.strOriginalURL.length > 0 )
+            {
+                [stringComments appendString:@"    Original post: "];
+                [stringComments appendString:meetup.strOriginalURL];
+                [stringComments appendString:@"\n"];
+            }
+            
             for (NSDictionary *comment in commentsList)
             {
                 NSNumber* nSystem = [comment objectForKey:@"system"];

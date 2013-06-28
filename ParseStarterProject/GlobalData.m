@@ -921,9 +921,9 @@ NSInteger sortByName(id num1, id num2, void *context)
         case COMMENT_SAVED:
             [strComment appendString:[globalVariables fullUserName]];
             if (meetup.meetupType == TYPE_MEETUP)
-                [strComment appendString:@" changed meetup details."];
+                [strComment appendString:text];
             else
-                [strComment appendString:@" changed thread details."];
+                [strComment appendString:text];
             break;
         case COMMENT_JOINED:
             [strComment appendString:[globalVariables fullUserName]];

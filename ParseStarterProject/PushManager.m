@@ -214,6 +214,14 @@ static PushManager *sharedInstance = nil;
     NSString* strUserChannel =[[NSString alloc] initWithFormat:@"fb%@", strId];
     [[PFInstallation currentInstallation] addUniqueObject:strUserChannel forKey:@"channels"];
     [[PFInstallation currentInstallation] addUniqueObject:@"" forKey:@"channels"];
+    [[PFInstallation currentInstallation] addUniqueObject:@"newFbFriend" forKey:@"channels"];
+    [[PFInstallation currentInstallation] addUniqueObject:@"new2OFriend" forKey:@"channels"];
+    [[PFInstallation currentInstallation] addUniqueObject:@"newMessage" forKey:@"channels"];
+    [[PFInstallation currentInstallation] addUniqueObject:@"newInvite" forKey:@"channels"];
+    [[PFInstallation currentInstallation] addUniqueObject:@"newJoin" forKey:@"channels"];
+    [[PFInstallation currentInstallation] addUniqueObject:@"newComment" forKey:@"channels"];
+    [[PFInstallation currentInstallation] addUniqueObject:@"newMeetupNearby" forKey:@"channels"];
+    
     [[PFInstallation currentInstallation] setObject:strId forKey:@"ownerId"];
     [[PFInstallation currentInstallation] setObject:pCurrentUser forKey:@"ownerData"];
     [[PFInstallation currentInstallation] saveInBackground];

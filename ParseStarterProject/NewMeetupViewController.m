@@ -24,6 +24,7 @@
         invitee = nil;
         datePicker = nil;
         durationPicker = nil;
+        bLocationChanged = bDateChanged = bDurationChanged = false;
         self.navigationItem.leftItemsSupplementBackButton = true;
     }
     return self;
@@ -198,7 +199,12 @@
 - (void)dateChanged:(UIDatePicker *)picker
 {
     if ( picker )
+    {
+        NSDate* oldDate = meetupDate;
         meetupDate = picker.date;
+        if ( [oldDate compare:meetupDate] != NSOrderedSame )
+            bDateChanged = true;
+    }
     NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
     [formatter setDateStyle:NSDateFormatterMediumStyle];
     [formatter setTimeStyle:NSDateFormatterShortStyle];
@@ -287,6 +293,9 @@
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
+    NSUInteger nOldDays = meetupDurationDays;
+    NSUInteger nOldHours = meetupDurationHours;
+    
     // Preventing 0 days and 0 hours situation
     if ( [durationPicker selectedRowInComponent:0] == 0 &&
         [durationPicker selectedRowInComponent:1] == 0 )
@@ -297,6 +306,8 @@
     
     meetupDurationDays = [durationPicker selectedRowInComponent:0];
     meetupDurationHours = [durationPicker selectedRowInComponent:1];
+    if ( nOldDays != meetupDurationDays || nOldHours != meetupDurationHours )
+        bDurationChanged = true;
     [self updateDurationText];
 }
 
@@ -344,7 +355,10 @@
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     if (self.selectedVenue) {
+        NSString* oldLocation = [location titleForState:UIControlStateNormal];
         [location setTitle:self.selectedVenue.name forState:UIControlStateNormal];
+        if ( [oldLocation compare:self.selectedVenue.name] != NSOrderedSame )
+            bLocationChanged = true;
     }
 }
 
@@ -410,7 +424,32 @@
     [meetup save];
     
     // Creating comment
-    [globalData createCommentForMeetup:meetup commentType:COMMENT_SAVED commentText:nil];
+    if ( bLocationChanged || bDateChanged || bDurationChanged )
+    {
+        NSMutableString* strChanged = [NSMutableString stringWithString:@" changed "];
+        Boolean bShouldAddComma = false;
+        if ( bLocationChanged )
+        {
+            [strChanged appendString:@"location"];
+            bShouldAddComma = true;
+        }
+        if ( bDateChanged )
+        {
+            if ( bShouldAddComma )
+                [strChanged appendString:@", "];
+            [strChanged appendString:@"date-time"];
+            bShouldAddComma = true;
+        }
+        if ( bDurationChanged )
+        {
+            if ( bShouldAddComma )
+                [strChanged appendString:@" and "];
+            [strChanged appendString:@"duration"];
+            bShouldAddComma = true;
+        }
+        [strChanged appendString:@" of the meetup."];
+        [globalData createCommentForMeetup:meetup commentType:COMMENT_SAVED commentText:strChanged];
+    }
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }
