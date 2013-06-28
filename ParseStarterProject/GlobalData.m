@@ -418,10 +418,9 @@ NSInteger sortByName(id num1, id num2, void *context)
                 
                 // Adding first circle friends
                 [self addPerson:friendUser userCircle:CIRCLE_FB];
-                
-                // Notification for that user if the friend is new
-                [pushManager sendPushNewUser:PUSH_NEW_FBFRIEND idTo:[friendUser objectForKey:@"fbId"]];
             }
+            // Notification for that user if the friend is new
+            [pushManager sendPushNewUser:PUSH_NEW_FBFRIEND idsTo:[friendUsers valueForKeyPath:@"fbId"]];
             
             // Sorting FB friends
             Circle* circleFB = [self getCircle:CIRCLE_FB];
@@ -507,12 +506,10 @@ NSInteger sortByName(id num1, id num2, void *context)
             
             // Data collection
             for (PFUser *friend2OUser in friend2OUsers)
-            {
                 [self addPerson:friend2OUser userCircle:CIRCLE_2O];
-                
-                // Notification for that user if the friend is new
-                [pushManager sendPushNewUser:PUSH_NEW_2OFRIEND idTo:[friend2OUser objectForKey:@"fbId"]];
-            }
+            
+            // Notification for that user if the friend is new
+            [pushManager sendPushNewUser:PUSH_NEW_2OFRIEND idsTo:[friend2OUsers valueForKeyPath:@"fbId"]];
             
             // Sorting 2O friends
             Circle* circle2O = [self getCircle:CIRCLE_2O];
@@ -1066,7 +1063,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [[PFUser currentUser] saveInBackground]; // CHECK: here was Eventually
     
     // Pushes
-    [pushManager removeChannel:strThread];
+    //[pushManager removeChannels:[strThread];
 }
 
 - (Boolean) isSubscribedToThread:(NSString *)strThread

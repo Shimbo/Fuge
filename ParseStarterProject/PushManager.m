@@ -27,37 +27,40 @@ static PushManager *sharedInstance = nil;
     self = [super init];
     
     if (self) {
-        dicNewUserPushesSent = [[NSMutableDictionary alloc] init];
+        newUserPushesSent = [NSMutableArray arrayWithCapacity:30];
     }
     
     return self;
 }
 
-- (void)sendPushNewUser:(NSInteger)pushType idTo:(NSString*)strTo
+- (void)sendPushNewUser:(NSInteger)pushType idsTo:(NSArray*)to
 {
     Boolean bShouldSendPushToFriends = [globalVariables shouldSendPushToFriends];
     if ( ! bShouldSendPushToFriends )
         return;
     
-    if ( [strTo compare:[[PFUser currentUser] objectForKey:@"fbId"]] == NSOrderedSame )
-        return;
-    
-    if ( [dicNewUserPushesSent objectForKey:strTo] )
-        return;
+    NSMutableArray* ids = [NSMutableArray arrayWithArray:to];
+    [ids removeObject:strCurrentUserId];
+    [ids removeObjectsInArray:newUserPushesSent];
     
     NSString* strName = [globalVariables fullUserName];
     NSString* strPush = @"Wrong push! Error codename: Cleopatra.";
+    NSString* strChannel = @"Wrong channel";
     switch (pushType)
     {
         case PUSH_NEW_FBFRIEND:
             strPush = [[NSString alloc] initWithFormat:@"Woohoo! Your Facebook friend %@ joined Second Circle! Check if you've got new connections!", strName];
+            strChannel = @"newFbFriend";
             break;
         case PUSH_NEW_2OFRIEND:
             strPush = [[NSString alloc] initWithFormat:@"Hurray! Your 2ndO friend %@ joined Second Circle!", strName];
+            strChannel = @"new2OFriend";
             break;
     }
     
-    NSString* strChannel = [NSString stringWithFormat:@"fb%@", strTo];
+    PFQuery *pushQuery = [PFInstallation query];
+    [pushQuery whereKey:@"ownerId" containedIn:ids];
+    
     NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
                           @"New friend!",   @"title",
                           strPush,          @"alert",
@@ -70,12 +73,12 @@ static PushManager *sharedInstance = nil;
     [push setData:data];
     [push sendPushInBackground];
     
-    [dicNewUserPushesSent setObject:@"Sent" forKey:strTo];
+    [newUserPushesSent addObjectsFromArray:ids];
 }
 
 - (void)sendPushNewMessage:(NSString*)userId text:(NSString*)strText
 {
-    NSString* strChannel = [NSString stringWithFormat:@"fb%@", userId];
+    NSString* strMessageChannel =[[NSString alloc] initWithFormat:@"fb%@_message", userId];
     NSString* strPush = [NSString stringWithFormat:@"%@: %@", [globalVariables shortUserName], strText];
     NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
                           @"New message!",  @"title",
@@ -85,7 +88,7 @@ static PushManager *sharedInstance = nil;
                           nil];
     
     PFPush *push = [[PFPush alloc] init];
-    [push setChannel:strChannel];
+    [push setChannel:strMessageChannel];
     [push setData:data];
     [push sendPushInBackground];
 }
@@ -115,6 +118,7 @@ static PushManager *sharedInstance = nil;
                           meetupId,         @"meetup",
                           @"Increment",     @"badge",
                           nil];
+    [push setChannel:@"newJoin"];
     [push setData:data];
     [push sendPushInBackground];
 }
@@ -139,6 +143,7 @@ static PushManager *sharedInstance = nil;
                           meetupId,         @"meetup",
                           @"Increment",     @"badge",
                           nil];
+    [push setChannel:@"newComment"];
     [push setData:data];
     [push sendPushInBackground];
 }
@@ -149,7 +154,7 @@ static PushManager *sharedInstance = nil;
     if ( ! meetup )
         return;
     
-    NSString* strChannel = [NSString stringWithFormat:@"fb%@", userId];
+    NSString* strInviteChannel =[NSString stringWithFormat:@"fb%@_invite", userId];
     NSString* strText = [NSString stringWithFormat:@"%@ invited you to %@", [globalVariables shortUserName], meetup.strSubject];
     NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
                           @"New comment!",  @"title",
@@ -159,7 +164,7 @@ static PushManager *sharedInstance = nil;
                           nil];
     
     PFPush *push = [[PFPush alloc] init];
-    [push setChannel:strChannel];
+    [push setChannel:strInviteChannel];
     [push setData:data];
     [push sendPushInBackground];
 }
@@ -204,6 +209,7 @@ static PushManager *sharedInstance = nil;
                           meetupId,         @"meetup",
     //                      @"Increment",     @"badge", // Don't increment as not inbox event
                           nil];
+    [push setChannel:@"newMeetupNearby"];
     [push setData:data];
     [push expireAfterTimeInterval:PUSH_DISCOVERY_EXPIRATION];
     [push sendPushInBackground];
@@ -211,13 +217,16 @@ static PushManager *sharedInstance = nil;
 
 - (void)initChannelsForTheFirstTime:(NSString*)strId
 {
-    NSString* strUserChannel =[[NSString alloc] initWithFormat:@"fb%@", strId];
-    [[PFInstallation currentInstallation] addUniqueObject:strUserChannel forKey:@"channels"];
+    //NSString* strUserChannel =[[NSString alloc] initWithFormat:@"fb%@", strId];
+    NSString* strMessageChannel =[[NSString alloc] initWithFormat:@"fb%@_message", strId];
+    NSString* strInviteChannel =[[NSString alloc] initWithFormat:@"fb%@_invite", strId];
+    
+    //[[PFInstallation currentInstallation] addUniqueObject:strUserChannel forKey:@"channels"];
     [[PFInstallation currentInstallation] addUniqueObject:@"" forKey:@"channels"];
     [[PFInstallation currentInstallation] addUniqueObject:@"newFbFriend" forKey:@"channels"];
     [[PFInstallation currentInstallation] addUniqueObject:@"new2OFriend" forKey:@"channels"];
-    [[PFInstallation currentInstallation] addUniqueObject:@"newMessage" forKey:@"channels"];
-    [[PFInstallation currentInstallation] addUniqueObject:@"newInvite" forKey:@"channels"];
+    [[PFInstallation currentInstallation] addUniqueObject:strMessageChannel forKey:@"channels"];
+    [[PFInstallation currentInstallation] addUniqueObject:strInviteChannel forKey:@"channels"];
     [[PFInstallation currentInstallation] addUniqueObject:@"newJoin" forKey:@"channels"];
     [[PFInstallation currentInstallation] addUniqueObject:@"newComment" forKey:@"channels"];
     [[PFInstallation currentInstallation] addUniqueObject:@"newMeetupNearby" forKey:@"channels"];
@@ -225,26 +234,38 @@ static PushManager *sharedInstance = nil;
     [[PFInstallation currentInstallation] setObject:strId forKey:@"ownerId"];
     [[PFInstallation currentInstallation] setObject:pCurrentUser forKey:@"ownerData"];
     [[PFInstallation currentInstallation] saveInBackground];
+    
+    //[PFPush subscribeToChannelInBackground:strUserChannel target:self selector:@selector(subscribeFinished:error:)];
     [PFPush subscribeToChannelInBackground:@"" target:self selector:@selector(subscribeFinished:error:)];
-    [PFPush subscribeToChannelInBackground:strUserChannel target:self selector:@selector(subscribeFinished:error:)];
+    [PFPush subscribeToChannelInBackground:@"newFbFriend" target:self selector:@selector(subscribeFinished:error:)];
+    [PFPush subscribeToChannelInBackground:@"new2OFriend" target:self selector:@selector(subscribeFinished:error:)];
+    [PFPush subscribeToChannelInBackground:strMessageChannel target:self selector:@selector(subscribeFinished:error:)];
+    [PFPush subscribeToChannelInBackground:strInviteChannel target:self selector:@selector(subscribeFinished:error:)];
+    [PFPush subscribeToChannelInBackground:@"newJoin" target:self selector:@selector(subscribeFinished:error:)];
+    [PFPush subscribeToChannelInBackground:@"newComment" target:self selector:@selector(subscribeFinished:error:)];
+    [PFPush subscribeToChannelInBackground:@"newMeetupNearby" target:self selector:@selector(subscribeFinished:error:)];
 }
 
-- (void)addChannel:(NSString*)strChannel
+- (void)addChannels:(NSArray*)channels
 {
-    PFInstallation* currentInstallation = [PFInstallation currentInstallation];
-    [currentInstallation addUniqueObject:strChannel forKey:@"channels"];
-    [currentInstallation saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+    [[PFInstallation currentInstallation] addUniqueObjectsFromArray:channels forKey:@"channels"];
+    [[PFInstallation currentInstallation] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (error)
             NSLog(@"Sync Error:%@", error);
     }];
-    [PFPush subscribeToChannelInBackground:strChannel target:self selector:@selector(subscribeFinished:error:)];
+    for ( NSString* strChannel in channels )
+        [PFPush subscribeToChannelInBackground:strChannel target:self selector:@selector(subscribeFinished:error:)];
 }
 
-- (void)removeChannel:(NSString*)strChannel
+- (void)removeChannels:(NSArray*)channels
 {
-    [[PFInstallation currentInstallation] removeObject:strChannel forKey:@"channels"];
-    [[PFInstallation currentInstallation] saveInBackground];
-    [PFPush unsubscribeFromChannelInBackground:strChannel];
+    [[PFInstallation currentInstallation] removeObjectsInArray:channels forKey:@"channels"];
+    [[PFInstallation currentInstallation] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (error)
+            NSLog(@"Sync Error:%@", error);
+    }];
+    for ( NSString* strChannel in channels )
+        [PFPush unsubscribeFromChannelInBackground:strChannel];
 }
 
 - (void)subscribeFinished:(NSNumber *)result error:(NSError *)error {

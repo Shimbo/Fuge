@@ -21,12 +21,12 @@ enum EPushType
 
 @interface PushManager : NSObject
 {
-    NSMutableDictionary* dicNewUserPushesSent;
+    NSMutableArray* newUserPushesSent;
 }
 
 + (id)sharedInstance;
 
-- (void)sendPushNewUser:(NSInteger)pushType idTo:(NSString*)strTo;
+- (void)sendPushNewUser:(NSInteger)pushType idsTo:(NSArray*)to;
 - (void)sendPushNewMessage:(NSString*)userId text:(NSString*)strText;
 - (void)sendPushAttendingMeetup:(NSString*)meetupId;
 - (void)sendPushCommentedMeetup:(NSString*)meetupId;
@@ -37,8 +37,8 @@ enum EPushType
 //- (void)sendPushNewMessage:(NSInteger)pushType idTo:(NSString*)strTo;
 
 - (void)initChannelsForTheFirstTime:(NSString*)strId;
-- (void)addChannel:(NSString*)strChannel;
-- (void)removeChannel:(NSString*)strChannel;
+- (void)addChannels:(NSArray*)channels;
+- (void)removeChannels:(NSArray*)channels;
 
 @end
 

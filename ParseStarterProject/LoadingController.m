@@ -324,7 +324,7 @@ static Boolean bRotating = true;
     _miscText.hidden = FALSE;
     
     _titleText.text = @"Welcome!";
-    _descriptionText.text = @"Fuge is a mobile discovery service for\npeople and activities nearby. Please, keep\nin mind that we're still in early beta.";
+    _descriptionText.text = @"Fuge is a social discovery service. Explore\n surroundings for people and activites. Or\n create your own and invite friends!";
     
     [self showAll];
 }
