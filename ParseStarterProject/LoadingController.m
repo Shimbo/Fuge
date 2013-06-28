@@ -211,7 +211,8 @@ static Boolean bRotating = true;
     //if ( [globalVariables isNewUser] )
     //    [self proceedToProfile];
     //else
-        [self proceedToMapWindow];
+    [globalVariables setLoaded];
+    [self proceedToMapWindow];
     
     [TestFlight passCheckpoint:@"Initialization main complete"];
 }

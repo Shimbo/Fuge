@@ -92,6 +92,7 @@
     NSMutableDictionary* personalSettings;      // Personal settings (from PFUser)
     NSDictionary*       globalSettings; // Global settings (from settings object)
     NSMutableArray*     arrayRoles;
+    Boolean             bLoaded;    // True if initial loading passed
 }
 
 + (id)sharedInstance;
@@ -121,5 +122,8 @@
 
 - (NSMutableArray*)getRoles;
 - (NSString*)roleByNumber:(NSUInteger)number;
+
+- (void)setLoaded;
+- (Boolean)isLoaded;
 
 @end

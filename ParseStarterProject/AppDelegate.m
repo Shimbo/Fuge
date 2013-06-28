@@ -160,7 +160,7 @@
     
     if ( bFirstActivation )
         bFirstActivation = false;
-    else if ( [[PFUser currentUser] isAuthenticated])
+    else if ( [globalVariables isLoaded] )
     {
         [globalData reloadFriendsInBackground];
         [globalData reloadMapInfoInBackground:nil toNorthEast:nil];

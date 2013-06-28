@@ -93,6 +93,8 @@
         [imageURLField setText:meetup.strImageURL];
         [originalURLField setText:meetup.strOriginalURL];
         [descriptionText setText:meetup.strDescription];
+        meetupIcon = meetup.iconNumber;
+        [iconButton setTitle:meetupIcons[meetupIcon] forState:UIControlStateNormal];
     }
     else
     {
@@ -111,6 +113,7 @@
         meetupDate = dateDefault;
         meetupDurationDays = 0;
         meetupDurationHours = 1;
+        meetupIcon = 0;
         
         // Set focus on text view
         [subject becomeFirstResponder];
@@ -125,6 +128,13 @@
         imageURLField.hidden = TRUE;
         originalURLField.hidden = TRUE;
         descriptionText.hidden = TRUE;
+        iconButton.hidden = TRUE;
+    }
+    else
+    {
+        CGSize size = scrollView.contentSize;
+        size.height = descriptionText.frame.origin.y + descriptionText.frame.size.height + 10;
+        scrollView.contentSize = size;
     }
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
@@ -396,6 +406,7 @@
     meetup.privacy = notifySwitch.isOn ? MEETUP_PUBLIC : MEETUP_PRIVATE;
     meetup.dateTime = meetupDate;
     meetup.durationSeconds = meetupDurationDays*24*3600 + meetupDurationHours*3600;
+    meetup.iconNumber = meetupIcon;
     if ( priceField.text.length > 0 )
         meetup.strPrice = priceField.text;
     if ( imageURLField.text.length > 0 )
@@ -502,6 +513,13 @@
     }
 }
 
+- (IBAction)iconChanged:(id)sender {
+    meetupIcon++;
+    if ( meetupIcon >= meetupIcons.count )
+        meetupIcon= 0;
+    [iconButton setTitle:meetupIcons[meetupIcon] forState:UIControlStateNormal];
+}
+
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     [subject resignFirstResponder];
@@ -528,6 +546,7 @@
     originalURLField = nil;
     descriptionText = nil;
     priceText = nil;
+    iconButton = nil;
     [super viewDidUnload];
 }
 

@@ -84,17 +84,7 @@
     
     NSMutableString* stringHistory = [[NSMutableString alloc] initWithFormat:@""];
     
-    // Feedback message
-    if ( [personThis.strId compare:FEEDBACK_BOT_ID] == NSOrderedSame )
-    {
-        [stringHistory appendString:@"    "];
-        [stringHistory appendString:personThis.strFirstName];
-        [stringHistory appendString:@": "];
-        [stringHistory appendString:WELCOME_MESSAGE];
-        if ( messages.count != 0 )
-            [stringHistory appendString:@"\n"];
-    }
-    
+    // Messages
     for ( int n = 0; n < messages.count; n++ )
     {
         PFObject* message = messages[n];
@@ -109,6 +99,17 @@
             [stringHistory appendString:@"    You: "];
         [stringHistory appendString:strText];
         if ( n != messages.count - 1 )
+            [stringHistory appendString:@"\n"];
+    }
+    
+    // Feedback message (always at the bottom, first one)
+    if ( [personThis.strId compare:FEEDBACK_BOT_ID] == NSOrderedSame )
+    {
+        [stringHistory appendString:@"    "];
+        [stringHistory appendString:personThis.strFirstName];
+        [stringHistory appendString:@": "];
+        [stringHistory appendString:WELCOME_MESSAGE];
+        if ( messages.count != 0 )
             [stringHistory appendString:@"\n"];
     }
     

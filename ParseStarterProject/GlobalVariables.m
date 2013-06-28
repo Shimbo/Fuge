@@ -33,6 +33,7 @@ static GlobalVariables *sharedInstance = nil;
         bSendPushToFriends = FALSE;
         personalSettings = nil;
         globalSettings = nil;
+        bLoaded = false;
         
         // DO NOT change the order, server side uses this numeration
         arrayRoles = [[NSMutableArray alloc] init];
@@ -208,6 +209,16 @@ static GlobalVariables *sharedInstance = nil;
     if ( ! num )
         return defaultResult;
     return [num integerValue];
+}
+
+- (void)setLoaded
+{
+    bLoaded = true;
+}
+
+- (Boolean)isLoaded
+{
+    return bLoaded;
 }
 
 @end

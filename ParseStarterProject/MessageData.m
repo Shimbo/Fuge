@@ -120,27 +120,16 @@
     return messagesUnique;
 }
 
-NSInteger sort(id message1, id message2, void *context)
-{
-    PFObject* mes1 = message1;
-    PFObject* mes2 = message2;
-    NSDate *date1 = mes1.createdAt;
-    NSDate *date2 = mes2.createdAt;
-    if ([date2 compare:date1] == NSOrderedDescending)
-        return NSOrderedDescending;
-    return NSOrderedAscending;
-}
-
 - (void)loadMessages
 {
     // Query
-    PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Message"];
-    [messagesQuery whereKey:@"idUserTo" equalTo:strCurrentUserId];
-    [messagesQuery orderByAscending:@"createdAt"];
-    messagesQuery.limit = 200;
+    NSPredicate* predicate = [NSPredicate predicateWithFormat:@"idUserTo = %@ OR idUserFrom = %@", strCurrentUserId, strCurrentUserId];
+    PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Message" predicate:predicate];
+    [messagesQuery orderByDescending:@"createdAt"];
+    messagesQuery.limit = 500;
     
     // Loading
-    [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *messages1, NSError *error) {
+    [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *result, NSError *error) {
         
         if ( error )
         {
@@ -149,45 +138,22 @@ NSInteger sort(id message1, id message2, void *context)
         }
         else
         {
-            PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Message"];
-            [messagesQuery whereKey:@"idUserFrom" equalTo:strCurrentUserId];
-            [messagesQuery orderByAscending:@"createdAt"];
-            messagesQuery.limit = 200;
+            messages = [NSMutableArray arrayWithCapacity:30];
             
-            [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *messages2, NSError *error) {
-                
-                if ( error )
-                {
-                    NSLog(@"Uh oh. An error occurred: %@", error);
-                    [self loadingFailed:LOADING_INBOX status:LOAD_NOCONNECTION];
-                }
-                else
-                {
-                    // Merging and sorting results
-                    NSMutableSet *set = [NSMutableSet setWithArray:messages1];
-                    [set addObjectsFromArray:messages2];
-                    NSArray *array = [set allObjects];
-                    NSArray *sortedArray = [array sortedArrayUsingFunction:sort context:NULL];
+            // Welcome message
+            Message* welcomeMessage = [[Message alloc] initWithWelcomeMessage];
+            [self addMessage:welcomeMessage];
+            
+            // Loading it with data
+            for ( PFObject* messageData in result )
+                [self addMessageWithData:messageData];
                     
-                    // Creating array
-                    messages = [[NSMutableArray alloc] init];
-                    
-                    // Welcome message
-                    Message* welcomeMessage = [[Message alloc] initWithWelcomeMessage];
-                    [self addMessage:welcomeMessage];
-                    
-                    // Loading it with data
-                    for ( PFObject* messageData in sortedArray )
-                        [self addMessageWithData:messageData];
-                    
-                    // Loading stage complete
-                    [self incrementInboxLoadingStage];
-                }
-            }];
+            // Loading stage complete
+            [self incrementInboxLoadingStage];
         }
     }];
     
-    // TODO: add check for paging and paging itself if result count == limit in any of two queries
+    // TODO: add check for paging and paging itself if result count == limit
 }
 
 - (void)loadThread:(Person*)person target:(id)target selector:(SEL)callback
@@ -202,46 +168,21 @@ NSInteger sort(id message1, id message2, void *context)
         return;
     }
     
-    PFQuery *messageQuery1 = [PFQuery queryWithClassName:@"Message"];
-    messageQuery1.limit = 1000;
-    [messageQuery1 whereKey:@"idUserFrom" equalTo:strCurrentUserId ];
-    [messageQuery1 whereKey:@"idUserTo" equalTo:person.strId ];
-    [messageQuery1 orderByDescending:@"createdAt"];
+    NSPredicate* predicate = [NSPredicate predicateWithFormat:@"idUserTo = %@ AND idUserFrom = %@ OR idUserTo = %@ AND idUserFrom = %@", strCurrentUserId, person.strId, person.strId, strCurrentUserId];
+    PFQuery *messageQuery = [PFQuery queryWithClassName:@"Message" predicate:predicate];
+    messageQuery.limit = 1000;
+    [messageQuery orderByDescending:@"createdAt"];
     
-    PFQuery *messageQuery2 = [PFQuery queryWithClassName:@"Message"];
-    messageQuery2.limit = 1000;
-    [messageQuery2 whereKey:@"idUserFrom" equalTo:person.strId ];
-    [messageQuery2 whereKey:@"idUserTo" equalTo:strCurrentUserId ];
-    [messageQuery2 orderByDescending:@"createdAt"];
-    
-    [messageQuery1 findObjectsInBackgroundWithBlock:^(NSArray *messages1, NSError* error1) {
+    [messageQuery findObjectsInBackgroundWithBlock:^(NSArray *result, NSError* error) {
         
-        [messageQuery2 findObjectsInBackgroundWithBlock:^(NSArray *messages2, NSError* error2) {
-            
-            NSError* error = nil;
-            NSArray *sortedArray = nil;
-            if ( error1 )
-                error = error1;
-            else
-                error = error2;
-            
-            if ( ! error1 && ! error2 )
-            {
-                NSMutableSet *set = [NSMutableSet setWithArray:messages1];
-                [set addObjectsFromArray:messages2];
-                NSArray *array = [set allObjects];
-                sortedArray = [array sortedArrayUsingFunction:sort context:NULL];
-            }
-            
-            [target performSelector:callback withObject:sortedArray withObject:error];
-            
-            // Last read message date
-            if ( sortedArray && [sortedArray count] > 0 )
-            {
-                [globalData updateConversation:((PFObject*)sortedArray[0]).createdAt count:[sortedArray count] thread:person.strId];
-                [globalData postInboxUnreadCountDidUpdate];
-            }
-        }];
+        [target performSelector:callback withObject:result withObject:error];
+        
+        // Last read message date
+        if ( result && [result count] > 0 )
+        {
+            [globalData updateConversation:((PFObject*)result[0]).createdAt count:[result count] thread:person.strId];
+            [globalData postInboxUnreadCountDidUpdate];
+        }
     }];
 }
 

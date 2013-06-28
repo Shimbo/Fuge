@@ -27,6 +27,7 @@
     NSDate* meetupDate;
     NSUInteger meetupDurationDays;
     NSUInteger meetupDurationHours;
+    NSUInteger meetupIcon;
     Meetup* meetup;
     Person* invitee;
     NSUInteger meetupType;
@@ -38,6 +39,7 @@
     IBOutlet UITextField *imageURLField;
     IBOutlet UITextField *originalURLField;
     IBOutlet UITextField *descriptionText;
+    IBOutlet UIButton *iconButton;
     
     Boolean bLocationChanged, bDateChanged, bDurationChanged;
 }
@@ -48,6 +50,7 @@
 - (IBAction)durationButton:(id)sender;
 - (IBAction)venueButton:(id)sender;
 - (IBAction)privacyChanged:(id)sender;
+- (IBAction)iconChanged:(id)sender;
 
 -(void) setMeetup:(Meetup*)m;
 -(void) setInvitee:(Person*)i;
