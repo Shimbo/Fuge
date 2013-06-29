@@ -37,15 +37,19 @@
 @implementation HPGrowingTextView
 @synthesize internalTextView;
 @synthesize delegate;
-
+@synthesize maxHeight;
+@synthesize minHeight;
 @synthesize font;
 @synthesize textColor;
 @synthesize textAlignment; 
 @synthesize selectedRange;
 @synthesize editable;
-@synthesize dataDetectorTypes; 
+@synthesize dataDetectorTypes;
 @synthesize animateHeightChange;
+@synthesize animationDuration;
 @synthesize returnKeyType;
+@dynamic placeholder;
+@dynamic placeholderColor;
 
 // having initwithcoder allows us to use HPGrowingTextView in a Nib. -- aob, 9/2011
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -82,10 +86,14 @@
     minNumberOfLines = 1;
     
     animateHeightChange = YES;
+    animationDuration = 0.1f;
     
     internalTextView.text = @"";
     
     [self setMaxNumberOfLines:3];
+
+    [self setPlaceholderColor:[UIColor lightGrayColor]];
+    internalTextView.displayPlaceHolder = YES;
 }
 
 -(CGSize)sizeThatFits:(CGSize)size
@@ -130,6 +138,8 @@
 
 -(void)setMaxNumberOfLines:(int)n
 {
+    if(n == 0 && maxHeight > 0) return; // the user specified a maxHeight themselves.
+    
     // Use internalTextView for height calculations, thanks to Gwynne <http://blog.darkrainfall.org/>
     NSString *saveText = internalTextView.text, *newText = @"-";
     
@@ -157,8 +167,16 @@
     return maxNumberOfLines;
 }
 
+- (void)setMaxHeight:(int)height
+{
+    maxHeight = height;
+    maxNumberOfLines = 0;
+}
+
 -(void)setMinNumberOfLines:(int)m
 {
+    if(m == 0 && minHeight > 0) return; // the user specified a minHeight themselves.
+
 	// Use internalTextView for height calculations, thanks to Gwynne <http://blog.darkrainfall.org/>
     NSString *saveText = internalTextView.text, *newText = @"-";
     
@@ -186,9 +204,39 @@
     return minNumberOfLines;
 }
 
+- (void)setMinHeight:(int)height
+{
+    minHeight = height;
+    minNumberOfLines = 0;
+}
+
+- (NSString *)placeholder
+{
+    return internalTextView.placeholder;
+}
+
+- (void)setPlaceholder:(NSString *)placeholder
+{
+    [internalTextView setPlaceholder:placeholder];
+}
+
+- (UIColor *)placeholderColor
+{
+    return internalTextView.placeholderColor;
+}
+
+- (void)setPlaceholderColor:(UIColor *)placeholderColor 
+{
+    [internalTextView setPlaceholderColor:placeholderColor];
+}
 
 - (void)textViewDidChange:(UITextView *)textView
-{	
+{
+    [self refreshHeight];
+}
+
+- (void)refreshHeight
+{
 	//size of content, so we can set the frame of self
 	NSInteger newSizeH = internalTextView.contentSize.height;
 	if(newSizeH < minHeight || !internalTextView.hasText) newSizeH = minHeight; //not smalles than minHeight
@@ -210,7 +258,7 @@
                 
                 if ([UIView resolveClassMethod:@selector(animateWithDuration:animations:)]) {
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 40000
-                    [UIView animateWithDuration:0.1f 
+                    [UIView animateWithDuration:animationDuration 
                                           delay:0 
                                         options:(UIViewAnimationOptionAllowUserInteraction|
                                                  UIViewAnimationOptionBeginFromCurrentState)                                 
@@ -225,7 +273,7 @@
 #endif
                 } else {
                     [UIView beginAnimations:@"" context:nil];
-                    [UIView setAnimationDuration:0.1f];
+                    [UIView setAnimationDuration:animationDuration];
                     [UIView setAnimationDelegate:self];
                     [UIView setAnimationDidStopSelector:@selector(growDidStop)];
                     [UIView setAnimationBeginsFromCurrentState:YES];
@@ -260,8 +308,18 @@
 		
 	}
 	
+    // Display (or not) the placeholder string
+    
+    BOOL wasDisplayingPlaceholder = internalTextView.displayPlaceHolder;
+    internalTextView.displayPlaceHolder = self.internalTextView.text.length == 0;
 	
-	if ([delegate respondsToSelector:@selector(growingTextViewDidChange:)]) {
+    if (wasDisplayingPlaceholder != internalTextView.displayPlaceHolder) {
+        [internalTextView setNeedsDisplay];
+    }
+    
+    // Tell the delegate that the text view changed
+	
+    if ([delegate respondsToSelector:@selector(growingTextViewDidChange:)]) {
 		[delegate growingTextViewDidChange:self];
 	}
 	

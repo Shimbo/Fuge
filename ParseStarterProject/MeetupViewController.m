@@ -372,14 +372,14 @@
             [html appendString:strHtml];
             bWasSomethingBefore = true;
         }
-        /*if ( meetup.strOriginalURL )
-        {
-            if ( bWasSomethingBefore )
-                [html appendString:@"<BR>"];
-            NSString* strHtml = [NSString stringWithFormat:MEETUP_TEMPLATE_URL, meetup.strOriginalURL];
-            [html appendString:strHtml];
-            bWasSomethingBefore = true;
-        }*/
+        //if ( meetup.strOriginalURL )
+        //{
+        //    if ( bWasSomethingBefore )
+        //        [html appendString:@"<BR>"];
+        //    NSString* strHtml = [NSString stringWithFormat:MEETUP_TEMPLATE_URL, meetup.strOriginalURL];
+        //    [html appendString:strHtml];
+        //    bWasSomethingBefore = true;
+        //}
         [html appendString:@"</body></html>"];
         [descriptionView loadHTMLString:html baseURL:nil];
     }
@@ -393,17 +393,6 @@
         textFrame.origin.y = descriptionView.frame.origin.y;
         comments.frame = textFrame;
     }
-/*    for ( UIView* view in descriptionView.subviews )
-    {
-        if ( [view isKindOfClass:[UIScrollView class]] )
-            ((UIScrollView*)view).scrollEnabled = NO;
-        for ( UIView* view2 in view.subviews )
-            if ( [view2 isKindOfClass:[UIScrollView class]] )
-                ((UIScrollView*)view2).scrollEnabled = NO;
-
-    }*/
-    //descriptionView.scrollView.scrollEnabled = NO;
-    //descriptionView.scrollView.bounces = NO;
     
     // Loading comments
     PFQuery *commentsQuery = [PFQuery queryWithClassName:@"Comment"];
