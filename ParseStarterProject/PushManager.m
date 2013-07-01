@@ -43,17 +43,20 @@ static PushManager *sharedInstance = nil;
     [ids removeObject:strCurrentUserId];
     [ids removeObjectsInArray:newUserPushesSent];
     
+    if ( ids.count == 0 )
+        return;
+    
     NSString* strName = [globalVariables fullUserName];
     NSString* strPush = @"Wrong push! Error codename: Cleopatra.";
     NSString* strChannel = @"Wrong channel";
     switch (pushType)
     {
         case PUSH_NEW_FBFRIEND:
-            strPush = [[NSString alloc] initWithFormat:@"Woohoo! Your Facebook friend %@ joined Second Circle! Check if you've got new connections!", strName];
+            strPush = [[NSString alloc] initWithFormat:@"Woohoo! Your Facebook friend %@ joined Fuge! Check if you've got new connections!", strName];
             strChannel = @"newFbFriend";
             break;
         case PUSH_NEW_2OFRIEND:
-            strPush = [[NSString alloc] initWithFormat:@"Hurray! Your 2ndO friend %@ joined Second Circle!", strName];
+            strPush = [[NSString alloc] initWithFormat:@"Hurray! %@, a friend of your friend, joined Fuge!", strName];
             strChannel = @"new2OFriend";
             break;
     }
@@ -69,6 +72,8 @@ static PushManager *sharedInstance = nil;
                           nil];
     
     PFPush *push = [[PFPush alloc] init];
+    
+    [push setQuery:pushQuery];
     [push setChannel:strChannel];
     [push setData:data];
     [push sendPushInBackground];
@@ -111,13 +116,15 @@ static PushManager *sharedInstance = nil;
     NSString* strText = [NSString stringWithFormat:@"%@ joined meetup %@", [globalVariables shortUserName], meetup.strSubject];
     
     PFPush *push = [[PFPush alloc] init];
-    [push setQuery:pushQuery];
+    
     NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
                           @"New attendee!", @"title",
                           strText,          @"alert",
                           meetupId,         @"meetup",
                           @"Increment",     @"badge",
                           nil];
+    
+    [push setQuery:pushQuery];
     [push setChannel:@"newJoin"];
     [push setData:data];
     [push sendPushInBackground];

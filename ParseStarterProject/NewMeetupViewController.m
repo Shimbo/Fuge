@@ -504,7 +504,7 @@
 }
 
 - (IBAction)privacyChanged:(id)sender {
-    if ( [pCurrentUser.createdAt compare:[NSDate date]] == NSOrderedDescending )
+    if ( [pCurrentUser.createdAt compare:[NSDate dateWithTimeIntervalSinceNow:-24*3600*7]] == NSOrderedDescending )
     {
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Too early" message:@"Public meetups are available only for experienced users, registered at least a week ago. Try creating private meetup and invite your friends, so you will become familiar with how it works." delegate:self cancelButtonTitle:@"Alright" otherButtonTitles:nil, nil];
         [alert show];

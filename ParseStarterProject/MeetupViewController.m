@@ -260,7 +260,7 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    [super viewDidLoad];
+    [super viewDidAppear:animated];
     
     self.title = @"";
     

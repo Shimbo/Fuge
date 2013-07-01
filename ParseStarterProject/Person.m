@@ -40,14 +40,19 @@
         NSDateFormatter* myFormatter = [[NSDateFormatter alloc] init];
         [myFormatter setDateFormat:@"MM/dd/yyyy"];
         NSDate* birthday = [myFormatter dateFromString:[user objectForKey:@"fbBirthday"]];
-        NSDate* now = [NSDate date];
-        NSDateComponents* ageComponents = [[NSCalendar currentCalendar]
-                                           components:NSYearCalendarUnit
-                                           fromDate:birthday
-                                           toDate:now
-                                           options:0];
-        NSInteger age = [ageComponents year];
-        strAge = [NSString stringWithFormat:@"%d y/o", age];
+        if ( birthday )
+        {
+            NSDate* now = [NSDate date];
+            NSDateComponents* ageComponents = [[NSCalendar currentCalendar]
+                                               components:NSYearCalendarUnit
+                                               fromDate:birthday
+                                               toDate:now
+                                               options:0];
+            NSInteger age = [ageComponents year];
+            strAge = [NSString stringWithFormat:@"%d y/o", age];
+        }
+        else
+            strAge = @"";
         
         numUnreadMessages = 0;
 	}

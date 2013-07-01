@@ -233,9 +233,12 @@ NSInteger sortByName(id num1, id num2, void *context)
         {
             // Store the current user's Facebook ID on the user
             [pCurrentUser setObject:user.id forKey:@"fbId"];
-            [pCurrentUser setObject:user.first_name forKey:@"fbNameFirst"];
-            [pCurrentUser setObject:user.last_name forKey:@"fbNameLast"];
-            [pCurrentUser setObject:user.birthday forKey:@"fbBirthday"];
+            if ( user.first_name )
+                [pCurrentUser setObject:user.first_name forKey:@"fbNameFirst"];
+            if ( user.last_name )
+                [pCurrentUser setObject:user.last_name forKey:@"fbNameLast"];
+            if ( user.birthday )
+                [pCurrentUser setObject:user.birthday forKey:@"fbBirthday"];
             if ( [user objectForKey:@"gender"] )
                 [pCurrentUser setObject:[user objectForKey:@"gender"]
                                      forKey:@"fbGender"];
@@ -243,7 +246,8 @@ NSInteger sortByName(id num1, id num2, void *context)
                 pCurrentUser.email = [user objectForKey:@"email"];
             [pCurrentUser setObject:[globalVariables currentVersion]
                                      forKey:@"version"];
-            
+            if ( ! [pCurrentUser objectForKey:@"profileDiscoverable"] )
+                [pCurrentUser setObject:[NSNumber numberWithBool:TRUE] forKey:@"profileDiscoverable"];
             
             // Looking for job data
             NSArray* work = [user objectForKey:@"work"];
@@ -655,8 +659,8 @@ NSInteger sortByName(id num1, id num2, void *context)
     meetup = [[Meetup alloc] init];
     [meetup unpack:meetupData];
     
-    // 2ndO meetups check
-    if ( meetup.privacy == 1 )
+    // private meetups additional check
+    if ( meetup.privacy == MEETUP_PRIVATE )
     {
         Boolean bSkip = true;
         NSArray* friends = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
