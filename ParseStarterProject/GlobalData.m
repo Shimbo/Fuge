@@ -144,7 +144,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 -(NSArray*)searchForUserName:(NSString*)searchStr
 {
     NSMutableArray *result = [NSMutableArray arrayWithCapacity:100];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"strName CONTAINS[cd] %@",searchStr];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"fullName CONTAINS[cd] %@",searchStr];
     for ( Circle* circle in [circles allValues] )
         [result addObjectsFromArray:[circle.getPersons filteredArrayUsingPredicate:predicate]];
     return result;

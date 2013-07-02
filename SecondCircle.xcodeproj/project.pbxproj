@@ -1279,8 +1279,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Mikhail Larionov (WDEGJM2L33)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Mikhail Larionov (WDEGJM2L33)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1300,8 +1300,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = SecondCircle;
-				PROVISIONING_PROFILE = "0481C223-DAD0-49D1-B4E9-46E811293CE3";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "0481C223-DAD0-49D1-B4E9-46E811293CE3";
+				PROVISIONING_PROFILE = "82BA2C5C-9741-4862-8567-3E5DD320F7EA";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "82BA2C5C-9741-4862-8567-3E5DD320F7EA";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
 				WRAPPER_EXTENSION = app;
@@ -1313,8 +1313,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Mikhail Larionov (WDEGJM2L33)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Mikhail Larionov (WDEGJM2L33)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1333,8 +1333,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = SecondCircle;
-				PROVISIONING_PROFILE = "0481C223-DAD0-49D1-B4E9-46E811293CE3";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "0481C223-DAD0-49D1-B4E9-46E811293CE3";
+				PROVISIONING_PROFILE = "82BA2C5C-9741-4862-8567-3E5DD320F7EA";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "82BA2C5C-9741-4862-8567-3E5DD320F7EA";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
