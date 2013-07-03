@@ -79,6 +79,15 @@
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     self.tableView.rowHeight = ROW_HEIGHT;
     
+    // Reload button
+    UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithTitle:@"Reload" style:UIBarButtonItemStyleBordered target:self action:@selector(reloadClicked)];
+    [self.navigationItem setRightBarButtonItem:reloadBtn];
+}
+
+- (void) viewDidAppear:(BOOL)animated {
+    
+    [super viewDidAppear:animated];
+    
     if ( [globalData getLoadingStatus:LOADING_CIRCLES] == LOAD_STARTED )
     {
         [self.activityIndicator startAnimating];
@@ -87,9 +96,7 @@
     else
         self.navigationController.view.userInteractionEnabled = TRUE;
     
-    // Reload button
-    UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithTitle:@"Reload" style:UIBarButtonItemStyleBordered target:self action:@selector(reloadClicked)];
-    [self.navigationItem setRightBarButtonItem:reloadBtn];
+    [[self tableView] reloadData];
 }
 
 - (void) reloadFinished
