@@ -42,9 +42,9 @@
 {
     NSNumber *boolDiscovery = [NSNumber numberWithBool:discoverySwitch.on];
     [[PFUser currentUser] setObject:boolDiscovery forKey:@"profileDiscoverable"];
-    [[PFUser currentUser] setObject:[NSNumber numberWithInt:selection] forKey:@"profileRole"];
-    [[PFUser currentUser] setObject:areaEdit.text forKey:@"profileArea"];
-    [[PFUser currentUser] saveInBackground]; // CHECK: here was Eventually
+    //[[PFUser currentUser] setObject:[NSNumber numberWithInt:selection] forKey:@"profileRole"];
+    //[[PFUser currentUser] setObject:areaEdit.text forKey:@"profileArea"];
+    [[PFUser currentUser] saveInBackground];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -83,16 +83,16 @@
     else
         [discoverySwitch setOn:TRUE];
 
-    if ( [[PFUser currentUser] objectForKey:@"profileRole"] )
+    /*if ( [[PFUser currentUser] objectForKey:@"profileRole"] )
         selection = [[pCurrentUser objectForKey:@"profileRole"] integerValue];
     else
         selection = [globalVariables getRoles].count-1;
-    [labelRoles setText:[globalVariables roleByNumber:selection]];
+    [labelRoles setText:[globalVariables roleByNumber:selection]];*/
     
-    if ( [[PFUser currentUser] objectForKey:@"profileArea"] )
+    /*if ( [[PFUser currentUser] objectForKey:@"profileArea"] )
         [areaEdit setText:[[PFUser currentUser] objectForKey:@"profileArea"]];
     else
-        [areaEdit setText:@""];
+        [areaEdit setText:@""];*/
 }
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
