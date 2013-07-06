@@ -79,7 +79,7 @@
     return n;
 }
 
-- (NSUInteger)loadMeetupAndThreadAnnotations:(NSInteger)l
+- (NSArray*) getMeetupsByDate
 {
     // Calculating date windows
     NSDate* windowStart = [NSDate date];
@@ -109,16 +109,50 @@
     windowEnd = [[NSCalendar currentCalendar] dateFromComponents:comps];
     
     // Loading annotations
-    NSUInteger n = 0;
+    NSMutableArray* resultMeetups = [NSMutableArray arrayWithCapacity:30];
     for (Meetup *meetup in [globalData getMeetups])
     {
-        if (meetup.meetupType == TYPE_MEETUP) {
+        if (meetup.meetupType == TYPE_MEETUP)
             if ( ! meetup.hasPassed && [meetup isWithinTimeFrame:windowStart till:windowEnd] )
+                [resultMeetups addObject:meetup];
+    }
+    return resultMeetups;
+}
+
+static Boolean bFirstZoom = true;
+
+- (NSUInteger)loadMeetupAndThreadAnnotations:(NSInteger)l
+{
+    PFGeoPoint *geoPointUser = [pCurrentUser objectForKey:@"location"];
+    MKCoordinateRegion region = mapView.region;
+    Boolean bZoom = FALSE;
+    
+    CLLocationCoordinate2D upper, lower;
+    if ( geoPointUser )
+        upper = lower = CLLocationCoordinate2DMake(geoPointUser.latitude, geoPointUser.longitude);
+    
+    // Loading annotations
+    NSUInteger n = 0;
+    NSArray* meetups = [self getMeetupsByDate];
+    if ( meetups.count == 0 )
+        return 0;
+    for (Meetup *meetup in meetups)
+    {
+        if (meetup.meetupType == TYPE_MEETUP) {
+            MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
+            [_meetupAnnotations addObject:ann];
+            
+            // Creating zoom for the map
+            if ( geoPointUser && [globalData isAttendingMeetup:meetup.strId])
             {
-                MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
-                [_meetupAnnotations addObject:ann];
+                PFGeoPoint* pt = meetup.location;
+                if(pt.latitude > upper.latitude) upper.latitude = pt.latitude;
+                if(pt.latitude < lower.latitude) lower.latitude = pt.latitude;
+                if(pt.longitude > upper.longitude) upper.longitude = pt.longitude;
+                if(pt.longitude < lower.longitude) lower.longitude = pt.longitude;
+                bZoom = TRUE;
             }
-        }else{
+        }else{ // Warning! Now getMeetupsByDate will never return any thread at all!
             ThreadAnnotation *ann = [[ThreadAnnotation alloc] initWithMeetup:meetup];
             [_threadAnnotations addObject:ann];
         }
@@ -127,6 +161,24 @@
         if ( n >= l )
             break;
     }
+    
+    // Default map location
+    if ( geoPointUser && bFirstZoom && bZoom )
+    {
+        MKCoordinateSpan locationSpan;
+        locationSpan.latitudeDelta = upper.latitude - lower.latitude;
+        locationSpan.longitudeDelta = upper.longitude - lower.longitude;
+        CLLocationCoordinate2D locationCenter;
+        locationCenter.latitude = (upper.latitude + lower.latitude) / 2;
+        locationCenter.longitude = (upper.longitude + lower.longitude) / 2;
+        
+        region = MKCoordinateRegionMake(locationCenter, locationSpan);
+        region.span.latitudeDelta *= 1.1f;
+        region.span.longitudeDelta *= 1.1f;
+        [mapView setRegion:region animated:YES];
+    }
+    
+    bFirstZoom = false;
     return n;
 }
 

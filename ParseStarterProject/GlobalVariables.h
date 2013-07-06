@@ -38,6 +38,7 @@
 
 // Pushes
 #define PUSH_DISCOVERY_KILOMETERS   [globalVariables globalParam:@"PushDiscoveryKilometers" default:100]
+#define PUSH_DISCOVERY_WINDOW       [globalVariables globalParam:@"PushDiscoveryWindow" default:43200]
 #define PUSH_DISCOVERY_EXPIRATION   [globalVariables globalParam:@"PushDiscoveryExpiration" default:86400]
 
 // Not to overload with data

@@ -40,7 +40,10 @@
     [formatter setDoesRelativeDateFormatting:TRUE];
     
     self.date.text = [formatter stringFromDate:meetup.dateTime];
-    self.attending.text = [NSString stringWithFormat:@"Attending: %d", annotation.meetup.attendees.count];
+    if ( annotation.attendedPersons.count )
+        self.attending.text = [NSString stringWithFormat:@"Attending: %d", annotation.attendedPersons.count];
+    else
+        self.attending.text = [NSString stringWithFormat:@"Joined: %d", annotation.meetup.attendees.count];
      
     [self.annotation prepareForAnnotation:annotation];
 }

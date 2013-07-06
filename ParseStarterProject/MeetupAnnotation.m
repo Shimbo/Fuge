@@ -35,7 +35,10 @@
         // Don't trim name for imported events as organizers are not people
         NSString* strName = self.meetup.bImportedEvent ? self.meetup.strOwnerName : [globalVariables trimName:self.meetup.strOwnerName];
         
-        self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Attending: %d", strName, nAttendeesCount ];
+        if ( self.attendedPersons.count )
+            self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Attending: %d", strName, self.attendedPersons.count ];
+        else
+            self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Joined: %d", strName, nAttendeesCount ];
     }
     else
         self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Comments: %d", [globalVariables trimName:self.meetup.strOwnerName], self.meetup.numComments ];

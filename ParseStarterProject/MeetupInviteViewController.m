@@ -61,15 +61,17 @@
                 [arrayRecentIds addObject:person.strId];
     [globalData addRecentInvites:arrayRecentIds];
     
-    // Push for everybody NOT invited
+    // Push for everybody NOT invited and only in case meetup will happen in next 12 hours
     if ( bNewMeetup )
         if ( meetup.privacy == MEETUP_PUBLIC )
-            [pushManager sendPushCreatedMeetup:meetup.strId ignore:[self selectedPersons]];
+            if ( [meetup.dateTime compare:[NSDate dateWithTimeIntervalSinceNow:PUSH_DISCOVERY_WINDOW]]
+                    == NSOrderedAscending)
+                [pushManager sendPushCreatedMeetup:meetup.strId ignore:[self selectedPersons]];
     
     // Adding to calendar here
     [self dismissViewControllerAnimated:YES completion:^{
-        if ( bNewMeetup && meetup.meetupType == TYPE_MEETUP )
-            [meetup addToCalendar];
+//        if ( bNewMeetup && meetup.meetupType == TYPE_MEETUP )
+//            [meetup addToCalendar];
     }];
 }
 
