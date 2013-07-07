@@ -10,6 +10,7 @@
 
 @interface FacebookLoader : NSObject
 
-- (void)loadData:(id)target selector:(SEL)callback;
+- (void)loadMeetups:(id)target selector:(SEL)callback;
+- (void)loadLikes:(id)target selector:(SEL)callback;
 
 @end

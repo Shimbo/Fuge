@@ -17,6 +17,10 @@
     NSString* strEmployer;
     NSString* strPosition;
     
+    NSArray* friendsFb;
+    NSArray* friends2O;
+    NSArray* likes;
+    
     NSUInteger  numUnreadMessages;
     
     PFGeoPoint* location;
@@ -42,6 +46,10 @@
 
 @property (nonatomic, copy) PFUser *personData;
 
+@property (nonatomic, retain) NSArray *friendsFb;
+@property (nonatomic, retain) NSArray *friends2O;
+@property (nonatomic, retain) NSArray *likes;
+
 // User could be nil (!) for fb friends who are not in the app yet for example
 - (id)init:(PFUser*)user circle:(NSUInteger)nCircle;
 - (id)initEmpty:(NSUInteger)nCircle;
@@ -50,7 +58,7 @@
 - (void)calculateDistance;
 - (void)changeCircle:(NSUInteger)nCircle;
 
-- (NSUInteger)getFriendsInCommonCount;
+//- (NSUInteger)getFriendsInCommonCount;
 
 - (Boolean)isOutdated;
 
@@ -70,5 +78,17 @@
 -(NSString*)jobInfo;
 
 - (PFGeoPoint*) getLocation;
+
++(void)showInviteDialog:(NSString*)strId;
++(void)openProfileInBrowser:(NSString*)strId;
+
+// Matching
+- (NSArray*) matchedFriendsToFriends;
+- (NSArray*) matchedFriendsTo2O;
+- (NSArray*) matched2OToFriends;
+- (NSArray*) matchedLikes;
+- (NSUInteger) matchesTotal;
+- (NSUInteger) matchesRank;
+- (NSDictionary*) getLikeById:(NSString*)like;
 
 @end

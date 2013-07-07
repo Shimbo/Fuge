@@ -8,5 +8,6 @@
 @property (strong, nonatomic) IBOutlet UILabel *personName;
 @property (strong, nonatomic) IBOutlet UILabel *personInfo;
 @property (strong, nonatomic) IBOutlet UILabel *personStatus;
+@property (strong, nonatomic) UIColor *color;
 
 @end

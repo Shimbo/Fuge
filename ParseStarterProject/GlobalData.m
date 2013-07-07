@@ -19,6 +19,8 @@
 @implementation GlobalData
 
 static GlobalData *sharedInstance = nil;
+static FacebookLoader* FBloader = nil;
+//static EventbriteLoader* EBloader = nil;
 
 // Get the shared instance and create it if necessary.
 + (GlobalData *)sharedInstance {
@@ -224,6 +226,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     FBRequest *request = [FBRequest requestForMe];
     [request startWithCompletionHandler:^(FBRequestConnection *connection,
                                           NSDictionary<FBGraphUser> *user, NSError *error) {
+        
         if ( error )
         {
             NSLog(@"Uh oh. An error occurred: %@", error);
@@ -268,6 +271,11 @@ NSInteger sortByName(id num1, id num2, void *context)
                     [pCurrentUser setObject:strPosition forKey:@"profilePosition"];
                 }
             }
+            
+            // Loading likes
+            if ( !FBloader )
+                FBloader = [[FacebookLoader alloc] init];
+            [FBloader loadLikes:self selector:@selector(fbLikesCallback:)];
             
             [pCurrentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                 
@@ -680,9 +688,6 @@ NSInteger sortByName(id num1, id num2, void *context)
     return meetup;
 }
 
-//static FacebookLoader* FBloader = nil;
-//static EventbriteLoader* EBloader = nil;
-
 - (void)fbMeetupsCallback:(NSArray*)events
 {
     [self incrementMapLoadingStage];
@@ -694,6 +699,18 @@ NSInteger sortByName(id num1, id num2, void *context)
     {
         Meetup* meetup = [[Meetup alloc] initWithFbEvent:event];
         [self addMeetup:meetup];
+    }
+}
+
+- (void)fbLikesCallback:(NSArray*)likes
+{
+    if ( likes )
+    {
+        [pCurrentUser setObject:likes forKey:@"fbLikes"];
+        [pCurrentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if ( error )
+                NSLog(@"Error: %@", error);
+        }];
     }
 }
 

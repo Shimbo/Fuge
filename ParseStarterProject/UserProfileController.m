@@ -12,6 +12,7 @@
 #import "AsyncImageView.h"
 #import "GlobalData.h"
 #import "NewMeetupViewController.h"
+#import "MatchesViewController.h"
 #include "Message.h"
 
 @implementation UserProfileController
@@ -27,8 +28,7 @@
 }
 
 - (void)profileClicked{
-    NSString *url = [NSString stringWithFormat:@"http://facebook.com/%@", personThis.strId]; ;
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+    [Person openProfileInBrowser:personThis.strId];
 }
 
 - (void)meetClicked{
@@ -63,7 +63,11 @@
     labelDistance.text = [[NSString alloc] initWithFormat:@"%@ away", [personThis distanceString]];
     labelTimePassed.text = [[NSString alloc] initWithFormat:@"%@ ago", [personThis timeString]];
     labelCircle.text = personThis.strCircle;
-    labelFriendsInCommon.text = [NSString stringWithFormat:@"%d friends in common", [personThis getFriendsInCommonCount]];
+    nThingsInCommon = [personThis matchesTotal];
+    if ( nThingsInCommon == 1 )
+        [btnThingsInCommon setTitle:[NSString stringWithFormat:@"%d thing in common", nThingsInCommon] forState:UIControlStateNormal];
+    else
+        [btnThingsInCommon setTitle:[NSString stringWithFormat:@"%d things in common", nThingsInCommon] forState:UIControlStateNormal];
     
     personThis.numUnreadMessages = 0;
 }
@@ -119,15 +123,19 @@
     textView.editable = TRUE;
 }
 
+- (IBAction)showMatchesList:(id)sender {
+    if ( nThingsInCommon == 0 )
+        return;
+    MatchesViewController *matchesViewController = [[MatchesViewController alloc] initWithNibName:@"MatchesViewController" bundle:nil];
+    [matchesViewController setPerson:personThis];
+    UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:matchesViewController];
+    [self.navigationController presentViewController:navigation animated:YES completion:nil];
+}
+
 -(void) setPerson:(Person*)person
 {
     personThis = person;
 }
-
-
-
-
-
 
 
 
@@ -137,9 +145,9 @@
     labelCircle = nil;
     [self setActivityIndicator:nil];
     profileImageView = nil;
-    labelFriendsInCommon = nil;
     labelFriendName = nil;
     labelTimePassed = nil;
+    btnThingsInCommon = nil;
     [super viewDidUnload];
 }
 

@@ -4,11 +4,12 @@
 #import "PersonView.h"
 #import "Circle.h"
 #import "LocationManager.h"
+#import "GlobalData.h"
 #import "GlobalVariables.h"
 
 @implementation Person
 
-@synthesize strId, strFirstName, strLastName, strAge, strGender, distance, /*role, strArea,*/ strEmployer, strPosition, strCircle, idCircle, personData, numUnreadMessages;
+@synthesize strId, strFirstName, strLastName, strAge, strGender, distance, /*role, strArea,*/ strEmployer, strPosition, strCircle, idCircle, personData, numUnreadMessages, friendsFb, friends2O, likes;
 
 + (void)initialize {
 	if (self == [Person class]) {
@@ -35,6 +36,11 @@
         location = nil;
         distance = nil;
         [self updateLocation:[user objectForKey:@"location"]];
+        
+        // Friends and likes
+        friendsFb = [user objectForKey:@"fbFriends"];
+        friends2O = [user objectForKey:@"fbFriends2O"];
+        likes = [user objectForKey:@"fbLikes"];
         
         // Age calculations
         NSDateFormatter* myFormatter = [[NSDateFormatter alloc] init];
@@ -149,23 +155,6 @@
         return [[NSString alloc] initWithFormat:@"%.0f years", interval/(60.0f*60.0f*24.0f*30.0f*12.0f)];
 }
 
-- (NSUInteger)getFriendsInCommonCount
-{
-    NSArray* pCurrentUserFriends = [pCurrentUser objectForKey:@"fbFriends"];
-    if ( ! pCurrentUserFriends )
-        return 0;
-    
-    NSArray* pThatUserFriends = [personData objectForKey:@"fbFriends"];
-    if ( ! pThatUserFriends )
-        return 0;
-    
-    NSMutableSet* set1 = [NSMutableSet setWithArray:pCurrentUserFriends];
-    NSMutableSet* set2 = [NSMutableSet setWithArray:pThatUserFriends];
-    [set1 intersectSet:set2];
-    NSArray* result = [set1 allObjects];
-    return result.count;
-}
-
 +(NSString*)imageURLWithId:(NSString*)fbId
 {
     return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&width=100&height=100&return_ssl_resources=1", fbId];
@@ -209,6 +198,19 @@
     return strResult;
 }
 
++(void)showInviteDialog:(NSString*)strId
+{
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithObjectsAndKeys: strId, @"to", nil];
+    [FBWebDialogs presentRequestsDialogModallyWithSession:nil message:FB_INVITE_MESSAGE title:nil parameters:params handler:nil];
+}
+
++(void)openProfileInBrowser:(NSString*)strId
+{
+    NSString *url = [NSString stringWithFormat:@"http://facebook.com/%@", strId];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+}
+
+
 /*
 - (UIImage *)getImage {
     if (image == nil && imageData == nil && urlConnection == nil )
@@ -250,5 +252,116 @@
 {
     location = loc;
 }*/
+
+// How many of my friends are her friends
+- (NSArray*) matchedFriendsToFriends
+{
+    NSArray* myFriends = [pCurrentUser objectForKey:@"fbFriends"];
+    if ( ! myFriends )
+        return [NSArray array];
+    if ( ! friendsFb )
+        return [NSArray array];
+    
+    NSMutableSet* intersection = [NSMutableSet setWithArray:myFriends];
+    [intersection intersectSet:[NSSet setWithArray:friendsFb]];
+    return [intersection allObjects];
+}
+
+// How many of my friends are her 2O friends
+- (NSArray*) matchedFriendsTo2O
+{
+    // All my friends have my other friends in 2O friends, obviously, so return 0
+    if ( idCircle == CIRCLE_FB )
+        return [NSArray array];
+        
+    NSArray* myFriends = [pCurrentUser objectForKey:@"fbFriends"];
+    if ( ! myFriends )
+        return [NSArray array];
+    if ( ! friends2O )
+        return [NSArray array];
+    
+    NSMutableSet* intersection = [NSMutableSet setWithArray:myFriends];
+    [intersection intersectSet:[NSSet setWithArray:friends2O]];
+    
+    return [intersection allObjects];
+}
+
+// How many of my 2O friends are her friends
+- (NSArray*) matched2OToFriends
+{
+    // All her friends are my 2O friends in case we're friends, return 0
+    if ( idCircle == CIRCLE_FB )
+        return [NSArray array];
+    
+    NSArray* myFriends2O = [pCurrentUser objectForKey:@"fbFriends2O"];
+    if ( ! myFriends2O )
+        return [NSArray array];
+    if ( ! friendsFb )
+        return [NSArray array];
+    
+    NSMutableSet* intersection = [NSMutableSet setWithArray:myFriends2O];
+    [intersection intersectSet:[NSSet setWithArray:friendsFb]];
+    return [intersection allObjects];
+}
+
+// How many of my 2O friends are her 2O friends
+/*- (NSArray*) matched2OTo2O
+{
+    NSMutableArray* arrayFriends2O = [NSMutableArray arrayWithArray:friends2O];
+     
+     // Removing 2O friends added from mutual friends
+     Circle* friends = [globalData getCircle:CIRCLE_FB];
+     for ( Person* person in friends.getPersons )
+     [arrayFriends2O removeObjectsInArray:person.friends2O];
+     
+     NSMutableSet* intersection = [NSMutableSet setWithArray:arrayFriends2O];
+     
+     // Intersection
+     NSArray* myFriends2O = [pCurrentUser objectForKey:@"fbFriends2O"];
+     [intersection intersectSet:[NSSet setWithArray:myFriends2O]];
+     
+     return [intersection allObjects];
+}*/
+
+- (NSArray*) matchedLikes
+{
+    NSArray* myLikes = [pCurrentUser objectForKey:@"fbLikes"];
+    if ( ! myLikes )
+        return [NSArray array];
+    if ( ! likes )
+        return [NSArray array];
+    
+    NSArray* strLikes = [likes valueForKeyPath:@"id"];
+    NSArray* strMyLikes = [myLikes valueForKeyPath:@"id"];
+    
+    NSMutableSet* intersection = [NSMutableSet setWithArray:strMyLikes];
+    [intersection intersectSet:[NSSet setWithArray:strLikes]];
+    
+    return [intersection allObjects];
+}
+
+- (NSUInteger) matchesTotal
+{
+    return self.matchedFriendsToFriends.count
+            +self.matchedFriendsTo2O.count
+//            +self.matched2OToFriends.count
+            +self.matchedLikes.count;
+}
+
+- (NSUInteger) matchesRank
+{
+    return self.matchedFriendsToFriends.count*MATCHING_BONUS_FRIEND
+            +self.matchedFriendsTo2O.count*MATCHING_BONUS_2O
+            //+self.matched2OToFriends.count*MATCHING_BONUS_2O
+            +self.matchedLikes.count*MATCHING_BONUS_LIKE;
+}
+
+- (NSDictionary*) getLikeById:(NSString*)like
+{
+    for ( NSDictionary* item in likes )
+        if ( [(NSString*)[item objectForKey:@"id"] compare:like] == NSOrderedSame )
+            return item;
+    return nil;
+}
 
 @end

@@ -21,7 +21,7 @@
 
 #define IPAD (UI_USER_INTERFACE_IDIOM()==UIUserInterfaceIdiomPad)
 
-#define meetupIcons @[@"iconMtGeneric", @"iconMtMovie", @"iconMtMusic", @"iconMtSports", @"iconMtGames", @"iconMtStudy", @"iconMtOutdoor", @"iconMtTheatre"]
+#define meetupIcons @[@"iconMtGeneric", @"iconMtMovie", @"iconMtMusic", @"iconMtSports", @"iconMtGames", @"iconMtStudy", @"iconMtOutdoor", @"iconMtTheatre", @"iconMtArts"]
 
 // Query distance to discover
 #define RANDOM_PERSON_KILOMETERS_NORMAL    [globalVariables globalParam:@"RandomPersonKilometersNormal" default:50]
@@ -82,9 +82,19 @@
 // Viral
 #define FB_INVITE_MESSAGE           @"Discover new friends and local activities!"
 
-#define CAN_GROUP_PERSON           NO
-#define CAN_GROUP_MEETUP           YES
-#define CAN_GROUP_THREAD           YES
+// Grouping
+#define CAN_GROUP_PERSON            NO
+#define CAN_GROUP_MEETUP            YES
+#define CAN_GROUP_THREAD            YES
+
+// Ranking
+#define MATCHING_BONUS_FRIEND       10
+#define MATCHING_BONUS_2O           1
+#define MATCHING_BONUS_LIKE         1
+#define MATCHING_COLOR_RANK_MAX     50.0f
+#define MATCHING_COLOR_COMPONENT_R  75.0f
+#define MATCHING_COLOR_COMPONENT_G  108.0f
+#define MATCHING_COLOR_COMPONENT_B  162.0f
 
 @interface GlobalVariables : NSObject
 {

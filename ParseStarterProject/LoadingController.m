@@ -396,7 +396,10 @@ static Boolean bRotating = true;
     NSInteger daysLeft = interval / (3600*24) + 1;
     NSString* strDays = daysLeft == 1 ? @"day" : @"days";
     
-    _descriptionText.text = [NSString stringWithFormat:@"So, you've got a ban. What a shame.\nWas it spam or rudeness? Whatever.\nYour ban will expire in %d %@.", daysLeft, strDays];
+    NSString* strReason = @"Was it spam or rudeness? Whatever.";
+    if ( [pCurrentUser objectForKey:@"banReason"] )
+        strReason = [NSString stringWithFormat:@"Reason? %@", [pCurrentUser objectForKey:@"banReason"]];
+    _descriptionText.text = [NSString stringWithFormat:@"So, you were reported. What a shame.\n%@\nThe ban will expire in %d %@.", strReason, daysLeft, strDays];
     
     [self showAll];
 }
@@ -407,7 +410,7 @@ static Boolean bRotating = true;
     // Activity indicator
     [self hideAll];
     
-    NSArray *permissionsArray = @[ @"user_about_me", @"user_relationships", @"user_birthday", @"user_location", @"email"];
+    NSArray *permissionsArray = @[ @"user_about_me", @"user_relationships", @"user_birthday", @"user_likes", @"user_location", @"email"];
     __weak LoadingController *ctrl = self;
     [PFFacebookUtils logInWithPermissions:permissionsArray
                                     block:^(PFUser *user, NSError *error)

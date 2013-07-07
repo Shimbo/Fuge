@@ -15,14 +15,17 @@
 }
 
 - (void)addPerson:(Person *)person {
+    personsSortedByRank = nil;
 	[persons addObject:person];    
 }
 
 - (void)removePerson:(Person *)person{
+    personsSortedByRank = nil;
     [persons removeObject:person];
 }
 
 - (id)addPersonWithData:(PFUser*)data {
+    personsSortedByRank = nil;
 	Person *person = [[Person alloc] init:data circle:idCircle];
 	[persons addObject:person];
     return person;
@@ -41,6 +44,19 @@
 - (NSMutableArray*) getPersons
 {
     return persons;
+}
+
+- (NSMutableArray*) getPersonsSortedByRank
+{
+    if ( ! personsSortedByRank )
+    {
+        personsSortedByRank = [NSMutableArray arrayWithArray:persons];
+        NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"matchesRank" ascending:NO];
+        NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
+        [personsSortedByRank sortUsingDescriptors:sortDescriptors];
+
+    }
+    return personsSortedByRank;
 }
 
 + (NSString*) getPersonType:(NSUInteger)circle

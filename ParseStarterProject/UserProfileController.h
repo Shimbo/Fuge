@@ -20,8 +20,9 @@
     IBOutlet UILabel *labelFriendName;
     IBOutlet UILabel *labelDistance;
     IBOutlet UILabel *labelCircle;
-    IBOutlet UILabel *labelFriendsInCommon;
     IBOutlet UILabel *labelTimePassed;
+    IBOutlet UIButton *btnThingsInCommon;
+    NSUInteger  nThingsInCommon;
     
     NSUInteger  messagesCount;
     IBOutlet FBProfilePictureView *profileImageView;
@@ -30,6 +31,7 @@
 }
 
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+- (IBAction)showMatchesList:(id)sender;
 
 -(void) setPerson:(Person*)person;
 

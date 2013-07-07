@@ -62,12 +62,23 @@
 }
 
 
+- (void) matchClicked
+{
+    sortingMode++;
+    if ( sortingMode > 1 )
+        sortingMode = 0;
+    [matchBtn setTitle:sortingModeTitles[sortingMode]];
+    [[self tableView] reloadData];
+}
+
+
 #pragma mark -
 #pragma mark View loading
 
 
 - (void) viewDidLoad {
     [super viewDidLoad];
+    sortingMode = 0;
     
     // Navigation bar
     [self.navigationItem setHidesBackButton:true animated:false];
@@ -79,9 +90,10 @@
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     self.tableView.rowHeight = ROW_HEIGHT;
     
-    // Reload button
+    // Buttons
+    matchBtn = [[UIBarButtonItem alloc] initWithTitle:sortingModeTitles[0] style:UIBarButtonItemStyleBordered target:self action:@selector(matchClicked)];
     UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithTitle:@"Reload" style:UIBarButtonItemStyleBordered target:self action:@selector(reloadClicked)];
-    [self.navigationItem setRightBarButtonItem:reloadBtn];
+    [self.navigationItem setRightBarButtonItems:@[reloadBtn, matchBtn]];
 }
 
 - (void) viewDidAppear:(BOOL)animated {
@@ -118,22 +130,30 @@
 
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)aTableView {
-	// Number of sections is the number of regions
-    NSInteger nCount = [[globalData getCircles] count];
-	return nCount;
+    
+    if ( sortingMode == SORTING_DISTANCE )
+        return [[globalData getCircles] count];
+    else
+        return ([globalData getCircle:CIRCLE_2O].getPersons.count ? 1 : 0) + ([globalData getCircle:CIRCLE_RANDOM].getPersons.count ? 1 : 0);
 }
 
 - (NSInteger)tableView:(UITableView *)aTableView numberOfRowsInSection:(NSInteger)section {
-	// Number of rows is the number of time zones in the region for the specified section
-	Circle *circle = [globalData getCircleByNumber:section];
-	NSArray *persons = [circle getPersons];
-	return [persons count];
+	
+    Circle *circle;
+    if ( sortingMode == SORTING_DISTANCE )
+        circle = [globalData getCircleByNumber:section];
+    else
+        circle = [globalData getCircle:(section == 0 ? CIRCLE_2O : CIRCLE_RANDOM )];
+    return [circle getPersons].count;
 }
 
 - (NSString *)tableView:(UITableView *)aTableView titleForHeaderInSection:(NSInteger)section {
-	// Section title is the region name
-    Circle *circle = [globalData getCircleByNumber:section];
-	return [Circle getCircleName:circle.idCircle];
+    Circle *circle;
+	if ( sortingMode == SORTING_DISTANCE )
+        circle = [globalData getCircleByNumber:section];
+    else
+        circle = [globalData getCircle:(section == 0 ? CIRCLE_2O : CIRCLE_RANDOM )];
+    return [Circle getCircleName:circle.idCircle];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath  {
@@ -143,33 +163,74 @@
 	PersonCell *personCell = (PersonCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	
 	// Get the time zones for the region for the section
-	Circle* circle = [globalData getCircleByNumber:indexPath.section];
-	Person *person = [circle getPersons][indexPath.row];
+	Circle* circle;
+	Person *person;
+    
+    if ( sortingMode == SORTING_DISTANCE )
+    {
+        circle = [globalData getCircleByNumber:indexPath.section];
+        person = [circle getPersons][indexPath.row];
+    }
+    else
+    {
+        circle = [globalData getCircle:(indexPath.section == 0 ? CIRCLE_2O : CIRCLE_RANDOM )];
+        person = [circle getPersonsSortedByRank][indexPath.row];
+    }
+    
     [personCell.personImage loadImageFromURL:person.imageURL];
     personCell.personName.text = [person fullName];
-    personCell.personDistance.text = [person distanceString];
-    personCell.personInfo.text = @"";
     if ( person.idCircle == CIRCLE_FBOTHERS )
-        personCell.personStatus.text = @"Invite!";
+        personCell.personDistance.text = @"Invite!";
     else
-        personCell.personStatus.text = [person jobInfo];
+        personCell.personDistance.text = [person distanceString];
+    if ( ( sortingMode == SORTING_RANK ) && ( person.idCircle == CIRCLE_2O || person.idCircle == CIRCLE_RANDOM ) )
+    {
+        NSString* strMatches = [NSString stringWithFormat:@"Matches: %d", person.matchesTotal];
+        personCell.personInfo.text = strMatches;
+        NSUInteger matchesRank = person.matchesRank;
+        float fColor = 1.0f - ((float)(matchesRank > MATCHING_COLOR_RANK_MAX ? MATCHING_COLOR_RANK_MAX : matchesRank))/MATCHING_COLOR_RANK_MAX;
+        personCell.color = [UIColor
+            colorWithRed: (MATCHING_COLOR_COMPONENT_R+(255.0f-MATCHING_COLOR_COMPONENT_R)*fColor)/255.0f
+            green:(MATCHING_COLOR_COMPONENT_G+(255.0f-MATCHING_COLOR_COMPONENT_G)*fColor)/255.0f
+            blue:(MATCHING_COLOR_COMPONENT_B+(255.0f-MATCHING_COLOR_COMPONENT_B)*fColor)/255.0f alpha:1.0f];
+    }
+    else
+    {
+        personCell.color = [UIColor colorWithWhite:1.0f alpha:1.0f];
+        personCell.personInfo.text = @"";
+    }
+    personCell.personStatus.text = [person jobInfo];
     
 	return personCell;
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    cell.backgroundColor = ((PersonCell*)cell).color;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     NSInteger nRow = indexPath.row;
     NSInteger nSection = indexPath.section;
-    Circle *circle = [globalData getCircleByNumber:nSection];
-    Person* person = [circle getPersons][nRow];
+    Circle *circle;
+    Person* person;
+    
+    if ( sortingMode == SORTING_DISTANCE )
+    {
+        circle = [globalData getCircleByNumber:nSection];
+        person = [circle getPersons][nRow];
+    }
+    else
+    {
+        circle = [globalData getCircle:(nSection == 0 ? CIRCLE_2O : CIRCLE_RANDOM )];
+        person = [circle getPersonsSortedByRank][nRow];
+    }
     
     // Empty profile, should open invite window
     if ( person.idCircle == CIRCLE_FBOTHERS ) {
         
-        NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithObjectsAndKeys: person.strId, @"to", nil];
-        
-        [FBWebDialogs presentRequestsDialogModallyWithSession:nil message:FB_INVITE_MESSAGE title:nil parameters:params handler:nil];
+        [Person showInviteDialog:person.strId];
     }
     else {
         UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
