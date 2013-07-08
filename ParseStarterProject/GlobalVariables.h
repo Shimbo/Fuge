@@ -23,6 +23,8 @@
 
 #define meetupIcons @[@"iconMtGeneric", @"iconMtMovie", @"iconMtMusic", @"iconMtSports", @"iconMtGames", @"iconMtStudy", @"iconMtOutdoor", @"iconMtTheatre", @"iconMtArts"]
 
+#define FACEBOOK_PERMISSIONS @[ @"user_about_me", @"user_relationships", @"user_birthday", @"user_likes", @"user_location", @"email"]
+
 // Query distance to discover
 #define RANDOM_PERSON_KILOMETERS_NORMAL    [globalVariables globalParam:@"RandomPersonKilometersNormal" default:50]
 #define RANDOM_EVENT_KILOMETERS_NORMAL     [globalVariables globalParam:@"RandomEventKilometersNormal" default:50]

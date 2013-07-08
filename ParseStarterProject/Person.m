@@ -140,9 +140,9 @@
     
     // Multiplying by 2 to get at least 2 hours, 2 days, etc. (to get rid of singular forms)
     if ( interval < 60.0f*2.0f )
-        return [[NSString alloc] initWithFormat:@"%.0f seconds", interval];
+        return [[NSString alloc] initWithFormat:@"%.0f secs", interval];
     else if ( interval < 60.0f*60.0f*2.0f )
-        return [[NSString alloc] initWithFormat:@"%.0f minutes", interval/60.0f];
+        return [[NSString alloc] initWithFormat:@"%.0f mins", interval/60.0f];
     else if ( interval < 60.0f*60.0f*24.0f*2.0f )
         return [[NSString alloc] initWithFormat:@"%.0f hours", interval/(60.0f*60.0f)];
     else if ( interval < 60.0f*60.0f*24.0f*7.0f*2.0f )
@@ -344,7 +344,7 @@
 {
     return self.matchedFriendsToFriends.count
             +self.matchedFriendsTo2O.count
-//            +self.matched2OToFriends.count
+            +(bIsAdmin ? self.matched2OToFriends.count : 0)
             +self.matchedLikes.count;
 }
 
@@ -352,7 +352,7 @@
 {
     return self.matchedFriendsToFriends.count*MATCHING_BONUS_FRIEND
             +self.matchedFriendsTo2O.count*MATCHING_BONUS_2O
-            //+self.matched2OToFriends.count*MATCHING_BONUS_2O
+            //+(bIsAdmin ? self.matched2OToFriends.count*MATCHING_BONUS_2O : 0)
             +self.matchedLikes.count*MATCHING_BONUS_LIKE;
 }
 

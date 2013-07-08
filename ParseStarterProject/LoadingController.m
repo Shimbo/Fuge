@@ -123,8 +123,18 @@ static Boolean bRotating = true;
     // Location data
     [locManager startUpdating];
     
+    // Check permissions
+    Boolean bPermissionsGranted = TRUE;
+    NSArray *permissionsArray = FACEBOOK_PERMISSIONS;
+    for ( NSString* permission in permissionsArray )
+        if ([PFFacebookUtils.session.permissions indexOfObject:permission] == NSNotFound)
+        {
+            bPermissionsGranted = FALSE;
+            break;
+        }
+    
     // Login or load
-    if (! PFFacebookUtils.session.isOpen || ! [[PFUser currentUser] isAuthenticated])
+    if (! PFFacebookUtils.session.isOpen || ! [[PFUser currentUser] isAuthenticated] || ! bPermissionsGranted )
     {
         [self notLoggedIn];
     }
@@ -410,7 +420,7 @@ static Boolean bRotating = true;
     // Activity indicator
     [self hideAll];
     
-    NSArray *permissionsArray = @[ @"user_about_me", @"user_relationships", @"user_birthday", @"user_likes", @"user_location", @"email"];
+    NSArray *permissionsArray = FACEBOOK_PERMISSIONS;
     __weak LoadingController *ctrl = self;
     [PFFacebookUtils logInWithPermissions:permissionsArray
                                     block:^(PFUser *user, NSError *error)

@@ -64,10 +64,12 @@
     labelTimePassed.text = [[NSString alloc] initWithFormat:@"%@ ago", [personThis timeString]];
     labelCircle.text = personThis.strCircle;
     nThingsInCommon = [personThis matchesTotal];
-    if ( nThingsInCommon == 1 )
-        [btnThingsInCommon setTitle:[NSString stringWithFormat:@"%d thing in common", nThingsInCommon] forState:UIControlStateNormal];
+    if ( nThingsInCommon == 0 )
+        [btnThingsInCommon setTitle:@"No matches" forState:UIControlStateNormal];
+    else if ( nThingsInCommon == 1 )
+        [btnThingsInCommon setTitle:@"See 1 match" forState:UIControlStateNormal];
     else
-        [btnThingsInCommon setTitle:[NSString stringWithFormat:@"%d things in common", nThingsInCommon] forState:UIControlStateNormal];
+        [btnThingsInCommon setTitle:[NSString stringWithFormat:@"See %d matches", nThingsInCommon] forState:UIControlStateNormal];
     
     personThis.numUnreadMessages = 0;
 }
