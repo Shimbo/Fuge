@@ -501,7 +501,10 @@ NSInteger sortByName(id num1, id num2, void *context)
     // Second circle friends query
     NSMutableArray *friend2OIds = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
     PFQuery *friend2OQuery = [PFUser query];
-    friend2OQuery.limit = 1000;
+    if ( [globalVariables isUserAdmin] )
+        friend2OQuery.limit = 1000;
+    else
+        friend2OQuery.limit = SECOND_PERSON_MAX_COUNT;
     [friend2OQuery orderByDescending:@"updatedAt"];
     [friend2OQuery whereKey:@"fbId" containedIn:friend2OIds];
     [friend2OQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
@@ -549,7 +552,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     if ( [globalVariables isUserAdmin] )
         friendAnyQuery.limit = 1000;
     else
-        friendAnyQuery.limit = 100;
+        friendAnyQuery.limit = RANDOM_PERSON_MAX_COUNT;
     [friendAnyQuery orderByDescending:@"updatedAt"];
     
     // We could load based on player location or map rect if he moved the map later
@@ -563,6 +566,8 @@ NSInteger sortByName(id num1, id num2, void *context)
         [friendAnyQuery whereKey:@"location" withinGeoBoxFromSouthwest:southWest toNortheast:northEast];
     }
     [friendAnyQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
+    NSDate* dateToHide = [NSDate dateWithTimeIntervalSinceNow:-(NSTimeInterval)MAX_SECONDS_FROM_PERSON_LOGIN];
+    [friendAnyQuery whereKey:@"updatedAt" greaterThan:dateToHide];
     
     // Actual load
     [friendAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {

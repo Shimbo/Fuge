@@ -37,7 +37,7 @@
     // Buttons
     UIBarButtonItem *joinBtn = [[UIBarButtonItem alloc] initWithTitle:@"Join" style:UIBarButtonItemStyleBordered target:self action:@selector(joinClicked)];
     UIBarButtonItem *declineBtn = [[UIBarButtonItem alloc] initWithTitle:@"Decline" style:UIBarButtonItemStyleBordered target:self action:@selector(declineClicked)];
-    UIBarButtonItem *leaveBtn = [[UIBarButtonItem alloc] initWithTitle:@"Leave" style:UIBarButtonItemStyleBordered target:self action:@selector(leaveClicked)];
+    //UIBarButtonItem *leaveBtn = [[UIBarButtonItem alloc] initWithTitle:@"Leave" style:UIBarButtonItemStyleBordered target:self action:@selector(leaveClicked)];
     
     UIBarButtonItem *subscribeBtn;
     if ( [globalData isSubscribedToThread:meetup.strId])
@@ -46,7 +46,7 @@
         subscribeBtn = [[UIBarButtonItem alloc] initWithTitle:@"Subscribe" style:UIBarButtonItemStylePlain target:self action:@selector(subscribeClicked)];
     UIBarButtonItem *inviteBtn = [[UIBarButtonItem alloc] initWithTitle:@"Invite" style:UIBarButtonItemStylePlain target:self action:@selector(inviteClicked)];
     
-    UIBarButtonItem *cancelBtn = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleBordered target:self action:@selector(cancelClicked)];
+    //UIBarButtonItem *cancelBtn = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleBordered target:self action:@selector(cancelClicked)];
     UIBarButtonItem *editBtn = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(editClicked)];
     UIBarButtonItem *calendarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Calendar-Day"] style:UIBarButtonItemStyleBordered  target:self action:@selector(calendarClicked)];
     
@@ -57,14 +57,14 @@
         [actualButtons addObject:subscribeBtn];
     if ( [buttons[MB_DECLINE] integerValue] != 0 )
         [actualButtons addObject:declineBtn];
-    if ( [buttons[MB_LEAVE] integerValue] != 0 )
-        [actualButtons addObject:leaveBtn];
+    //if ( [buttons[MB_LEAVE] integerValue] != 0 )
+    //    [actualButtons addObject:leaveBtn];
     if ( [buttons[MB_CALENDAR] integerValue] != 0 && ! [meetup addedToCalendar] )
         [actualButtons addObject:calendarBtn];
     if ( [buttons[MB_INVITE] integerValue] != 0 )
         [actualButtons addObject:inviteBtn];
-    if ( [buttons[MB_CANCEL] integerValue] != 0 )
-        [actualButtons addObject:cancelBtn];
+    //if ( [buttons[MB_CANCEL] integerValue] != 0 )
+    //    [actualButtons addObject:cancelBtn];
     if ( [buttons[MB_EDIT] integerValue] != 0 )
         [actualButtons addObject:editBtn];
     
@@ -130,7 +130,7 @@
     [self reloadAnnotation];
     
     // Ask to add to calendar
-    [meetup addToCalendar];
+    //[meetup addToCalendar];
 }
 
 - (void)editClicked

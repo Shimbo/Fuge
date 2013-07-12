@@ -26,11 +26,12 @@
 #define FACEBOOK_PERMISSIONS @[ @"user_about_me", @"user_relationships", @"user_birthday", @"user_likes", @"user_location", @"email"]
 
 // Query distance to discover
-#define RANDOM_PERSON_KILOMETERS_NORMAL    [globalVariables globalParam:@"RandomPersonKilometersNormal" default:50]
-#define RANDOM_EVENT_KILOMETERS_NORMAL     [globalVariables globalParam:@"RandomEventKilometersNormal" default:50]
-#define RANDOM_PERSON_KILOMETERS_ADMIN     [globalVariables globalParam:@"RandomPersonKilometersAdmin" default:50000]
-#define RANDOM_EVENT_KILOMETERS_ADMIN      [globalVariables globalParam:@"RandomEventKilometersNormal" default:50000]
-
+#define RANDOM_PERSON_KILOMETERS_NORMAL [globalVariables globalParam:@"RandomPersonKilometersNormal" default:50]
+#define RANDOM_EVENT_KILOMETERS_NORMAL  [globalVariables globalParam:@"RandomEventKilometersNormal" default:50]
+#define RANDOM_PERSON_KILOMETERS_ADMIN  [globalVariables globalParam:@"RandomPersonKilometersAdmin" default:50000]
+#define RANDOM_EVENT_KILOMETERS_ADMIN   [globalVariables globalParam:@"RandomEventKilometersNormal" default:50000]
+#define RANDOM_PERSON_MAX_COUNT         [globalVariables globalParam:@"RandomPersonMaxCount" default:100]
+#define SECOND_PERSON_MAX_COUNT         [globalVariables globalParam:@"SecondPersonMaxCount" default:100]
 
 // Location update distance (to call save for PFUser
 #define LOCATION_UPDATE_KILOMETERS  0.5f
@@ -58,6 +59,7 @@
 
 // Otherwise not showing at all
 #define MAX_DAYS_TILL_MEETUP        [globalVariables globalParam:@"MaxDaysTillMeetup" default:7]
+#define MAX_SECONDS_FROM_PERSON_LOGIN [globalVariables globalParam:@"MaxSecondsFromPersonLogin" default:86400*100]
 
 #define WELCOME_MESSAGE             (NSString*)[globalVariables getGlobalParam:@"WelcomeMessage"]
 
