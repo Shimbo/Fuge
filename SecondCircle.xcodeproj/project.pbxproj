@@ -120,11 +120,8 @@
 		4C08DDD3163C88580093C851 /* Circle.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD0163C88580093C851 /* Circle.m */; };
 		4C08DDD4163C88580093C851 /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD2163C88580093C851 /* Person.m */; };
 		4C08DDDB163C88640093C851 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD6163C88640093C851 /* RootViewController.m */; };
-		4C14CD961774B2C700BC2533 /* EventbriteLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C14CD951774B2C700BC2533 /* EventbriteLoader.m */; };
-		4C14CD991774BE1D00BC2533 /* XMLDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C14CD981774BE1D00BC2533 /* XMLDictionary.m */; };
 		4C14CD9C1775E26000BC2533 /* iconEventbrite.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C14CD9A1775E26000BC2533 /* iconEventbrite.png */; };
 		4C14CD9D1775E26000BC2533 /* iconEventbrite@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C14CD9B1775E26000BC2533 /* iconEventbrite@2x.png */; };
-		4C14CDA01775E52C00BC2533 /* FacebookLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C14CD9F1775E52C00BC2533 /* FacebookLoader.m */; };
 		4C188D221698C51A004CF42D /* MapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C188D201698C51A004CF42D /* MapViewController.m */; };
 		4C188D231698C51A004CF42D /* MapView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C188D211698C51A004CF42D /* MapView.xib */; };
 		4C188D251698C72C004CF42D /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C188D241698C72B004CF42D /* MapKit.framework */; };
@@ -202,6 +199,9 @@
 		4CEAEFE7176FC50E00578254 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4CEAEFE6176FC50E00578254 /* Default@2x.png */; };
 		4CEAEFE9176FC52800578254 /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4CEAEFE8176FC52800578254 /* Default-Portrait~ipad.png */; };
 		4CEAEFEB176FC53500578254 /* Default-Portrait@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4CEAEFEA176FC53500578254 /* Default-Portrait@2x~ipad.png */; };
+		4CF697C417956DE70064ACE7 /* EventbriteLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CF697BF17956DE70064ACE7 /* EventbriteLoader.m */; };
+		4CF697C517956DE70064ACE7 /* FacebookLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CF697C117956DE70064ACE7 /* FacebookLoader.m */; };
+		4CF697C617956DE70064ACE7 /* XMLDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CF697C317956DE70064ACE7 /* XMLDictionary.m */; };
 		4CFE78C8166BBA7900E1BF72 /* FilterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CFE78C6166BBA7900E1BF72 /* FilterViewController.m */; };
 		4CFE78C9166BBA7900E1BF72 /* FilterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CFE78C7166BBA7900E1BF72 /* FilterView.xib */; };
 		6332375415E438E900AE2736 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6332375315E438E900AE2736 /* libsqlite3.dylib */; };
@@ -251,7 +251,7 @@
 		4706D10D16C11BA200CAF9AF /* RootViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RootViewController.xib; sourceTree = "<group>"; };
 		4706D10F16C11CA600CAF9AF /* reveal_menu_icon_portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = reveal_menu_icon_portrait.png; sourceTree = "<group>"; };
 		4706D11016C11CA600CAF9AF /* reveal_menu_icon_portrait@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reveal_menu_icon_portrait@2x.png"; sourceTree = "<group>"; };
-		4706D11316C12A1600CAF9AF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		4706D11316C12A1600CAF9AF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		470E5D2516F99EB90090A19F /* Calendar-Day.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Calendar-Day.png"; sourceTree = "<group>"; };
 		470E5D2616F99EB90090A19F /* Calendar-Day@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Calendar-Day@2x.png"; sourceTree = "<group>"; };
 		470E5D2916F9A5E40090A19F /* PersonAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersonAnnotationView.h; sourceTree = "<group>"; };
@@ -379,14 +379,8 @@
 		4C08DDD7163C88640093C851 /* PersonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersonCell.h; sourceTree = "<group>"; };
 		4C08DDD9163C88640093C851 /* PersonView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersonView.h; sourceTree = "<group>"; };
 		4C08DDDA163C88640093C851 /* PersonView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersonView.m; sourceTree = "<group>"; };
-		4C14CD941774B2C700BC2533 /* EventbriteLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventbriteLoader.h; sourceTree = "<group>"; };
-		4C14CD951774B2C700BC2533 /* EventbriteLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventbriteLoader.m; sourceTree = "<group>"; };
-		4C14CD971774BE1D00BC2533 /* XMLDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLDictionary.h; sourceTree = "<group>"; };
-		4C14CD981774BE1D00BC2533 /* XMLDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLDictionary.m; sourceTree = "<group>"; };
 		4C14CD9A1775E26000BC2533 /* iconEventbrite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconEventbrite.png; sourceTree = "<group>"; };
 		4C14CD9B1775E26000BC2533 /* iconEventbrite@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconEventbrite@2x.png"; sourceTree = "<group>"; };
-		4C14CD9E1775E52C00BC2533 /* FacebookLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookLoader.h; sourceTree = "<group>"; };
-		4C14CD9F1775E52C00BC2533 /* FacebookLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookLoader.m; sourceTree = "<group>"; };
 		4C188D1F1698C51A004CF42D /* MapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapViewController.h; sourceTree = "<group>"; };
 		4C188D201698C51A004CF42D /* MapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapViewController.m; sourceTree = "<group>"; };
 		4C188D211698C51A004CF42D /* MapView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MapView.xib; sourceTree = "<group>"; };
@@ -473,16 +467,22 @@
 		4CDEEB151764D0E600C0A41D /* bg@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "bg@2x~ipad.png"; path = "resources/bg@2x~ipad.png"; sourceTree = "<group>"; };
 		4CE307FB16BF424600F427DE /* PushManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushManager.h; sourceTree = "<group>"; };
 		4CE307FC16BF424600F427DE /* PushManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushManager.m; sourceTree = "<group>"; };
-		4CEAEFD8176FB82700578254 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
-		4CEAEFDA176FB83200578254 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
-		4CEAEFDC176FB85C00578254 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
-		4CEAEFDE176FB86000578254 /* Icon-72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72@2x.png"; sourceTree = "<group>"; };
+		4CEAEFD8176FB82700578254 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Icon.png; path = ../Icon.png; sourceTree = "<group>"; };
+		4CEAEFDA176FB83200578254 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon@2x.png"; path = "../Icon@2x.png"; sourceTree = "<group>"; };
+		4CEAEFDC176FB85C00578254 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72.png"; path = "../Icon-72.png"; sourceTree = "<group>"; };
+		4CEAEFDE176FB86000578254 /* Icon-72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72@2x.png"; path = "../Icon-72@2x.png"; sourceTree = "<group>"; };
 		4CEAEFE0176FC26300578254 /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
-		4CEAEFE2176FC34C00578254 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		4CEAEFE4176FC4FE00578254 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
-		4CEAEFE6176FC50E00578254 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
-		4CEAEFE8176FC52800578254 /* Default-Portrait~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait~ipad.png"; sourceTree = "<group>"; };
-		4CEAEFEA176FC53500578254 /* Default-Portrait@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait@2x~ipad.png"; sourceTree = "<group>"; };
+		4CEAEFE2176FC34C00578254 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
+		4CEAEFE4176FC4FE00578254 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Default.png; path = ../Default.png; sourceTree = "<group>"; };
+		4CEAEFE6176FC50E00578254 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default@2x.png"; path = "../Default@2x.png"; sourceTree = "<group>"; };
+		4CEAEFE8176FC52800578254 /* Default-Portrait~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Portrait~ipad.png"; path = "../Default-Portrait~ipad.png"; sourceTree = "<group>"; };
+		4CEAEFEA176FC53500578254 /* Default-Portrait@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Portrait@2x~ipad.png"; path = "../Default-Portrait@2x~ipad.png"; sourceTree = "<group>"; };
+		4CF697BE17956DE70064ACE7 /* EventbriteLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventbriteLoader.h; path = ParseStarterProject/ExternalLibs/EventbriteLoader.h; sourceTree = "<group>"; };
+		4CF697BF17956DE70064ACE7 /* EventbriteLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EventbriteLoader.m; path = ParseStarterProject/ExternalLibs/EventbriteLoader.m; sourceTree = "<group>"; };
+		4CF697C017956DE70064ACE7 /* FacebookLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FacebookLoader.h; path = ParseStarterProject/ExternalLibs/FacebookLoader.h; sourceTree = "<group>"; };
+		4CF697C117956DE70064ACE7 /* FacebookLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FacebookLoader.m; path = ParseStarterProject/ExternalLibs/FacebookLoader.m; sourceTree = "<group>"; };
+		4CF697C217956DE70064ACE7 /* XMLDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XMLDictionary.h; path = ParseStarterProject/ExternalLibs/XMLDictionary.h; sourceTree = "<group>"; };
+		4CF697C317956DE70064ACE7 /* XMLDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XMLDictionary.m; path = ParseStarterProject/ExternalLibs/XMLDictionary.m; sourceTree = "<group>"; };
 		4CFE78C5166BBA7900E1BF72 /* FilterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterViewController.h; sourceTree = "<group>"; };
 		4CFE78C6166BBA7900E1BF72 /* FilterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FilterViewController.m; sourceTree = "<group>"; };
 		4CFE78C7166BBA7900E1BF72 /* FilterView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FilterView.xib; sourceTree = "<group>"; };
@@ -534,16 +534,6 @@
 		09ABC06213A1D52D009C3FCF = {
 			isa = PBXGroup;
 			children = (
-				4CEAEFEA176FC53500578254 /* Default-Portrait@2x~ipad.png */,
-				4CEAEFE8176FC52800578254 /* Default-Portrait~ipad.png */,
-				4CEAEFE6176FC50E00578254 /* Default@2x.png */,
-				4CEAEFE4176FC4FE00578254 /* Default.png */,
-				4CEAEFE2176FC34C00578254 /* Default-568h@2x.png */,
-				4CEAEFDE176FB86000578254 /* Icon-72@2x.png */,
-				4CEAEFDC176FB85C00578254 /* Icon-72.png */,
-				4CEAEFDA176FB83200578254 /* Icon@2x.png */,
-				4CEAEFD8176FB82700578254 /* Icon.png */,
-				4706D11316C12A1600CAF9AF /* README.md */,
 				47534DC916A7143F008CC823 /* libs */,
 				09ABC07713A1D52D009C3FCF /* ParseStarterProject */,
 				09ABC07013A1D52D009C3FCF /* Frameworks */,
@@ -604,6 +594,7 @@
 		09ABC07813A1D52D009C3FCF /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				470E5D2416F99EB90090A19F /* icons */,
 				97E170E0174E8F1B00BA0094 /* bg.png */,
 				97E170D5174D3C1F00BA0094 /* bg@2x.png */,
 				4CDEEB141764D0E600C0A41D /* bg~ipad.png */,
@@ -612,7 +603,16 @@
 				4C466041176FB63E00D1FE3A /* white@2x.png */,
 				4C8F7BC9177B58920015B2A8 /* white~ipad.png */,
 				4C8F7BC8177B58920015B2A8 /* white@2x~ipad.png */,
-				470E5D2416F99EB90090A19F /* icons */,
+				4CEAEFEA176FC53500578254 /* Default-Portrait@2x~ipad.png */,
+				4CEAEFE8176FC52800578254 /* Default-Portrait~ipad.png */,
+				4CEAEFE6176FC50E00578254 /* Default@2x.png */,
+				4CEAEFE4176FC4FE00578254 /* Default.png */,
+				4CEAEFE2176FC34C00578254 /* Default-568h@2x.png */,
+				4CEAEFDE176FB86000578254 /* Icon-72@2x.png */,
+				4CEAEFDC176FB85C00578254 /* Icon-72.png */,
+				4CEAEFDA176FB83200578254 /* Icon@2x.png */,
+				4CEAEFD8176FB82700578254 /* Icon.png */,
+				4706D11316C12A1600CAF9AF /* README.md */,
 				09ABC07913A1D52D009C3FCF /* SecondCircle-Info.plist */,
 				09144A7213C2997E00388B00 /* Entitlements.plist */,
 				09ABC07A13A1D52D009C3FCF /* InfoPlist.strings */,
@@ -763,12 +763,12 @@
 				47534D8516A6F8DC008CC823 /* Foursquare2 */,
 				97E170E4174E906A00BA0094 /* UIDefs.h */,
 				97E170E5174E906A00BA0094 /* UIDefs.m */,
-				4C14CD971774BE1D00BC2533 /* XMLDictionary.h */,
-				4C14CD981774BE1D00BC2533 /* XMLDictionary.m */,
-				4C14CD941774B2C700BC2533 /* EventbriteLoader.h */,
-				4C14CD951774B2C700BC2533 /* EventbriteLoader.m */,
-				4C14CD9E1775E52C00BC2533 /* FacebookLoader.h */,
-				4C14CD9F1775E52C00BC2533 /* FacebookLoader.m */,
+				4CF697BE17956DE70064ACE7 /* EventbriteLoader.h */,
+				4CF697BF17956DE70064ACE7 /* EventbriteLoader.m */,
+				4CF697C017956DE70064ACE7 /* FacebookLoader.h */,
+				4CF697C117956DE70064ACE7 /* FacebookLoader.m */,
+				4CF697C217956DE70064ACE7 /* XMLDictionary.h */,
+				4CF697C317956DE70064ACE7 /* XMLDictionary.m */,
 			);
 			name = libs;
 			sourceTree = "<group>";
@@ -1221,13 +1221,13 @@
 				471984B0172EBA5200A5FE8E /* GrowingTextViewController.m in Sources */,
 				4744E1741751F26600BEB737 /* TimerView.m in Sources */,
 				97E170E6174E906A00BA0094 /* UIDefs.m in Sources */,
-				4C14CD961774B2C700BC2533 /* EventbriteLoader.m in Sources */,
-				4C14CD991774BE1D00BC2533 /* XMLDictionary.m in Sources */,
-				4C14CDA01775E52C00BC2533 /* FacebookLoader.m in Sources */,
 				4CDE8D441789D27A00844B7E /* MatchesViewController.m in Sources */,
 				4CDE8D4E1789E20700844B7E /* InboxCell.m in Sources */,
 				4CDE8D4F1789E20700844B7E /* LikeCell.m in Sources */,
 				4CDE8D501789E20700844B7E /* PersonCell.m in Sources */,
+				4CF697C417956DE70064ACE7 /* EventbriteLoader.m in Sources */,
+				4CF697C517956DE70064ACE7 /* FacebookLoader.m in Sources */,
+				4CF697C617956DE70064ACE7 /* XMLDictionary.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
