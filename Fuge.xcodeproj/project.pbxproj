@@ -477,12 +477,12 @@
 		4CEAEFE6176FC50E00578254 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default@2x.png"; path = "../Default@2x.png"; sourceTree = "<group>"; };
 		4CEAEFE8176FC52800578254 /* Default-Portrait~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Portrait~ipad.png"; path = "../Default-Portrait~ipad.png"; sourceTree = "<group>"; };
 		4CEAEFEA176FC53500578254 /* Default-Portrait@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Portrait@2x~ipad.png"; path = "../Default-Portrait@2x~ipad.png"; sourceTree = "<group>"; };
-		4CF697BE17956DE70064ACE7 /* EventbriteLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventbriteLoader.h; path = ParseStarterProject/ExternalLibs/EventbriteLoader.h; sourceTree = "<group>"; };
-		4CF697BF17956DE70064ACE7 /* EventbriteLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EventbriteLoader.m; path = ParseStarterProject/ExternalLibs/EventbriteLoader.m; sourceTree = "<group>"; };
-		4CF697C017956DE70064ACE7 /* FacebookLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FacebookLoader.h; path = ParseStarterProject/ExternalLibs/FacebookLoader.h; sourceTree = "<group>"; };
-		4CF697C117956DE70064ACE7 /* FacebookLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FacebookLoader.m; path = ParseStarterProject/ExternalLibs/FacebookLoader.m; sourceTree = "<group>"; };
-		4CF697C217956DE70064ACE7 /* XMLDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XMLDictionary.h; path = ParseStarterProject/ExternalLibs/XMLDictionary.h; sourceTree = "<group>"; };
-		4CF697C317956DE70064ACE7 /* XMLDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XMLDictionary.m; path = ParseStarterProject/ExternalLibs/XMLDictionary.m; sourceTree = "<group>"; };
+		4CF697BE17956DE70064ACE7 /* EventbriteLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventbriteLoader.h; path = Project/ExternalLibs/EventbriteLoader.h; sourceTree = "<group>"; };
+		4CF697BF17956DE70064ACE7 /* EventbriteLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EventbriteLoader.m; path = Project/ExternalLibs/EventbriteLoader.m; sourceTree = "<group>"; };
+		4CF697C017956DE70064ACE7 /* FacebookLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FacebookLoader.h; path = Project/ExternalLibs/FacebookLoader.h; sourceTree = "<group>"; };
+		4CF697C117956DE70064ACE7 /* FacebookLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FacebookLoader.m; path = Project/ExternalLibs/FacebookLoader.m; sourceTree = "<group>"; };
+		4CF697C217956DE70064ACE7 /* XMLDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XMLDictionary.h; path = Project/ExternalLibs/XMLDictionary.h; sourceTree = "<group>"; };
+		4CF697C317956DE70064ACE7 /* XMLDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XMLDictionary.m; path = Project/ExternalLibs/XMLDictionary.m; sourceTree = "<group>"; };
 		4CFE78C5166BBA7900E1BF72 /* FilterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterViewController.h; sourceTree = "<group>"; };
 		4CFE78C6166BBA7900E1BF72 /* FilterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FilterViewController.m; sourceTree = "<group>"; };
 		4CFE78C7166BBA7900E1BF72 /* FilterView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FilterView.xib; sourceTree = "<group>"; };
@@ -493,8 +493,8 @@
 		743D7B6C157DA60100084B67 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		97E170D5174D3C1F00BA0094 /* bg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "bg@2x.png"; path = "resources/bg@2x.png"; sourceTree = "<group>"; };
 		97E170E0174E8F1B00BA0094 /* bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bg.png; path = resources/bg.png; sourceTree = "<group>"; };
-		97E170E4174E906A00BA0094 /* UIDefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIDefs.h; path = ParseStarterProject/UIDefs.h; sourceTree = "<group>"; };
-		97E170E5174E906A00BA0094 /* UIDefs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIDefs.m; path = ParseStarterProject/UIDefs.m; sourceTree = "<group>"; };
+		97E170E4174E906A00BA0094 /* UIDefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIDefs.h; path = Project/UIDefs.h; sourceTree = "<group>"; };
+		97E170E5174E906A00BA0094 /* UIDefs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIDefs.m; path = Project/UIDefs.m; sourceTree = "<group>"; };
 		97E18B1E1624CB5700B17A67 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -589,7 +589,7 @@
 				09ABC07813A1D52D009C3FCF /* Supporting Files */,
 			);
 			name = Project;
-			path = ParseStarterProject;
+			path = Project;
 			sourceTree = "<group>";
 		};
 		09ABC07813A1D52D009C3FCF /* Supporting Files */ = {
@@ -957,7 +957,7 @@
 				4C27C96D1691862A00B2A905 /* TestFlight.h */,
 			);
 			name = TestFlightSDK;
-			path = ParseStarterProject/TestFlightSDK;
+			path = Project/TestFlightSDK;
 			sourceTree = "<group>";
 		};
 		4C7E3FE4169A1F260065484F /* Data */ = {
@@ -1001,7 +1001,7 @@
 			dependencies = (
 			);
 			name = Fuge;
-			productName = ParseStarterProject;
+			productName = Project;
 			productReference = 09ABC06D13A1D52D009C3FCF /* Fuge.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -1318,14 +1318,14 @@
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ParseStarterProject/Fuge-Prefix.pch";
+				GCC_PREFIX_HEADER = "Project/Fuge-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libs\"";
-				INFOPLIST_FILE = "ParseStarterProject/Fuge-Info.plist";
+				INFOPLIST_FILE = "Project/Fuge-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/ParseStarterProject/TestFlightSDK\"",
+					"\"$(SRCROOT)/Project/TestFlightSDK\"",
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Fuge;
@@ -1351,14 +1351,14 @@
 					"\"$(SRCROOT)/libs\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ParseStarterProject/Fuge-Prefix.pch";
+				GCC_PREFIX_HEADER = "Project/Fuge-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/libs\"";
-				INFOPLIST_FILE = "ParseStarterProject/Fuge-Info.plist";
+				INFOPLIST_FILE = "Project/Fuge-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/ParseStarterProject/TestFlightSDK\"",
+					"\"$(SRCROOT)/Project/TestFlightSDK\"",
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Fuge;
