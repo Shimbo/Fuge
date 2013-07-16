@@ -535,7 +535,7 @@
 			isa = PBXGroup;
 			children = (
 				47534DC916A7143F008CC823 /* libs */,
-				09ABC07713A1D52D009C3FCF /* ParseStarterProject */,
+				09ABC07713A1D52D009C3FCF /* Project */,
 				09ABC07013A1D52D009C3FCF /* Frameworks */,
 				09ABC06E13A1D52D009C3FCF /* Products */,
 			);
@@ -577,7 +577,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		09ABC07713A1D52D009C3FCF /* ParseStarterProject */ = {
+		09ABC07713A1D52D009C3FCF /* Project */ = {
 			isa = PBXGroup;
 			children = (
 				47B203DC1710046E00B756FA /* helpers */,
@@ -588,6 +588,7 @@
 				4C08DDCD163C88480093C851 /* UI */,
 				09ABC07813A1D52D009C3FCF /* Supporting Files */,
 			);
+			name = Project;
 			path = ParseStarterProject;
 			sourceTree = "<group>";
 		};
