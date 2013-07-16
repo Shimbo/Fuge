@@ -199,6 +199,7 @@
 		4CEAEFE7176FC50E00578254 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4CEAEFE6176FC50E00578254 /* Default@2x.png */; };
 		4CEAEFE9176FC52800578254 /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4CEAEFE8176FC52800578254 /* Default-Portrait~ipad.png */; };
 		4CEAEFEB176FC53500578254 /* Default-Portrait@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4CEAEFEA176FC53500578254 /* Default-Portrait@2x~ipad.png */; };
+		4CF2DE3717960DF40052E92B /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CF2DE3617960DF40052E92B /* Crashlytics.framework */; };
 		4CF697C417956DE70064ACE7 /* EventbriteLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CF697BF17956DE70064ACE7 /* EventbriteLoader.m */; };
 		4CF697C517956DE70064ACE7 /* FacebookLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CF697C117956DE70064ACE7 /* FacebookLoader.m */; };
 		4CF697C617956DE70064ACE7 /* XMLDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CF697C317956DE70064ACE7 /* XMLDictionary.m */; };
@@ -477,6 +478,7 @@
 		4CEAEFE6176FC50E00578254 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default@2x.png"; path = "../Default@2x.png"; sourceTree = "<group>"; };
 		4CEAEFE8176FC52800578254 /* Default-Portrait~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Portrait~ipad.png"; path = "../Default-Portrait~ipad.png"; sourceTree = "<group>"; };
 		4CEAEFEA176FC53500578254 /* Default-Portrait@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Portrait@2x~ipad.png"; path = "../Default-Portrait@2x~ipad.png"; sourceTree = "<group>"; };
+		4CF2DE3617960DF40052E92B /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		4CF697BE17956DE70064ACE7 /* EventbriteLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventbriteLoader.h; path = Project/ExternalLibs/EventbriteLoader.h; sourceTree = "<group>"; };
 		4CF697BF17956DE70064ACE7 /* EventbriteLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EventbriteLoader.m; path = Project/ExternalLibs/EventbriteLoader.m; sourceTree = "<group>"; };
 		4CF697C017956DE70064ACE7 /* FacebookLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FacebookLoader.h; path = Project/ExternalLibs/FacebookLoader.h; sourceTree = "<group>"; };
@@ -525,6 +527,7 @@
 				094ACA0014367ACD008398F8 /* Parse.framework in Frameworks */,
 				4C27C96E1691862A00B2A905 /* libTestFlight.a in Frameworks */,
 				4C68CA791701F26100C2AD24 /* FacebookSDK.framework in Frameworks */,
+				4CF2DE3717960DF40052E92B /* Crashlytics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -552,6 +555,7 @@
 		09ABC07013A1D52D009C3FCF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4CF2DE3617960DF40052E92B /* Crashlytics.framework */,
 				4C68CA781701F26100C2AD24 /* FacebookSDK.framework */,
 				4C4228E516C46B62008EBA67 /* EventKit.framework */,
 				4C4228E616C46B62008EBA67 /* EventKitUI.framework */,
@@ -588,7 +592,6 @@
 				4C08DDCD163C88480093C851 /* UI */,
 				09ABC07813A1D52D009C3FCF /* Supporting Files */,
 			);
-			name = Project;
 			path = Project;
 			sourceTree = "<group>";
 		};
@@ -995,6 +998,7 @@
 				09ABC06913A1D52D009C3FCF /* Sources */,
 				09ABC06A13A1D52D009C3FCF /* Frameworks */,
 				09ABC06B13A1D52D009C3FCF /* Resources */,
+				4CF2DE3517960D500052E92B /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1154,6 +1158,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4CF2DE3517960D500052E92B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Crashlytics.framework/run f2aad2d4ba94eff0ac771885455f29bb4fbc3320";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		09ABC06913A1D52D009C3FCF /* Sources */ = {

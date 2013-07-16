@@ -8,6 +8,7 @@
 #import "LoadingController.h"
 #import "TestFlightSDK/TestFlight.h"
 #import "JMImageCache.h"
+#import <Crashlytics/Crashlytics.h>
 
 @implementation ParseStarterProjectAppDelegate
 
@@ -48,6 +49,9 @@
     // Parse
     [Parse setApplicationId:@"VMhSG8IQ9xibufk8lAPpclIwdXVfYD44OpKmsHdn"
                   clientKey:@"u2kJ1jWBjN9qY3ARlJuEyNkvUA9EjOMv1R4w5sDX"];
+    
+    // Crashlytics
+    [Crashlytics startWithAPIKey:@"f2aad2d4ba94eff0ac771885455f29bb4fbc3320"];
     
     // Left menu
     LeftMenuController *leftMenu = [[LeftMenuController alloc]init];

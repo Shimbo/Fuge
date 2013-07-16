@@ -39,6 +39,7 @@
             self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Attending: %d", strName, self.attendedPersons.count ];
         else
             self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Joined: %d", strName, nAttendeesCount ];
+        //self.subtitle = [[NSString alloc] initWithFormat:@"Cass Business School, July 15, 10:30 PM", strName, nAttendeesCount ];
     }
     else
         self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Comments: %d", [globalVariables trimName:self.meetup.strOwnerName], self.meetup.numComments ];
