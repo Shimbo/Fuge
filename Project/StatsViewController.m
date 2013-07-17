@@ -8,6 +8,7 @@
 
 #import <Parse/Parse.h>
 #import "StatsViewController.h"
+#import "PCLineChartView.h"
 
 @implementation StatsViewController
 
@@ -20,24 +21,32 @@
     return self;
 }
 
-- (void)viewDidLoad
+- (void)viewDidAppear:(BOOL)animated
 {
-    [super viewDidLoad];
+    [super viewDidAppear:animated];
     
     // Some really hardcoded manual code only for stats
-    NSMutableString* labels = [[NSMutableString alloc] init];
-    NSMutableString* stats = [[NSMutableString alloc] init];
+    //NSMutableString* labels = [[NSMutableString alloc] init];
+    //NSMutableString* stats = [[NSMutableString alloc] init];
     
-    // Counters
+    // Loading data
     PFQuery *userQuery = [PFUser query];
     userQuery.limit = 1000;
-    NSNumber *userCount = [[NSNumber alloc] initWithInt:[userQuery countObjects]];
-    /*NSArray* users = [userQuery findObjects];
-    NSNumber *fbfriends =
-    for ( PFUser* user in users )
-    {
-        
-    }*/
+    NSMutableArray* users = [NSMutableArray arrayWithCapacity:1000];
+    NSArray* newBulk;
+    do {
+        newBulk = [userQuery findObjects];
+        [users addObjectsFromArray:newBulk];
+        userQuery.skip += newBulk.count;
+    } while (newBulk && newBulk.count == userQuery.limit);
+    
+    NSUInteger nCount = 0;
+    for (PFUser* user in users)
+        if ( [user.updatedAt compare:[NSDate dateWithTimeIntervalSinceNow:-86400]] == NSOrderedDescending )
+            nCount++;
+    self.title = [NSString stringWithFormat:@"24h count: %d", nCount];
+    
+    /*NSNumber *userCount = [[NSNumber alloc] initWithInt:[userQuery countObjects]];
     
     PFQuery *query = [PFQuery queryWithClassName:@"Message"];
     NSNumber *msgCount = [[NSNumber alloc] initWithInt:[query countObjects]];
@@ -105,13 +114,148 @@
     [stats appendString:[[NSString alloc] initWithFormat:@"%.1f", [averageThreadInvites doubleValue]]];
     [stats appendString:@"\n"];
     
-    /*NSNumber *averageThreadAttendees = [[NSNumber alloc] initWithDouble:([attendeeCount doubleValue] / [meetupCount doubleValue])];
-    [labels appendString:@"\nAverage meetup attendees: "];
-    [stats appendString:[[NSString alloc] initWithFormat:@"%.1f", [averageThreadAttendees doubleValue]]];
-    [stats appendString:@"\n"];*/
-    
     [_statsText setText:labels];
-    [_statsNumbers setText:stats];
+    [_statsNumbers setText:stats];*/
+    
+    _statsNumbers.hidden = TRUE;
+    _statsText.hidden = TRUE;
+    
+    PCLineChartViewComponent* c1 = [[PCLineChartViewComponent alloc] init];
+    c1.colour = [UIColor blueColor];
+    c1.points = [NSMutableArray arrayWithCapacity:30];
+    PCLineChartViewComponent* c2 = [[PCLineChartViewComponent alloc] init];
+    c2.colour = [UIColor greenColor];
+    c2.points = [NSMutableArray arrayWithCapacity:30];
+    PCLineChartViewComponent* c3 = [[PCLineChartViewComponent alloc] init];
+    c3.colour = [UIColor yellowColor];
+    c3.points = [NSMutableArray arrayWithCapacity:30];
+    PCLineChartViewComponent* c4 = [[PCLineChartViewComponent alloc] init];
+    c4.colour = [UIColor redColor];
+    c4.points = [NSMutableArray arrayWithCapacity:30];
+    PCLineChartViewComponent* cc1 = [[PCLineChartViewComponent alloc] init];
+    cc1.colour = [UIColor greenColor];
+    cc1.points = [NSMutableArray arrayWithCapacity:30];
+    PCLineChartViewComponent* cc2 = [[PCLineChartViewComponent alloc] init];
+    cc2.colour = [UIColor yellowColor];
+    cc2.points = [NSMutableArray arrayWithCapacity:30];
+    PCLineChartViewComponent* cc3 = [[PCLineChartViewComponent alloc] init];
+    cc3.colour = [UIColor redColor];
+    cc3.points = [NSMutableArray arrayWithCapacity:30];
+    
+    NSInteger screenWidth = self.view.frame.size.width;
+    NSInteger screenHeight = self.view.frame.size.height;
+    PCLineChartView* chart1 = [[PCLineChartView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight/3)];
+    chart1.xLabels = [NSMutableArray arrayWithCapacity:30];
+    chart1.maxValue = 0;
+    chart1.minValue = 0;
+    PCLineChartView* chart2 = [[PCLineChartView alloc] initWithFrame:CGRectMake(0, screenHeight/3, screenWidth, screenHeight/3)];
+    chart2.xLabels = [NSMutableArray arrayWithCapacity:30];
+    chart2.maxValue = 100;
+    chart2.minValue = 0;
+    
+    // Creating dictionary
+    NSMutableDictionary* usersByDates = [NSMutableDictionary dictionary];
+    for ( PFUser* user in users )
+    {
+        NSDateComponents *components = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:user.createdAt];
+        NSDate *newDate = [[NSCalendar currentCalendar] dateFromComponents:components];
+        NSMutableArray* usersThisDay = [usersByDates objectForKey:newDate];
+        if ( ! usersThisDay )
+        {
+            usersThisDay = [NSMutableArray arrayWithCapacity:30];
+            [usersByDates setObject:usersThisDay forKey:newDate];
+        }
+        [usersThisDay addObject:user];
+    }
+    
+    // Creating charts
+    NSDateComponents *components = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[NSDate dateWithTimeIntervalSinceNow:-100*86400]];
+    components.year = 2013;
+    components.month = 7;
+    components.day = 18;
+    NSDate *currentDate = [[NSCalendar currentCalendar] dateFromComponents:components];
+    NSUInteger nDayShift = 0;
+    while ([currentDate compare:[NSDate date]] == NSOrderedAscending)
+    {
+        // Calc date info
+        NSDate* date = currentDate;
+        components = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:date];
+        NSString* strLabel = [NSString stringWithFormat:@"%02d/%02d", [components month], [components day]];
+        if ( nDayShift % 7 == 0 )
+        {
+            [chart1.xLabels addObject:strLabel];
+            [chart2.xLabels addObject:strLabel];
+        }
+        else
+        {
+            [chart1.xLabels addObject:@" "];
+            [chart2.xLabels addObject:@" "];
+        }
+        
+        // Update counter
+        currentDate = [currentDate dateByAddingTimeInterval:86400];
+        nDayShift++;
+        
+        // Basic info
+        NSMutableArray* usersThisDay = [usersByDates objectForKey:date];
+        if ( ! usersThisDay )
+        {
+            [c1.points addObject:[NSNumber numberWithInt:0]];
+            [c2.points addObject:[NSNumber numberWithInt:0]];
+            [c3.points addObject:[NSNumber numberWithInt:0]];
+            [c4.points addObject:[NSNumber numberWithInt:0]];
+            [cc1.points addObject:[NSNumber numberWithInt:0]];
+            [cc2.points addObject:[NSNumber numberWithInt:0]];
+            [cc3.points addObject:[NSNumber numberWithInt:0]];
+            continue;
+        }
+        
+        // Installs per day
+        [c1.points addObject:[NSNumber numberWithInt:usersThisDay.count]];
+        if ( usersThisDay.count > chart1.maxValue )
+            chart1.maxValue = usersThisDay.count;
+        
+        // Opened profile at least once
+        NSUInteger nOpenedProfile = 0;
+        NSUInteger nGotMessages = 0;
+        NSUInteger nReturned = 0;
+        for ( PFUser* user in usersThisDay )
+            if ( [user objectForKey:@"messageCounts"] )
+            {
+                nOpenedProfile++;
+                Boolean bConversationStarted = FALSE;
+                NSDictionary* messageCounts = [user objectForKey:@"messageCounts"];
+                for ( NSString* strKey in [messageCounts allKeys] )
+                {
+                    NSNumber* nCount = [messageCounts objectForKey:strKey];
+                    if ( [nCount integerValue] > 0 )
+                    {
+                        nGotMessages++;
+                        bConversationStarted = TRUE;
+                        break;
+                    }
+                }
+                if ( bConversationStarted )
+                    if ( [user.updatedAt compare:[NSDate dateWithTimeInterval:7*86400 sinceDate:user.createdAt]] == NSOrderedDescending)
+                        nReturned++;
+            }
+        [c2.points addObject:[NSNumber numberWithInt:nOpenedProfile]];
+        [c3.points addObject:[NSNumber numberWithInt:nGotMessages]];
+        [c4.points addObject:[NSNumber numberWithInt:nReturned]];
+        
+        [cc1.points addObject:[NSNumber numberWithFloat:(float)nOpenedProfile*100.0f/(float)usersThisDay.count]];
+        [cc2.points addObject:[NSNumber numberWithFloat:(float)nGotMessages*100.0f/(float)usersThisDay.count]];
+        [cc3.points addObject:[NSNumber numberWithFloat:(float)nReturned*100.0f/(float)usersThisDay.count]];
+        
+        currentDate = [currentDate dateByAddingTimeInterval:86400];
+    }
+    chart1.components = [NSMutableArray arrayWithObjects:c1, c2, c3, c4, nil];
+    chart1.interval = chart1.maxValue / 5.0f;
+    chart2.components = [NSMutableArray arrayWithObjects:cc1, cc2, cc3, nil];
+    chart2.interval = 20.0f;
+    
+    [self.view addSubview:chart1];
+    [self.view addSubview:chart2];
 }
 
 - (void)didReceiveMemoryWarning

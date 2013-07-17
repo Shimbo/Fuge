@@ -955,7 +955,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         case COMMENT_PLAIN:
             [strComment appendString:text];
             meetup.numComments++;
-            [globalData updateConversation:nil count:meetup.numComments thread:meetup.strId];
+            [globalData updateConversation:nil count:meetup.numComments thread:meetup.strId meetup:TRUE];
             break;
     }
     
@@ -1171,7 +1171,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 - (Boolean) setUserPosition:(PFGeoPoint*)geoPoint
 {
-    if ( [pCurrentUser isAuthenticated] && geoPoint )
+    if ( geoPoint )
     {
         // Setting own coords
         [pCurrentUser setObject:geoPoint forKey:@"location"];
@@ -1215,6 +1215,5 @@ NSInteger sortByName(id num1, id num2, void *context)
                                                            object:nil];
     }
 }
-
 
 @end

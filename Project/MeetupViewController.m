@@ -440,7 +440,7 @@
             NSDate* commentDate = nil;
             if ( commentsList.count > 0 )
                 commentDate = ((PFObject*)commentsList[commentsList.count-1]).createdAt;
-            [globalData updateConversation:commentDate count:meetup.numComments thread:meetup.strId];
+            [globalData updateConversation:commentDate count:meetup.numComments thread:meetup.strId meetup:TRUE];
             
             // Update badge number for unread messages
             [globalData postInboxUnreadCountDidUpdate];

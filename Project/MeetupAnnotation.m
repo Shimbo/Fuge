@@ -62,7 +62,7 @@
         
         // all read threads are passed as well
         if ( ! attorsubsc )
-            if ( [globalData getConversationPresence:self.meetup.strId] )
+            if ( [globalData getConversationPresence:self.meetup.strId meetup:TRUE] )
                 read = true;
     }
     

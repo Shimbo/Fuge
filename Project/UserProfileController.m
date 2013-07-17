@@ -247,7 +247,7 @@ double animatedDistance;
     
     // Updating conversation
     messagesCount++;
-    [globalData updateConversation:nil count:messagesCount thread:personThis.strId];
+    [globalData updateConversation:nil count:messagesCount thread:personThis.strId meetup:FALSE];
     
     // Adding to inbox
     [globalData addMessage:currentMessage];

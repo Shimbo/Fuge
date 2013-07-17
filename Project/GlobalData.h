@@ -156,10 +156,10 @@ typedef  enum EMeetupCommentType
     // Inbox utils
 - (void)postInboxUnreadCountDidUpdate;
 - (NSUInteger)getInboxUnreadCount;
-- (void) updateConversation:(NSDate*)date count:(NSUInteger)msgCount thread:(NSString*)strThread;
-- (Boolean) getConversationPresence:(NSString*)strThread;
-- (NSDate*) getConversationDate:(NSString*)strThread;
-- (NSUInteger) getConversationCount:(NSString*)strThread;
+- (void) updateConversation:(NSDate*)date count:(NSUInteger)msgCount thread:(NSString*)strThread meetup:(Boolean)bMeetup;
+- (Boolean) getConversationPresence:(NSString*)strThread meetup:(Boolean)bMeetup;
+- (NSDate*) getConversationDate:(NSString*)strThread meetup:(Boolean)bMeetup;
+- (NSUInteger) getConversationCount:(NSString*)strThread meetup:(Boolean)bMeetup;
 - (PFObject*)getInviteForMeetup:(NSString*)strId;
 - (void) updateInvite:(NSString*)strId attending:(NSUInteger)status;
 @end

@@ -120,9 +120,6 @@ static Boolean bRotating = true;
 {
     [TestFlight passCheckpoint:@"Initialization phase 2"];
     
-    // Location data
-    [locManager startUpdating];
-    
     // Check permissions
     Boolean bPermissionsGranted = TRUE;
     NSArray *permissionsArray = FACEBOOK_PERMISSIONS;
@@ -156,7 +153,10 @@ static Boolean bRotating = true;
                 if ( bBanned )
                     [ctrl bannedUser];
                 else
+                {
                     [globalData loadData];
+                    [locManager startUpdating];
+                }
             }
         }];
     }

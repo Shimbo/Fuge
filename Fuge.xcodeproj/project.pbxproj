@@ -148,6 +148,7 @@
 		4C6C3A041727FE4100F5F1B3 /* iconFacebook@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C6C3A001727FE4000F5F1B3 /* iconFacebook@2x.png */; };
 		4C6C3A051727FE4100F5F1B3 /* iconThread.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C6C3A011727FE4000F5F1B3 /* iconThread.png */; };
 		4C6C3A061727FE4100F5F1B3 /* iconThread@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C6C3A021727FE4000F5F1B3 /* iconThread@2x.png */; };
+		4C7CE99E1796183F0005A70F /* PCLineChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7CE99D1796183F0005A70F /* PCLineChartView.m */; };
 		4C7E3FD61699017C0065484F /* NewMeetupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FD41699017C0065484F /* NewMeetupViewController.m */; };
 		4C7E3FD71699017C0065484F /* NewMeetupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E3FD51699017C0065484F /* NewMeetupViewController.xib */; };
 		4C7E3FDB169A09880065484F /* MeetupAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FDA169A09880065484F /* MeetupAnnotation.m */; };
@@ -416,6 +417,8 @@
 		4C6C3A001727FE4000F5F1B3 /* iconFacebook@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconFacebook@2x.png"; sourceTree = "<group>"; };
 		4C6C3A011727FE4000F5F1B3 /* iconThread.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconThread.png; sourceTree = "<group>"; };
 		4C6C3A021727FE4000F5F1B3 /* iconThread@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconThread@2x.png"; sourceTree = "<group>"; };
+		4C7CE99C1796183F0005A70F /* PCLineChartView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCLineChartView.h; path = Project/ExternalLibs/PCLineChartView.h; sourceTree = "<group>"; };
+		4C7CE99D1796183F0005A70F /* PCLineChartView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PCLineChartView.m; path = Project/ExternalLibs/PCLineChartView.m; sourceTree = "<group>"; };
 		4C7E3FD31699017C0065484F /* NewMeetupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewMeetupViewController.h; sourceTree = "<group>"; };
 		4C7E3FD41699017C0065484F /* NewMeetupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewMeetupViewController.m; sourceTree = "<group>"; };
 		4C7E3FD51699017C0065484F /* NewMeetupViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NewMeetupViewController.xib; sourceTree = "<group>"; };
@@ -773,6 +776,8 @@
 				4CF697C117956DE70064ACE7 /* FacebookLoader.m */,
 				4CF697C217956DE70064ACE7 /* XMLDictionary.h */,
 				4CF697C317956DE70064ACE7 /* XMLDictionary.m */,
+				4C7CE99C1796183F0005A70F /* PCLineChartView.h */,
+				4C7CE99D1796183F0005A70F /* PCLineChartView.m */,
 			);
 			name = libs;
 			sourceTree = "<group>";
@@ -1249,6 +1254,7 @@
 				4CF697C417956DE70064ACE7 /* EventbriteLoader.m in Sources */,
 				4CF697C517956DE70064ACE7 /* FacebookLoader.m in Sources */,
 				4CF697C617956DE70064ACE7 /* XMLDictionary.m in Sources */,
+				4C7CE99E1796183F0005A70F /* PCLineChartView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

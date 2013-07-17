@@ -260,7 +260,7 @@
 {
     if ( bImportedEvent )
         return 0;
-    NSUInteger nOldCount = [globalData getConversationCount:strId];
+    NSUInteger nOldCount = [globalData getConversationCount:strId meetup:TRUE];
     return numComments - nOldCount;
 }
 

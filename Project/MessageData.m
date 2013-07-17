@@ -51,9 +51,9 @@
                 
                 NSDate* lastReadDate;
                 if ( bOwnMessage )
-                    lastReadDate = [self getConversationDate:message.strUserTo];
+                    lastReadDate = [self getConversationDate:message.strUserTo meetup:FALSE];
                 else
-                    lastReadDate = [self getConversationDate:message.strUserFrom];
+                    lastReadDate = [self getConversationDate:message.strUserFrom meetup:FALSE];
                 
                 Boolean bOldBeforeThanReadDate = false;
                 Boolean bNewLaterThanReadDate = true;
@@ -178,11 +178,11 @@
         [target performSelector:callback withObject:result withObject:error];
         
         // Last read message date
-        if ( result && [result count] > 0 )
-        {
-            [globalData updateConversation:((PFObject*)result[0]).createdAt count:[result count] thread:person.strId];
+        NSDate* date = result ? ((PFObject*)result[0]).createdAt : nil;
+        NSInteger count = result ? result.count : 0;
+        [globalData updateConversation:date count:count thread:person.strId meetup:FALSE];
+        if ( count > 0 )
             [globalData postInboxUnreadCountDidUpdate];
-        }
     }];
 }
 
