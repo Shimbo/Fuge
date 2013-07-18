@@ -349,7 +349,10 @@
 
 - (NSUInteger) matchesAdminBonus
 {
-    return self.matched2OToFriends.count;
+    if ( bIsAdmin )
+        return self.matched2OToFriends.count;
+    else
+        return 0;
 }
 
 - (NSUInteger) matchesRank

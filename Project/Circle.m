@@ -33,24 +33,20 @@
 
 - (void)sort
 {
-    // Stupid hack to sort persons without distance to the end of the list. But eh, ok. TODO.
-    if ( idCircle == CIRCLE_FB || idCircle == CIRCLE_2O )
-        for (Person* person in persons)
-            if (! person.distance)
-                person.distance = [NSNumber numberWithInt:10000000];
-
-    NSString* strKey = @"distance";
-    if ( idCircle == CIRCLE_FBOTHERS )
-        strKey = @"strFirstName";
-	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:strKey ascending:YES];
-	NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
-	[persons sortUsingDescriptors:sortDescriptors];
-    
-    // Second part of the hack
-    if ( idCircle == CIRCLE_FB || idCircle == CIRCLE_2O )
-        for (Person* person in persons)
-            if ([person.distance integerValue] == 10000000)
-                person.distance = nil;
+	[persons sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        Person* person1 = obj1;
+        Person* person2 = obj2;
+        if ( idCircle == CIRCLE_FBOTHERS )
+            return [person1.strFirstName compare:person2.strFirstName];
+        if ( ! person1.distance )
+            return NSOrderedDescending;
+        if ( ! person2.distance )
+            return NSOrderedAscending;
+        if ( person1.distance.floatValue > person2.distance.floatValue )
+            return NSOrderedDescending;
+        else
+            return NSOrderedAscending;
+    }];
 }
 
 - (NSMutableArray*) getPersons

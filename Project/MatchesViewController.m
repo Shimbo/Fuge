@@ -43,6 +43,20 @@
     return result;
 }
 
+NSInteger compareDistance(id id1, id id2, void *context)
+{
+    Person* person1 = id1;
+    Person* person2 = id2;
+    if ( ! person1.distance )
+        return NSOrderedDescending;
+    if ( ! person2.distance )
+        return NSOrderedAscending;
+    if ( person1.distance.floatValue > person2.distance.floatValue )
+        return NSOrderedDescending;
+    else
+        return NSOrderedAscending;
+}
+
 - (void) viewDidLoad {
     [super viewDidLoad];
     
@@ -66,10 +80,8 @@
     matchedLikes = personThis.matchedLikes;
     
     // Sorting
-	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"distance" ascending:YES];
-	NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
-	[matchedFriends sortUsingDescriptors:sortDescriptors];
-    [matchedFriends2O sortUsingDescriptors:sortDescriptors];
+	[matchedFriends sortUsingFunction:compareDistance context:nil];
+    [matched2OFriends sortUsingFunction:compareDistance context:nil];
 }
 
 - (void)cancelButtonDown {

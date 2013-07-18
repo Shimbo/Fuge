@@ -1,7 +1,7 @@
 
 #import "MainViewController.h"
 
-#define sortingModeTitles @[@"By distance", @"Engagement", @"Match me!"]
+#define sortingModeTitles @[@"Match me!", @"By distance", @"Engagement"]
 
 typedef enum ESortingRank
 {

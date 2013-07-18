@@ -69,7 +69,14 @@
         sortingMode++;
     if ( sortingMode == SORTING_MODES_COUNT )
         sortingMode = 0;
-    [matchBtn setTitle:sortingModeTitles[sortingMode]];
+    
+    NSUInteger titleNum = sortingMode+1;
+    if ( ! bIsAdmin && titleNum == SORTING_ENGAGEMENT )  // Skip engagement for non-admins
+        titleNum++;
+    if ( titleNum == SORTING_MODES_COUNT )
+        titleNum = 0;
+    
+    [matchBtn setTitle:sortingModeTitles[titleNum]];
     [[self tableView] reloadData];
 }
 
@@ -80,7 +87,7 @@
 
 - (void) viewDidLoad {
     [super viewDidLoad];
-    sortingMode = 0;
+    sortingMode = SORTING_RANK;
     
     // Navigation bar
     [self.navigationItem setHidesBackButton:true animated:false];
@@ -93,7 +100,7 @@
     self.tableView.rowHeight = ROW_HEIGHT;
     
     // Buttons
-    matchBtn = [[UIBarButtonItem alloc] initWithTitle:sortingModeTitles[0] style:UIBarButtonItemStyleBordered target:self action:@selector(matchClicked)];
+    matchBtn = [[UIBarButtonItem alloc] initWithTitle:sortingModeTitles[sortingMode+1] style:UIBarButtonItemStyleBordered target:self action:@selector(matchClicked)];
     UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithTitle:@"Reload" style:UIBarButtonItemStyleBordered target:self action:@selector(reloadClicked)];
     [self.navigationItem setRightBarButtonItems:@[reloadBtn, matchBtn]];
     
@@ -179,7 +186,7 @@
             circle = [globalData getCircle:(section == 0 ? CIRCLE_2O : CIRCLE_RANDOM )];
             return [Circle getCircleName:circle.idCircle];
         default:    // ENGAGEMENT
-            return @"Sorting by engagement!";
+            return @"Sorting by engagement";
     }
 }
 
@@ -220,21 +227,30 @@
             personCell.personDistance.text = @"Unknown";
     }
     
+    personCell.color = [UIColor whiteColor];
+    personCell.personInfo.text = @"";
+    
     // Matches
-    NSString* strMatches = [NSString stringWithFormat:@"Matches: %d", person.matchesTotal];
-    if ( bIsAdmin )
-        strMatches = [strMatches stringByAppendingString:[NSString stringWithFormat:@"+%d", person.matchesAdminBonus]];
-    personCell.personInfo.text = strMatches;
-    NSUInteger matchesRank = person.matchesRank;
-    float fColor = 1.0f - ((float)(matchesRank > MATCHING_COLOR_RANK_MAX ? MATCHING_COLOR_RANK_MAX : matchesRank))/MATCHING_COLOR_RANK_MAX;
-    personCell.color = [UIColor
-        colorWithRed: (MATCHING_COLOR_COMPONENT_R+(255.0f-MATCHING_COLOR_COMPONENT_R)*fColor)/255.0f
-        green:(MATCHING_COLOR_COMPONENT_G+(255.0f-MATCHING_COLOR_COMPONENT_G)*fColor)/255.0f
-        blue:(MATCHING_COLOR_COMPONENT_B+(255.0f-MATCHING_COLOR_COMPONENT_B)*fColor)/255.0f alpha:1.0f];
-
+    if ( person.idCircle != CIRCLE_FBOTHERS )
+    {
+        NSString* strMatches = [NSString stringWithFormat:@"Matches: %d", person.matchesTotal];
+        if ( bIsAdmin )
+            strMatches = [strMatches stringByAppendingString:[NSString stringWithFormat:@"+%d", person.matchesAdminBonus]];
+        personCell.personInfo.text = strMatches;
+        if ( sortingMode == SORTING_RANK )
+        {
+            NSUInteger matchesRank = person.matchesRank;
+            float fColor = 1.0f - ((float)(matchesRank > MATCHING_COLOR_RANK_MAX ? MATCHING_COLOR_RANK_MAX : matchesRank))/MATCHING_COLOR_RANK_MAX / MATCHING_COLOR_BRIGHTNESS;
+            personCell.color = [UIColor
+                        colorWithRed: (MATCHING_COLOR_COMPONENT_R+(255.0f-MATCHING_COLOR_COMPONENT_R)*fColor)/255.0f
+                        green:(MATCHING_COLOR_COMPONENT_G+(255.0f-MATCHING_COLOR_COMPONENT_G)*fColor)/255.0f
+                        blue:(MATCHING_COLOR_COMPONENT_B+(255.0f-MATCHING_COLOR_COMPONENT_B)*fColor)/255.0f alpha:1.0f];
+        }
+    }
+    
+    // Engagement details
     if ( sortingMode == SORTING_ENGAGEMENT )
     {
-        personCell.color = [UIColor colorWithWhite:1.0f alpha:1.0f];
         NSString* strMatches = [NSString stringWithFormat:@"%d/%d/%d/%d", [person getConversationCount:TRUE onlyMessages:FALSE], [person getConversationCount:FALSE onlyMessages:FALSE], [person getConversationCount:TRUE onlyMessages:TRUE], [person getConversationCount:FALSE onlyMessages:TRUE]];
         personCell.personInfo.text = strMatches;
     }

@@ -96,6 +96,7 @@
 #define MATCHING_BONUS_2O           1
 #define MATCHING_BONUS_LIKE         1
 #define MATCHING_COLOR_RANK_MAX     50.0f
+#define MATCHING_COLOR_BRIGHTNESS   1.0f    // Make it larget to make bg brighter
 #define MATCHING_COLOR_COMPONENT_R  75.0f
 #define MATCHING_COLOR_COMPONENT_G  108.0f
 #define MATCHING_COLOR_COMPONENT_B  162.0f
