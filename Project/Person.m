@@ -344,15 +344,18 @@
 {
     return self.matchedFriendsToFriends.count
             +self.matchedFriendsTo2O.count
-            +(bIsAdmin ? self.matched2OToFriends.count : 0)
             +self.matchedLikes.count;
+}
+
+- (NSUInteger) matchesAdminBonus
+{
+    return self.matched2OToFriends.count;
 }
 
 - (NSUInteger) matchesRank
 {
     return self.matchedFriendsToFriends.count*MATCHING_BONUS_FRIEND
             +self.matchedFriendsTo2O.count*MATCHING_BONUS_2O
-            //+(bIsAdmin ? self.matched2OToFriends.count*MATCHING_BONUS_2O : 0)
             +self.matchedLikes.count*MATCHING_BONUS_LIKE;
 }
 
@@ -362,6 +365,38 @@
         if ( [(NSString*)[item objectForKey:@"id"] compare:like] == NSOrderedSame )
             return item;
     return nil;
+}
+
+- (NSUInteger) getConversationCount:(Boolean)onlyNotEmpty onlyMessages:(Boolean)bOnlyMessages
+{
+    NSUInteger nResult = 0;
+    
+    if ( [personData objectForKey:@"messageCounts"] )
+    {
+        if ( onlyNotEmpty )
+        {
+            for ( NSNumber* counter in ((NSDictionary*)[personData objectForKey:@"messageCounts"]).allValues)
+                if ( [counter integerValue] != 0 )
+                    nResult++;
+        }
+        else
+            nResult += ((NSDictionary*)[personData objectForKey:@"messageCounts"]).count;
+    }
+    
+    if ( ! bOnlyMessages )
+    if ( [personData objectForKey:@"threadsCounts"] )
+    {
+        if ( onlyNotEmpty )
+        {
+            for ( NSNumber* counter in ((NSDictionary*)[personData objectForKey:@"threadsCounts"]).allValues)
+                if ( [counter integerValue] != 0 )
+                    nResult++;
+        }
+        else
+            nResult += ((NSDictionary*)[personData objectForKey:@"threadsCounts"]).count;
+    }
+    
+    return nResult;
 }
 
 @end

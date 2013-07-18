@@ -68,12 +68,14 @@
     labelTimePassed.text = [[NSString alloc] initWithFormat:@"%@ ago", [personThis timeString]];
     labelCircle.text = personThis.strCircle;
     nThingsInCommon = [personThis matchesTotal];
-    if ( nThingsInCommon == 0 )
-        [btnThingsInCommon setTitle:@"No matches" forState:UIControlStateNormal];
-    else if ( nThingsInCommon == 1 )
-        [btnThingsInCommon setTitle:@"See 1 match" forState:UIControlStateNormal];
-    else
-        [btnThingsInCommon setTitle:[NSString stringWithFormat:@"See %d matches", nThingsInCommon] forState:UIControlStateNormal];
+    NSString* strTitle = @"No matches";
+    if ( nThingsInCommon == 1 )
+        strTitle = @"See 1 match";
+    else if ( nThingsInCommon > 1 )
+        strTitle = [NSString stringWithFormat:@"See %d matches", nThingsInCommon];
+    if ( bIsAdmin )
+        strTitle = [strTitle stringByAppendingString:[NSString stringWithFormat:@"+%d", personThis.matchesAdminBonus]];
+    [btnThingsInCommon setTitle:strTitle forState:UIControlStateNormal];
     
     personThis.numUnreadMessages = 0;
 }
@@ -130,7 +132,7 @@
 }
 
 - (IBAction)showMatchesList:(id)sender {
-    if ( nThingsInCommon == 0 )
+    if ( nThingsInCommon + personThis.matchesAdminBonus == 0 )
         return;
     MatchesViewController *matchesViewController = [[MatchesViewController alloc] initWithNibName:@"MatchesViewController" bundle:nil];
     [matchesViewController setPerson:personThis];

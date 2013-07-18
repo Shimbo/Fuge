@@ -1,13 +1,21 @@
 
 #import "MainViewController.h"
 
-#define sortingModeTitles @[@"Match me!", @"By distance"]
-#define SORTING_DISTANCE    0
-#define SORTING_RANK        1
+#define sortingModeTitles @[@"By distance", @"Engagement", @"Match me!"]
+
+typedef enum ESortingRank
+{
+    SORTING_RANK        = 0,
+    SORTING_DISTANCE    = 1,
+    SORTING_ENGAGEMENT  = 2,
+    
+    SORTING_MODES_COUNT = 3
+}SortingRank;
 
 @interface RootViewController : MainViewController {
     NSUInteger      sortingMode;
     UIBarButtonItem *matchBtn;
+    NSMutableArray  *arrayEngagementUsers;
 }
 
 @property (nonatomic,retain) IBOutlet UITableView *tableView;

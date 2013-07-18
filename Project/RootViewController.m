@@ -65,7 +65,9 @@
 - (void) matchClicked
 {
     sortingMode++;
-    if ( sortingMode > 1 )
+    if ( ! bIsAdmin && sortingMode == SORTING_ENGAGEMENT )  // Skip engagement for non-admins
+        sortingMode++;
+    if ( sortingMode == SORTING_MODES_COUNT )
         sortingMode = 0;
     [matchBtn setTitle:sortingModeTitles[sortingMode]];
     [[self tableView] reloadData];
@@ -94,6 +96,17 @@
     matchBtn = [[UIBarButtonItem alloc] initWithTitle:sortingModeTitles[0] style:UIBarButtonItemStyleBordered target:self action:@selector(matchClicked)];
     UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithTitle:@"Reload" style:UIBarButtonItemStyleBordered target:self action:@selector(reloadClicked)];
     [self.navigationItem setRightBarButtonItems:@[reloadBtn, matchBtn]];
+    
+    arrayEngagementUsers = [NSMutableArray arrayWithCapacity:100];
+    for ( Circle* circle in [globalData getCircles] )
+        if ( circle.idCircle != CIRCLE_FBOTHERS)
+            [arrayEngagementUsers addObjectsFromArray:circle.getPersons];
+	[arrayEngagementUsers sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        if ( [((Person*)obj1) getConversationCount:TRUE onlyMessages:FALSE] > [((Person*)obj2) getConversationCount:TRUE onlyMessages:FALSE] )
+            return NSOrderedAscending;
+        else
+            return NSOrderedDescending;
+    }];
 }
 
 - (void) viewDidAppear:(BOOL)animated {
@@ -133,27 +146,41 @@
     
     if ( sortingMode == SORTING_DISTANCE )
         return [[globalData getCircles] count];
-    else
+    else if ( sortingMode == SORTING_RANK )
         return ([globalData getCircle:CIRCLE_2O].getPersons.count ? 1 : 0) + ([globalData getCircle:CIRCLE_RANDOM].getPersons.count ? 1 : 0);
+    else // SORTING_ENGAGEMENT
+        return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)aTableView numberOfRowsInSection:(NSInteger)section {
 	
     Circle *circle;
-    if ( sortingMode == SORTING_DISTANCE )
-        circle = [globalData getCircleByNumber:section];
-    else
-        circle = [globalData getCircle:(section == 0 ? CIRCLE_2O : CIRCLE_RANDOM )];
-    return [circle getPersons].count;
+    switch (sortingMode)
+    {
+        case SORTING_DISTANCE:
+            circle = [globalData getCircleByNumber:section];
+            return [circle getPersons].count;
+        case SORTING_RANK:
+            circle = [globalData getCircle:(section == 0 ? CIRCLE_2O : CIRCLE_RANDOM )];
+            return [circle getPersons].count;
+        default:    // ENGAGEMENT
+            return arrayEngagementUsers.count;
+    }
 }
 
 - (NSString *)tableView:(UITableView *)aTableView titleForHeaderInSection:(NSInteger)section {
     Circle *circle;
-	if ( sortingMode == SORTING_DISTANCE )
-        circle = [globalData getCircleByNumber:section];
-    else
-        circle = [globalData getCircle:(section == 0 ? CIRCLE_2O : CIRCLE_RANDOM )];
-    return [Circle getCircleName:circle.idCircle];
+	switch ( sortingMode )
+    {
+        case SORTING_DISTANCE:
+            circle = [globalData getCircleByNumber:section];
+            return [Circle getCircleName:circle.idCircle];
+        case SORTING_RANK:
+            circle = [globalData getCircle:(section == 0 ? CIRCLE_2O : CIRCLE_RANDOM )];
+            return [Circle getCircleName:circle.idCircle];
+        default:    // ENGAGEMENT
+            return @"Sorting by engagement!";
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath  {
@@ -162,19 +189,22 @@
     
 	PersonCell *personCell = (PersonCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	
-	// Get the time zones for the region for the section
-	Circle* circle;
+    Circle *circle;
 	Person *person;
     
-    if ( sortingMode == SORTING_DISTANCE )
+    switch ( sortingMode )
     {
-        circle = [globalData getCircleByNumber:indexPath.section];
-        person = [circle getPersons][indexPath.row];
-    }
-    else
-    {
-        circle = [globalData getCircle:(indexPath.section == 0 ? CIRCLE_2O : CIRCLE_RANDOM )];
-        person = [circle getPersonsSortedByRank][indexPath.row];
+        case SORTING_DISTANCE:
+            circle = [globalData getCircleByNumber:indexPath.section];
+            person = [circle getPersons][indexPath.row];
+            break;
+        case SORTING_RANK:
+            circle = [globalData getCircle:(indexPath.section == 0 ? CIRCLE_2O : CIRCLE_RANDOM )];
+            person = [circle getPersonsSortedByRank][indexPath.row];
+            break;
+        default:    // ENGAGEMENT
+            person = arrayEngagementUsers[indexPath.row];
+            break;
     }
     
     [personCell.personImage loadImageFromURL:person.imageURL];
@@ -189,21 +219,24 @@
         else
             personCell.personDistance.text = @"Unknown";
     }
-    if ( sortingMode == SORTING_RANK )
-    {
-        NSString* strMatches = [NSString stringWithFormat:@"Matches: %d", person.matchesTotal];
-        personCell.personInfo.text = strMatches;
-        NSUInteger matchesRank = person.matchesRank;
-        float fColor = 1.0f - ((float)(matchesRank > MATCHING_COLOR_RANK_MAX ? MATCHING_COLOR_RANK_MAX : matchesRank))/MATCHING_COLOR_RANK_MAX;
-        personCell.color = [UIColor
-            colorWithRed: (MATCHING_COLOR_COMPONENT_R+(255.0f-MATCHING_COLOR_COMPONENT_R)*fColor)/255.0f
-            green:(MATCHING_COLOR_COMPONENT_G+(255.0f-MATCHING_COLOR_COMPONENT_G)*fColor)/255.0f
-            blue:(MATCHING_COLOR_COMPONENT_B+(255.0f-MATCHING_COLOR_COMPONENT_B)*fColor)/255.0f alpha:1.0f];
-    }
-    else
+    
+    // Matches
+    NSString* strMatches = [NSString stringWithFormat:@"Matches: %d", person.matchesTotal];
+    if ( bIsAdmin )
+        strMatches = [strMatches stringByAppendingString:[NSString stringWithFormat:@"+%d", person.matchesAdminBonus]];
+    personCell.personInfo.text = strMatches;
+    NSUInteger matchesRank = person.matchesRank;
+    float fColor = 1.0f - ((float)(matchesRank > MATCHING_COLOR_RANK_MAX ? MATCHING_COLOR_RANK_MAX : matchesRank))/MATCHING_COLOR_RANK_MAX;
+    personCell.color = [UIColor
+        colorWithRed: (MATCHING_COLOR_COMPONENT_R+(255.0f-MATCHING_COLOR_COMPONENT_R)*fColor)/255.0f
+        green:(MATCHING_COLOR_COMPONENT_G+(255.0f-MATCHING_COLOR_COMPONENT_G)*fColor)/255.0f
+        blue:(MATCHING_COLOR_COMPONENT_B+(255.0f-MATCHING_COLOR_COMPONENT_B)*fColor)/255.0f alpha:1.0f];
+
+    if ( sortingMode == SORTING_ENGAGEMENT )
     {
         personCell.color = [UIColor colorWithWhite:1.0f alpha:1.0f];
-        personCell.personInfo.text = @"";
+        NSString* strMatches = [NSString stringWithFormat:@"%d/%d/%d/%d", [person getConversationCount:TRUE onlyMessages:FALSE], [person getConversationCount:FALSE onlyMessages:FALSE], [person getConversationCount:TRUE onlyMessages:TRUE], [person getConversationCount:FALSE onlyMessages:TRUE]];
+        personCell.personInfo.text = strMatches;
     }
     personCell.personStatus.text = [person jobInfo];
     
@@ -222,15 +255,19 @@
     Circle *circle;
     Person* person;
     
-    if ( sortingMode == SORTING_DISTANCE )
+    switch ( sortingMode )
     {
-        circle = [globalData getCircleByNumber:nSection];
-        person = [circle getPersons][nRow];
-    }
-    else
-    {
-        circle = [globalData getCircle:(nSection == 0 ? CIRCLE_2O : CIRCLE_RANDOM )];
-        person = [circle getPersonsSortedByRank][nRow];
+        case SORTING_DISTANCE:
+            circle = [globalData getCircleByNumber:nSection];
+            person = [circle getPersons][nRow];
+            break;
+        case SORTING_RANK:
+            circle = [globalData getCircle:(nSection == 0 ? CIRCLE_2O : CIRCLE_RANDOM )];
+            person = [circle getPersonsSortedByRank][nRow];
+            break;
+        default:    // ENGAGEMENT
+            person = arrayEngagementUsers[nRow];
+            break;
     }
     
     // Empty profile, should open invite window

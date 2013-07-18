@@ -88,7 +88,10 @@
 - (NSArray*) matched2OToFriends;
 - (NSArray*) matchedLikes;
 - (NSUInteger) matchesTotal;
+- (NSUInteger) matchesAdminBonus;
 - (NSUInteger) matchesRank;
 - (NSDictionary*) getLikeById:(NSString*)like;
+
+- (NSUInteger) getConversationCount:(Boolean)onlyNotEmpty onlyMessages:(Boolean)bOnlyMessages;
 
 @end
