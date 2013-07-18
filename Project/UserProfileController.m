@@ -117,6 +117,8 @@
     // Feedback message (always at the bottom, first one)
     if ( [globalVariables isFeedbackBot:personThis.strId] )
     {
+        if ( stringHistory.length > 0 )
+            [stringHistory appendString:@"\n"];
         [stringHistory appendString:@"    "];
         [stringHistory appendString:personThis.strFirstName];
         [stringHistory appendString:@": "];

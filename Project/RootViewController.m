@@ -163,7 +163,7 @@
     if ( sortingMode == SORTING_DISTANCE )
         return [[globalData getCircles] count];
     else if ( sortingMode == SORTING_RANK )
-        return ([globalData getCircle:CIRCLE_2O].getPersons.count ? 1 : 0) + ([globalData getCircle:CIRCLE_RANDOM].getPersons.count ? 1 : 0);
+        return /*([globalData getCircle:CIRCLE_2O].getPersons.count ? 1 : 0) + ([globalData getCircle:CIRCLE_RANDOM].getPersons.count ? 1 : 0);*/2;
     else // SORTING_ENGAGEMENT
         return 1;
 }
