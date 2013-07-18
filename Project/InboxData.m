@@ -79,7 +79,7 @@ NSInteger sort2(id item1, id item2, void *context)
                 item.fromId = [pObject objectForKey:@"idUserFrom"];
                 item.toId = [pObject objectForKey:@"idUserTo"];
                 item.message = [pObject objectForKey:@"meetupSubject"];
-                item.data = object;
+                item.data = pObject;
                 item.dateTime = pObject.createdAt;
                 item.meetup = [globalData getMeetupById:[pObject objectForKey:@"meetupId"]];
                 
@@ -138,6 +138,9 @@ NSInteger sort2(id item1, id item2, void *context)
             item.dateTime = pObject.dateCreated;
             [tempArray addObject:item];
         }
+        
+        if ( ! item.data )
+            NSLog(@"Item without data! %@", item.subject);
     }
     
     // Sorting
@@ -176,7 +179,9 @@ NSInteger sort2(id item1, id item2, void *context)
             lastDate = [self getConversationDate:item.toId meetup:(item.type == INBOX_ITEM_COMMENT)];
         else
             lastDate = [self getConversationDate:item.fromId meetup:(item.type == INBOX_ITEM_COMMENT)];
-            
+        
+        if ( ! lastDate )
+            bNew = true;
         if ( lastDate && ([item.dateTime compare:lastDate] == NSOrderedDescending ) && ( [item.fromId compare:strCurrentUserId] != NSOrderedSame ) )
             bNew = true;
         
@@ -412,7 +417,7 @@ NSInteger sort2(id item1, id item2, void *context)
     return nInboxUnreadCount;
 }
 
-- (void) updateConversation:(NSDate*)date count:(NSUInteger)msgCount thread:(NSString*)strThread meetup:(Boolean)bMeetup
+- (void) updateConversation:(NSDate*)date count:(NSNumber*)msgCount thread:(NSString*)strThread meetup:(Boolean)bMeetup
 {
     NSMutableDictionary* conversations;
     
@@ -430,11 +435,14 @@ NSInteger sort2(id item1, id item2, void *context)
     }
     
     // Count
-    conversations = [[PFUser currentUser] objectForKey:strKeyCounts];
-    if ( ! conversations )
-        conversations = [[NSMutableDictionary alloc] init];
-    [conversations setValue:[[NSNumber alloc] initWithInt:msgCount] forKey:strThread];
-    [[PFUser currentUser] setObject:conversations forKey:strKeyCounts];
+    if ( msgCount )
+    {
+        conversations = [[PFUser currentUser] objectForKey:strKeyCounts];
+        if ( ! conversations )
+            conversations = [[NSMutableDictionary alloc] init];
+        [conversations setValue:msgCount forKey:strThread];
+        [[PFUser currentUser] setObject:conversations forKey:strKeyCounts];
+    }
     
     // Save
     [[PFUser currentUser] saveInBackground]; // CHECK: here was Eventually

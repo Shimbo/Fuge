@@ -13,10 +13,5 @@
     #import <Foundation/Foundation.h>
     #import "GlobalVariables.h"
     #import "UIDefs.h"
+    #import "UIParams.h"
 #endif
-
-typedef enum kPinColor{
-    PinGray = 1,
-    PinBlue,
-    PinOrange
-}PinColor;

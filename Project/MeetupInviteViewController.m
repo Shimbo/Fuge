@@ -68,10 +68,14 @@
                     == NSOrderedAscending)
                 [pushManager sendPushCreatedMeetup:meetup.strId ignore:[self selectedPersons]];
     
-    // Adding to calendar here
+    // Focusing on meetup and adding to calendar here
     [self dismissViewControllerAnimated:YES completion:^{
-//        if ( bNewMeetup && meetup.meetupType == TYPE_MEETUP )
+        if ( bNewMeetup && meetup.meetupType == TYPE_MEETUP )
+        {
+            NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:meetup, @"meetup", nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMeetupCreated object:nil userInfo:userInfo];
 //            [meetup addToCalendar];
+        }
     }];
 }
 

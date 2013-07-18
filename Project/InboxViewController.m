@@ -136,24 +136,28 @@
     
 	InboxCell *inboxCell = (InboxCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     NSArray *keys = [inbox allKeys];
-    id aKey = [keys objectAtIndex:indexPath.section];
+    NSString* strKey = [keys objectAtIndex:indexPath.section];
     
-	NSArray *items = [inbox objectForKey:aKey];
+	NSArray *items = [inbox objectForKey:strKey];
 	InboxViewItem *item = [items objectAtIndex:indexPath.row];
     
     // Here should follow big switch
+    if ( [strKey compare:@"New"] == NSOrderedSame )
+        inboxCell.color = [UIColor colorWithHexString:INBOX_UNREAD_CELL_BG_COLOR];
+    else
+        inboxCell.color = [UIColor whiteColor   ];
     inboxCell.subject.text = item.subject;
     inboxCell.message.text = item.message;
     inboxCell.misc.text = item.misc;
     inboxCell.mainImage.shoulCacheCircledImage = YES;
-    if ( item.meetup )
+/*    if ( item.meetup )
     {
         MeetupAnnotation* temp = [[MeetupAnnotation alloc] initWithMeetup:item.meetup];
         inboxCell.pinImage = [[MeetupPin alloc] init];
         [inboxCell.pinImage prepareForAnnotation:temp];
     }
     else
-        inboxCell.pinImage = nil;
+        inboxCell.pinImage = nil;*/
     if ( [item.fromId compare:strCurrentUserId] == NSOrderedSame && item.type != INBOX_ITEM_COMMENT )
         [inboxCell.mainImage loadImageFromURL:[Person imageURLWithId:item.toId]];
     else
@@ -182,6 +186,11 @@
     [self.navigationController pushViewController:meetupController animated:YES];
 }
 
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    cell.backgroundColor = ((InboxCell*)cell).color;
+}
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     NSInteger nRow = indexPath.row;
@@ -204,6 +213,8 @@
         else // Fetching if needed
         {
             PFObject *meetupData = [item.data objectForKey:@"meetupData"];
+            if ( ! meetupData )
+                return;
             [self.activityIndicator startAnimating];
             self.navigationController.view.userInteractionEnabled = FALSE;
             [meetupData fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
@@ -247,6 +258,8 @@
             [self openPersonWindow:person];
         else // fetching if needed
         {
+            if ( ! personData )
+                return;
             [self.activityIndicator startAnimating];
             self.navigationController.view.userInteractionEnabled = FALSE;
             [personData fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {

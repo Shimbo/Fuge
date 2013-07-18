@@ -141,8 +141,11 @@
             messages = [NSMutableArray arrayWithCapacity:30];
             
             // Welcome message
-            Message* welcomeMessage = [[Message alloc] initWithWelcomeMessage];
-            [self addMessage:welcomeMessage];
+            if ( ! [globalVariables isFeedbackBot:strCurrentUserId] )
+            {
+                Message* welcomeMessage = [[Message alloc] initWithWelcomeMessage];
+                [self addMessage:welcomeMessage];
+            }
             
             // Loading it with data
             for ( PFObject* messageData in result )
@@ -177,9 +180,14 @@
         
         [target performSelector:callback withObject:result withObject:error];
         
-        // Last read message date
-        NSInteger count = result ? result.count : 0;
-        NSDate* date = count > 0 ? ((PFObject*)result[0]).createdAt : nil;
+        // Last read message date/count
+        NSNumber* count = result ? [NSNumber numberWithInteger:result.count] : [NSNumber numberWithInteger:0];
+        NSDate* date = count.integerValue > 0 ? ((PFObject*)result[0]).createdAt : nil;
+        if ( ! date && [globalVariables isFeedbackBot:person.strId] )
+        {
+            date = [NSDate date];   // Feedback bot hack to make his default message read
+            count = nil;            // But not to count him as opened profile, etc
+        }
         [globalData updateConversation:date count:count thread:person.strId meetup:FALSE];
         if ( count > 0 )
             [globalData postInboxUnreadCountDidUpdate];

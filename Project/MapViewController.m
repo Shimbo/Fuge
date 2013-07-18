@@ -59,6 +59,11 @@ static Boolean bFirstZoom = true;
                                                 selector:@selector(reloadStatusChanged)
                                                 name:kAppRestored
                                                 object:nil];
+        SEL focusMapOnMeetup = NSSelectorFromString(@"focusMapOnMeetup:");  // To avoid stupid warning
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:focusMapOnMeetup
+                                                name:kNewMeetupCreated
+                                                object:nil];
     }
     return self;
 }
@@ -263,6 +268,21 @@ static Boolean bFirstZoom = true;
     [mapView setRegion:region animated:YES];
 }
 
+- (void) focusMapOnMeetup:(NSNotification *)notification
+{
+    daySelector = 0;
+    daySelectButton.title = dayButtonLabels[ daySelector ];
+    [self reloadStatusChanged];
+
+    Meetup *meetup = [[notification userInfo] objectForKey:@"meetup"];
+    MKCoordinateRegion region = mapView.region;
+    region.center.latitude = meetup.location.latitude;
+    region.center.longitude = meetup.location.longitude;
+    region.span.longitudeDelta = 0.05f;
+    region.span.latitudeDelta = 0.05f;
+    [mapView setRegion:region animated:YES];
+}
+
 - (void)addCurrentPerson
 {
     currentPerson = [[Person alloc] init:pCurrentUser circle:CIRCLE_NONE];
@@ -276,6 +296,30 @@ static Boolean bFirstZoom = true;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    // Texts for buttons
+    NSDateFormatter* theDateFormatter = [[NSDateFormatter alloc] init];
+    [theDateFormatter setFormatterBehavior:NSDateFormatterBehavior10_4];
+    [theDateFormatter setDateFormat:@"EEEE"];
+    NSDateFormatter* theDateFormatter2 = [[NSDateFormatter alloc] init];
+    [theDateFormatter2 setFormatterBehavior:NSDateFormatterBehavior10_4];
+    [theDateFormatter2 setDateFormat:@"dd MMM"];
+    dayButtonLabels = [NSMutableArray arrayWithCapacity:7];
+    selectionChoices = [NSMutableArray arrayWithCapacity:8];
+    for ( NSUInteger n = 0; n < 7; n++ )
+    {
+        NSDate* day = [NSDate dateWithTimeIntervalSinceNow:24*n*3600];
+        NSString *weekDay = [theDateFormatter stringFromDate:day];
+        if ( n == 0 )
+            weekDay = @"Today";
+        if ( n == 1 )
+            weekDay = @"Tomorrow";
+        [dayButtonLabels addObject:weekDay];
+        NSString* selection = [NSString stringWithFormat:@"%@, %@", weekDay, [theDateFormatter2 stringFromDate:day]];
+        [selectionChoices addObject:selection];
+    }
+    [dayButtonLabels addObject:@"All week"];
+    [selectionChoices addObject:@"All week"];
     
     // Misc
     [mapView setMapType:MKMapTypeStandard];
@@ -516,38 +560,8 @@ static Boolean bFirstZoom = true;
     return 8;
 }
 
-static NSMutableArray* dayButtonLabels = nil;
 
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
-    
-    NSMutableArray* selectionChoices = [NSMutableArray arrayWithCapacity:8];
-    
-    NSDateFormatter* theDateFormatter = [[NSDateFormatter alloc] init];
-    [theDateFormatter setFormatterBehavior:NSDateFormatterBehavior10_4];
-    [theDateFormatter setDateFormat:@"EEEE"];
-    
-    NSDateFormatter* theDateFormatter2 = [[NSDateFormatter alloc] init];
-    [theDateFormatter2 setFormatterBehavior:NSDateFormatterBehavior10_4];
-    [theDateFormatter2 setDateFormat:@"dd MMM"];
-    
-    if ( ! dayButtonLabels )
-        dayButtonLabels = [NSMutableArray arrayWithCapacity:7];
-    
-    for ( NSUInteger n = 0; n < 7; n++ )
-    {
-        NSDate* day = [NSDate dateWithTimeIntervalSinceNow:24*n*3600];
-        NSString *weekDay = [theDateFormatter stringFromDate:day];
-        if ( n == 0 )
-            weekDay = @"Today";
-        if ( n == 1 )
-            weekDay = @"Tomorrow";
-        [dayButtonLabels addObject:weekDay];
-        NSString* selection = [NSString stringWithFormat:@"%@, %@", weekDay, [theDateFormatter2 stringFromDate:day]];
-        [selectionChoices addObject:selection];
-    }
-    
-    [dayButtonLabels addObject:@"All week"];
-    [selectionChoices addObject:@"All week"];
     
     return selectionChoices[row];
     
@@ -557,7 +571,7 @@ static NSMutableArray* dayButtonLabels = nil;
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
     
-    daySelectButton.title = dayButtonLabels[ row ];    
+    daySelectButton.title = dayButtonLabels[ row ];
     daySelector = row;
     [self reloadStatusChanged];
 }
@@ -612,6 +626,5 @@ static NSMutableArray* dayButtonLabels = nil;
     else
         [actionSheet dismissWithClickedButtonIndex:0 animated:YES];
 }
-
 
 @end

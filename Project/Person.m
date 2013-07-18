@@ -387,16 +387,16 @@
     }
     
     if ( ! bOnlyMessages )
-    if ( [personData objectForKey:@"threadsCounts"] )
+    if ( [personData objectForKey:@"threadCounts"] )
     {
         if ( onlyNotEmpty )
         {
-            for ( NSNumber* counter in ((NSDictionary*)[personData objectForKey:@"threadsCounts"]).allValues)
+            for ( NSNumber* counter in ((NSDictionary*)[personData objectForKey:@"threadCounts"]).allValues)
                 if ( [counter integerValue] != 0 )
                     nResult++;
         }
         else
-            nResult += ((NSDictionary*)[personData objectForKey:@"threadsCounts"]).count;
+            nResult += ((NSDictionary*)[personData objectForKey:@"threadCounts"]).count;
     }
     
     return nResult;

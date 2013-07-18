@@ -421,7 +421,7 @@
         [meetup populateWithVenue:self.selectedVenue];
         [globalData addRecentVenue:self.selectedVenue];
     }
-    else if ( meetup.strVenueId.length == 0 ) // to preserve previously selected venues
+    else if ( ! meetup.location ) // to preserve previously selected coords/venue
         [meetup populateWithCoords];
 }
 

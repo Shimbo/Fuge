@@ -115,7 +115,7 @@
     }
     
     // Feedback message (always at the bottom, first one)
-    if ( [personThis.strId compare:FEEDBACK_BOT_ID] == NSOrderedSame )
+    if ( [globalVariables isFeedbackBot:personThis.strId] )
     {
         [stringHistory appendString:@"    "];
         [stringHistory appendString:personThis.strFirstName];
@@ -253,7 +253,7 @@ double animatedDistance;
     
     // Updating conversation
     messagesCount++;
-    [globalData updateConversation:nil count:messagesCount thread:personThis.strId meetup:FALSE];
+    [globalData updateConversation:nil count:[NSNumber numberWithInteger:messagesCount] thread:personThis.strId meetup:FALSE];
     
     // Adding to inbox
     [globalData addMessage:currentMessage];

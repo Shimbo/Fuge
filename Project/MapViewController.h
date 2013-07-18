@@ -28,6 +28,10 @@
     UIActionSheet*       actionSheet;
     
     Person* currentPerson;
+    
+    NSMutableArray* dayButtonLabels;
+    NSMutableArray* selectionChoices;
+
 }
 
 @property (nonatomic, retain) IBOutlet REVClusterMapView *mapView;

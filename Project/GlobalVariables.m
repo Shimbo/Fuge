@@ -175,6 +175,11 @@ static GlobalVariables *sharedInstance = nil;
     return false;
 }
 
+- (Boolean) isFeedbackBot:(NSString*)strId
+{
+    return ([strId compare:FEEDBACK_BOT_ID] == NSOrderedSame);
+}
+
 - (PFGeoPoint*) currentLocation
 {
     PFGeoPoint* ptUser = [[PFUser currentUser] objectForKey:@"location"];

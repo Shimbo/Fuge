@@ -459,6 +459,7 @@
 		4CAF3485178871BC0014AE80 /* iconMtArts.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMtArts.png; sourceTree = "<group>"; };
 		4CAF3486178871BC0014AE80 /* iconMtArts@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconMtArts@2x.png"; sourceTree = "<group>"; };
 		4CBAA0DC17099F44003C091F /* PersonInviteCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PersonInviteCell.xib; sourceTree = "<group>"; };
+		4CD2683F1798685F003B0FB8 /* UIParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIParams.h; sourceTree = "<group>"; };
 		4CDE8D411789D27900844B7E /* MatchesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MatchesViewController.h; sourceTree = "<group>"; };
 		4CDE8D421789D27900844B7E /* MatchesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MatchesViewController.m; sourceTree = "<group>"; };
 		4CDE8D431789D27900844B7E /* MatchesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MatchesViewController.xib; sourceTree = "<group>"; };
@@ -873,6 +874,7 @@
 		4C08DDCD163C88480093C851 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				4CD2683F1798685F003B0FB8 /* UIParams.h */,
 				47C7402F172BFA1700087C2A /* Table Annotations */,
 				47B203FD171183E800B756FA /* Map Annotations */,
 				4C188D1F1698C51A004CF42D /* MapViewController.h */,

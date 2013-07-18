@@ -84,6 +84,19 @@
 #pragma mark -
 #pragma mark View loading
 
+- (void) recalcEngagement
+{
+    arrayEngagementUsers = [NSMutableArray arrayWithCapacity:100];
+    for ( Circle* circle in [globalData getCircles] )
+        if ( circle.idCircle != CIRCLE_FBOTHERS)
+            [arrayEngagementUsers addObjectsFromArray:circle.getPersons];
+	[arrayEngagementUsers sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        if ( [((Person*)obj1) getConversationCount:TRUE onlyMessages:FALSE] > [((Person*)obj2) getConversationCount:TRUE onlyMessages:FALSE] )
+            return NSOrderedAscending;
+        else
+            return NSOrderedDescending;
+    }];
+}
 
 - (void) viewDidLoad {
     [super viewDidLoad];
@@ -104,16 +117,8 @@
     UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithTitle:@"Reload" style:UIBarButtonItemStyleBordered target:self action:@selector(reloadClicked)];
     [self.navigationItem setRightBarButtonItems:@[reloadBtn, matchBtn]];
     
-    arrayEngagementUsers = [NSMutableArray arrayWithCapacity:100];
-    for ( Circle* circle in [globalData getCircles] )
-        if ( circle.idCircle != CIRCLE_FBOTHERS)
-            [arrayEngagementUsers addObjectsFromArray:circle.getPersons];
-	[arrayEngagementUsers sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        if ( [((Person*)obj1) getConversationCount:TRUE onlyMessages:FALSE] > [((Person*)obj2) getConversationCount:TRUE onlyMessages:FALSE] )
-            return NSOrderedAscending;
-        else
-            return NSOrderedDescending;
-    }];
+    // Engagement admin info
+    [self recalcEngagement];
 }
 
 - (void) viewDidAppear:(BOOL)animated {
@@ -133,6 +138,10 @@
 
 - (void) reloadFinished
 {
+    // Admin stuff
+    [self recalcEngagement];
+    
+    // Data refresh
     [self.activityIndicator stopAnimating];
     self.navigationController.view.userInteractionEnabled = TRUE;
     [[self tableView] reloadData];

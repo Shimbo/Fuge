@@ -19,8 +19,6 @@
 #define strCurrentUserLastName [[PFUser currentUser] objectForKey:@"fbNameLast"]
 #define bIsAdmin [globalVariables isUserAdmin]
 
-#define IPAD (UI_USER_INTERFACE_IDIOM()==UIUserInterfaceIdiomPad)
-
 #define meetupIcons @[@"iconMtGeneric", @"iconMtMovie", @"iconMtMusic", @"iconMtSports", @"iconMtGames", @"iconMtStudy", @"iconMtOutdoor", @"iconMtTheatre", @"iconMtArts"]
 
 #define FACEBOOK_PERMISSIONS @[ @"user_about_me", @"user_relationships", @"user_birthday", @"user_likes", @"user_location", @"email"]
@@ -71,11 +69,6 @@
 // Zoom parameters
 #define MAX_ZOOM_LEVEL              19
 
-// Text view for outcoming messages
-#define TEXT_VIEW_MAX_LINES         9
-
-#define MAX_MEETUP_SUBJECT_LENGTH   27
-
 // App store path
 #define APP_STORE_PATH              @"http://itunes.apple.com/app/id662139655"
 
@@ -95,11 +88,6 @@
 #define MATCHING_BONUS_FRIEND       10
 #define MATCHING_BONUS_2O           1
 #define MATCHING_BONUS_LIKE         1
-#define MATCHING_COLOR_RANK_MAX     50.0f
-#define MATCHING_COLOR_BRIGHTNESS   1.0f    // Make it larget to make bg brighter
-#define MATCHING_COLOR_COMPONENT_R  75.0f
-#define MATCHING_COLOR_COMPONENT_G  108.0f
-#define MATCHING_COLOR_COMPONENT_B  162.0f
 
 @interface GlobalVariables : NSObject
 {
@@ -129,6 +117,7 @@
 - (NSNumber*)currentVersion;
 - (PFGeoPoint*) currentLocation;
 - (Boolean) isUserAdmin;
+- (Boolean) isFeedbackBot:(NSString*)strId;
 
 - (NSString*)trimName:(NSString*)name;
 - (NSString*)shortName:(NSString*)firstName last:(NSString*)lastName;

@@ -309,9 +309,8 @@
             }
             else    // Attending already
             {
-                if ( bPassed )
-                    buttons[MB_SUBSCRIBE] = buttonOn;
-                else
+                buttons[MB_SUBSCRIBE] = buttonOn;
+                if ( ! bPassed )
                 {
                     if ( meetup.privacy == MEETUP_PUBLIC )
                         buttons[MB_INVITE] = buttonOn;
@@ -440,7 +439,7 @@
             NSDate* commentDate = nil;
             if ( commentsList.count > 0 )
                 commentDate = ((PFObject*)commentsList[commentsList.count-1]).createdAt;
-            [globalData updateConversation:commentDate count:meetup.numComments thread:meetup.strId meetup:TRUE];
+            [globalData updateConversation:commentDate count:[NSNumber numberWithInteger:meetup.numComments] thread:meetup.strId meetup:TRUE];
             
             // Update badge number for unread messages
             [globalData postInboxUnreadCountDidUpdate];

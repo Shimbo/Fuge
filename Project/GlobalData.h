@@ -28,6 +28,7 @@ static NSString *const kLoadingCirclesFailed = @"kLoadingCirclesFailed";
 static NSString *const kLoadingInboxFailed = @"kLoadingInboxFailed";
 
 static NSString *const kAppRestored = @"kAppRestored";
+static NSString *const kNewMeetupCreated = @"kNewMeetupCreated";
 
 #define globalData [GlobalData sharedInstance]
 
@@ -156,7 +157,7 @@ typedef  enum EMeetupCommentType
     // Inbox utils
 - (void)postInboxUnreadCountDidUpdate;
 - (NSUInteger)getInboxUnreadCount;
-- (void) updateConversation:(NSDate*)date count:(NSUInteger)msgCount thread:(NSString*)strThread meetup:(Boolean)bMeetup;
+- (void) updateConversation:(NSDate*)date count:(NSNumber*)msgCount thread:(NSString*)strThread meetup:(Boolean)bMeetup;
 - (Boolean) getConversationPresence:(NSString*)strThread meetup:(Boolean)bMeetup;
 - (NSDate*) getConversationDate:(NSString*)strThread meetup:(Boolean)bMeetup;
 - (NSUInteger) getConversationCount:(NSString*)strThread meetup:(Boolean)bMeetup;

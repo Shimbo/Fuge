@@ -955,7 +955,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         case COMMENT_PLAIN:
             [strComment appendString:text];
             meetup.numComments++;
-            [globalData updateConversation:nil count:meetup.numComments thread:meetup.strId meetup:TRUE];
+            [globalData updateConversation:nil count:[NSNumber numberWithInteger:meetup.numComments] thread:meetup.strId meetup:TRUE];
             break;
     }
     

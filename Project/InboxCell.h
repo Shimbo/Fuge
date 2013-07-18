@@ -15,9 +15,9 @@
 
 @property (strong, nonatomic) IBOutlet AsyncImageView *mainImage;
 @property (strong, nonatomic) IBOutlet MeetupPin *pinImage;
-
 @property (strong, nonatomic) IBOutlet UILabel *subject;
 @property (strong, nonatomic) IBOutlet UILabel *message;
 @property (strong, nonatomic) IBOutlet UILabel *misc;
+@property (strong, nonatomic) UIColor *color;
 
 @end

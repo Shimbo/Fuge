@@ -9,6 +9,8 @@
 
 #import <Foundation/Foundation.h>
 
+#define IPAD (UI_USER_INTERFACE_IDIOM()==UIUserInterfaceIdiomPad)
+
 #define DEVICE_IS_IPHONE_5 ([UIScreen mainScreen].bounds.size.height == 568.f)
 
 #define SYSTEM_VERSION_IS_LESS_THAN(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
