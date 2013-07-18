@@ -178,8 +178,8 @@
         [target performSelector:callback withObject:result withObject:error];
         
         // Last read message date
-        NSDate* date = result ? ((PFObject*)result[0]).createdAt : nil;
         NSInteger count = result ? result.count : 0;
+        NSDate* date = count > 0 ? ((PFObject*)result[0]).createdAt : nil;
         [globalData updateConversation:date count:count thread:person.strId meetup:FALSE];
         if ( count > 0 )
             [globalData postInboxUnreadCountDidUpdate];

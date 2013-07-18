@@ -10,6 +10,8 @@
 #import <MapKit/MapKit.h>
 #import "MainViewController.h"
 #import "REVClusterMapView.h"
+
+@class Person;
 @class PersonAnnotation;
 @interface MapViewController : MainViewController <MKMapViewDelegate,CLLocationManagerDelegate,UIPickerViewDelegate, UIPickerViewDataSource, UIActionSheetDelegate>
 {
@@ -24,6 +26,8 @@
     UIBarButtonItem*     daySelectButton;
     UIPopoverController* popover;
     UIActionSheet*       actionSheet;
+    
+    Person* currentPerson;
 }
 
 @property (nonatomic, retain) IBOutlet REVClusterMapView *mapView;

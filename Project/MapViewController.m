@@ -33,6 +33,8 @@
 
 @synthesize mapView;
 
+static Boolean bFirstZoom = true;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -70,6 +72,8 @@
     int n = 0;
     for (Person* person in [circle getPersons] )
     {
+        if ( ! person.getLocation )
+            continue;
         PersonAnnotation *ann = [[PersonAnnotation alloc] initWithPerson:person];
         [_personsAnnotations addObject:ann];
         n++;
@@ -118,8 +122,6 @@
     }
     return resultMeetups;
 }
-
-static Boolean bFirstZoom = true;
 
 - (NSUInteger)loadMeetupAndThreadAnnotations:(NSInteger)l
 {
@@ -241,6 +243,34 @@ static Boolean bFirstZoom = true;
 -(void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
     _userLocation.coordinate = newLocation.coordinate;
+    if ( ! currentPerson )
+        [self addCurrentPerson];
+}
+
+- (void)focusMapOnUser
+{
+    PFGeoPoint *geoPointUser = [pCurrentUser objectForKey:@"location"];
+    if ( ! geoPointUser )
+        geoPointUser = [locManager getDefaultPosition];
+    
+    CLLocation* locationUser = [[CLLocation alloc] initWithLatitude:geoPointUser.latitude longitude:geoPointUser.longitude];
+    _userLocation.coordinate = locationUser.coordinate;
+    MKCoordinateRegion region = { {0.0, 0.0 }, { 0.0, 0.0 } };
+    region.center.latitude = locationUser.coordinate.latitude;//..mapView.userLocation.location.coordinate.latitude;
+    region.center.longitude = locationUser.coordinate.longitude;//mapView.userLocation.location.coordinate.longitude;
+    region.span.longitudeDelta = 0.05f;
+    region.span.latitudeDelta = 0.05f;
+    [mapView setRegion:region animated:YES];
+}
+
+- (void)addCurrentPerson
+{
+    currentPerson = [[Person alloc] init:pCurrentUser circle:CIRCLE_NONE];
+    currentPerson.isCurrentUser = YES;
+    _userLocation = [[PersonAnnotation alloc] initWithPerson:currentPerson];
+    _userLocation.title = [globalVariables shortUserName];
+    _userLocation.subtitle = @"This is you";
+    [self focusMapOnUser];
 }
 
 - (void)viewDidLoad
@@ -262,15 +292,8 @@ static Boolean bFirstZoom = true;
     _locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
     [_locationManager startUpdatingLocation];
     
-    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized) {
-        
-        Person *p = [[Person alloc]init:[PFUser currentUser] circle:0];
-        p.isCurrentUser = YES;
-        _userLocation = [[PersonAnnotation alloc] initWithPerson:p];
-        _userLocation.title = [globalVariables shortUserName];
-        _userLocation.subtitle = @"This is you";
-        
-    }
+    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized)
+        [self addCurrentPerson];
     
     // Navigation bar: new meetup
     [self.navigationItem setHidesBackButton:true animated:false];
@@ -282,26 +305,8 @@ static Boolean bFirstZoom = true;
     if ( oldLeft.count > 0 )
         self.navigationItem.leftBarButtonItems = @[ oldLeft[0], daySelectButton ];
     
-    // Setting user location
-    PFGeoPoint *geoPointUser = [[PFUser currentUser] objectForKey:@"location"];
-    float span = 0.05f;
-    
-    // Default position
-    if ( ! geoPointUser )
-    {
-        geoPointUser = [locManager getDefaultPosition];
-        span = 0.25f;
-    }
-    
-    // Default map location
-    CLLocation* locationUser = [[CLLocation alloc] initWithLatitude:geoPointUser.latitude longitude:geoPointUser.longitude];
-    _userLocation.coordinate = locationUser.coordinate;
-    MKCoordinateRegion region = { {0.0, 0.0 }, { 0.0, 0.0 } };
-    region.center.latitude = locationUser.coordinate.latitude;//..mapView.userLocation.location.coordinate.latitude;
-    region.center.longitude = locationUser.coordinate.longitude;//mapView.userLocation.location.coordinate.longitude;
-    region.span.longitudeDelta = span;
-    region.span.latitudeDelta = span;
-    [mapView setRegion:region animated:YES];
+    // Setting user location and focusing map
+    [self focusMapOnUser];
     
     // Data updating
     [self reloadStatusChanged];
@@ -585,7 +590,8 @@ static NSMutableArray* dayButtonLabels = nil;
         [vc setView:view];
         [vc setContentSizeForViewInPopover:CGSizeMake(320, 260)];
         
-        popover = [[UIPopoverController alloc] initWithContentViewController:vc];
+        if ( ! popover )
+            popover = [[UIPopoverController alloc] initWithContentViewController:vc];
         [popover presentPopoverFromBarButtonItem:daySelectButton permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     }
     else

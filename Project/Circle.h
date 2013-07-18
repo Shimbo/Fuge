@@ -3,6 +3,7 @@
 
 typedef enum ECircle
 {
+    CIRCLE_NONE     = 0,
     CIRCLE_FB       = 1,
     CIRCLE_2O       = 2,
     CIRCLE_RANDOM   = 3,

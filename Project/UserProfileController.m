@@ -60,7 +60,11 @@
     
     // Labels
     labelFriendName.text = [personThis fullName];
-    labelDistance.text = [[NSString alloc] initWithFormat:@"%@ away", [personThis distanceString]];
+    NSString* distanceString = [personThis distanceString];
+    if ( distanceString.length > 0 )
+        labelDistance.text = [[NSString alloc] initWithFormat:@"%@ away", distanceString];
+    else
+        labelDistance.text = @"";
     labelTimePassed.text = [[NSString alloc] initWithFormat:@"%@ ago", [personThis timeString]];
     labelCircle.text = personThis.strCircle;
     nThingsInCommon = [personThis matchesTotal];

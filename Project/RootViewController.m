@@ -182,8 +182,14 @@
     if ( person.idCircle == CIRCLE_FBOTHERS )
         personCell.personDistance.text = @"Invite!";
     else
-        personCell.personDistance.text = [person distanceString];
-    if ( ( sortingMode == SORTING_RANK ) && ( person.idCircle == CIRCLE_2O || person.idCircle == CIRCLE_RANDOM ) )
+    {
+        NSString* distanceString = [person distanceString];
+        if ( distanceString.length > 0 )
+            personCell.personDistance.text = distanceString;
+        else
+            personCell.personDistance.text = @"Unknown";
+    }
+    if ( sortingMode == SORTING_RANK )
     {
         NSString* strMatches = [NSString stringWithFormat:@"Matches: %d", person.matchesTotal];
         personCell.personInfo.text = strMatches;

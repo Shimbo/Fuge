@@ -64,6 +64,12 @@
     matchedFriends2O = [self getPersonListFromIds:tempMatchedFriends2O];
     matched2OFriends = [self getPersonListFromIds:tempMatched2OFriends];
     matchedLikes = personThis.matchedLikes;
+    
+    // Sorting
+	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"distance" ascending:YES];
+	NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
+	[matchedFriends sortUsingDescriptors:sortDescriptors];
+    [matchedFriends2O sortUsingDescriptors:sortDescriptors];
 }
 
 - (void)cancelButtonDown {
@@ -91,8 +97,8 @@
     switch (section)
     {
         case 0: return matchedFriends.count; break;
-        case 1: return matchedFriends2O.count; break;
-        case 2: return matchedLikes.count; break;
+        case 1: return matchedLikes.count; break;
+        case 2: return matchedFriends2O.count; break;
         case 3: return matched2OFriends.count; break;
     }
     return 0;
@@ -102,8 +108,8 @@
     switch (section)
     {
         case 0: return @"Mutual friends"; break;
-        case 1: return @"Friends who know friends of"; break;
-        case 2: return @"Mututal likes"; break;
+        case 1: return @"Mututal likes"; break;
+        case 2: return @"Friends who know friends of"; break;
         case 3: return @"For test: 2O in friends"; break;
     }
     return @"";
@@ -111,7 +117,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath  {
     
-    if ( indexPath.section != 2 )
+    if ( indexPath.section != 1 )
     {
         static NSString *PersonCellIdentifier = @"PersonCellIdent";
         PersonCell *personCell = (PersonCell *)[tableView dequeueReusableCellWithIdentifier:PersonCellIdentifier];
@@ -119,7 +125,7 @@
         switch (indexPath.section)
         {
             case 0: person = matchedFriends[indexPath.row]; break;
-            case 1: person = matchedFriends2O[indexPath.row]; break;
+            case 2: person = matchedFriends2O[indexPath.row]; break;
             case 3: person = matched2OFriends[indexPath.row]; break;
         }
         
@@ -157,13 +163,13 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    if ( indexPath.section != 2 )
+    if ( indexPath.section != 1 )
     {
         Person* person = nil;
         switch (indexPath.section)
         {
             case 0: person = matchedFriends[indexPath.row]; break;
-            case 1: person = matchedFriends2O[indexPath.row]; break;
+            case 2: person = matchedFriends2O[indexPath.row]; break;
             case 3: person = matched2OFriends[indexPath.row]; break;
         }
         

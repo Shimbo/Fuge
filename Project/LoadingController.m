@@ -153,13 +153,17 @@ static Boolean bRotating = true;
                 if ( bBanned )
                     [ctrl bannedUser];
                 else
-                {
-                    [globalData loadData];
-                    [locManager startUpdating];
-                }
+                    [self loadSequencePart3];
             }
         }];
     }
+}
+
+- (void)loadSequencePart3
+{
+    // Start loading data
+    [globalData loadData];
+    [locManager startUpdating];
 }
 
 - (void)animateHypno
@@ -414,7 +418,6 @@ static Boolean bRotating = true;
     [self showAll];
 }
 
-
 - (IBAction)loginDown:(id)sender {
     
     // Activity indicator
@@ -441,32 +444,17 @@ static Boolean bRotating = true;
              {
                  NSLog(@"User signed up and logged in through Facebook!");
                  [globalVariables setNewUser];
+                 [self loadSequencePart3];
              }
              else
              {
                  NSLog(@"User logged in through Facebook!");
-                 [[PFUser currentUser] refresh];
+                 [pCurrentUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                     if ( ! error )
+                         [self loadSequencePart3];
+                 }];
              }             
-        }
-        
-        // Waiting for location data
-        NSUInteger nRetries = 0;
-        while ( ! [locManager getPosition] && nRetries < 3 )
-        {
-            sleep(1);
-            nRetries++;
-        }
-        
-        PFGeoPoint* location = [locManager getPosition];
-        if ( location )
-            [globalData setUserPosition:location];
-         
-        // Continue to next window
-        bAnimation = false;
-        
-        // Start loading data
-        if ( [PFUser currentUser] )
-            [globalData loadData];
+        }        
     }];
 }
 
