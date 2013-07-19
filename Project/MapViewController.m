@@ -289,7 +289,10 @@ static Boolean bFirstZoom = true;
     currentPerson.isCurrentUser = YES;
     _userLocation = [[PersonAnnotation alloc] initWithPerson:currentPerson];
     _userLocation.title = [globalVariables shortUserName];
-    _userLocation.subtitle = @"This is you";
+    if ( currentPerson.strStatus && currentPerson.strStatus.length > 0 )
+        _userLocation.subtitle = currentPerson.strStatus;
+    else
+        _userLocation.subtitle = @"This is you";
     [self focusMapOnUser];
 }
 

@@ -17,7 +17,10 @@
     self = [super init];
     if (self) {
         self.title = [person shortName];
-        self.subtitle = [person jobInfo];
+        if ( person.strStatus && person.strStatus.length > 0 )
+            self.subtitle = person.strStatus;
+        else
+            self.subtitle = [person jobInfo];
         if ( person.getLocation )
             self.coordinate = CLLocationCoordinate2DMake(person.getLocation.latitude, person.getLocation.longitude);
         self.person = person;

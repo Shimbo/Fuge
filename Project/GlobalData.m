@@ -373,8 +373,9 @@ NSInteger sortByName(id num1, id num2, void *context)
             [[globalData getCircle:circleUser] addPerson:person];
             [person changeCircle:circleUser];
         }
-        // Updating location
+        // Updating location and status
         [person updateLocation:[user objectForKey:@"location"]];
+        person.strStatus = [user objectForKey:@"profileStatus"];
         return person;
     }
     
