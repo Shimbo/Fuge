@@ -233,7 +233,7 @@ static Boolean bRotating = true;
 
 -(void) proceedToMapWindow
 {
-    ParseStarterProjectAppDelegate *delegate = AppDelegate;
+    FugeAppDelegate *delegate = AppDelegate;
     [delegate.revealController dismissViewControllerAnimated:TRUE completion:nil];
     LeftMenuController *leftMenu = (LeftMenuController*)delegate.revealController.leftViewController;
     [leftMenu showMap];

@@ -13,7 +13,7 @@
 @class ProfileViewController;
 
 @class CustomBadge;
-@interface LeftMenuController : UIViewController<UIAlertViewDelegate>{
+@interface LeftMenuController : UIViewController<UIAlertViewDelegate, UITextFieldDelegate>{
     NSMutableArray *_items;
     NSMutableArray *_selectors;
     RootViewController *_rootViewController;
@@ -21,13 +21,14 @@
     ProfileViewController *_profileViewController;
     CustomBadge *_inboxBadge;
     IBOutlet UIActivityIndicatorView *activityIndicator;
+    UIAlertView *statusPrompt;
 }
 
-@property(nonatomic,weak)ParseStarterProjectAppDelegate *appDelegate;
+@property(nonatomic,weak)FugeAppDelegate *appDelegate;
 
 -(void)showMap;
 -(void)showUser;
-
 -(void)prepareMap;
+-(void)clean;
 
 @end

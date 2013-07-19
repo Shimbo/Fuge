@@ -1,9 +1,10 @@
 @class RootViewController;
 @class JMImageCache;
 #import "PKRevealController.h"
-#define AppDelegate (ParseStarterProjectAppDelegate*)[[UIApplication sharedApplication]delegate];
 
-@interface ParseStarterProjectAppDelegate : NSObject <UIApplicationDelegate> {
+#define AppDelegate ((FugeAppDelegate*)[[UIApplication sharedApplication]delegate])
+
+@interface FugeAppDelegate : NSObject <UIApplicationDelegate> {
 
     UIWindow *window;
 	//UINavigationController *navigationController;

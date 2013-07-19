@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "MainViewController.h"
 
-@interface ProfileViewController : MainViewController <UIPickerViewDelegate, UIPickerViewDataSource, UIActionSheetDelegate, UITextFieldDelegate> {
+@interface ProfileViewController : MainViewController <UIPickerViewDelegate, UIPickerViewDataSource, UIActionSheetDelegate, UITextFieldDelegate,UIAlertViewDelegate> {
     
     IBOutlet UILabel*   labelRoles;
     UIPopoverController* popover;
@@ -23,5 +23,6 @@
 }
 @property (nonatomic,assign)BOOL main;
 - (IBAction) showSearchWhereOptions;
+- (IBAction)logout:(id)sender;
 
 @end

@@ -157,7 +157,7 @@
     if ( textField != subject )
         return YES;
     NSUInteger newLength = [textField.text length] + [string length] - range.length;
-    return (newLength > MAX_MEETUP_SUBJECT_LENGTH) ? NO : YES;
+    return (newLength > TEXT_MAX_MEETUP_SUBJECT_LENGTH) ? NO : YES;
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer{

@@ -153,8 +153,16 @@ NSInteger compareDistance(id id1, id id2, void *context)
         else
             personCell.personDistance.text = [person distanceString];
         personCell.personInfo.text = @"";
-        personCell.personStatus.text = [person jobInfo];
-    
+        if ( person.strStatus && person.strStatus.length > 0 )
+        {
+            personCell.personStatus.text = person.strStatus;
+            personCell.personStatus.textColor = [UIColor blueColor];
+        }
+        else
+        {
+            personCell.personStatus.text = [person jobInfo];
+            personCell.personStatus.textColor = [UIColor blackColor];
+        }
         return personCell;
     }
     else

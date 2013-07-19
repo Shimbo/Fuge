@@ -59,7 +59,7 @@
 
 - (IBAction)donePressed:(UIButton *)sender {
     
-    ParseStarterProjectAppDelegate *delegate = AppDelegate;
+    FugeAppDelegate *delegate = AppDelegate;
     [delegate.revealController dismissViewControllerAnimated:TRUE completion:nil];
     LeftMenuController *leftMenu = (LeftMenuController*)delegate.revealController.leftViewController;
     [leftMenu showMap];
@@ -167,6 +167,21 @@
         [actionSheet setBounds:CGRectMake(0, 0, 320, 485)];
     }
 }
+
+- (IBAction)logout:(id)sender {
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Logout" message:@"Are you sure you want to logout? " delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
+    [alert show];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if (buttonIndex == 1) {
+        [PFUser logOut];
+        [(LeftMenuController*)AppDelegate.revealController.leftViewController clean];
+        [globalVariables setUnloaded];
+        [AppDelegate userDidLogout];
+    }
+}
+
 
 - (void) dismissPopup {
     

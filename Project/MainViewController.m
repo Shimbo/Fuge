@@ -58,14 +58,13 @@
 
 - (void)showLeftView:(id)sender
 {
-    ParseStarterProjectAppDelegate *delegate = AppDelegate;
-    if (delegate.revealController.focusedController == delegate.revealController.leftViewController)
+    if (AppDelegate.revealController.focusedController == AppDelegate.revealController.leftViewController)
     {
-        [delegate.revealController showViewController:delegate.revealController.frontViewController];
+        [AppDelegate.revealController showViewController:AppDelegate.revealController.frontViewController];
     }
     else
     {
-        [delegate.revealController showViewController:delegate.revealController.leftViewController];
+        [AppDelegate.revealController showViewController:AppDelegate.revealController.leftViewController];
     }
 }
 

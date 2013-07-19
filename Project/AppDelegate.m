@@ -10,7 +10,7 @@
 #import "JMImageCache.h"
 #import <Crashlytics/Crashlytics.h>
 
-@implementation ParseStarterProjectAppDelegate
+@implementation FugeAppDelegate
 
 @synthesize window;
 

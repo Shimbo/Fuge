@@ -39,10 +39,8 @@
 {
     [super viewDidLoad];
     
-    NSArray* items = @[@"Inbox", @"Explore", @"People", @"Settings", @"Logout"];
-    NSArray* selectors = @[@"showInbox", @"showMap", @"showCicles", @"showUser", @"logout"];
-    _items = [[NSMutableArray alloc] initWithArray:items];
-    _selectors = [[NSMutableArray alloc] initWithArray:selectors];
+    _items = [NSMutableArray arrayWithObjects:@"Inbox", @"People", @"Explore", @"Status", @"Settings", nil];
+    _selectors = [NSMutableArray arrayWithObjects:@"showInbox", @"showCicles", @"showMap", @"askStatus", @"showUser", nil];
     
     if ( [globalVariables isUserAdmin])
     {
@@ -95,9 +93,42 @@
                                              focusAfterChange:YES completion:nil];
 }
 
--(void)logout{
-    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Logout" message:@"Are you sure you want to logout? " delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
-    [alert show];
+-(void)askStatus{
+    
+    statusPrompt = [[UIAlertView alloc] initWithTitle:@"What are you up to?"
+                                                     message:@"Tell others what are you looking for or what would you like to do!"
+                                                    delegate:self
+                                           cancelButtonTitle:@"Skip"
+                                           otherButtonTitles:@"Enter", nil];
+    [statusPrompt setAlertViewStyle:UIAlertViewStylePlainTextInput];
+    [[statusPrompt textFieldAtIndex:0] setDelegate:self];
+    [[statusPrompt textFieldAtIndex:0] setPlaceholder:@"Example: Open for coffee and chat!"];
+    [[statusPrompt textFieldAtIndex:0] setFont:[UIFont systemFontOfSize:14]];
+    [statusPrompt show];
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    NSUInteger newLength = [textField.text length] + [string length] - range.length;
+    return (newLength > TEXT_MAX_STATUS_LENGTH) ? NO : YES;
+}
+
+-(BOOL)textFieldShouldReturn:(UITextField *)textField{
+    if ( statusPrompt )
+        [statusPrompt dismissWithClickedButtonIndex:statusPrompt.firstOtherButtonIndex animated:YES];
+    return YES;
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{
+    if (buttonIndex == 1)
+    {
+        NSString* strResult = [[alertView textFieldAtIndex:0] text];
+        if ( strResult )
+        {
+            [pCurrentUser setObject:strResult forKey:@"profileStatus"];
+            [pCurrentUser saveInBackground];
+        }
+    }
+    [self.appDelegate.revealController showViewController:self.appDelegate.revealController.frontViewController];
 }
 
 /*- (void)openPersonWindow:(Person*)person
@@ -147,18 +178,6 @@
 }
 
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    if (buttonIndex == 1) {
-        [PFUser logOut];
-        _mapViewController = nil;
-        _rootViewController = nil;
-        _profileViewController = nil;
-        [self.appDelegate userDidLogout];
-    }
-}
-
-
-
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -186,6 +205,11 @@
     [self performSelector:selector];
 }
 
-
+- (void) clean
+{
+    _mapViewController = nil;
+    _rootViewController = nil;
+    _profileViewController = nil;
+}
 
 @end

@@ -37,7 +37,7 @@ static inline NSMutableDictionary *updatedImages() {
         roundedImages = YES;
         self.cachPolicy = CFAsyncCachePolicyDiskAndMemory;
         self.loadPolicy = CFAsyncReturnCacheDataAndUpdateCachedImageOnce;
-        ParseStarterProjectAppDelegate *dlgt = (ParseStarterProjectAppDelegate*)[[UIApplication sharedApplication]delegate];
+        FugeAppDelegate *dlgt = (FugeAppDelegate*)[[UIApplication sharedApplication]delegate];
         _imageCache = dlgt.circledImageCache;
         self.maxImageSize = 400000;
         self.maxSize = CGSizeMake(200, 200);
@@ -51,7 +51,7 @@ static inline NSMutableDictionary *updatedImages() {
     if (self) {
         self.cachPolicy = CFAsyncCachePolicyDiskAndMemory;
         self.loadPolicy = CFAsyncReturnCacheDataElseLoad;
-        ParseStarterProjectAppDelegate *dlgt = (ParseStarterProjectAppDelegate*)[[UIApplication sharedApplication]delegate];
+        FugeAppDelegate *dlgt = (FugeAppDelegate*)[[UIApplication sharedApplication]delegate];
         _imageCache = dlgt.imageCache;
         self.maxImageSize = 400000;
         self.maxSize = CGSizeMake(200, 200);
@@ -165,7 +165,7 @@ static inline NSMutableDictionary *updatedImages() {
 }
 
 -(void)saveInCache:(UIImage*)image withUrl:(NSString*)url circled:(BOOL)circled{
-    ParseStarterProjectAppDelegate *dlgt = (ParseStarterProjectAppDelegate*)[[UIApplication sharedApplication]delegate];
+    FugeAppDelegate *dlgt = (FugeAppDelegate*)[[UIApplication sharedApplication]delegate];
     JMImageCache *cache = nil;
     if (circled) {
         cache = dlgt.circledImageCache;

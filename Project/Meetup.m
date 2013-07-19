@@ -312,7 +312,7 @@
     [eventView setEventStore:eventStore];
     [eventView setEvent:event];
     
-    ParseStarterProjectAppDelegate *delegate = AppDelegate;
+    FugeAppDelegate *delegate = AppDelegate;
     UIViewController* controller = delegate.revealController;
     
     [controller presentViewController:eventView animated:YES completion:nil];

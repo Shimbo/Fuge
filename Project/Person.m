@@ -9,7 +9,7 @@
 
 @implementation Person
 
-@synthesize strId, strFirstName, strLastName, strAge, strGender, distance, /*role, strArea,*/ strEmployer, strPosition, strCircle, idCircle, personData, numUnreadMessages, friendsFb, friends2O, likes;
+@synthesize strId, strFirstName, strLastName, strAge, strGender, distance, /*role, strArea,*/ strEmployer, strPosition, strCircle, strStatus, idCircle, personData, numUnreadMessages, friendsFb, friends2O, likes;
 
 + (void)initialize {
 	if (self == [Person class]) {
@@ -30,6 +30,7 @@
         strCircle = [Circle getPersonType:nCircle];
         strEmployer = [user objectForKey:@"profileEmployer"];
         strPosition = [user objectForKey:@"profilePosition"];
+        strStatus = [user objectForKey:@"profileStatus"];
         idCircle = nCircle;
         
         // Location

@@ -129,6 +129,7 @@
 - (NSString*)roleByNumber:(NSUInteger)number;
 
 - (void)setLoaded;
+- (void)setUnloaded;
 - (Boolean)isLoaded;
 
 @end

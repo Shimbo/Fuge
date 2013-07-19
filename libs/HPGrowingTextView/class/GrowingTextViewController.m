@@ -65,7 +65,7 @@
     textView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
     
 	textView.minNumberOfLines = 1;
-	textView.maxNumberOfLines = TEXT_VIEW_MAX_LINES;
+	textView.maxNumberOfLines = TEXT_MESSAGE_FIELD_MAX_LINES;
 	textView.returnKeyType = UIReturnKeyDone; //just as an example
 	textView.font = [UIFont systemFontOfSize:15.0f];
 	textView.delegate = self;

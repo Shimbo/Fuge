@@ -242,7 +242,7 @@
     // Matches
     if ( person.idCircle != CIRCLE_FBOTHERS )
     {
-        NSString* strMatches = [NSString stringWithFormat:@"Matches: %d", person.matchesTotal];
+        NSString* strMatches = [NSString stringWithFormat:@"%d matches", person.matchesTotal];
         if ( bIsAdmin )
             strMatches = [strMatches stringByAppendingString:[NSString stringWithFormat:@"+%d", person.matchesAdminBonus]];
         personCell.personInfo.text = strMatches;
@@ -263,7 +263,16 @@
         NSString* strMatches = [NSString stringWithFormat:@"%d/%d/%d/%d", [person getConversationCount:TRUE onlyMessages:FALSE], [person getConversationCount:FALSE onlyMessages:FALSE], [person getConversationCount:TRUE onlyMessages:TRUE], [person getConversationCount:FALSE onlyMessages:TRUE]];
         personCell.personInfo.text = strMatches;
     }
-    personCell.personStatus.text = [person jobInfo];
+    if ( person.strStatus && person.strStatus.length > 0 )
+    {
+        personCell.personStatus.text = person.strStatus;
+        personCell.personStatus.textColor = [UIColor blueColor];
+    }
+    else
+    {
+        personCell.personStatus.text = [person jobInfo];
+        personCell.personStatus.textColor = [UIColor blackColor];
+    }
     
 	return personCell;
 }

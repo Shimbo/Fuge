@@ -221,6 +221,11 @@ static GlobalVariables *sharedInstance = nil;
     bLoaded = true;
 }
 
+- (void)setUnloaded
+{
+    bLoaded = false;
+}
+
 - (Boolean)isLoaded
 {
     return bLoaded;
