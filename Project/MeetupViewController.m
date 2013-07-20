@@ -117,10 +117,7 @@
     [globalData attendMeetup:meetup];
     
     // Add comment to the text field
-    NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
-    [stringComments appendString:comments.text];
-    [stringComments appendString:@"    You joined the meetup!\n"];
-    [comments setText:stringComments];
+    [self addComment:@"    You joined the meetup!\n"];
     
     // If it was opened from invite
     if ( invite )
@@ -186,10 +183,7 @@
         [globalData unattendMeetup:meetup];
         
         // Add comment to the text field
-        NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
-        [stringComments appendString:comments.text];
-        [stringComments appendString:@"    You just left the meetup!\n"];
-        [comments setText:stringComments];
+        [self addComment:@"    You just left the meetup!\n"];
         
         // Buttons
         [self flushButtons];
@@ -207,10 +201,7 @@
         [globalData cancelMeetup:meetup];
         
         // Add comment to the text field
-        NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
-        [stringComments appendString:comments.text];
-        [stringComments appendString:@"    You just canceled the meetup!\n"];
-        [comments setText:stringComments];
+        [self addComment:@"    You just canceled the meetup!\n"];
         
         // Buttons
         [self flushButtons];
@@ -429,7 +420,10 @@
             {
                 NSNumber* nSystem = [comment objectForKey:@"system"];
                 if ( [nSystem integerValue] == COMMENT_CANCELED )
+                {
                     [meetup setCanceled];   // Set meetup as canceled (as we could have old data)
+                    [self reloadAnnotation];
+                }
                 
                 NSString* strUserName = [comment objectForKey:@"userName"];
                 if ( ! nSystem || [nSystem intValue] == 0 )   // Not a system comment
@@ -571,6 +565,15 @@
     [super viewDidUnload];
 }
 
+-(void)addComment:(NSString*)strComment
+{
+    NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
+    [stringComments appendString:comments.text];
+    [stringComments appendString:strComment];
+    [comments setText:stringComments];
+    [self resizeComments];
+}
+
 -(void)send{
     [super send];
     if ( textView.text.length == 0 )
@@ -581,17 +584,9 @@
                            commentText:textView.text];
     
     // Adding comment to the list
-    NSMutableString* stringComments = [[NSMutableString alloc] initWithString:comments.text];
-    [stringComments appendString:@"    "];
-    [stringComments appendString:[globalVariables fullUserName]];
-    [stringComments appendString:@": "];
-    [stringComments appendString:textView.text];
-    [stringComments appendString:@"\n"];
-    [comments setText:stringComments];
+    [self addComment:[NSString stringWithFormat:@"    %@: %@\n", [globalVariables fullUserName], textView.text]];
     
     [textView setText:@""];
-    
-    [self resizeComments];
     
     [self updateButtons];
 }

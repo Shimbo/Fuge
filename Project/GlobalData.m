@@ -1017,7 +1017,10 @@ NSInteger sortByName(id num1, id num2, void *context)
     
     // Attending list in user itself
     [pCurrentUser addUniqueObject:meetup.strId forKey:@"attending"];
-    [pCurrentUser saveInBackground];
+    [pCurrentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if ( error )
+            NSLog(@"Error: %@", error);
+    }];
     
     // Attendee in db (to store the data and update counters)
     PFObject* attendee = [PFObject objectWithClassName:@"Attendee"];
@@ -1028,16 +1031,18 @@ NSInteger sortByName(id num1, id num2, void *context)
     [attendee setObject:meetup.strSubject forKey:@"meetupSubject"];
     [attendee setObject:meetup.meetupData forKey:@"meetupData"];
     [attendee saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        
-        // Creating comment about joining in db
-        [globalData createCommentForMeetup:meetup commentType:COMMENT_JOINED commentText:nil];
-        
-        // Push notification to all attendees
-        [pushManager sendPushAttendingMeetup:meetup.strId];
-        
-        // Adding attendee to the local copy of the meetup
-        [meetup addAttendee:strCurrentUserId];
+        if ( error )
+            NSLog(@"Error: %@", error);
     }];
+    
+    // Creating comment about joining in db
+    [globalData createCommentForMeetup:meetup commentType:COMMENT_JOINED commentText:nil];
+    
+    // Push notification to all attendees
+    [pushManager sendPushAttendingMeetup:meetup.strId];
+    
+    // Adding attendee to the local copy of the meetup
+    [meetup addAttendee:strCurrentUserId];
 }
 
 - (void) unattendMeetup:(Meetup*)meetup
@@ -1045,7 +1050,10 @@ NSInteger sortByName(id num1, id num2, void *context)
     // Remove from attending list and add to left list in user
     [pCurrentUser removeObject:meetup.strId forKey:@"attending"];
     [pCurrentUser addUniqueObject:meetup.strId forKey:@"meetupsLeft"];
-    [pCurrentUser saveInBackground];
+    [pCurrentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if ( error )
+            NSLog(@"Error: %@", error);
+    }];
     
     // Attendee in db (to store the data and update counters)
     PFObject* attendee = [PFObject objectWithClassName:@"Attendee"];
@@ -1057,18 +1065,18 @@ NSInteger sortByName(id num1, id num2, void *context)
     [attendee setObject:meetup.meetupData forKey:@"meetupData"];
     [attendee setObject:[NSNumber numberWithBool:TRUE] forKey:@"leaving"];
     [attendee saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        
-        NSLog(@"Error: %@", error);
-        
-        // Creating comment about leaving in db
-        [globalData createCommentForMeetup:meetup commentType:COMMENT_LEFT commentText:nil];
-        
-        // Push notification to all attendees
-        [pushManager sendPushLeftMeetup:meetup.strId];
-        
-        // Removing attendee to the local copy of meetup
-        [meetup removeAttendee:strCurrentUserId];
+        if ( error )
+            NSLog(@"Error: %@", error);
     }];
+    
+    // Creating comment about leaving in db
+    [globalData createCommentForMeetup:meetup commentType:COMMENT_LEFT commentText:nil];
+    
+    // Push notification to all attendees
+    [pushManager sendPushLeftMeetup:meetup.strId];
+    
+    // Removing attendee to the local copy of meetup
+    [meetup removeAttendee:strCurrentUserId];
 }
 
 - (void) cancelMeetup:(Meetup*)meetup
