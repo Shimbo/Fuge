@@ -206,6 +206,8 @@
 		4CF697C617956DE70064ACE7 /* XMLDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CF697C317956DE70064ACE7 /* XMLDictionary.m */; };
 		4CFE78C8166BBA7900E1BF72 /* FilterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CFE78C6166BBA7900E1BF72 /* FilterViewController.m */; };
 		4CFE78C9166BBA7900E1BF72 /* FilterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CFE78C7166BBA7900E1BF72 /* FilterView.xib */; };
+		4CFEFD7D179ACD5D00BB5660 /* iconCanceled.png in Resources */ = {isa = PBXBuildFile; fileRef = 4CFEFD7B179ACD5D00BB5660 /* iconCanceled.png */; };
+		4CFEFD7E179ACD5D00BB5660 /* iconCanceled@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4CFEFD7C179ACD5D00BB5660 /* iconCanceled@2x.png */; };
 		6332375415E438E900AE2736 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6332375315E438E900AE2736 /* libsqlite3.dylib */; };
 		6372FF531613CC3C002132AF /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6372FF521613CC3C002132AF /* Accounts.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		6372FF561613CC42002132AF /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6372FF551613CC42002132AF /* Social.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -492,6 +494,8 @@
 		4CFE78C5166BBA7900E1BF72 /* FilterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterViewController.h; sourceTree = "<group>"; };
 		4CFE78C6166BBA7900E1BF72 /* FilterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FilterViewController.m; sourceTree = "<group>"; };
 		4CFE78C7166BBA7900E1BF72 /* FilterView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FilterView.xib; sourceTree = "<group>"; };
+		4CFEFD7B179ACD5D00BB5660 /* iconCanceled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconCanceled.png; sourceTree = "<group>"; };
+		4CFEFD7C179ACD5D00BB5660 /* iconCanceled@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconCanceled@2x.png"; sourceTree = "<group>"; };
 		6332375315E438E900AE2736 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		6372FF521613CC3C002132AF /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		6372FF551613CC42002132AF /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
@@ -671,6 +675,8 @@
 				47B203F5171018D200B756FA /* mask25@2x.png */,
 				47B203EC171010D700B756FA /* iconPrivate.png */,
 				47B203ED171010D700B756FA /* iconPrivate@2x.png */,
+				4CFEFD7B179ACD5D00BB5660 /* iconCanceled.png */,
+				4CFEFD7C179ACD5D00BB5660 /* iconCanceled@2x.png */,
 				47B203EE171010D700B756FA /* iconMtGeneric.png */,
 				47B203EF171010D700B756FA /* iconMtGeneric@2x.png */,
 				4C95ECA81770A59F00AC2C27 /* iconMtGames.png */,
@@ -1161,6 +1167,8 @@
 				4CAF3488178871BC0014AE80 /* iconMtArts@2x.png in Resources */,
 				4CDE8D451789D27A00844B7E /* MatchesViewController.xib in Resources */,
 				4CDE8D471789E03200844B7E /* LikeCell.xib in Resources */,
+				4CFEFD7D179ACD5D00BB5660 /* iconCanceled.png in Resources */,
+				4CFEFD7E179ACD5D00BB5660 /* iconCanceled@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

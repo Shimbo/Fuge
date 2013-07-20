@@ -64,6 +64,8 @@ typedef enum kEImportedType
     Boolean     bImportedEvent;
     NSUInteger  importedType;
     
+    Boolean     isCanceled;
+    
     // Write only during save method and loading
     PFObject*   meetupData;
 }
@@ -116,5 +118,8 @@ typedef enum kEImportedType
 // Only in local version, not on server (separate cloud code)
 -(void)addAttendee:(NSString*)str;
 -(void)removeAttendee:(NSString*)str;
+
+-(void)setCanceled;
+-(Boolean)isCanceled;
 
 @end

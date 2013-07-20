@@ -122,7 +122,7 @@ static Boolean bFirstZoom = true;
     for (Meetup *meetup in [globalData getMeetups])
     {
         if (meetup.meetupType == TYPE_MEETUP)
-            if ( ! meetup.hasPassed && [meetup isWithinTimeFrame:windowStart till:windowEnd] )
+            if ( ! meetup.hasPassed && ! meetup.isCanceled && [meetup isWithinTimeFrame:windowStart till:windowEnd] )
                 [resultMeetups addObject:meetup];
     }
     return resultMeetups;

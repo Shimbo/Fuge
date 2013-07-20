@@ -62,7 +62,9 @@ typedef  enum EMeetupCommentType
     COMMENT_PLAIN   = 0,
     COMMENT_CREATED = 1,
     COMMENT_SAVED   = 2,
-    COMMENT_JOINED  = 3
+    COMMENT_JOINED  = 3,
+    COMMENT_LEFT    = 4,
+    COMMENT_CANCELED = 5
 }CommentType;
 
 #define INBOX_LOADED    3   // Number of stages in loading
@@ -134,7 +136,9 @@ typedef  enum EMeetupCommentType
 - (void) removeUserFromNew:(NSString*)strUser;
 - (void) attendMeetup:(Meetup*)meetup;
 - (void) unattendMeetup:(Meetup*)meetup;
+- (void) cancelMeetup:(Meetup*)meetup;
 - (Boolean) isAttendingMeetup:(NSString*)strThread;
+- (Boolean) hasLeftMeetup:(NSString*)strMeetup;
 - (void) subscribeToThread:(NSString*)strThread;
 - (void) unsubscribeToThread:(NSString*)strThread;
 - (Boolean) isSubscribedToThread:(NSString*)strThread;

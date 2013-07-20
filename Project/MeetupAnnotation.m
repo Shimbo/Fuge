@@ -12,6 +12,8 @@
 
 @implementation MeetupAnnotation
 
+@synthesize meetup;
+
 - (void)configureAnnotation {
     switch ( self.meetup.privacy )
     {
@@ -24,16 +26,16 @@
             break;
     }
     
-    self.title = self.meetup.strSubject;
-    if ( self.meetup.meetupType == TYPE_MEETUP )
+    self.title = meetup.strSubject;
+    if ( meetup.meetupType == TYPE_MEETUP )
     {
         // Check if we have any attendees
         NSUInteger nAttendeesCount = 0;
-        if ( self.meetup.attendees )
-            nAttendeesCount = self.meetup.attendees.count;
+        if ( meetup.attendees )
+            nAttendeesCount = meetup.attendees.count;
         
         // Don't trim name for imported events as organizers are not people
-        NSString* strName = self.meetup.bImportedEvent ? self.meetup.strOwnerName : [globalVariables trimName:self.meetup.strOwnerName];
+        NSString* strName = meetup.bImportedEvent ? meetup.strOwnerName : [globalVariables trimName:meetup.strOwnerName];
         
         if ( self.attendedPersons.count )
             self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Attending: %d", strName, self.attendedPersons.count ];
@@ -42,36 +44,37 @@
         //self.subtitle = [[NSString alloc] initWithFormat:@"Cass Business School, July 15, 10:30 PM", strName, nAttendeesCount ];
     }
     else
-        self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Comments: %d", [globalVariables trimName:self.meetup.strOwnerName], self.meetup.numComments ];
-    self.strId = self.meetup.strId;
+        self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Comments: %d", [globalVariables trimName:meetup.strOwnerName], meetup.numComments ];
+    self.strId = meetup.strId;
     
     CLLocationCoordinate2D coord;
-    coord.latitude = self.meetup.location.latitude;
-    coord.longitude = self.meetup.location.longitude;
+    coord.latitude = meetup.location.latitude;
+    coord.longitude = meetup.location.longitude;
     self.coordinate = coord;
     
-    BOOL passed = [self.meetup hasPassed]; // grey?
+    BOOL passed = [meetup hasPassed];
+    BOOL canceled = [meetup isCanceled];
     BOOL read = false;
     
-    BOOL attorsubsc; // orange or just blue?
+    BOOL orange;
     if (!passed) {
         if ( self.meetup.meetupType == TYPE_MEETUP )
-            attorsubsc = [globalData isAttendingMeetup:self.meetup.strId];
+            orange = [globalData isAttendingMeetup:self.meetup.strId];
         else
-            attorsubsc = [globalData isSubscribedToThread:self.meetup.strId];
+            orange = [globalData isSubscribedToThread:self.meetup.strId];
         
         // all read threads are passed as well
-        if ( ! attorsubsc )
+        if ( ! orange )
             if ( [globalData getConversationPresence:self.meetup.strId meetup:TRUE] )
                 read = true;
     }
     
-    self.pinColor = PinBlue;
-    if (passed || read) {
+    if (passed || read || canceled)
         self.pinColor = PinGray;
-    }else if (attorsubsc){
+    else if (orange)
         self.pinColor = PinOrange;
-    }
+    else
+        self.pinColor = PinBlue;
     
     Boolean typeMeetup = (self.meetup.meetupType == TYPE_MEETUP); // meetup or thread
     if ( typeMeetup && ! passed ) // Show timer from 0 to 1 where 1 is max, 0 is min
@@ -80,11 +83,11 @@
     }
 }
 
-- (id)initWithMeetup:(Meetup*)meetup
+- (id)initWithMeetup:(Meetup*)m
 {
     self = [super init];
     if (self) {
-        self.meetup = meetup;
+        meetup = m;
         [self configureAnnotation];
 
     }

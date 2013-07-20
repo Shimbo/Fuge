@@ -120,7 +120,9 @@
 }
 
 -(void)setPinIcon:(Meetup*)meetup{
-    if ( meetup.privacy == MEETUP_PRIVATE )
+    if ( meetup.isCanceled )
+        _icon.image = [UIImage imageNamed:@"iconCanceled.png"];
+    else if ( meetup.privacy == MEETUP_PRIVATE )
         _icon.image = [UIImage imageNamed:@"iconPrivate.png"];
     else if ( meetup.bImportedEvent )
     {

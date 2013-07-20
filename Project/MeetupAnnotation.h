@@ -21,10 +21,10 @@ typedef enum kPinPrivacy{
 @class Person;
 @interface MeetupAnnotation : REVClusterPin <MKAnnotation>
 {
-
+    Meetup* meetup;
 }
 
-- (id)initWithMeetup:(Meetup*)meetup;
+- (id)initWithMeetup:(Meetup*)m;
 
 @property (nonatomic, assign) CLLocationCoordinate2D coordinate;
 @property (nonatomic, strong) Meetup* meetup;

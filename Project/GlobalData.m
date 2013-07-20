@@ -782,6 +782,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     // Expired meetups
     NSDate* dateLate = [NSDate date];
     [meetupAnyQuery whereKey:@"meetupDateExp" greaterThan:dateLate];
+    [meetupAnyQuery whereKey:@"canceled" notEqualTo:[NSNumber numberWithBool:TRUE]];
     
     // Meetups too far in the future
     NSDateComponents* deltaCompsMax = [[NSDateComponents alloc] init];
@@ -815,7 +816,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     }];
     
     // Query for events that user was subscribed to (to show also private and remote events/threads) - this query calls only for first request, not for the map reloads. Plus all invites!
-    NSMutableArray* subscriptions = [[PFUser currentUser] objectForKey:@"subscriptions"];
+    NSMutableArray* subscriptions = [pCurrentUser objectForKey:@"subscriptions"];
     if ( ! subscriptions )
         subscriptions = [[NSMutableArray alloc] initWithCapacity:30];
     for ( PFObject* invite in invites )
@@ -953,6 +954,14 @@ NSInteger sortByName(id num1, id num2, void *context)
             [strComment appendString:[globalVariables fullUserName]];
             [strComment appendString:@" joined the event."];
             break;
+        case COMMENT_LEFT:
+            [strComment appendString:[globalVariables fullUserName]];
+            [strComment appendString:@" has left the event."];
+            break;
+        case COMMENT_CANCELED:
+            [strComment appendString:[globalVariables fullUserName]];
+            [strComment appendString:@" canceled the event!"];
+            break;
         case COMMENT_PLAIN:
             [strComment appendString:text];
             meetup.numComments++;
@@ -996,22 +1005,19 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 - (void) attendMeetup:(Meetup*)meetup
 {
-    NSMutableArray* attending = [[PFUser currentUser] objectForKey:@"attending"];
-    if ( ! attending )
-        attending = [[NSMutableArray alloc] init];
-    
     // Check if already attending
-    for (NSString* str in attending)
-        if ( [str compare:meetup.strId] == NSOrderedSame )
-            return;
+    NSMutableArray* attending = [pCurrentUser objectForKey:@"attending"];
+    if ( attending )
+        for (NSString* str in attending)
+            if ( [str compare:meetup.strId] == NSOrderedSame )
+                return;
     
-    // Attend
-    [attending addObject:meetup.strId];
-    [[PFUser currentUser] setObject:attending forKey:@"attending"];
-    [[PFUser currentUser] saveInBackground];
+    // Update invite
+    [globalData updateInvite:meetup.strId attending:INVITE_ACCEPTED];
     
-    // Push notification to all attendees
-    [pushManager sendPushAttendingMeetup:meetup.strId];
+    // Attending list in user itself
+    [pCurrentUser addUniqueObject:meetup.strId forKey:@"attending"];
+    [pCurrentUser saveInBackground];
     
     // Attendee in db (to store the data and update counters)
     PFObject* attendee = [PFObject objectWithClassName:@"Attendee"];
@@ -1021,32 +1027,81 @@ NSInteger sortByName(id num1, id num2, void *context)
     [attendee setObject:meetup.strId forKey:@"meetupId"];
     [attendee setObject:meetup.strSubject forKey:@"meetupSubject"];
     [attendee setObject:meetup.meetupData forKey:@"meetupData"];
-    [attendee saveInBackground];
+    [attendee saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        
+        // Creating comment about joining in db
+        [globalData createCommentForMeetup:meetup commentType:COMMENT_JOINED commentText:nil];
+        
+        // Push notification to all attendees
+        [pushManager sendPushAttendingMeetup:meetup.strId];
+        
+        // Adding attendee to the local copy of the meetup
+        [meetup addAttendee:strCurrentUserId];
+    }];
 }
 
 - (void) unattendMeetup:(Meetup*)meetup
 {
-    NSMutableArray* attending = [[PFUser currentUser] objectForKey:@"attending"];
-    if ( ! attending )
-        attending = [[NSMutableArray alloc] init];
-    for (NSString* str in attending)
-    {
-        if ( [str compare:meetup.strId] == NSOrderedSame )
-        {
-            [attending removeObject:str];
-            break;
-        }
-    }
-    [[PFUser currentUser] setObject:attending forKey:@"attending"];
-    [[PFUser currentUser] saveInBackground]; // CHECK: here was Eventually
+    // Remove from attending list and add to left list in user
+    [pCurrentUser removeObject:meetup.strId forKey:@"attending"];
+    [pCurrentUser addUniqueObject:meetup.strId forKey:@"meetupsLeft"];
+    [pCurrentUser saveInBackground];
+    
+    // Attendee in db (to store the data and update counters)
+    PFObject* attendee = [PFObject objectWithClassName:@"Attendee"];
+    [attendee setObject:strCurrentUserId forKey:@"userId"];
+    [attendee setObject:[globalVariables fullUserName] forKey:@"userName"];
+    [attendee setObject:pCurrentUser forKey:@"userData"];
+    [attendee setObject:meetup.strId forKey:@"meetupId"];
+    [attendee setObject:meetup.strSubject forKey:@"meetupSubject"];
+    [attendee setObject:meetup.meetupData forKey:@"meetupData"];
+    [attendee setObject:[NSNumber numberWithBool:TRUE] forKey:@"leaving"];
+    [attendee saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        
+        NSLog(@"Error: %@", error);
+        
+        // Creating comment about leaving in db
+        [globalData createCommentForMeetup:meetup commentType:COMMENT_LEFT commentText:nil];
+        
+        // Push notification to all attendees
+        [pushManager sendPushLeftMeetup:meetup.strId];
+        
+        // Removing attendee to the local copy of meetup
+        [meetup removeAttendee:strCurrentUserId];
+    }];
+}
+
+- (void) cancelMeetup:(Meetup*)meetup
+{
+    // Saving meetup
+    [meetup setCanceled];
+    [meetup save];
+    
+    // Creating comment about canceling
+    [globalData createCommentForMeetup:meetup commentType:COMMENT_CANCELED commentText:nil];
+    
+    // Push notification to all attendees
+    [pushManager sendPushCanceledMeetup:meetup.strId];
+
 }
 
 - (Boolean) isAttendingMeetup:(NSString*)strMeetup
 {
-    NSMutableArray* attending = [[PFUser currentUser] objectForKey:@"attending"];
+    NSMutableArray* attending = [pCurrentUser objectForKey:@"attending"];
     if ( ! attending )
         return false;
     for (NSString* str in attending)
+        if ( [str compare:strMeetup] == NSOrderedSame )
+            return true;
+    return false;
+}
+
+- (Boolean) hasLeftMeetup:(NSString*)strMeetup
+{
+    NSMutableArray* meetupsLeft = [pCurrentUser objectForKey:@"meetupsLeft"];
+    if ( ! meetupsLeft )
+        return false;
+    for (NSString* str in meetupsLeft)
         if ( [str compare:strMeetup] == NSOrderedSame )
             return true;
     return false;

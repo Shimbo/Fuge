@@ -130,6 +130,60 @@ static PushManager *sharedInstance = nil;
     [push sendPushInBackground];
 }
 
+- (void)sendPushLeftMeetup:(NSString*)meetupId
+{
+    Meetup* meetup = [globalData getMeetupById:meetupId];
+    if ( ! meetup )
+        return;
+    
+    PFQuery *pushQuery = [PFInstallation query];
+    [pushQuery whereKey:@"ownerId" containedIn:meetup.attendees];
+    [pushQuery whereKey:@"ownerId" notEqualTo:strCurrentUserId];
+    
+    NSString* strText = [NSString stringWithFormat:@"%@ left meetup %@", [globalVariables shortUserName], meetup.strSubject];
+    
+    PFPush *push = [[PFPush alloc] init];
+    
+    NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
+                          @"Attendee left", @"title",
+                          strText,          @"alert",
+                          meetupId,         @"meetup",
+                          @"Increment",     @"badge",
+                          nil];
+    
+    [push setQuery:pushQuery];
+    [push setChannel:@"newJoin"];
+    [push setData:data];
+    [push sendPushInBackground];
+}
+
+- (void)sendPushCanceledMeetup:(NSString*)meetupId
+{
+    Meetup* meetup = [globalData getMeetupById:meetupId];
+    if ( ! meetup )
+        return;
+    
+    PFQuery *pushQuery = [PFInstallation query];
+    [pushQuery whereKey:@"ownerId" containedIn:meetup.attendees];
+    [pushQuery whereKey:@"ownerId" notEqualTo:strCurrentUserId];
+    
+    NSString* strText = [NSString stringWithFormat:@"%@ canceled meetup %@", [globalVariables shortUserName], meetup.strSubject];
+    
+    PFPush *push = [[PFPush alloc] init];
+    
+    NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
+                          @"Meetup canceled!", @"title",
+                          strText,             @"alert",
+                          meetupId,            @"meetup",
+                          @"Increment",        @"badge",
+                          nil];
+    
+    [push setQuery:pushQuery];
+    [push setChannel:@""];  // These messages shouldn't be blocked as they are very important
+    [push setData:data];
+    [push sendPushInBackground];
+}
+
 - (void)sendPushCommentedMeetup:(NSString*)meetupId
 {
     Meetup* meetup = [globalData getMeetupById:meetupId];

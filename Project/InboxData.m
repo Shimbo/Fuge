@@ -78,16 +78,16 @@ NSInteger sort2(id item1, id item2, void *context)
                 item.type = INBOX_ITEM_INVITE;
                 item.fromId = [pObject objectForKey:@"idUserFrom"];
                 item.toId = [pObject objectForKey:@"idUserTo"];
-                item.message = [pObject objectForKey:@"meetupSubject"];
+                item.subject = [pObject objectForKey:@"meetupSubject"];
                 item.data = pObject;
                 item.dateTime = pObject.createdAt;
                 item.meetup = [globalData getMeetupById:[pObject objectForKey:@"meetupId"]];
                 
                 NSUInteger meetupType = [[pObject objectForKey:@"type"] integerValue];
                 if ( meetupType == TYPE_MEETUP )
-                    item.subject = [[NSString alloc] initWithFormat:@"%@ invited to:", [pObject objectForKey:@"nameUserFrom"]];
+                    item.message = [[NSString alloc] initWithFormat:@"%@ invited you to the meetup", [pObject objectForKey:@"nameUserFrom"]];
                 else
-                    item.subject = [[NSString alloc] initWithFormat:@"%@ suggested:", [pObject objectForKey:@"nameUserFrom"]];
+                    item.message = [[NSString alloc] initWithFormat:@"%@ suggested you the thread", [pObject objectForKey:@"nameUserFrom"]];
                 
                 [tempArray addObject:item];
             }

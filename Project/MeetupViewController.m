@@ -26,10 +26,26 @@
         invite = false;
         self.navigationItem.leftItemsSupplementBackButton = true;
         buttons = [[NSMutableArray alloc] init];
-        for ( int n = 0; n < MB_TOTAL_COUNT; n++ )
-            [buttons addObject:[NSNumber numberWithInt:0]];
+        [self flushButtons];
     }
     return self;
+}
+
+-(void) setMeetup:(Meetup*)m
+{
+    meetup = m;
+}
+
+- (void) setInvite
+{
+    invite = true;
+}
+
+- (void)flushButtons
+{
+    [buttons removeAllObjects];
+    for ( int n = 0; n < MB_TOTAL_COUNT; n++ )
+        [buttons addObject:[NSNumber numberWithBool:FALSE]];
 }
 
 - (void)updateButtons
@@ -37,7 +53,7 @@
     // Buttons
     UIBarButtonItem *joinBtn = [[UIBarButtonItem alloc] initWithTitle:@"Join" style:UIBarButtonItemStyleBordered target:self action:@selector(joinClicked)];
     UIBarButtonItem *declineBtn = [[UIBarButtonItem alloc] initWithTitle:@"Decline" style:UIBarButtonItemStyleBordered target:self action:@selector(declineClicked)];
-    //UIBarButtonItem *leaveBtn = [[UIBarButtonItem alloc] initWithTitle:@"Leave" style:UIBarButtonItemStyleBordered target:self action:@selector(leaveClicked)];
+    UIBarButtonItem *leaveBtn = [[UIBarButtonItem alloc] initWithTitle:@"Leave" style:UIBarButtonItemStyleBordered target:self action:@selector(leaveClicked)];
     
     UIBarButtonItem *subscribeBtn;
     if ( [globalData isSubscribedToThread:meetup.strId])
@@ -46,26 +62,26 @@
         subscribeBtn = [[UIBarButtonItem alloc] initWithTitle:@"Subscribe" style:UIBarButtonItemStylePlain target:self action:@selector(subscribeClicked)];
     UIBarButtonItem *inviteBtn = [[UIBarButtonItem alloc] initWithTitle:@"Invite" style:UIBarButtonItemStylePlain target:self action:@selector(inviteClicked)];
     
-    //UIBarButtonItem *cancelBtn = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleBordered target:self action:@selector(cancelClicked)];
+    UIBarButtonItem *cancelBtn = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleBordered target:self action:@selector(cancelClicked)];
     UIBarButtonItem *editBtn = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(editClicked)];
     UIBarButtonItem *calendarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Calendar-Day"] style:UIBarButtonItemStyleBordered  target:self action:@selector(calendarClicked)];
     
     NSMutableArray* actualButtons = [[NSMutableArray alloc] init];
-    if ( [buttons[MB_JOIN] integerValue] != 0 )
+    if ( [buttons[MB_JOIN] boolValue] )
         [actualButtons addObject:joinBtn];
-    if ( [buttons[MB_SUBSCRIBE] integerValue] != 0 )
+    if ( [buttons[MB_SUBSCRIBE] boolValue] )
         [actualButtons addObject:subscribeBtn];
-    if ( [buttons[MB_DECLINE] integerValue] != 0 )
+    if ( [buttons[MB_DECLINE] boolValue] )
         [actualButtons addObject:declineBtn];
-    //if ( [buttons[MB_LEAVE] integerValue] != 0 )
-    //    [actualButtons addObject:leaveBtn];
-    if ( [buttons[MB_CALENDAR] integerValue] != 0 && ! [meetup addedToCalendar] )
+    if ( [buttons[MB_LEAVE] boolValue] )
+        [actualButtons addObject:leaveBtn];
+    if ( [buttons[MB_CALENDAR] boolValue] && ! [meetup addedToCalendar] )
         [actualButtons addObject:calendarBtn];
-    if ( [buttons[MB_INVITE] integerValue] != 0 )
+    if ( [buttons[MB_INVITE] boolValue] )
         [actualButtons addObject:inviteBtn];
-    //if ( [buttons[MB_CANCEL] integerValue] != 0 )
-    //    [actualButtons addObject:cancelBtn];
-    if ( [buttons[MB_EDIT] integerValue] != 0 )
+    if ( [buttons[MB_CANCEL] boolValue] )
+        [actualButtons addObject:cancelBtn];
+    if ( [buttons[MB_EDIT] boolValue] )
         [actualButtons addObject:editBtn];
     
     [self.navigationItem setRightBarButtonItems:actualButtons];
@@ -83,6 +99,9 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }*/
 
+#pragma mark -
+#pragma mark Actions
+
 - (void)declineClicked
 {
     // Update invite
@@ -94,23 +113,14 @@
 
 - (void)joinClicked
 {
-    // Add to attending list and save attendee in DB
+    // Change and save all the important data
     [globalData attendMeetup:meetup];
-    
-    // Update invite
-    [globalData updateInvite:meetup.strId attending:INVITE_ACCEPTED];
-    
-    // Creating comment about joining in db
-    [globalData createCommentForMeetup:meetup commentType:COMMENT_JOINED commentText:nil];
     
     // Add comment to the text field
     NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
     [stringComments appendString:comments.text];
-    [stringComments appendString:@"    You joined the event!\n"];
+    [stringComments appendString:@"    You joined the meetup!\n"];
     [comments setText:stringComments];
-    
-    // Adding attendee to the local copy of meetup
-    [meetup addAttendee:strCurrentUserId];
     
     // If it was opened from invite
     if ( invite )
@@ -120,11 +130,11 @@
     else
     {
         // Chaning join button to leave and adding addToCalendar
-        buttons[MB_JOIN] = [NSNumber numberWithInt:0];
-        buttons[MB_LEAVE] = [NSNumber numberWithInt:1];
-        buttons[MB_CALENDAR] = [NSNumber numberWithInt:1];
+        buttons[MB_JOIN] = [NSNumber numberWithBool:FALSE];
+        buttons[MB_LEAVE] = [NSNumber numberWithBool:TRUE];
+        buttons[MB_CALENDAR] = [NSNumber numberWithBool:TRUE];
         if ( meetup.privacy == MEETUP_PUBLIC )
-            buttons[MB_INVITE] = [NSNumber numberWithInt:1];
+            buttons[MB_INVITE] = [NSNumber numberWithBool:TRUE];
         [self updateButtons];
     }
     [self reloadAnnotation];
@@ -150,27 +160,68 @@
 
 - (void)leaveClicked
 {
-    UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Under construction!" message:@"Leaving meetups is not implemented yet." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil,nil];
+    UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Really?" message:@"You won't be able to join this meetup again (to eliminate ambiguity)!" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes",nil];
+    message.tag = 3; // Trinity force
     [message show];
-    
-    // TODO:
-    // Remove from attending list
-    //[globalData unattendMeetup:meetup.strId];
-
     return;
 }
 
 - (void)cancelClicked
 {
-    UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Under construction!" message:@"Canceling meetups is not implemented yet." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil,nil];
+    UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Are you serious?" message:@"If you cancel this meetup, nobody will be able to find it and join. This change is irreversible." delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes",nil];
+    message.tag = 7; // Lucky one
     [message show];
-    
-    // TODO:
-    // Remove from attending list
-    //[globalData unattendMeetup:meetup.strId];
-    
     return;
 }
+
+#pragma mark Leave and decline here
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{
+    if (buttonIndex != 1)
+        return;
+    
+    if ( alertView.tag == 3 ) // Leave
+    {
+        // Leaving
+        [globalData unattendMeetup:meetup];
+        
+        // Add comment to the text field
+        NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
+        [stringComments appendString:comments.text];
+        [stringComments appendString:@"    You just left the meetup!\n"];
+        [comments setText:stringComments];
+        
+        // Buttons
+        [self flushButtons];
+        buttons[MB_SUBSCRIBE] = [NSNumber numberWithBool:TRUE];
+        buttons[MB_INVITE] = [NSNumber numberWithBool:TRUE];
+        [self updateButtons];
+        
+        // Annotation
+        [self reloadAnnotation];
+    }
+    
+    if ( alertView.tag == 7 ) // Cancel
+    {
+        // Canceling
+        [globalData cancelMeetup:meetup];
+        
+        // Add comment to the text field
+        NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
+        [stringComments appendString:comments.text];
+        [stringComments appendString:@"    You just canceled the meetup!\n"];
+        [comments setText:stringComments];
+        
+        // Buttons
+        [self flushButtons];
+        buttons[MB_SUBSCRIBE] = [NSNumber numberWithBool:TRUE];
+        [self updateButtons];
+        
+        // Annotation
+        [self reloadAnnotation];
+    }
+}
+
 
 - (void)subscribeClicked
 {
@@ -207,55 +258,77 @@
     [self presentViewController:nav animated:YES completion:nil];
 }
 
--(void)reloadAnnotation{
-    CLLocationCoordinate2D loc = CLLocationCoordinate2DMake(meetup.location.latitude,meetup.location.longitude);
-    MKCoordinateRegion reg = MKCoordinateRegionMakeWithDistance(loc, 200.0f, 200.0f);
-    mapView.showsUserLocation = NO;
-    [mapView setDelegate:self];
-    [mapView setRegion:reg animated:true];
-    
-    if (currentAnnotation) {
-        [mapView removeAnnotation:currentAnnotation];
-    }
-    if (meetup.meetupType == TYPE_MEETUP) {
-        MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
-        [mapView addAnnotation:ann];
-        currentAnnotation = ann;
-    }else{
-        ThreadAnnotation *ann = [[ThreadAnnotation alloc] initWithMeetup:meetup];
-        [mapView addAnnotation:ann];
-        currentAnnotation = ann;
-    }
-}
+#pragma mark -
+#pragma mark UI stuff
 
-- (void)resizeComments
+- (void)initButtons
 {
-    // Resizing comments
-    NSUInteger newHeight = comments.contentSize.height;
-    CGRect frame = comments.frame;
-    frame.size.height = newHeight;
-    comments.frame = frame;
+    NSNumber* buttonOn = [NSNumber numberWithBool:TRUE];
     
-    // Resizing scroll view
-    [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width, comments.frame.origin.y + comments.frame.size.height)];
-}
-
-- (void)webViewDidFinishLoad:(UIWebView *)webView
-{
-    // Resizing webView
-    NSUInteger newHeight= [[webView stringByEvaluatingJavaScriptFromString:@"document.body.scrollHeight"] floatValue];
-    CGRect frame = webView.frame;
-    frame.size.height = newHeight;
-    webView.frame = frame;
-    webView.scrollView.scrollEnabled = FALSE;
+    // Time check
+    Boolean bPassed = meetup.hasPassed;
     
-    // Moving comments down
-    CGRect textFrame = comments.frame;
-    textFrame.origin.y = webView.frame.origin.y + webView.frame.size.height;
-    comments.frame = textFrame;
-    
-    // Resizing scroll view
-    [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width, comments.frame.origin.y + comments.frame.size.height)];
+    // Facebook/EB/etc or not
+    if ( meetup.bImportedEvent )
+    {
+        if ( ! bPassed )
+            buttons[MB_CALENDAR] = buttonOn;
+    }
+    else
+    {
+        if ( meetup.isCanceled || [globalData hasLeftMeetup:meetup.strId] )
+            buttons[MB_SUBSCRIBE] = buttonOn;
+        else
+        {
+            // Own meetup or not
+            if ( [meetup.strOwnerId compare:strCurrentUserId ] != NSOrderedSame )
+            {
+                // Joined or not
+                Boolean bJoined = [globalData isAttendingMeetup:meetup.strId];
+                
+                if ( ! bJoined )    // Or thread as thread can't be joined
+                {
+                    if ( meetup.meetupType == TYPE_MEETUP )
+                    {
+                        if ( ! bPassed || invite )
+                            buttons[MB_JOIN] = buttonOn;
+                    }
+                    
+                    if ( meetup.meetupType == TYPE_THREAD )
+                        buttons[MB_INVITE] = buttonOn;
+                    
+                    if ( invite )   // Window opened from invite
+                        buttons[MB_DECLINE] = buttonOn;
+                }
+                else    // Attending already
+                {
+                    if ( ! bPassed )
+                    {
+                        if ( meetup.privacy == MEETUP_PUBLIC )
+                            buttons[MB_INVITE] = buttonOn;
+                        buttons[MB_LEAVE] = buttonOn;
+                        buttons[MB_CALENDAR] = buttonOn;
+                    }
+                }
+            }
+            else
+            {
+                if ( meetup.meetupType == TYPE_THREAD || ! bPassed )
+                {
+                    buttons[MB_CANCEL] = buttonOn;
+                    buttons[MB_EDIT] = buttonOn;
+                    buttons[MB_INVITE] = buttonOn;
+                }
+                
+                if ( meetup.meetupType == TYPE_MEETUP && ! bPassed )
+                    buttons[MB_CALENDAR] = buttonOn;
+            }
+            
+            if ( bPassed || meetup.meetupType == TYPE_THREAD )
+                buttons[MB_SUBSCRIBE] = buttonOn;
+        }
+    }
+    [self updateButtons];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -270,69 +343,6 @@
 #ifdef IOS7_ENABLE
     mapView.rotateEnabled = FALSE;
 #endif
-    
-    NSNumber* buttonOn = [NSNumber numberWithInt:1];
-    
-    // Time check
-    Boolean bPassed = meetup.hasPassed;
-    
-    // Facebook/EB/etc or not
-    if ( meetup.bImportedEvent )
-    {
-        if ( ! bPassed )
-            buttons[MB_CALENDAR] = buttonOn;
-    }
-    else
-    {
-        // Own meetup or not
-        if ( [meetup.strOwnerId compare:strCurrentUserId ] != NSOrderedSame )
-        {
-            // Joined or not
-            Boolean bJoined = [globalData isAttendingMeetup:meetup.strId];
-            
-            if ( ! bJoined )    // Or thread as thread can't be joined
-            {
-                if ( meetup.meetupType == TYPE_MEETUP )
-                {
-                    if ( ! bPassed || invite )
-                        buttons[MB_JOIN] = buttonOn;
-                }
-                
-                if ( meetup.meetupType == TYPE_THREAD || bPassed )
-                    buttons[MB_SUBSCRIBE] = buttonOn;
-                
-                if ( meetup.meetupType == TYPE_THREAD )
-                    buttons[MB_INVITE] = buttonOn;
-                
-                if ( invite )   // Window opened from invite
-                    buttons[MB_DECLINE] = buttonOn;
-            }
-            else    // Attending already
-            {
-                buttons[MB_SUBSCRIBE] = buttonOn;
-                if ( ! bPassed )
-                {
-                    if ( meetup.privacy == MEETUP_PUBLIC )
-                        buttons[MB_INVITE] = buttonOn;
-                    buttons[MB_LEAVE] = buttonOn;
-                    buttons[MB_CALENDAR] = buttonOn;
-                }
-            }
-        }
-        else
-        {
-            if ( meetup.meetupType == TYPE_THREAD || ! bPassed )
-            {
-                buttons[MB_CANCEL] = buttonOn;
-                buttons[MB_EDIT] = buttonOn;
-                buttons[MB_INVITE] = buttonOn;
-            }
-            
-            if ( meetup.meetupType == TYPE_MEETUP && ! bPassed )
-                buttons[MB_CALENDAR] = buttonOn;
-        }
-    }
-    [self updateButtons];
     
     // Setting location and date labels
     [labelLocation setText:meetup.strVenue];
@@ -418,6 +428,9 @@
             for (NSDictionary *comment in commentsList)
             {
                 NSNumber* nSystem = [comment objectForKey:@"system"];
+                if ( [nSystem integerValue] == COMMENT_CANCELED )
+                    [meetup setCanceled];   // Set meetup as canceled (as we could have old data)
+                
                 NSString* strUserName = [comment objectForKey:@"userName"];
                 if ( ! nSystem || [nSystem intValue] == 0 )   // Not a system comment
                 {
@@ -446,8 +459,62 @@
             
             // Make new comment editable now
             textView.editable = TRUE;
+            
+            // Buttons setup
+            [self initButtons];
         }
     }];
+}
+
+-(void)reloadAnnotation{
+    CLLocationCoordinate2D loc = CLLocationCoordinate2DMake(meetup.location.latitude,meetup.location.longitude);
+    MKCoordinateRegion reg = MKCoordinateRegionMakeWithDistance(loc, 200.0f, 200.0f);
+    mapView.showsUserLocation = NO;
+    [mapView setDelegate:self];
+    [mapView setRegion:reg animated:true];
+    
+    if (currentAnnotation) {
+        [mapView removeAnnotation:currentAnnotation];
+    }
+    if (meetup.meetupType == TYPE_MEETUP) {
+        MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
+        [mapView addAnnotation:ann];
+        currentAnnotation = ann;
+    }else{
+        ThreadAnnotation *ann = [[ThreadAnnotation alloc] initWithMeetup:meetup];
+        [mapView addAnnotation:ann];
+        currentAnnotation = ann;
+    }
+}
+
+- (void)resizeComments
+{
+    // Resizing comments
+    NSUInteger newHeight = comments.contentSize.height;
+    CGRect frame = comments.frame;
+    frame.size.height = newHeight;
+    comments.frame = frame;
+    
+    // Resizing scroll view
+    [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width, comments.frame.origin.y + comments.frame.size.height)];
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+    // Resizing webView
+    NSUInteger newHeight= [[webView stringByEvaluatingJavaScriptFromString:@"document.body.scrollHeight"] floatValue];
+    CGRect frame = webView.frame;
+    frame.size.height = newHeight;
+    webView.frame = frame;
+    webView.scrollView.scrollEnabled = FALSE;
+    
+    // Moving comments down
+    CGRect textFrame = comments.frame;
+    textFrame.origin.y = webView.frame.origin.y + webView.frame.size.height;
+    comments.frame = textFrame;
+    
+    // Resizing scroll view
+    [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width, comments.frame.origin.y + comments.frame.size.height)];
 }
 
 -(BOOL) webView:(UIWebView *)inWeb shouldStartLoadWithRequest:(NSURLRequest *)inRequest navigationType:(UIWebViewNavigationType)inType {
@@ -463,26 +530,6 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
--(void) setMeetup:(Meetup*)m
-{
-    meetup = m;
-}
-
-- (void) setInvite
-{
-    invite = true;
-}
-
-- (void)viewDidUnload {
-    comments = nil;
-    mapView = nil;
-    labelDate = nil;
-    labelLocation = nil;
-    descriptionView = nil;
-    scrollView = nil;
-    [super viewDidUnload];
 }
 
 -(MKAnnotationView *)mapView:(MKMapView *)mV viewForAnnotation:(id<MKAnnotation>)annotation
@@ -514,6 +561,15 @@
     [self reloadAnnotation];
 }
 
+- (void)viewDidUnload {
+    comments = nil;
+    mapView = nil;
+    labelDate = nil;
+    labelLocation = nil;
+    descriptionView = nil;
+    scrollView = nil;
+    [super viewDidUnload];
+}
 
 -(void)send{
     [super send];

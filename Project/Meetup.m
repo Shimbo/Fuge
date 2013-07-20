@@ -28,8 +28,9 @@
         numComments = 0;
         strAddress = @"";
         strVenueId = @"";
-        bImportedEvent = false;
+        bImportedEvent = FALSE;
         iconNumber = 0;
+        isCanceled = FALSE;
     }
     
     return self;
@@ -193,6 +194,8 @@
     [meetupData setObject:[NSNumber numberWithInt:durationSeconds] forKey:@"duration"];
     [meetupData setObject:[NSNumber numberWithInt:iconNumber] forKey:@"icon"];
     
+    if ( isCanceled )
+        [meetupData setObject:[NSNumber numberWithBool:TRUE] forKey:@"canceled"];
     if ( strDescription )
         [meetupData setObject:strDescription forKey:@"description"];
     if ( strPrice)
@@ -254,6 +257,8 @@
     decliners = [meetupData objectForKey:@"decliners"];
     durationSeconds = [[meetupData objectForKey:@"duration"] integerValue];
     iconNumber = [[meetupData objectForKey:@"icon"] integerValue];
+    if ( [meetupData objectForKey:@"canceled"] )
+        isCanceled = [[meetupData objectForKey:@"canceled"] boolValue];
 }
 
 -(NSUInteger)getUnreadMessagesCount
@@ -489,6 +494,15 @@
 {
     if ( attendees )
         [attendees removeObjectIdenticalTo:str];
+}
+
+-(void)setCanceled
+{
+    isCanceled = TRUE;
+}
+-(Boolean)isCanceled
+{
+    return isCanceled;
 }
 
 @end
