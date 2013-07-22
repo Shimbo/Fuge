@@ -50,7 +50,7 @@
     textView.editable = FALSE;
     
     // Comments
-    [globalData loadThread:personThis target:self selector:@selector(callback:error:)];
+    [globalData loadMessageThread:personThis target:self selector:@selector(callback:error:)];
     
     //[profileImage loadImageFromURL:personThis.largeImageURL];
     

@@ -35,6 +35,10 @@
                                                 selector:@selector(loadingFailed)
                                                 name:kLoadingInboxFailed
                                                 object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(refreshData)
+                                                name:kInboxUpdated
+                                                object:nil];
     }
     return self;
 }
@@ -145,7 +149,7 @@
     if ( [strKey compare:@"New"] == NSOrderedSame )
         inboxCell.color = [UIColor colorWithHexString:INBOX_UNREAD_CELL_BG_COLOR];
     else
-        inboxCell.color = [UIColor whiteColor   ];
+        inboxCell.color = [UIColor whiteColor];
     inboxCell.subject.text = item.subject;
     inboxCell.message.text = item.message;
     inboxCell.misc.text = item.misc;
@@ -205,14 +209,14 @@
     // Another switch depending on item type
     if ( item.type == INBOX_ITEM_INVITE || item.type == INBOX_ITEM_COMMENT )
     {
-        Meetup* meetup = [globalData getMeetupById:[item.data objectForKey:@"meetupId"]];
+        Meetup* meetup = item.meetup;
         Boolean bInvite = ( ! item.misc && item.type == INBOX_ITEM_INVITE );
         
         if ( meetup)
             [self openMeetupWindow:meetup invite:bInvite];
         else // Fetching if needed
         {
-            PFObject *meetupData = [item.data objectForKey:@"meetupData"];
+            PFObject *meetupData = (item.type == INBOX_ITEM_COMMENT) ? ((Comment*)item.data).meetupData : [item.data objectForKey:@"meetupData"];
             if ( ! meetupData )
                 return;
             [self.activityIndicator startAnimating];

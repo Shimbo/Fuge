@@ -11,6 +11,7 @@
 #import "Circle.h"
 #import "Meetup.h"
 #import "Message.h"
+#import "Comment.h"
 
 @class MapViewController;
 @class InboxViewController;
@@ -29,6 +30,7 @@ static NSString *const kLoadingInboxFailed = @"kLoadingInboxFailed";
 
 static NSString *const kAppRestored = @"kAppRestored";
 static NSString *const kNewMeetupCreated = @"kNewMeetupCreated";
+static NSString *const kInboxUpdated = @"kInboxUpdated";
 
 #define globalData [GlobalData sharedInstance]
 
@@ -110,12 +112,8 @@ typedef  enum EMeetupCommentType
 
 -(NSArray*)searchForUserName:(NSString*)searchStr;
 
--(void)createCommentForMeetup:(Meetup*)meetup commentType:(CommentType)type commentText:(NSString*)text;
-
 // New meetup created during the session
 - (void)addMeetup:(Meetup*)meetup;
-// New comment created in meetup window
-- (void)addComment:(PFObject*)comment;
 // Person added somehow (opened from unread pm for example)
 - (Person*)addPerson:(PFUser*)user userCircle:(NSUInteger)circleUser;
 
@@ -173,5 +171,13 @@ typedef  enum EMeetupCommentType
 - (void)addMessage:(Message*)message;
 - (void)loadMessages;
 - (NSArray*)getUniqueMessages;
-- (void)loadThread:(Person*)person target:(id)target selector:(SEL)callback;
+- (void)loadMessageThread:(Person*)person target:(id)target selector:(SEL)callback;
+@end
+
+@interface GlobalData (Comments)
+- (void)addComment:(Comment*)message;
+- (void)loadComments;
+- (NSArray*)getUniqueThreads;
+- (void)loadCommentThread:(Meetup*)meetup target:(id)target selector:(SEL)callback;
+-(void)createCommentForMeetup:(Meetup*)meetup commentType:(CommentType)type commentText:(NSString*)text;
 @end

@@ -159,7 +159,7 @@
     // TODO: add check for paging and paging itself if result count == limit
 }
 
-- (void)loadThread:(Person*)person target:(id)target selector:(SEL)callback
+- (void)loadMessageThread:(Person*)person target:(id)target selector:(SEL)callback
 {
     if ( ! person || ! person.strId )
     {

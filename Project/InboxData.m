@@ -91,22 +91,8 @@ NSInteger sort2(id item1, id item2, void *context)
                 
                 [tempArray addObject:item];
             }
-            else if ( [pObject.parseClassName compare:@"Comment"] == NSOrderedSame )
-            {
-                item.type = INBOX_ITEM_COMMENT;
-                item.fromId = [pObject objectForKey:@"userId"];
-                item.toId = [pObject objectForKey:@"meetupId"];
-                item.subject = [pObject objectForKey:@"meetupSubject"];
-                item.message = [pObject objectForKey:@"comment"];
-                item.misc = nil;
-                item.data = pObject;
-                item.dateTime = pObject.createdAt;
-                item.meetup = [globalData getMeetupById:[pObject objectForKey:@"meetupId"]];
-                [tempArray addObject:item];
-            }
-        }
-        else if ( [object isKindOfClass:[Person class]] )
-        {
+        } else if ( [object isKindOfClass:[Person class]] ) {
+            
             Person* pObject = object;
             
             item.type = INBOX_ITEM_NEWUSER;
@@ -118,9 +104,24 @@ NSInteger sort2(id item1, id item2, void *context)
             item.data = pObject;
             item.dateTime = nil;
             [tempArray addObject:item];
-        }
-        else if ( [object isKindOfClass:[Message class]] )
-        {
+            
+        } else if ( [object isKindOfClass:[Comment class]] ) {
+            
+            Comment* pObject = object;
+            
+            item.type = INBOX_ITEM_COMMENT;
+            item.fromId = pObject.strUserFrom;
+            item.toId = pObject.strMeetupId;
+            item.subject = pObject.strMeetupSubject;
+            item.message = pObject.strComment;
+            item.misc = nil;
+            item.data = pObject;
+            item.dateTime = pObject.dateCreated;
+            item.meetup = [globalData getMeetupById:pObject.strMeetupId];
+            [tempArray addObject:item];
+            
+        } else if ( [object isKindOfClass:[Message class]] ) {
+            
             Message* pObject = object;
             
             item.type = INBOX_ITEM_MESSAGE;
@@ -304,102 +305,6 @@ NSInteger sort2(id item1, id item2, void *context)
     }];
 }
 
-
-- (NSArray*)getUniqueThreads
-{
-    NSMutableArray *threadsUnique = [[NSMutableArray alloc] init];
-    
-    for (PFObject *comment in comments)
-    {
-        // Looking for already created thread
-        Boolean bSuchThreadAlreadyAdded = false;
-        for (PFObject *commentOld in threadsUnique)
-            if ( [[comment objectForKey:@"meetupId"] compare:[commentOld objectForKey:@"meetupId"]] == NSOrderedSame )
-            {
-                // Replacing with an older unread:
-                // checking date, if it's > than last read, but < than current, replace
-                
-                Boolean bExchange = false;
-                
-                Boolean bOwnMessage = ( [[comment objectForKey:@"userId"] compare:strCurrentUserId] == NSOrderedSame );
-                Boolean bOldOwnMessage = ( [[commentOld objectForKey:@"userId"] compare:strCurrentUserId] == NSOrderedSame );
-                
-                NSDate* lastReadDate = [self getConversationDate:[comment objectForKey:@"meetupId"] meetup:TRUE];
-                
-                Boolean bOldBeforeThanReadDate = false;
-                Boolean bNewLaterThanReadDate = true;
-                Boolean bNewIsBeforeOld = false;
-                if ( commentOld.createdAt && comment.createdAt )
-                {
-                    bNewIsBeforeOld = ( [ comment.createdAt compare:commentOld.createdAt ] == NSOrderedAscending );
-                    if ( lastReadDate )
-                    {
-                        bOldBeforeThanReadDate = [commentOld.createdAt compare:lastReadDate] != NSOrderedDescending;
-                        bNewLaterThanReadDate = [comment.createdAt compare:lastReadDate] == NSOrderedDescending;
-                    }
-                }
-                
-                // New message is not older, but old message is already read
-                if ( ! bNewIsBeforeOld && bOldBeforeThanReadDate )
-                    bExchange = true;
-                
-                // New message is older but still unread
-                if ( bNewIsBeforeOld && bNewLaterThanReadDate && ! bOwnMessage )
-                    bExchange = true;
-                
-                // User own messages is later than old unread
-                if ( ! bNewIsBeforeOld && bOwnMessage )
-                    bExchange = true;
-                
-                // New message is after own users message
-                if ( ! bNewIsBeforeOld && bOldOwnMessage )
-                    bExchange = true;
-                
-                if ( bExchange)
-                    [threadsUnique removeObject:commentOld];
-                else
-                    bSuchThreadAlreadyAdded = true;
-                break;
-            }
-        
-        // Adding object
-        if ( ! bSuchThreadAlreadyAdded )
-            [threadsUnique addObject:comment];
-    }
-    
-    return threadsUnique;
-}
-
-- (void)loadComments
-{
-    // Query
-    PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Comment"];
-    NSArray* subscriptions = [[PFUser currentUser] objectForKey:@"subscriptions"];
-    [messagesQuery whereKey:@"meetupId" containedIn:subscriptions];
-    messagesQuery.limit = 1000;
-    [messagesQuery orderByDescending:@"createdAt"];
-    //[messagesQuery whereKey:@"system" notEqualTo:[NSNumber numberWithInt:1]];
-    
-    // TODO: add here later another query limitation by date (like 10 last days) to not push server too hard. It will be like pages, loading every 10 previous days or so.
-    
-    // Loading
-    [messagesQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        
-        if ( error )
-        {
-            NSLog(@"Uh oh. An error occurred: %@", error);
-            [self loadingFailed:LOADING_INBOX status:LOAD_NOCONNECTION];
-        }
-        else
-        {
-            // Comments
-            comments = [[NSMutableArray alloc] initWithArray:objects];
-            
-            // Loading stage complete
-            [self incrementInboxLoadingStage];
-        }
-    }];
-}
 
 #pragma mark -
 #pragma mark Misc

@@ -77,7 +77,7 @@
         self.pinColor = PinBlue;
     
     Boolean typeMeetup = (self.meetup.meetupType == TYPE_MEETUP); // meetup or thread
-    if ( typeMeetup && ! passed ) // Show timer from 0 to 1 where 1 is max, 0 is min
+    if ( typeMeetup && ! passed && ! canceled ) // Show timer from 0 to 1 where 1 is max, 0 is min
     {
         self.time = [self.meetup getTimerTill];
     }

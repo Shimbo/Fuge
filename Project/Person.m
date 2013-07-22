@@ -358,9 +358,15 @@
 
 - (NSUInteger) matchesRank
 {
-    return self.matchedFriendsToFriends.count*MATCHING_BONUS_FRIEND
-            +self.matchedFriendsTo2O.count*MATCHING_BONUS_2O
-            +self.matchedLikes.count*MATCHING_BONUS_LIKE;
+    NSUInteger bonusFriends = self.matchedFriendsToFriends.count*MATCHING_BONUS_FRIEND;
+    
+    NSUInteger bonusLikes = self.matchedLikes.count*MATCHING_BONUS_LIKE;
+    
+    NSUInteger bonus2O = self.matchedFriendsTo2O.count*MATCHING_BONUS_2O;
+    if ( bonus2O > MATCHING_BONUS_2O_CAP )
+        bonus2O = MATCHING_BONUS_2O_CAP;
+    
+    return bonusFriends + bonusLikes + bonus2O;
 }
 
 - (NSDictionary*) getLikeById:(NSString*)like

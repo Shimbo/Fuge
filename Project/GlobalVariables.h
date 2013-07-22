@@ -88,6 +88,7 @@
 #define MATCHING_BONUS_FRIEND       10
 #define MATCHING_BONUS_2O           1
 #define MATCHING_BONUS_LIKE         1
+#define MATCHING_BONUS_2O_CAP       10
 
 @interface GlobalVariables : NSObject
 {
