@@ -63,6 +63,10 @@
         else
             orange = [globalData isSubscribedToThread:self.meetup.strId];
         
+        // Exported
+        if ( self.meetup.bImportedEvent )
+            orange = TRUE;
+        
         // all read threads are passed as well
         if ( ! orange )
             if ( [globalData getConversationPresence:self.meetup.strId meetup:TRUE] )

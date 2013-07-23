@@ -14,8 +14,8 @@
 {
     NSString *query =
     @"{"
-    @"'event_info':'SELECT eid, venue, name, start_time, end_time, creator, host, attending_count from event WHERE eid in (SELECT eid FROM event_member WHERE uid = me())',"
-    @"'event_venue':'SELECT name, location, page_id FROM page WHERE page_id IN (SELECT venue.id FROM #event_info)',"
+    @"\"event_info\":\"SELECT eid, venue, name, start_time, end_time, creator, host, attending_count FROM event WHERE eid IN (SELECT eid FROM event_member WHERE uid = me() AND rsvp_status = 'attending')\","
+    @"\"event_venue\":\"SELECT name, location, page_id FROM page WHERE page_id IN (SELECT venue.id FROM #event_info)\","
     @"}";
     NSDictionary *queryParam = [NSDictionary dictionaryWithObjectsAndKeys:
                                 query, @"q", nil];
@@ -55,6 +55,7 @@
                      {
                          NSDictionary* result = [NSDictionary dictionaryWithObjectsAndKeys:event, @"event", venue, @"venue", nil];
                          [eventsApproved addObject:result];
+                         break;
                      }
                  }
              }

@@ -722,12 +722,12 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 - (void)loadFBMeetups
 {
-    /*if ( bIsAdmin )
+    if ( bIsAdmin )
     {
         FBloader = [[FacebookLoader alloc] init];
-        [FBloader loadData:self selector:@selector(fbMeetupsCallback:)];
+        [FBloader loadMeetups:self selector:@selector(fbMeetupsCallback:)];
     }
-    else*/
+    else
         [self incrementMapLoadingStage];
 }
 

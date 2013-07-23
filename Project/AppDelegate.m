@@ -51,7 +51,7 @@
                   clientKey:@"u2kJ1jWBjN9qY3ARlJuEyNkvUA9EjOMv1R4w5sDX"];
     
     // Crashlytics
-    [Crashlytics startWithAPIKey:@"f2aad2d4ba94eff0ac771885455f29bb4fbc3320"];
+    [Crashlytics startWithAPIKey:@"05bf10b64dd5e5dbbe55dfb384d01abad7bba586"];
     
     // Left menu
     LeftMenuController *leftMenu = [[LeftMenuController alloc]init];

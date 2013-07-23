@@ -617,7 +617,7 @@ static Boolean bFirstZoom = true;
         [actionSheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
         [actionSheet addSubview:pickerView];
         [actionSheet addSubview:closeButton];
-        [actionSheet showInView:[[UIApplication sharedApplication] keyWindow]];
+        [actionSheet showInView:self.view];
         [actionSheet setBounds:CGRectMake(0, 0, 320, 485)];
     }
 }

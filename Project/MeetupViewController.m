@@ -369,7 +369,8 @@
     [globalData postInboxUnreadCountDidUpdate];
     
     // Make new comment editable now
-    textView.editable = TRUE;
+    if ( ! meetup.bImportedEvent )
+        textView.editable = TRUE;
     
     // Buttons setup
     [self initButtons];

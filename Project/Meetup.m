@@ -52,7 +52,7 @@
     meetupType = TYPE_MEETUP;
     privacy = MEETUP_PUBLIC;
     
-    strId = [ [NSString alloc] initWithFormat:@"fbmt_%@", [eventData objectForKey:@"eid"] ];
+    strId = [NSString stringWithFormat:@"fbmt_%@", [eventData objectForKey:@"eid"]];
     strOwnerId = [eventData objectForKey:@"creator"];
     strOwnerName = [eventData objectForKey:@"host"];
     strSubject = [eventData objectForKey:@"name"];
@@ -61,24 +61,34 @@
     [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
     
     NSString* strStartDate = [eventData objectForKey:@"start_time"];
+    if ( ! strStartDate || ! [strStartDate isKindOfClass:[NSString class]] )
+        return nil;
     dateTime = [dateFormatter dateFromString:strStartDate];
     NSString* strEndDate = [eventData objectForKey:@"end_time"];
-    NSDate* endDate = [dateFormatter dateFromString:strEndDate];
-    durationSeconds = [endDate timeIntervalSince1970] - [dateTime timeIntervalSince1970];
+    if ( strEndDate && [strEndDate isKindOfClass:[NSString class]] )
+    {
+        NSDate* endDate = [dateFormatter dateFromString:strEndDate];
+        durationSeconds = [endDate timeIntervalSince1970] - [dateTime timeIntervalSince1970];
+        dateTimeExp = endDate;
+    }
+    else
+    {
+        durationSeconds = 3600;
+        dateTimeExp = [dateTime dateByAddingTimeInterval:durationSeconds];
+    }
     
     NSDictionary* venueLocation = [venueData objectForKey:@"location"];
-    if ( [venueLocation objectForKey:@"latitude"] && [venueLocation objectForKey:@"longitude"])
-    {
-        double lat = [[venueLocation objectForKey:@"latitude"] doubleValue];
-        double lon = [[venueLocation objectForKey:@"longitude"] doubleValue];
-        location = [PFGeoPoint geoPointWithLatitude:lat longitude:lon];
-    }
+    if ( ! [venueLocation objectForKey:@"latitude"] || ! [venueLocation objectForKey:@"longitude"])
+        return nil;
+    double lat = [[venueLocation objectForKey:@"latitude"] doubleValue];
+    double lon = [[venueLocation objectForKey:@"longitude"] doubleValue];
+    location = [PFGeoPoint geoPointWithLatitude:lat longitude:lon];
     strVenue = [venueLocation objectForKey:@"name"];
     if ( ! strVenue )
         strVenue = [venueData objectForKey:@"name"];
     strAddress = [venueLocation objectForKey:@"street"];
     
-    dateTimeExp = endDate;
+    attendees = [NSMutableArray arrayWithObject:strCurrentUserId];
     
     return self;
 }

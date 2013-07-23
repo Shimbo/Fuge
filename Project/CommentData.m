@@ -140,7 +140,8 @@
             [comment unpack:commentData];
             [threadComments addObject:comment];
         }
-        [self addComment:[threadComments lastObject]];
+        if ( threadComments.count > 0 )
+            [self addComment:[threadComments lastObject]];
         
         [target performSelector:callback withObject:threadComments withObject:error];
         
