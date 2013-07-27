@@ -10,6 +10,82 @@
 
 @implementation FacebookLoader
 
+#pragma mark -
+#pragma mark Singleton
+
+static FacebookLoader *sharedInstance = nil;
+
++ (FacebookLoader *)sharedInstance {
+    if (sharedInstance == nil) {
+        sharedInstance = [[super allocWithZone:NULL] init];
+    }
+    
+    return sharedInstance;
+}
+
+// Initialization
+- (id)init
+{
+    self = [super init];
+    
+    if (self) {
+    }
+    
+    return self;
+}
+
+// We don't want to allocate a new instance, so return the current one.
++ (id)allocWithZone:(NSZone*)zone {
+    return [self sharedInstance];
+}
+
+// Equally, we don't want to generate multiple copies of the singleton.
+- (id)copyWithZone:(NSZone *)zone {
+    return self;
+}
+
+
+#pragma mark -
+#pragma mark Loaders
+
+
+- (void)loadUserData:(NSDictionary<FBGraphUser>*)user
+{
+    // Store the current user's Facebook ID on the user
+    [pCurrentUser setObject:user.id forKey:@"fbId"];
+    if ( user.first_name )
+        [pCurrentUser setObject:user.first_name forKey:@"fbNameFirst"];
+    if ( user.last_name )
+        [pCurrentUser setObject:user.last_name forKey:@"fbNameLast"];
+    if ( user.birthday )
+        [pCurrentUser setObject:user.birthday forKey:@"fbBirthday"];
+    if ( [user objectForKey:@"gender"] )
+        [pCurrentUser setObject:[user objectForKey:@"gender"]
+                         forKey:@"fbGender"];
+    if ( [user objectForKey:@"email"] )
+        pCurrentUser.email = [user objectForKey:@"email"];
+    
+    // Looking for job data
+    NSArray* work = [user objectForKey:@"work"];
+    if ( work && work.count > 0 )
+    {
+        NSDictionary* current = work[0];
+        if ( current )
+        {
+            NSDictionary* employer = [current objectForKey:@"employer"];
+            NSString* strEmployer = @"";
+            NSString* strPosition = @"";
+            if ( employer && [employer objectForKey:@"name"] )
+                strEmployer = [employer objectForKey:@"name"];
+            NSDictionary* position = [current objectForKey:@"position"];
+            if ( position && [position objectForKey:@"name"] )
+                strPosition = [position objectForKey:@"name"];
+            [pCurrentUser setObject:strEmployer forKey:@"profileEmployer"];
+            [pCurrentUser setObject:strPosition forKey:@"profilePosition"];
+        }
+    }
+}
+
 - (void)loadMeetups:(id)target selector:(SEL)callback
 {
     NSString *query =
@@ -64,9 +140,6 @@
          }
      }];
 }
-
-#define keys @[@"/me/movies", @"/me/music", @"/me/games", @"/me/books", @"/me/interests", @"/me/likes"]
-#define categories @[@"Movies", @"Music", @"Games", @"Books", @"Interests", @"Likes"]
 
 - (void)loadLikesData:(NSInteger)stage result:(NSMutableArray*)data caller:(id)target selector:(SEL)callback
 {

@@ -15,6 +15,7 @@
 #import "ProfileViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import "TestFlightSDK/TestFlight.h"
+#import "LinkedinLoader.h"
 
 @implementation LoadingController
 
@@ -46,8 +47,10 @@ static Boolean bRotating = true;
 
 - (void)loadSequencePart0
 {
+#ifdef TARGET_FUGE
     // Facebook
     [PFFacebookUtils initializeFacebook];
+#endif
     
     // ACL
     PFACL *defaultACL = [PFACL ACL];
@@ -56,15 +59,17 @@ static Boolean bRotating = true;
     [PFACL setDefaultACL:defaultACL withAccessForCurrentUser:YES];
     
     // Zoom in animated
+    _backgroundImage.hidden = FALSE;
+    _backgroundImage.alpha = 0.0f;
+#ifdef TARGET_FUGE
     _whiteImage.hidden = FALSE;
     _whiteImage.transform = CGAffineTransformScale(CGAffineTransformIdentity, 4.0, 4.0);
-    _backgroundImage.alpha = 0.0f;
-    _backgroundImage.hidden = FALSE;
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
     [UIView setAnimationDuration:1.0];
     _backgroundImage.alpha = 1.0f;
     [UIView commitAnimations];
+#endif
     
     [self performSelector:@selector(loadSequencePart1) withObject:nil afterDelay:0.01f];
 }
@@ -120,6 +125,7 @@ static Boolean bRotating = true;
 {
     [TestFlight passCheckpoint:@"Initialization phase 2"];
     
+#ifdef TARGET_FUGE
     // Check permissions
     Boolean bPermissionsGranted = TRUE;
     NSArray *permissionsArray = FACEBOOK_PERMISSIONS;
@@ -131,7 +137,10 @@ static Boolean bRotating = true;
         }
     
     // Login or load
-    if (! PFFacebookUtils.session.isOpen || ! [[PFUser currentUser] isAuthenticated] || ! bPermissionsGranted )
+    if ( ! PFFacebookUtils.session.isOpen || ! [[PFUser currentUser] isAuthenticated] || ! bPermissionsGranted )
+#elif defined TARGET_S2C
+    if ( ! [[PFUser currentUser] isAuthenticated] )
+#endif
     {
         [self notLoggedIn];
     }
@@ -173,10 +182,24 @@ static Boolean bRotating = true;
         nOptions = UIViewAnimationOptionCurveEaseIn;
     if ( nAnimationStage == 2 )
         nOptions = UIViewAnimationOptionCurveEaseOut;
+#ifdef TARGET_FUGE
     float fPower = bAnimation ? M_PI/2 : M_PI/6;
     [UIView animateWithDuration: 0.5f delay: 0.0f options: nOptions animations: ^ {
         _backgroundImage.transform = CGAffineTransformRotate(_backgroundImage.transform, fPower);
     }
+#elif defined TARGET_S2C
+    [UIView animateWithDuration: bAnimation? 0.5f : 1.0 delay: 0.0f options: nOptions animations: ^ {
+        if (nAnimationStage == 0)
+            _backgroundImage.alpha = 0.0f;
+        else
+        {
+            if ( _backgroundImage.alpha == 1.0f )
+                _backgroundImage.alpha = bAnimation ? 0.2f : 0.5f;
+            else
+                _backgroundImage.alpha = 1.0f;
+        }
+    }
+#endif
     completion: ^(BOOL finished) {
         
         if (nAnimationStage == 0)
@@ -193,8 +216,6 @@ static Boolean bRotating = true;
 {
     [super viewDidLoad];
     
-    [self animateHypno];
-    
     [self performSelector:@selector(loadSequencePart0) withObject:nil afterDelay:0.01f];
 }
 
@@ -207,6 +228,15 @@ static Boolean bRotating = true;
 {
     ProfileViewController *profileViewController = [[ProfileViewController alloc] initWithNibName:@"ProfileView" bundle:nil];
     [self presentViewController:profileViewController animated:TRUE completion:nil];
+}
+
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    bRotating = TRUE;
+    _backgroundImage.hidden = FALSE;
+    _backgroundImage.alpha = 0.0f;
+    [self animateHypno];
 }
 
 - (void) viewDidDisappear:(BOOL)animated
@@ -254,6 +284,7 @@ static Boolean bRotating = true;
     nAnimationStage = 0;
     
     _loginButton.alpha = 1.0f;
+    _linkedinButton.alpha = 1.0f;
     _retryButton.alpha = 1.0f;
     _updateButton.alpha = 1.0f;
     _descriptionText.alpha = 1.0f;
@@ -269,6 +300,7 @@ static Boolean bRotating = true;
         _titleText.centerY -= 200;
         _miscText.centerY += 200;
         _loginButton.alpha = 0.0f;
+        _linkedinButton.alpha = 0.0f;
         _retryButton.alpha = 0.0f;
         _updateButton.alpha = 0.0f;
         _descriptionText.alpha = 0.0f;
@@ -278,6 +310,7 @@ static Boolean bRotating = true;
     }
     completion: ^(BOOL finished) {
         _loginButton.hidden = TRUE;
+        _linkedinButton.hidden = TRUE;
         _retryButton.hidden = TRUE;
         _descriptionText.hidden = TRUE;
         _titleText.hidden = TRUE;
@@ -296,12 +329,14 @@ static Boolean bRotating = true;
     bAnimation = false;
     
     _loginButton.centerY += 200;
+    _linkedinButton.centerY += 200;
     _retryButton.centerY += 200;
     _updateButton.centerY += 200;
     _descriptionText.centerY -= 200;
     _titleText.centerY -= 200;
     _miscText.centerY += 200;
     _loginButton.alpha = 0;
+    _linkedinButton.alpha = 0;
     _retryButton.alpha = 0;
     _updateButton.alpha = 0;
     _descriptionText.alpha = 0;
@@ -311,12 +346,14 @@ static Boolean bRotating = true;
     
     [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
         _loginButton.centerY -= 200;
+        _linkedinButton.centerY -= 200;
         _retryButton.centerY -= 200;
         _updateButton.centerY -= 200;
         _descriptionText.centerY += 200;
         _titleText.centerY += 200;
         _miscText.centerY -= 200;
         _loginButton.alpha = 1.0f;
+        _linkedinButton.alpha = 1.0f;
         _retryButton.alpha = 1.0f;
         _updateButton.alpha = 1.0f;
         _descriptionText.alpha = 1.0f;
@@ -331,7 +368,11 @@ static Boolean bRotating = true;
 - (void) notLoggedIn
 {
     _retryButton.hidden = TRUE;
+#ifdef TARGET_FUGE
     _loginButton.hidden = FALSE;
+#elif defined TARGET_S2C
+    _linkedinButton.hidden = FALSE;
+#endif
     _updateButton.hidden = TRUE;
     
     _descriptionText.hidden = FALSE;
@@ -347,6 +388,7 @@ static Boolean bRotating = true;
 - (void) noInternet
 {
     _loginButton.hidden = TRUE;
+    _linkedinButton.hidden = TRUE;
     _retryButton.hidden = FALSE;
     _updateButton.hidden = TRUE;
     
@@ -362,7 +404,11 @@ static Boolean bRotating = true;
 
 - (void) loginFailed
 {
+#ifdef TARGET_FUGE
     _loginButton.hidden = FALSE;
+#elif defined TARGET_S2C
+    _linkedinButton.hidden = FALSE;
+#endif
     _retryButton.hidden = TRUE;
     _updateButton.hidden = TRUE;
     
@@ -379,6 +425,7 @@ static Boolean bRotating = true;
 - (void) oldVersion
 {
     _loginButton.hidden = TRUE;
+    _linkedinButton.hidden = TRUE;
     _retryButton.hidden = TRUE;
     _updateButton.hidden = FALSE;
     
@@ -395,6 +442,7 @@ static Boolean bRotating = true;
 - (void) bannedUser
 {
     _loginButton.hidden = TRUE;
+    _linkedinButton.hidden = TRUE;
     _retryButton.hidden = TRUE;
     _updateButton.hidden = TRUE;
     
@@ -458,6 +506,18 @@ static Boolean bRotating = true;
     }];
 }
 
+- (void)lnLoadFailed:(NSError*)error
+{
+    [self loginFailed];
+}
+
+- (IBAction)linkedinDown:(id)sender {
+    
+    [self hideAll];
+    
+    [lnLoader initialize:self selector:@selector(loadSequencePart3) failed:@selector(lnLoadFailed:)];
+}
+
 - (IBAction)retryDown:(id)sender {
     [self hideAll];
     if ( bVersionChecked )
@@ -490,6 +550,7 @@ static Boolean bRotating = true;
 }
 - (void)viewDidUnload {
     [self setWhiteImage:nil];
+    [self setLinkedinButton:nil];
     [super viewDidUnload];
 }
 @end

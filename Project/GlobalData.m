@@ -19,7 +19,6 @@
 @implementation GlobalData
 
 static GlobalData *sharedInstance = nil;
-static FacebookLoader* FBloader = nil;
 //static EventbriteLoader* EBloader = nil;
 
 // Get the shared instance and create it if necessary.
@@ -222,6 +221,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [circles removeAllObjects];
     [meetups removeAllObjects];
     
+#ifdef TARGET_FUGE
     // Current user data
     FBRequest *request = [FBRequest requestForMe];
     [request startWithCompletionHandler:^(FBRequestConnection *connection,
@@ -234,49 +234,20 @@ NSInteger sortByName(id num1, id num2, void *context)
         }
         else
         {
-            // Store the current user's Facebook ID on the user
-            [pCurrentUser setObject:user.id forKey:@"fbId"];
-            if ( user.first_name )
-                [pCurrentUser setObject:user.first_name forKey:@"fbNameFirst"];
-            if ( user.last_name )
-                [pCurrentUser setObject:user.last_name forKey:@"fbNameLast"];
-            if ( user.birthday )
-                [pCurrentUser setObject:user.birthday forKey:@"fbBirthday"];
-            if ( [user objectForKey:@"gender"] )
-                [pCurrentUser setObject:[user objectForKey:@"gender"]
-                                     forKey:@"fbGender"];
-            if ( [user objectForKey:@"email"] )
-                pCurrentUser.email = [user objectForKey:@"email"];
+            // Facebook personal data and likes
+            [fbLoader loadUserData:user];
+            [fbLoader loadLikes:self selector:@selector(fbLikesCallback:)];
+#elif defined TARGET_S2C
+            
+#endif
+            
+            // General data
             [pCurrentUser setObject:[globalVariables currentVersion]
                                      forKey:@"version"];
             if ( ! [pCurrentUser objectForKey:@"profileDiscoverable"] )
                 [pCurrentUser setObject:[NSNumber numberWithBool:TRUE] forKey:@"profileDiscoverable"];
             
-            // Looking for job data
-            NSArray* work = [user objectForKey:@"work"];
-            if ( work && work.count > 0 )
-            {
-                NSDictionary* current = work[0];
-                if ( current )
-                {
-                    NSDictionary* employer = [current objectForKey:@"employer"];
-                    NSString* strEmployer = @"";
-                    NSString* strPosition = @"";
-                    if ( employer && [employer objectForKey:@"name"] )
-                        strEmployer = [employer objectForKey:@"name"];
-                    NSDictionary* position = [current objectForKey:@"position"];
-                    if ( position && [position objectForKey:@"name"] )
-                        strPosition = [position objectForKey:@"name"];
-                    [pCurrentUser setObject:strEmployer forKey:@"profileEmployer"];
-                    [pCurrentUser setObject:strPosition forKey:@"profilePosition"];
-                }
-            }
-            
-            // Loading likes
-            if ( !FBloader )
-                FBloader = [[FacebookLoader alloc] init];
-            [FBloader loadLikes:self selector:@selector(fbLikesCallback:)];
-            
+            // Saving user and following the next steps
             [pCurrentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                 
                 if ( error )
@@ -291,7 +262,7 @@ NSInteger sortByName(id num1, id num2, void *context)
                     [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMainComplete object:nil];
                     
                     // Push channels initialization
-                    [pushManager initChannelsForTheFirstTime:user.id];
+                    [pushManager initChannelsForTheFirstTime:strCurrentUserId];
                     
                     // FB friends, 2O friends, fb friends not installed the app
                     [self reloadFriendsInBackground];
@@ -299,18 +270,22 @@ NSInteger sortByName(id num1, id num2, void *context)
                     // Map data: random people, meetups, threads, etc - location based
                     [self reloadMapInfoInBackground:nil toNorthEast:nil];
                     
+#ifdef TARGET_FUGE
                     // FB Meetups
                     [self loadFBMeetups];
                     
                     // EB Meetups
                     [self loadEBMeetups];
+#endif
                     
                     // Inbox
                     [self reloadInboxInBackground];
                 }
             }];
+#ifdef TARGET_FUGE
         }
     }];
+#endif
 }
 
 // Will not use any load status, on fail just nothing
@@ -724,8 +699,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 {
     if ( bIsAdmin )
     {
-        FBloader = [[FacebookLoader alloc] init];
-        [FBloader loadMeetups:self selector:@selector(fbMeetupsCallback:)];
+        [fbLoader loadMeetups:self selector:@selector(fbMeetupsCallback:)];
     }
     else
         [self incrementMapLoadingStage];

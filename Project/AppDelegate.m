@@ -46,12 +46,16 @@
     }
     [TestFlight passCheckpoint:@"Initialization phase 0"];
     
-    // Parse
+    // Parse and crashlytics
+#ifdef TARGET_FUGE
     [Parse setApplicationId:@"VMhSG8IQ9xibufk8lAPpclIwdXVfYD44OpKmsHdn"
                   clientKey:@"u2kJ1jWBjN9qY3ARlJuEyNkvUA9EjOMv1R4w5sDX"];
-    
-    // Crashlytics
     [Crashlytics startWithAPIKey:@"05bf10b64dd5e5dbbe55dfb384d01abad7bba586"];
+#elif defined TARGET_S2C
+    [Parse setApplicationId:@"5bVuo6zSUmUsC8FjQYGOgYTlhbGAxsgFRd49d5Zm"
+                  clientKey:@"yrKLYveKcDiT9m98gMTQqh5SSuhJJnh2MeKoxOF4"];
+    [Crashlytics startWithAPIKey:@"05bf10b64dd5e5dbbe55dfb384d01abad7bba586"];
+#endif
     
     // Left menu
     LeftMenuController *leftMenu = [[LeftMenuController alloc]init];

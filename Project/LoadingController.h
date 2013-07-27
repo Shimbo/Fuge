@@ -15,6 +15,7 @@
     Boolean     bAnimation;
 }
 @property (strong, nonatomic) IBOutlet UIButton *loginButton;
+@property (strong, nonatomic) IBOutlet UIButton *linkedinButton;
 @property (strong, nonatomic) IBOutlet UIButton *retryButton;
 @property (strong, nonatomic) IBOutlet UIButton *updateButton;
 @property (strong, nonatomic) IBOutlet UILabel *titleText;
@@ -26,5 +27,6 @@
 - (IBAction)loginDown:(id)sender;
 - (IBAction)retryDown:(id)sender;
 - (IBAction)updateDown:(id)sender;
+- (IBAction)linkedinDown:(id)sender;
 
 @end
