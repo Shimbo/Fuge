@@ -435,7 +435,7 @@
 
 -(Boolean) addedToCalendar
 {
-    EKEventStore *eventStore = [[EKEventStore alloc] init];
+    /*EKEventStore *eventStore = [[EKEventStore alloc] init];
     
     NSDate* dateEnd = [[NSDate alloc] initWithTimeInterval:durationSeconds sinceDate:dateTime];
     NSPredicate *predicateForEvents = [eventStore predicateForEventsWithStartDate:dateTime endDate:dateEnd calendars:nil];
@@ -447,7 +447,7 @@
         if ([eventToCheck.location isEqualToString:strAddress])
             if ( [eventToCheck.title isEqualToString:[strSubject stringByAppendingFormat:@" at %@", strVenue]])
             return true;
-    }
+    }*/
     
     return false;
 }

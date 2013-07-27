@@ -28,7 +28,7 @@
     if ( commentData )
         return;
     
-    commentData = [PFObject objectWithClassName:@"Message"];
+    commentData = [PFObject objectWithClassName:@"Comment"];
     
     [commentData setObject:strUserFrom forKey:@"userId"];
     [commentData setObject:strNameUserFrom forKey:@"userName"];

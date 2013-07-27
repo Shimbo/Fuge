@@ -183,6 +183,7 @@
 		4CAF3487178871BC0014AE80 /* iconMtArts.png in Resources */ = {isa = PBXBuildFile; fileRef = 4CAF3485178871BC0014AE80 /* iconMtArts.png */; };
 		4CAF3488178871BC0014AE80 /* iconMtArts@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4CAF3486178871BC0014AE80 /* iconMtArts@2x.png */; };
 		4CBAA0DD17099F44003C091F /* PersonInviteCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CBAA0DC17099F44003C091F /* PersonInviteCell.xib */; };
+		4CCE2DF717A33DD300A0574C /* FacebookLogin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4CCE2DF617A33DD300A0574C /* FacebookLogin@2x.png */; };
 		4CDE8D441789D27A00844B7E /* MatchesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE8D421789D27900844B7E /* MatchesViewController.m */; };
 		4CDE8D451789D27A00844B7E /* MatchesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CDE8D431789D27900844B7E /* MatchesViewController.xib */; };
 		4CDE8D471789E03200844B7E /* LikeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CDE8D461789E03200844B7E /* LikeCell.xib */; };
@@ -466,6 +467,7 @@
 		4CAF3485178871BC0014AE80 /* iconMtArts.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMtArts.png; sourceTree = "<group>"; };
 		4CAF3486178871BC0014AE80 /* iconMtArts@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconMtArts@2x.png"; sourceTree = "<group>"; };
 		4CBAA0DC17099F44003C091F /* PersonInviteCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PersonInviteCell.xib; sourceTree = "<group>"; };
+		4CCE2DF617A33DD300A0574C /* FacebookLogin@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "FacebookLogin@2x.png"; path = "resources/FacebookLogin@2x.png"; sourceTree = "<group>"; };
 		4CD2683F1798685F003B0FB8 /* UIParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIParams.h; sourceTree = "<group>"; };
 		4CDE8D411789D27900844B7E /* MatchesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MatchesViewController.h; sourceTree = "<group>"; };
 		4CDE8D421789D27900844B7E /* MatchesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MatchesViewController.m; sourceTree = "<group>"; };
@@ -636,6 +638,7 @@
 				09ABC07D13A1D52D009C3FCF /* Fuge-Prefix.pch */,
 				09ABC07E13A1D52D009C3FCF /* main.m */,
 				4C057321166AE74D00EF6FAD /* FacebookLogin.png */,
+				4CCE2DF617A33DD300A0574C /* FacebookLogin@2x.png */,
 				4CEAEFE0176FC26300578254 /* MainWindow.xib */,
 			);
 			name = "Supporting Files";
@@ -1177,6 +1180,7 @@
 				4CDE8D471789E03200844B7E /* LikeCell.xib in Resources */,
 				4CFEFD7D179ACD5D00BB5660 /* iconCanceled.png in Resources */,
 				4CFEFD7E179ACD5D00BB5660 /* iconCanceled@2x.png in Resources */,
+				4CCE2DF717A33DD300A0574C /* FacebookLogin@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1375,8 +1379,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Fuge;
-				PROVISIONING_PROFILE = "82BA2C5C-9741-4862-8567-3E5DD320F7EA";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "82BA2C5C-9741-4862-8567-3E5DD320F7EA";
+				PROVISIONING_PROFILE = "83E4F8FB-7B5C-4D65-AC0B-D1A4F85933AD";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "83E4F8FB-7B5C-4D65-AC0B-D1A4F85933AD";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
 				WRAPPER_EXTENSION = app;
@@ -1408,8 +1412,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Fuge;
-				PROVISIONING_PROFILE = "82BA2C5C-9741-4862-8567-3E5DD320F7EA";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "82BA2C5C-9741-4862-8567-3E5DD320F7EA";
+				PROVISIONING_PROFILE = "83E4F8FB-7B5C-4D65-AC0B-D1A4F85933AD";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "83E4F8FB-7B5C-4D65-AC0B-D1A4F85933AD";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
