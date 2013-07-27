@@ -139,19 +139,6 @@
 		4C334475170873A400422689 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C334474170873A400422689 /* Message.m */; };
 		4C4228E716C46B62008EBA67 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C4228E516C46B62008EBA67 /* EventKit.framework */; };
 		4C4228E816C46B62008EBA67 /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C4228E616C46B62008EBA67 /* EventKitUI.framework */; };
-		4C444E2C179FF8C300288139 /* LIALinkedInApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C444E25179FF8C300288139 /* LIALinkedInApplication.m */; };
-		4C444E2D179FF8C300288139 /* LIALinkedInAuthorizationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C444E27179FF8C300288139 /* LIALinkedInAuthorizationViewController.m */; };
-		4C444E2E179FF8C300288139 /* LIALinkedInHttpClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C444E29179FF8C300288139 /* LIALinkedInHttpClient.m */; };
-		4C444E2F179FF8C300288139 /* NSString+LIAEncode.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C444E2B179FF8C300288139 /* NSString+LIAEncode.m */; };
-		4C444E44179FFF0F00288139 /* AFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C444E32179FFF0F00288139 /* AFHTTPClient.m */; };
-		4C444E45179FFF0F00288139 /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C444E34179FFF0F00288139 /* AFHTTPRequestOperation.m */; };
-		4C444E46179FFF0F00288139 /* AFImageRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C444E36179FFF0F00288139 /* AFImageRequestOperation.m */; };
-		4C444E47179FFF0F00288139 /* AFJSONRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C444E38179FFF0F00288139 /* AFJSONRequestOperation.m */; };
-		4C444E48179FFF0F00288139 /* AFNetworkActivityIndicatorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C444E3A179FFF0F00288139 /* AFNetworkActivityIndicatorManager.m */; };
-		4C444E49179FFF0F00288139 /* AFPropertyListRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C444E3D179FFF0F00288139 /* AFPropertyListRequestOperation.m */; };
-		4C444E4A179FFF0F00288139 /* AFURLConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C444E3F179FFF0F00288139 /* AFURLConnectionOperation.m */; };
-		4C444E4B179FFF0F00288139 /* AFXMLRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C444E41179FFF0F00288139 /* AFXMLRequestOperation.m */; };
-		4C444E4C179FFF0F00288139 /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C444E43179FFF0F00288139 /* UIImageView+AFNetworking.m */; };
 		4C444E4E17A0017D00288139 /* FacebookLogin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C444E4D17A0017D00288139 /* FacebookLogin@2x.png */; };
 		4C444E5517A0045700288139 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 09ABC07E13A1D52D009C3FCF /* main.m */; };
 		4C444E5617A0045700288139 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 09ABC08113A1D52D009C3FCF /* AppDelegate.m */; };
@@ -376,16 +363,22 @@
 		4C6C3A041727FE4100F5F1B3 /* iconFacebook@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C6C3A001727FE4000F5F1B3 /* iconFacebook@2x.png */; };
 		4C6C3A051727FE4100F5F1B3 /* iconThread.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C6C3A011727FE4000F5F1B3 /* iconThread.png */; };
 		4C6C3A061727FE4100F5F1B3 /* iconThread@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C6C3A021727FE4000F5F1B3 /* iconThread@2x.png */; };
-		4C76EB0A17A463F4007770D1 /* S2C-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4C76EB0917A463F4007770D1 /* S2C-Info.plist */; };
 		4C76EB0F17A465A2007770D1 /* S2C-Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C76EB0B17A465A2007770D1 /* S2C-Icon-72.png */; };
 		4C76EB1017A465A2007770D1 /* S2C-Icon-72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C76EB0C17A465A2007770D1 /* S2C-Icon-72@2x.png */; };
 		4C76EB1117A465A2007770D1 /* S2C-Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C76EB0D17A465A2007770D1 /* S2C-Icon.png */; };
 		4C76EB1217A465A2007770D1 /* S2C-Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C76EB0E17A465A2007770D1 /* S2C-Icon@2x.png */; };
-		4C76EB1317A46962007770D1 /* Fuge-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 09ABC07913A1D52D009C3FCF /* Fuge-Info.plist */; };
 		4C76EB1917A46AB2007770D1 /* bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C76EB1517A46AB2007770D1 /* bg.png */; };
 		4C76EB1A17A46AB2007770D1 /* bg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C76EB1617A46AB2007770D1 /* bg@2x.png */; };
 		4C76EB1B17A46AB2007770D1 /* bg@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C76EB1717A46AB2007770D1 /* bg@2x~ipad.png */; };
 		4C76EB1C17A46AB2007770D1 /* bg~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C76EB1817A46AB2007770D1 /* bg~ipad.png */; };
+		4C76EB2017A47796007770D1 /* LoadingController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CA3F06417170D8A00271E7A /* LoadingController.xib */; };
+		4C76EB2217A478DF007770D1 /* white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C466041176FB63E00D1FE3A /* white@2x.png */; };
+		4C76EB2317A478DF007770D1 /* white~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C8F7BC9177B58920015B2A8 /* white~ipad.png */; };
+		4C76EB2417A478DF007770D1 /* white@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C8F7BC8177B58920015B2A8 /* white@2x~ipad.png */; };
+		4C76EB2517A47937007770D1 /* LinkedinLogin.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C444E4F17A003DB00288139 /* LinkedinLogin.png */; };
+		4C76EB2617A4793B007770D1 /* LinkedinLogin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C444E5017A003DB00288139 /* LinkedinLogin@2x.png */; };
+		4C76EB2717A4793D007770D1 /* FacebookLogin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C444E4D17A0017D00288139 /* FacebookLogin@2x.png */; };
+		4C76EB2817A47940007770D1 /* FacebookLogin.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C057321166AE74D00EF6FAD /* FacebookLogin.png */; };
 		4C7CE99E1796183F0005A70F /* PCLineChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7CE99D1796183F0005A70F /* PCLineChartView.m */; };
 		4C7E3FD61699017C0065484F /* NewMeetupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FD41699017C0065484F /* NewMeetupViewController.m */; };
 		4C7E3FD71699017C0065484F /* NewMeetupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E3FD51699017C0065484F /* NewMeetupViewController.xib */; };
@@ -1573,7 +1566,8 @@
 				4CFEFD7D179ACD5D00BB5660 /* iconCanceled.png in Resources */,
 				4CFEFD7E179ACD5D00BB5660 /* iconCanceled@2x.png in Resources */,
 				4C444E4E17A0017D00288139 /* FacebookLogin@2x.png in Resources */,
-				4C76EB1317A46962007770D1 /* Fuge-Info.plist in Resources */,
+				4C76EB2517A47937007770D1 /* LinkedinLogin.png in Resources */,
+				4C76EB2617A4793B007770D1 /* LinkedinLogin@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1686,7 +1680,6 @@
 				4C444F3717A0045700288139 /* iconCanceled@2x.png in Resources */,
 				4C444F3917A0045700288139 /* LinkedinLogin.png in Resources */,
 				4C444F3A17A0045700288139 /* LinkedinLogin@2x.png in Resources */,
-				4C76EB0A17A463F4007770D1 /* S2C-Info.plist in Resources */,
 				4C76EB0F17A465A2007770D1 /* S2C-Icon-72.png in Resources */,
 				4C76EB1017A465A2007770D1 /* S2C-Icon-72@2x.png in Resources */,
 				4C76EB1117A465A2007770D1 /* S2C-Icon.png in Resources */,
@@ -1695,6 +1688,12 @@
 				4C76EB1A17A46AB2007770D1 /* bg@2x.png in Resources */,
 				4C76EB1B17A46AB2007770D1 /* bg@2x~ipad.png in Resources */,
 				4C76EB1C17A46AB2007770D1 /* bg~ipad.png in Resources */,
+				4C76EB2017A47796007770D1 /* LoadingController.xib in Resources */,
+				4C76EB2217A478DF007770D1 /* white@2x.png in Resources */,
+				4C76EB2317A478DF007770D1 /* white~ipad.png in Resources */,
+				4C76EB2417A478DF007770D1 /* white@2x~ipad.png in Resources */,
+				4C76EB2717A4793D007770D1 /* FacebookLogin@2x.png in Resources */,
+				4C76EB2817A47940007770D1 /* FacebookLogin.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1806,19 +1805,6 @@
 				4C7CE99E1796183F0005A70F /* PCLineChartView.m in Sources */,
 				4C9A1575179D583C006736E7 /* Comment.m in Sources */,
 				4C9A1577179D5C25006736E7 /* CommentData.m in Sources */,
-				4C444E2C179FF8C300288139 /* LIALinkedInApplication.m in Sources */,
-				4C444E2D179FF8C300288139 /* LIALinkedInAuthorizationViewController.m in Sources */,
-				4C444E2E179FF8C300288139 /* LIALinkedInHttpClient.m in Sources */,
-				4C444E2F179FF8C300288139 /* NSString+LIAEncode.m in Sources */,
-				4C444E44179FFF0F00288139 /* AFHTTPClient.m in Sources */,
-				4C444E45179FFF0F00288139 /* AFHTTPRequestOperation.m in Sources */,
-				4C444E46179FFF0F00288139 /* AFImageRequestOperation.m in Sources */,
-				4C444E47179FFF0F00288139 /* AFJSONRequestOperation.m in Sources */,
-				4C444E48179FFF0F00288139 /* AFNetworkActivityIndicatorManager.m in Sources */,
-				4C444E49179FFF0F00288139 /* AFPropertyListRequestOperation.m in Sources */,
-				4C444E4A179FFF0F00288139 /* AFURLConnectionOperation.m in Sources */,
-				4C444E4B179FFF0F00288139 /* AFXMLRequestOperation.m in Sources */,
-				4C444E4C179FFF0F00288139 /* UIImageView+AFNetworking.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2016,8 +2002,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Fuge;
-				PROVISIONING_PROFILE = "82BA2C5C-9741-4862-8567-3E5DD320F7EA";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "82BA2C5C-9741-4862-8567-3E5DD320F7EA";
+				PROVISIONING_PROFILE = "83E4F8FB-7B5C-4D65-AC0B-D1A4F85933AD";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "83E4F8FB-7B5C-4D65-AC0B-D1A4F85933AD";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
 				WRAPPER_EXTENSION = app;
@@ -2050,8 +2036,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Fuge;
-				PROVISIONING_PROFILE = "82BA2C5C-9741-4862-8567-3E5DD320F7EA";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "82BA2C5C-9741-4862-8567-3E5DD320F7EA";
+				PROVISIONING_PROFILE = "83E4F8FB-7B5C-4D65-AC0B-D1A4F85933AD";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "83E4F8FB-7B5C-4D65-AC0B-D1A4F85933AD";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";

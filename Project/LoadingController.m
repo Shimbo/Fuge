@@ -15,7 +15,10 @@
 #import "ProfileViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import "TestFlightSDK/TestFlight.h"
+
+#ifdef TARGET_S2C
 #import "LinkedinLoader.h"
+#endif
 
 @implementation LoadingController
 
@@ -514,8 +517,9 @@ static Boolean bRotating = true;
 - (IBAction)linkedinDown:(id)sender {
     
     [self hideAll];
-    
+#ifdef TARGET_S2C
     [lnLoader initialize:self selector:@selector(loadSequencePart3) failed:@selector(lnLoadFailed:)];
+#endif
 }
 
 - (IBAction)retryDown:(id)sender {
