@@ -247,9 +247,9 @@ static Boolean bFirstZoom = true;
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-    _userLocation.coordinate = newLocation.coordinate;
-    if ( ! currentPerson )
+    if ( ! _userLocation )
         [self addCurrentPerson];
+    _userLocation.coordinate = newLocation.coordinate;
 }
 
 - (void)focusMapOnUser
@@ -285,12 +285,11 @@ static Boolean bFirstZoom = true;
 
 - (void)addCurrentPerson
 {
-    currentPerson = [[Person alloc] init:pCurrentUser circle:CIRCLE_NONE];
-    currentPerson.isCurrentUser = YES;
-    _userLocation = [[PersonAnnotation alloc] initWithPerson:currentPerson];
+    Person* current = currentPerson;
+    _userLocation = [[PersonAnnotation alloc] initWithPerson:current];
     _userLocation.title = [globalVariables shortUserName];
-    if ( currentPerson.strStatus && currentPerson.strStatus.length > 0 )
-        _userLocation.subtitle = currentPerson.strStatus;
+    if ( current.strStatus && current.strStatus.length > 0 )
+        _userLocation.subtitle = current.strStatus;
     else
         _userLocation.subtitle = @"This is you";
     [self focusMapOnUser];

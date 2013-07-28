@@ -69,7 +69,7 @@
         
         // all read threads are passed as well
         if ( ! orange )
-            if ( [globalData getConversationPresence:self.meetup.strId meetup:TRUE] )
+            if ( [currentPerson getConversationPresence:self.meetup.strId meetup:TRUE] )
                 read = true;
     }
     

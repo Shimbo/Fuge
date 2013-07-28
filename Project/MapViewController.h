@@ -27,8 +27,6 @@
     UIPopoverController* popover;
     UIActionSheet*       actionSheet;
     
-    Person* currentPerson;
-    
     NSMutableArray* dayButtonLabels;
     NSMutableArray* selectionChoices;
 

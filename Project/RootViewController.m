@@ -91,7 +91,7 @@
         if ( circle.idCircle != CIRCLE_FBOTHERS)
             [arrayEngagementUsers addObjectsFromArray:circle.getPersons];
 	[arrayEngagementUsers sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        if ( [((Person*)obj1) getConversationCount:TRUE onlyMessages:FALSE] > [((Person*)obj2) getConversationCount:TRUE onlyMessages:FALSE] )
+        if ( [((Person*)obj1) getConversationCountStats:TRUE onlyMessages:FALSE] > [((Person*)obj2) getConversationCountStats:TRUE onlyMessages:FALSE] )
             return NSOrderedAscending;
         else
             return NSOrderedDescending;
@@ -260,7 +260,7 @@
     // Engagement details
     if ( sortingMode == SORTING_ENGAGEMENT )
     {
-        NSString* strMatches = [NSString stringWithFormat:@"%d/%d/%d/%d", [person getConversationCount:TRUE onlyMessages:FALSE], [person getConversationCount:FALSE onlyMessages:FALSE], [person getConversationCount:TRUE onlyMessages:TRUE], [person getConversationCount:FALSE onlyMessages:TRUE]];
+        NSString* strMatches = [NSString stringWithFormat:@"%d/%d/%d/%d", [person getConversationCountStats:TRUE onlyMessages:FALSE], [person getConversationCountStats:FALSE onlyMessages:FALSE], [person getConversationCountStats:TRUE onlyMessages:TRUE], [person getConversationCountStats:FALSE onlyMessages:TRUE]];
         personCell.personInfo.text = strMatches;
     }
     if ( person.strStatus && person.strStatus.length > 0 )

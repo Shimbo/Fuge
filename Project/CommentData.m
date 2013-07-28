@@ -29,7 +29,7 @@
 - (NSArray*)getUniqueThreads
 {
     NSMutableArray *threadsUnique = [[NSMutableArray alloc] init];
-    
+    Person* current = currentPerson;
     for (Comment *comment in comments)
     {
         // Looking for already created thread
@@ -45,7 +45,7 @@
                 Boolean bOwnMessage = ( [comment.strUserFrom compare:strCurrentUserId] == NSOrderedSame );
                 Boolean bOldOwnMessage = ( [commentOld.strUserFrom compare:strCurrentUserId] == NSOrderedSame );
                 
-                NSDate* lastReadDate = [self getConversationDate:comment.strMeetupId meetup:TRUE];
+                NSDate* lastReadDate = [current getConversationDate:comment.strMeetupId meetup:TRUE];
                 
                 Boolean bOldBeforeThanReadDate = false;
                 Boolean bNewLaterThanReadDate = true;

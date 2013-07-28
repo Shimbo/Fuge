@@ -9,7 +9,7 @@
 
 @implementation Person
 
-@synthesize strId, strFirstName, strLastName, strAge, strGender, distance, /*role, strArea,*/ strEmployer, strPosition, strCircle, strStatus, idCircle, personData, numUnreadMessages, friendsFb, friends2O, likes;
+@synthesize strId, strFirstName, strLastName, strAge, strGender, distance, /*role, strArea,*/ strEmployer, strPosition, strCircle, strStatus, idCircle, personData, numUnreadMessages, friendsFb, friends2O, likes, isCurrentUser;
 
 + (void)initialize {
 	if (self == [Person class]) {
@@ -34,9 +34,8 @@
         idCircle = nCircle;
         
         // Location
-        location = nil;
-        distance = nil;
-        [self updateLocation:[user objectForKey:@"location"]];
+        location = [user objectForKey:@"location"];;
+        [self calculateDistance];
         
         // Friends and likes
         friendsFb = [user objectForKey:@"fbFriends"];
@@ -62,9 +61,28 @@
             strAge = @"";
         
         numUnreadMessages = 0;
+        
+        // Current user
+        if ( user == pCurrentUser )
+            isCurrentUser = YES;
 	}
 	return self;
 }
+
+- (void)update:(PFUser*)newData
+{
+    PFGeoPoint* newLocation = [newData objectForKey:@"location"];
+    if ( newLocation )
+    {
+        location = newLocation;
+        [self calculateDistance];
+    }
+    
+    strStatus = [newData objectForKey:@"profileStatus"];
+    
+    personData = newData;
+}
+
 
 - (void)calculateDistance
 {
@@ -79,14 +97,6 @@
     
     distance = [NSNumber numberWithDouble:
                 [geoPointUser distanceInKilometersTo:location]*1000.0f];
-}
-
-- (void)updateLocation:(PFGeoPoint*)ptNewLocation
-{
-    if ( ptNewLocation )
-        location = ptNewLocation;
-    
-    [self calculateDistance];
 }
 
 - (PFGeoPoint*) getLocation
@@ -377,7 +387,7 @@
     return nil;
 }
 
-- (NSUInteger) getConversationCount:(Boolean)onlyNotEmpty onlyMessages:(Boolean)bOnlyMessages
+- (NSUInteger) getConversationCountStats:(Boolean)onlyNotEmpty onlyMessages:(Boolean)bOnlyMessages
 {
     NSUInteger nResult = 0;
     
@@ -407,6 +417,42 @@
     }
     
     return nResult;
+}
+
+- (Boolean) getConversationPresence:(NSString*)strThread meetup:(Boolean)bMeetup
+{
+    NSString* strKeyCounts = bMeetup ? @"threadCounts" : @"messageCounts";
+    
+    NSMutableDictionary* conversations = [personData objectForKey:strKeyCounts];
+    if ( ! conversations )
+        return false;
+    NSNumber* num = [conversations valueForKey:strThread];
+    if ( ! num )
+        return false;
+    return true;
+}
+
+- (NSDate*) getConversationDate:(NSString*)strThread meetup:(Boolean)bMeetup
+{
+    NSString* strKeyDates = bMeetup ? @"threadDates" : @"messageDates";
+    
+    NSMutableDictionary* conversations = [personData objectForKey:strKeyDates];
+    if ( ! conversations )
+        return nil;
+    return [conversations valueForKey:strThread];
+}
+
+- (NSUInteger) getConversationCount:(NSString*)strThread meetup:(Boolean)bMeetup
+{
+    NSString* strKeyCounts = bMeetup ? @"threadCounts" : @"messageCounts";
+    
+    NSMutableDictionary* conversations = [personData objectForKey:strKeyCounts];
+    if ( ! conversations )
+        return 0;
+    NSNumber* num = [conversations valueForKey:strThread];
+    if ( ! num )
+        return 0;
+    return [num intValue];
 }
 
 @end

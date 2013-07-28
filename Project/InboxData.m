@@ -155,6 +155,7 @@ NSInteger sort2(id item1, id item2, void *context)
     
     // Parsing data
     NSDate* dateRecent = [[NSDate alloc] initWithTimeIntervalSinceNow:-24*60*60*7];
+    Person* current = currentPerson;
     for ( InboxViewItem* item in sortedArray )
     {
         // Invites and new users always in new
@@ -177,9 +178,9 @@ NSInteger sort2(id item1, id item2, void *context)
         
         NSDate* lastDate;
         if ( item.type == INBOX_ITEM_COMMENT || ( [item.fromId compare:strCurrentUserId] == NSOrderedSame ) )
-            lastDate = [self getConversationDate:item.toId meetup:(item.type == INBOX_ITEM_COMMENT)];
+            lastDate = [current getConversationDate:item.toId meetup:(item.type == INBOX_ITEM_COMMENT)];
         else
-            lastDate = [self getConversationDate:item.fromId meetup:(item.type == INBOX_ITEM_COMMENT)];
+            lastDate = [current getConversationDate:item.fromId meetup:(item.type == INBOX_ITEM_COMMENT)];
         
         if ( ! lastDate )
             bNew = true;
@@ -351,42 +352,6 @@ NSInteger sort2(id item1, id item2, void *context)
     
     // Save
     [[PFUser currentUser] saveInBackground]; // CHECK: here was Eventually
-}
-
-- (Boolean) getConversationPresence:(NSString*)strThread meetup:(Boolean)bMeetup
-{
-    NSString* strKeyCounts = bMeetup ? @"threadCounts" : @"messageCounts";
-    
-    NSMutableDictionary* conversations = [[PFUser currentUser] objectForKey:strKeyCounts];
-    if ( ! conversations )
-        return false;
-    NSNumber* num = [conversations valueForKey:strThread];
-    if ( ! num )
-        return false;
-    return true;
-}
-
-- (NSDate*) getConversationDate:(NSString*)strThread meetup:(Boolean)bMeetup
-{
-    NSString* strKeyDates = bMeetup ? @"threadDates" : @"messageDates";
-
-    NSMutableDictionary* conversations = [[PFUser currentUser] objectForKey:strKeyDates];
-    if ( ! conversations )
-        return nil;
-    return [conversations valueForKey:strThread];
-}
-
-- (NSUInteger) getConversationCount:(NSString*)strThread meetup:(Boolean)bMeetup
-{
-    NSString* strKeyCounts = bMeetup ? @"threadCounts" : @"messageCounts";
-    
-    NSMutableDictionary* conversations = [[PFUser currentUser] objectForKey:strKeyCounts];
-    if ( ! conversations )
-        return 0;
-    NSNumber* num = [conversations valueForKey:strThread];
-    if ( ! num )
-        return 0;
-    return [num intValue];
 }
 
 -(PFObject*)getInviteForMeetup:(NSString*)strId

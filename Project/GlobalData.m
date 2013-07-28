@@ -337,7 +337,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     if ( [strId compare:[ [PFUser currentUser] objectForKey:@"fbId"] ] == NSOrderedSame )
         return nil;
     
-    // Already added users: only update location
+    // Already added users: update
     Person* person = [self getPersonById:strId];
     if ( person )
     {
@@ -349,8 +349,7 @@ NSInteger sortByName(id num1, id num2, void *context)
             [person changeCircle:circleUser];
         }
         // Updating location and status
-        [person updateLocation:[user objectForKey:@"location"]];
-        person.strStatus = [user objectForKey:@"profileStatus"];
+        [person update:user];
         return person;
     }
     

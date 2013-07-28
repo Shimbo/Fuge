@@ -50,7 +50,7 @@
     textView.editable = FALSE;
     
     // Comments
-    [globalData loadMessageThread:personThis target:self selector:@selector(callback:error:)];
+    [globalData loadMessageThread:personThis target:self selector:@selector(messagesLoaded:error:)];
     
     //[profileImage loadImageFromURL:personThis.largeImageURL];
     
@@ -86,7 +86,7 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void) callback:(NSArray*)messages error:(NSError *)error
+-(void) messagesLoaded:(NSArray*)messages error:(NSError *)error
 {
     if (error || ! messages )
     {
@@ -96,34 +96,59 @@
     
     NSMutableString* stringHistory = [[NSMutableString alloc] initWithFormat:@""];
     
-    // Messages
-    for ( int n = 0; n < messages.count; n++ )
-    {
-        PFObject* message = messages[n];
-        NSString* strText = [message objectForKey:@"text"];
-        if ( [ personThis.strId compare:[ message objectForKey:@"idUserFrom"] ] == NSOrderedSame )
-        {
-            [stringHistory appendString:@"    "];
-            [stringHistory appendString:personThis.strFirstName];
-            [stringHistory appendString:@": "];
-        }
-        else
-            [stringHistory appendString:@"    You: "];
-        [stringHistory appendString:strText];
-        if ( n != messages.count - 1 )
-            [stringHistory appendString:@"\n"];
-    }
-    
-    // Feedback message (always at the bottom, first one)
+    // Feedback message (always at the top, first one)
     if ( [globalVariables isFeedbackBot:personThis.strId] )
     {
-        if ( stringHistory.length > 0 )
-            [stringHistory appendString:@"\n"];
         [stringHistory appendString:@"    "];
         [stringHistory appendString:personThis.strFirstName];
         [stringHistory appendString:@": "];
         [stringHistory appendString:WELCOME_MESSAGE];
         if ( messages.count != 0 )
+            [stringHistory appendString:@"\n"];
+    }
+    
+    // Date formatter
+    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateStyle:NSDateFormatterMediumStyle];
+    [formatter setTimeStyle:NSDateFormatterNoStyle];
+    [formatter setDoesRelativeDateFormatting:TRUE];
+    
+    // Messages
+    NSDate* conversationDate = [personThis getConversationDate:strCurrentUserId meetup:FALSE];
+    Boolean bReadMarkAdded = FALSE;
+    for ( int n = 0; n < messages.count; n++ )
+    {
+        Message* message = messages[n];
+        Message* nextMessage = (n == messages.count-1 ? nil : messages[n+1]);
+        
+        // My or opponents?
+        Boolean myMessage = ([personThis.strId compare:message.strUserFrom] != NSOrderedSame);
+        
+        // Add message
+        if ( myMessage )
+            [stringHistory appendString:@"    You: "];
+        else
+        {
+            [stringHistory appendString:@"    "];
+            [stringHistory appendString:personThis.strFirstName];
+            [stringHistory appendString:@": "];
+        }
+        [stringHistory appendString:[formatter stringFromDate:message.dateCreated]];
+        [stringHistory appendString:@": "];
+        [stringHistory appendString:message.strText];
+        
+        // Append read mark
+        Boolean thisMessageBefore = [conversationDate compare:message.dateCreated] != NSOrderedAscending;
+        Boolean nextMessageAfter = ( ! nextMessage || [conversationDate compare:nextMessage.dateCreated] == NSOrderedAscending);
+        if ( myMessage && ! bReadMarkAdded && thisMessageBefore && nextMessageAfter )
+        {
+            [stringHistory appendString:@"\n"];
+            [stringHistory appendString:[NSString stringWithFormat:@"                                    * Read %@", [formatter stringFromDate:conversationDate]]];
+            
+            bReadMarkAdded = TRUE;
+        }
+        
+        if ( n != messages.count - 1 )
             [stringHistory appendString:@"\n"];
     }
     
@@ -238,11 +263,11 @@ double animatedDistance;
     }
     
     // Updating history
-    NSMutableString* stringHistory = [[NSMutableString alloc] initWithFormat:@""];
+    NSMutableString* stringHistory = [NSMutableString stringWithString:messageHistory.text];
+    if ( stringHistory.length > 0 )
+        [stringHistory appendString:@"\n"];
     [stringHistory appendString:@"    You: "];
     [stringHistory appendString:textView.text];
-    [stringHistory appendString:@"\n"];
-    [stringHistory appendString:messageHistory.text];
     [messageHistory setText:stringHistory];
     
     // Scrolling

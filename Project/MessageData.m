@@ -30,7 +30,7 @@
     NSMutableArray *messagesUnique = [[NSMutableArray alloc] init];
     
     NSMutableDictionary* unreadCounts = [[NSMutableDictionary alloc] initWithCapacity:30];
-    
+    Person* current = currentPerson;
     for (Message *message in messages)
     {
         // Looking for already created thread
@@ -51,9 +51,9 @@
                 
                 NSDate* lastReadDate;
                 if ( bOwnMessage )
-                    lastReadDate = [self getConversationDate:message.strUserTo meetup:FALSE];
+                    lastReadDate = [current getConversationDate:message.strUserTo meetup:FALSE];
                 else
-                    lastReadDate = [self getConversationDate:message.strUserFrom meetup:FALSE];
+                    lastReadDate = [current getConversationDate:message.strUserFrom meetup:FALSE];
                 
                 Boolean bOldBeforeThanReadDate = false;
                 Boolean bNewLaterThanReadDate = true;
@@ -150,7 +150,7 @@
             // Loading it with data
             for ( PFObject* messageData in result )
                 [self addMessageWithData:messageData];
-                    
+            
             // Loading stage complete
             [self incrementInboxLoadingStage];
         }
@@ -174,15 +174,23 @@
     NSPredicate* predicate = [NSPredicate predicateWithFormat:@"idUserTo = %@ AND idUserFrom = %@ OR idUserTo = %@ AND idUserFrom = %@", strCurrentUserId, person.strId, person.strId, strCurrentUserId];
     PFQuery *messageQuery = [PFQuery queryWithClassName:@"Message" predicate:predicate];
     messageQuery.limit = 1000;
-    [messageQuery orderByDescending:@"createdAt"];
+    [messageQuery orderByAscending:@"createdAt"];
     
     [messageQuery findObjectsInBackgroundWithBlock:^(NSArray *result, NSError* error) {
         
-        [target performSelector:callback withObject:result withObject:error];
+        // Loading it with data
+        NSMutableArray* messageThread = [NSMutableArray arrayWithCapacity:30];
+        for ( PFObject* messageData in result )
+        {
+            Message* message = [[Message alloc] init];
+            [message unpack:messageData];
+            [messageThread addObject:message];
+        }
+        [target performSelector:callback withObject:messageThread withObject:error];
         
         // Last read message date/count
-        NSNumber* count = result ? [NSNumber numberWithInteger:result.count] : [NSNumber numberWithInteger:0];
-        NSDate* date = count.integerValue > 0 ? ((PFObject*)result[0]).createdAt : nil;
+        NSNumber* count = result ? [NSNumber numberWithInteger:messageThread.count] : [NSNumber numberWithInteger:0];
+        NSDate* date = count.integerValue > 0 ? ((Message*)[messageThread lastObject]).dateCreated : nil;
         if ( ! date && [globalVariables isFeedbackBot:person.strId] )
         {
             date = [NSDate date];   // Feedback bot hack to make his default message read

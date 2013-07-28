@@ -5,6 +5,8 @@
 
 //@class PersonView;
 
+#define currentPerson [[Person alloc] init:pCurrentUser circle:CIRCLE_NONE]
+
 @interface Person : NSObject {
     
     NSString *strId;
@@ -26,6 +28,7 @@
     PFGeoPoint* location;
     
     NSUInteger idCircle;
+    Boolean isCurrentUser;
     
     // Read-only of course
     PFUser* personData;
@@ -54,8 +57,8 @@
 // User could be nil (!) for fb friends who are not in the app yet for example
 - (id)init:(PFUser*)user circle:(NSUInteger)nCircle;
 - (id)initEmpty:(NSUInteger)nCircle;
+- (void)update:(PFUser*)newData;
 
-- (void)updateLocation:(PFGeoPoint*)ptNewLocation;
 - (void)calculateDistance;
 - (void)changeCircle:(NSUInteger)nCircle;
 
@@ -93,6 +96,12 @@
 - (NSUInteger) matchesRank;
 - (NSDictionary*) getLikeById:(NSString*)like;
 
-- (NSUInteger) getConversationCount:(Boolean)onlyNotEmpty onlyMessages:(Boolean)bOnlyMessages;
+// For statistics
+- (NSUInteger) getConversationCountStats:(Boolean)onlyNotEmpty onlyMessages:(Boolean)bOnlyMessages;
+
+// Conversations
+- (Boolean) getConversationPresence:(NSString*)strThread meetup:(Boolean)bMeetup;
+- (NSDate*) getConversationDate:(NSString*)strThread meetup:(Boolean)bMeetup;
+- (NSUInteger) getConversationCount:(NSString*)strThread meetup:(Boolean)bMeetup;
 
 @end
