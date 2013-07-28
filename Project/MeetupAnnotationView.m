@@ -165,7 +165,7 @@
     [self setUnreaCount:ann.numUnreadCount];
     if (ann.attendedPersons.count) {
         Person *p = ann.attendedPersons[0];
-        [self loadImageWithURL:p.imageURL];
+        [self loadImageWithURL:p.smallAvatarUrl];
     }else{
         _personImage.image = nil;
     }

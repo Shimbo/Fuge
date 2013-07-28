@@ -6,6 +6,7 @@
 #import "LocationManager.h"
 #import "GlobalData.h"
 #import "GlobalVariables.h"
+#import "FacebookLoader.h"
 
 @implementation Person
 
@@ -34,7 +35,7 @@
         idCircle = nCircle;
         
         // Location
-        location = [user objectForKey:@"location"];;
+        location = [user objectForKey:@"location"];
         [self calculateDistance];
         
         // Friends and likes
@@ -166,25 +167,20 @@
         return [[NSString alloc] initWithFormat:@"%.0f years", interval/(60.0f*60.0f*24.0f*30.0f*12.0f)];
 }
 
-+(NSString*)imageURLWithId:(NSString*)fbId
-{
-    return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&width=100&height=100&return_ssl_resources=1", fbId];
+-(NSString*)smallAvatarUrl{
+#ifdef TARGET_FUGE
+    return [fbLoader getSmallAvatarUrl:strId];
+#elif defined TARGET_S2C
+    return [personData objectForKey:@"urlAvatar"];
+#endif
 }
 
-+(NSString*)largeImageURLWithId:(NSString*)fbId
-{
-    return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", fbId];
-}
-
-
--(NSString*)imageURL{
-    return [Person imageURLWithId:strId];
-//    return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&width=100&height=100&return_ssl_resources=1", fbId ? fbId : strId];
-}
-
--(NSString*)largeImageURL{
-    return [Person largeImageURLWithId:strId];
-//    return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", fbId ? fbId : strId];
+-(NSString*)largeAvatarUrl{
+#ifdef TARGET_FUGE
+    return [fbLoader getLargeAvatarUrl:strId];
+#elif defined TARGET_S2C
+    return [personData objectForKey:@"urlAvatar"];
+#endif
 }
 
 -(NSString*)shortName
@@ -209,15 +205,21 @@
     return strResult;
 }
 
-+(void)showInviteDialog:(NSString*)strId
+-(void)showInviteDialog
 {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithObjectsAndKeys: strId, @"to", nil];
     [FBWebDialogs presentRequestsDialogModallyWithSession:nil message:FB_INVITE_MESSAGE title:nil parameters:params handler:nil];
 }
 
-+(void)openProfileInBrowser:(NSString*)strId
+-(void)openProfileInBrowser
 {
-    NSString *url = [NSString stringWithFormat:@"http://facebook.com/%@", strId];
+#ifdef TARGET_FUGE
+    NSString *url = [fbLoader getProfileUrl:strId];
+#elif defined TARGET_S2C
+    NSString *url = [personData objectForKey:@"urlProfile"];
+    if ( ! url )
+        return;
+#endif
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
 }
 

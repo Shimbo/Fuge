@@ -193,7 +193,7 @@
 	// Get the time zones for the region for the section
 	Person *person = [self getArrayForSecionNumber:indexPath.section][indexPath.row];
     personCell.personName.text = [person fullName];
-    [personCell.personImage loadImageFromURL:person.imageURL];
+    [personCell.personImage loadImageFromURL:person.smallAvatarUrl];
     if ([selected objectForKey:person.strId]) {
         personCell.accessoryType = UITableViewCellAccessoryCheckmark;
     }else{

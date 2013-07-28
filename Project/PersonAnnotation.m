@@ -36,7 +36,7 @@
 }
 
 -(NSString*)imageURL{
-    return _person.imageURL;
+    return _person.smallAvatarUrl;
 }
 
 

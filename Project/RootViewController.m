@@ -223,7 +223,7 @@
             break;
     }
     
-    [personCell.personImage loadImageFromURL:person.imageURL];
+    [personCell.personImage loadImageFromURL:person.smallAvatarUrl];
     personCell.personName.text = [person fullName];
     if ( person.idCircle == CIRCLE_FBOTHERS )
         personCell.personDistance.text = @"Invite!";
@@ -307,7 +307,7 @@
     // Empty profile, should open invite window
     if ( person.idCircle == CIRCLE_FBOTHERS ) {
         
-        [Person showInviteDialog:person.strId];
+        [person showInviteDialog];
     }
     else {
         UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];

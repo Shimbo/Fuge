@@ -100,7 +100,7 @@ static FacebookLoader *sharedInstance = nil;
                                  HTTPMethod:@"GET" completionHandler:^(FBRequestConnection *connection,
                                                                        id result, NSError *error) {
          if (error) {
-             NSLog(@"Error: %@", [error localizedDescription]);
+             NSLog(@"FB Loader error, meetups: %@", [error localizedDescription]);
              [target performSelector:callback withObject:nil];
          } else {
              //NSLog(@"Result: %@", result);
@@ -195,6 +195,51 @@ static FacebookLoader *sharedInstance = nil;
     NSMutableArray* allThings = [NSMutableArray arrayWithCapacity:30];
     
     [self loadLikesData:0 result:allThings caller:target selector:callback];
+}
+
+- (void)loadFriends:(id)target selectorSuccess:(SEL)callbackSuccess selectorFailure:(SEL)callbackFailure
+{
+    FBRequest *request2 = [FBRequest requestForMyFriends];
+    [request2 startWithCompletionHandler:^(FBRequestConnection *connection,
+                                           id result, NSError *error)
+     {
+         if ( error )
+         {
+             NSLog(@"Uh oh. An error occurred: %@", error);
+             [target performSelector:callbackFailure withObject:nil];
+         }
+         else
+         {
+             // Create a list of friends' Facebook IDs
+             NSArray *friendObjects = [result objectForKey:@"data"];
+             NSMutableArray *friends = [NSMutableArray arrayWithCapacity:friendObjects.count];
+             for (NSDictionary *friendObject in friendObjects)
+             {
+                 [friends addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+                                       [friendObject objectForKey:@"id"], @"id",
+                                       [friendObject objectForKey:@"name"], @"name",
+                                       nil]];
+             }
+             
+             // FB friends, 2O/FBout inside, 2O will call pushes block and user save
+             [target performSelector:callbackSuccess withObject:friends];
+         }
+     }];
+}
+
+- (NSString*)getProfileUrl:(NSString*)strId
+{
+    return [NSString stringWithFormat:@"http://facebook.com/%@", strId];
+}
+
+- (NSString*)getSmallAvatarUrl:(NSString*)fbId
+{
+    return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&width=100&height=100&return_ssl_resources=1", fbId];
+}
+
+- (NSString*)getLargeAvatarUrl:(NSString*)fbId
+{
+    return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", fbId];
 }
 
 @end

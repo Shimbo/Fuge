@@ -24,5 +24,11 @@
 - (void)loadUserData:(NSDictionary<FBGraphUser>*)user;
 - (void)loadMeetups:(id)target selector:(SEL)callback;
 - (void)loadLikes:(id)target selector:(SEL)callback;
+- (void)loadFriends:(id)target selectorSuccess:(SEL)callbackSuccess selectorFailure:(SEL)callbackFailure;
+
+// Utils
+- (NSString*)getProfileUrl:(NSString*)strId;
+- (NSString*)getSmallAvatarUrl:(NSString*)fbId;
+- (NSString*)getLargeAvatarUrl:(NSString*)fbId;
 
 @end

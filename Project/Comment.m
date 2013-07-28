@@ -47,7 +47,7 @@
     
     [commentData saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if ( error )
-            NSLog( @"Error: %@", error );
+            NSLog( @"Comment saving failed: %@", error );
     }];
 }
 

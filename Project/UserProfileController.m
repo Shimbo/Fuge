@@ -28,7 +28,7 @@
 }
 
 - (void)profileClicked{
-    [Person openProfileInBrowser:personThis.strId];
+    [personThis openProfileInBrowser];
 }
 
 - (void)meetClicked{
@@ -43,9 +43,13 @@
 {
     [super viewDidLoad];
     
+#ifdef TARGET_FUGE
+    NSString* strProfileTitle = @"FB Profile";
+#elif defined TARGET_S2C
+    NSString* strProfileTitle = @"LN Profile";
+#endif
     self.navigationItem.rightBarButtonItems = @[
-                                                [[UIBarButtonItem alloc] initWithTitle:@"Meet" style:UIBarButtonItemStylePlain target:self action:@selector(meetClicked)],                                                                                                                                                                                                                 [[UIBarButtonItem alloc] initWithTitle:@"FB Profile" style:UIBarButtonItemStylePlain target:self action:@selector(profileClicked)]];
-    
+                                                [[UIBarButtonItem alloc] initWithTitle:@"Meet" style:UIBarButtonItemStylePlain target:self action:@selector(meetClicked)],                                                                                                                                                                                                                 [[UIBarButtonItem alloc] initWithTitle:strProfileTitle style:UIBarButtonItemStylePlain target:self action:@selector(profileClicked)]];
     
     textView.editable = FALSE;
     
@@ -133,19 +137,22 @@
             [stringHistory appendString:personThis.strFirstName];
             [stringHistory appendString:@": "];
         }
-        [stringHistory appendString:[formatter stringFromDate:message.dateCreated]];
-        [stringHistory appendString:@": "];
+        //[stringHistory appendString:[formatter stringFromDate:message.dateCreated]];
+        //[stringHistory appendString:@": "];
         [stringHistory appendString:message.strText];
         
         // Append read mark
-        Boolean thisMessageBefore = [conversationDate compare:message.dateCreated] != NSOrderedAscending;
-        Boolean nextMessageAfter = ( ! nextMessage || [conversationDate compare:nextMessage.dateCreated] == NSOrderedAscending);
-        if ( myMessage && ! bReadMarkAdded && thisMessageBefore && nextMessageAfter )
+        if ( conversationDate )
         {
-            [stringHistory appendString:@"\n"];
-            [stringHistory appendString:[NSString stringWithFormat:@"                                    * Read %@", [formatter stringFromDate:conversationDate]]];
-            
-            bReadMarkAdded = TRUE;
+            Boolean thisMessageBefore = [conversationDate compare:message.dateCreated] != NSOrderedAscending;
+            Boolean nextMessageAfter = ( ! nextMessage || [conversationDate compare:nextMessage.dateCreated] == NSOrderedAscending);
+            if ( myMessage && ! bReadMarkAdded && thisMessageBefore && nextMessageAfter )
+            {
+                [stringHistory appendString:@"\n"];
+                [stringHistory appendString:[NSString stringWithFormat:@"                                    * Read %@", [formatter stringFromDate:conversationDate]]];
+                
+                bReadMarkAdded = TRUE;
+            }
         }
         
         if ( n != messages.count - 1 )

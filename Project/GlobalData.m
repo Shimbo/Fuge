@@ -288,27 +288,22 @@ NSInteger sortByName(id num1, id num2, void *context)
 #endif
 }
 
+- (void) loadFriendsInBackgroundFailed
+{
+    [self loadingFailed:LOADING_CIRCLES status:LOAD_NOFACEBOOK];
+}
+
 // Will not use any load status, on fail just nothing
 - (void)reloadFriendsInBackground
 {
     nCirclesLoadingStage = 0;
     nLoadStatusCircles = LOAD_STARTED;
     
-    FBRequest *request2 = [FBRequest requestForMyFriends];
-    [request2 startWithCompletionHandler:^(FBRequestConnection *connection,
-                                           id result, NSError *error)
-     {
-         if ( error )
-         {
-             NSLog(@"Uh oh. An error occurred: %@", error);
-             [self loadingFailed:LOADING_CIRCLES status:LOAD_NOFACEBOOK];
-         }
-         else
-         {
-             // FB friends, 2O/FBout inside, 2O will call pushes block and user save
-             [self loadFbFriendsInBackground:result];
-         }
-     }];
+#ifdef TARGET_FUGE
+    [fbLoader loadFriends:self selectorSuccess:@selector(loadFbFriendsInBackground:) selectorFailure:@selector(loadFriendsInBackgroundFailed)];
+#elif defined TARGET_S2C
+    [self loadFbFriendsInBackground:nil];
+#endif
 }
 
 // Will use secondary load status to show problems with connection
@@ -362,22 +357,28 @@ NSInteger sortByName(id num1, id num2, void *context)
 }
 
 // Load friends in background
-- (void) loadFbFriendsInBackground:(id)friends
+- (void) loadFbFriendsInBackground:(NSArray*)friends
 {
-    // result will contain an array with your user's friends in the "data" key
-    NSArray *friendObjects = [friends objectForKey:@"data"];
-    NSMutableArray *friendIds = [NSMutableArray arrayWithCapacity:friendObjects.count];
-    
-    // Create a list of friends' Facebook IDs
-    for (NSDictionary *friendObject in friendObjects)
-        [friendIds addObject:[friendObject objectForKey:@"id"]];
-    
     // Storing old friends lists (to calculate new friends later in this call)
-    NSArray* oldFriendsFb = [[[PFUser currentUser] objectForKey:@"fbFriends"] copy];
-    NSArray* oldFriends2O = [[[PFUser currentUser] objectForKey:@"fbFriends2O"] copy];
+    NSArray* oldFriendsFb = [[pCurrentUser objectForKey:@"fbFriends"] copy];
+    NSArray* oldFriends2O = [[pCurrentUser objectForKey:@"fbFriends2O"] copy];
     
     // Saving user FB friends
-    [[PFUser currentUser] addUniqueObjectsFromArray:friendIds forKey:@"fbFriends"];
+    NSMutableArray* friendIds;
+    if ( friends )
+    {
+        friendIds = [NSMutableArray arrayWithCapacity:friends.count];
+        for (NSDictionary *friendObject in friends)
+        {
+            NSString* strIdFb = [friendObject objectForKey:@"id"];
+            [friendIds addObject:strIdFb];
+        }
+        [pCurrentUser addUniqueObjectsFromArray:friendIds forKey:@"fbFriends"];
+    }
+    else
+        friendIds = [pCurrentUser objectForKey:@"fbFriends"];
+    if ( ! friendIds || friendIds.count == 0 )
+        return;
     
     // FB friends query
     PFQuery *friendQuery = [PFUser query];
@@ -391,7 +392,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         
         if ( error )
         {
-            NSLog(@"error:%@", error);
+            NSLog(@"Parse query for friends load error: %@", error);
             [self loadingFailed:LOADING_CIRCLES status:LOAD_NOCONNECTION];
         }
         else
@@ -401,7 +402,7 @@ NSInteger sortByName(id num1, id num2, void *context)
             {
                 // Collecting second circle data
                 NSMutableArray *friendFriendIds = [friendUser objectForKey:@"fbFriends"];
-                [[PFUser currentUser] addUniqueObjectsFromArray:friendFriendIds forKey:@"fbFriends2O"];
+                [pCurrentUser addUniqueObjectsFromArray:friendFriendIds forKey:@"fbFriends2O"];
                 
                 // Adding first circle friends
                 [self addPerson:friendUser userCircle:CIRCLE_FB];
@@ -471,7 +472,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     }];
 }
 
-- (void) load2OFriendsInBackground:(id)friends
+- (void) load2OFriendsInBackground:(NSArray*)friends
 {
     // Second circle friends query
     NSMutableArray *friend2OIds = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
@@ -487,7 +488,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         
         if ( error )
         {
-            NSLog(@"error:%@", error);
+            NSLog(@"Parse query for 2O friends error: %@", error);
             [self loadingFailed:LOADING_CIRCLES status:LOAD_NOCONNECTION];
         }
         else
@@ -549,7 +550,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         
         if ( error )
         {
-            NSLog(@"error:%@", error);
+            NSLog(@"Parse query for random people error: %@", error);
             [self loadingFailed:LOADING_MAP status:LOAD_NOCONNECTION];
         }
         else
@@ -571,9 +572,12 @@ NSInteger sortByName(id num1, id num2, void *context)
     }];
 }
 
-- (void) loadFbOthers:(id)friends
+- (void) loadFbOthers:(NSArray*)friends
 {
-    NSMutableArray *friendIds = [[[PFUser currentUser] objectForKey:@"fbFriends"] mutableCopy];
+    if ( ! friends )
+        return;
+    
+    NSMutableArray *friendIds = [[pCurrentUser objectForKey:@"fbFriends"] mutableCopy];
     
     Circle *fbCircle = [self getCircle:CIRCLE_FBOTHERS];
     
@@ -585,13 +589,10 @@ NSInteger sortByName(id num1, id num2, void *context)
     }
     [friendIds removeObjectsInArray:array];
     
-    // Extracting FB data
-    NSArray *friendObjects = [friends objectForKey:@"data"];
-    
     // Creating persons for fb friends that don't use app yet
     for (NSString *strId in friendIds)
     {
-        for (NSDictionary *friendObject in friendObjects)
+        for (NSDictionary *friendObject in friends)
         {
             // Comparing fb id with stored id (yeah, I'm too lazy to refactor this, TODO as it's n*n)
             NSString* strIdFb = [friendObject objectForKey:@"id"];
@@ -689,7 +690,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         [pCurrentUser setObject:likes forKey:@"fbLikes"];
         [pCurrentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if ( error )
-                NSLog(@"Error: %@", error);
+                NSLog(@"Parse save for likes failed, error: %@", error);
         }];
     }
 }
@@ -774,7 +775,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [meetupAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if ( error )
         {
-            NSLog(@"error:%@", error);
+            NSLog(@"Parse query for public meetups error: %@", error);
             [self loadingFailed:LOADING_MAP status:LOAD_NOCONNECTION];
         }
         else
@@ -811,7 +812,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         {
             if ( error )
             {
-                NSLog(@"error:%@", error);
+                NSLog(@"Parse query for subscribed meetups error: %@", error);
                 [self loadingFailed:LOADING_MAP status:LOAD_NOCONNECTION];
             }
             else
@@ -910,7 +911,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [pCurrentUser addUniqueObject:meetup.strId forKey:@"attending"];
     [pCurrentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if ( error )
-            NSLog(@"Error: %@", error);
+            NSLog(@"Parse save for current user (attending meetup) error: %@", error);
     }];
     
     // Attendee in db (to store the data and update counters)
@@ -923,7 +924,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [attendee setObject:meetup.meetupData forKey:@"meetupData"];
     [attendee saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if ( error )
-            NSLog(@"Error: %@", error);
+            NSLog(@"Parse save for attendee error: %@", error);
     }];
     
     // Creating comment about joining in db
@@ -943,7 +944,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [pCurrentUser addUniqueObject:meetup.strId forKey:@"meetupsLeft"];
     [pCurrentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if ( error )
-            NSLog(@"Error: %@", error);
+            NSLog(@"Parse save for current user (unattend meetup) error: %@", error);
     }];
     
     // Attendee in db (to store the data and update counters)
@@ -957,7 +958,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [attendee setObject:[NSNumber numberWithBool:TRUE] forKey:@"leaving"];
     [attendee saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if ( error )
-            NSLog(@"Error: %@", error);
+            NSLog(@"Parse save for (leaving) attendee error: %@", error);
     }];
     
     // Creating comment about leaving in db

@@ -10,10 +10,9 @@
 #import "Circle.h"
 #import "GlobalVariables.h"
 #import "GlobalData.h"
-
+#import "FacebookLoader.h"
 #import "AppDelegate.h"
 #import "AsyncImageView.h"
-
 #import "TestFlightSDK/TestFlight.h"
 
 @implementation MatchesViewController
@@ -141,7 +140,7 @@ NSInteger compareDistance(id id1, id id2, void *context)
             case 3: person = matched2OFriends[indexPath.row]; break;
         }
         
-        [personCell.personImage loadImageFromURL:person.imageURL];
+        [personCell.personImage loadImageFromURL:person.smallAvatarUrl];
         personCell.personName.text = [person fullName];
         if ( person.idCircle == CIRCLE_FBOTHERS )
         {
@@ -174,7 +173,7 @@ NSInteger compareDistance(id id1, id id2, void *context)
         {
             likeCell.likeName.text = [like objectForKey:@"name"];
             likeCell.likeCategory.text = [NSString stringWithFormat:@"Category: %@", [like objectForKey:@"cat"]];
-            NSString* strImage = [Person imageURLWithId:[like objectForKey:@"id"]];
+            NSString* strImage = [fbLoader getSmallAvatarUrl:[like objectForKey:@"id"]];
             [likeCell.likeImage loadImageFromURL:strImage];
         }
         return likeCell;
@@ -196,9 +195,9 @@ NSInteger compareDistance(id id1, id id2, void *context)
         if ( person.idCircle == CIRCLE_FBOTHERS )
         {
             if ( indexPath.section != 3 )
-                [Person showInviteDialog:person.strId];
+                [person showInviteDialog];
             else if ( bIsAdmin )
-                [Person openProfileInBrowser:person.strId];
+                [person openProfileInBrowser];
         }
         else
         {

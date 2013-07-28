@@ -66,15 +66,12 @@
 
 - (Boolean)isOutdated;
 
--(NSString*)imageURL;
--(NSString*)largeImageURL;
+-(NSString*)smallAvatarUrl;
+-(NSString*)largeAvatarUrl;
 
 -(NSString*)distanceString;
 
 -(NSString*)timeString;
-
-+(NSString*)imageURLWithId:(NSString*)fbId;
-+(NSString*)largeImageURLWithId:(NSString*)fbId;
 
 -(NSString*)shortName;
 -(NSString*)fullName;
@@ -83,8 +80,8 @@
 
 - (PFGeoPoint*) getLocation;
 
-+(void)showInviteDialog:(NSString*)strId;
-+(void)openProfileInBrowser:(NSString*)strId;
+-(void)showInviteDialog;
+-(void)openProfileInBrowser;
 
 // Matching
 - (NSArray*) matchedFriendsToFriends;

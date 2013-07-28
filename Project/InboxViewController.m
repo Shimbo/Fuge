@@ -162,10 +162,14 @@
     }
     else
         inboxCell.pinImage = nil;*/
+    Person* person = nil;
     if ( [item.fromId compare:strCurrentUserId] == NSOrderedSame && item.type != INBOX_ITEM_COMMENT )
-        [inboxCell.mainImage loadImageFromURL:[Person imageURLWithId:item.toId]];
+        person = [globalData getPersonById:item.toId];
     else
-        [inboxCell.mainImage loadImageFromURL:[Person imageURLWithId:item.fromId]];
+        person = [globalData getPersonById:item.fromId];
+    if ( person )
+        [inboxCell.mainImage loadImageFromURL:[person smallAvatarUrl]];
+    // TODO: add unknown person avatar
     
 	return inboxCell;
 }

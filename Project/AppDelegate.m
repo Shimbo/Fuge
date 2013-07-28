@@ -52,8 +52,8 @@
                   clientKey:@"u2kJ1jWBjN9qY3ARlJuEyNkvUA9EjOMv1R4w5sDX"];
     [Crashlytics startWithAPIKey:@"05bf10b64dd5e5dbbe55dfb384d01abad7bba586"];
 #elif defined TARGET_S2C
-    [Parse setApplicationId:@"5bVuo6zSUmUsC8FjQYGOgYTlhbGAxsgFRd49d5Zm"
-                  clientKey:@"yrKLYveKcDiT9m98gMTQqh5SSuhJJnh2MeKoxOF4"];
+    [Parse setApplicationId:@"I9uZLwyq11toxUfMCEYrFD70jadFfGutGdTett2R"
+                  clientKey:@"1S8w9f1JkVS16FQaoIwoQqJiGxYCCvfbfwCl1LBD"];
     [Crashlytics startWithAPIKey:@"05bf10b64dd5e5dbbe55dfb384d01abad7bba586"];
 #endif
     

@@ -86,7 +86,7 @@ static LocationManager *sharedInstance = nil;
     
     NSString *errorString;
     [manager stopUpdatingLocation];
-    NSLog(@"Error: %@",[error localizedDescription]);
+    NSLog(@"Location manager did fail with error: %@",[error localizedDescription]);
     UIAlertView *alert;
     switch([error code]) {
         case kCLErrorDenied:

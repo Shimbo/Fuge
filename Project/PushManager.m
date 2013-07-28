@@ -312,7 +312,7 @@ static PushManager *sharedInstance = nil;
     [[PFInstallation currentInstallation] addUniqueObjectsFromArray:channels forKey:@"channels"];
     [[PFInstallation currentInstallation] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (error)
-            NSLog(@"Sync Error:%@", error);
+            NSLog(@"Parse installation save (during push add channel) failed with error: %@", error);
     }];
     for ( NSString* strChannel in channels )
         [PFPush subscribeToChannelInBackground:strChannel target:self selector:@selector(subscribeFinished:error:)];
@@ -323,7 +323,7 @@ static PushManager *sharedInstance = nil;
     [[PFInstallation currentInstallation] removeObjectsInArray:channels forKey:@"channels"];
     [[PFInstallation currentInstallation] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (error)
-            NSLog(@"Sync Error:%@", error);
+            NSLog(@"Parse installation save (during push remove channel) failed with error: %@", error);
     }];
     for ( NSString* strChannel in channels )
         [PFPush unsubscribeFromChannelInBackground:strChannel];

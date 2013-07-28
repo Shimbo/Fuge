@@ -50,16 +50,69 @@ static LinkedinLoader *sharedInstance = nil;
 
 - (void)loadUserData:(PFUser*)user
 {
+    // Id
     NSString* strId = [userProfile objectForKey:@"id"];
     [user setObject:strId forKey:@"fbId"];
     
+    // First name
     NSString* strFirstName = [userProfile objectForKey:@"firstName"];
     if ( strFirstName )
         [user setObject:strFirstName forKey:@"fbNameFirst"];
     
+    // Last name
     NSString* strLastName = [userProfile objectForKey:@"lastName"];
     if ( strLastName )
         [user setObject:strLastName forKey:@"fbNameLast"];
+    
+    // Position, industry
+    NSString* strPosition = [userProfile objectForKey:@"headline"];
+    if ( strPosition )
+        [user setObject:strPosition forKey:@"profilePosition"];
+    NSString* strIndustry = [userProfile objectForKey:@"industry"];
+    if ( strIndustry )
+        [user setObject:strIndustry forKey:@"profileIndustry"];
+    
+    // Jobs, summary and current employer
+    NSString* strSummary = [userProfile objectForKey:@"summary"];
+    if ( strSummary )
+        [user setObject:strSummary forKey:@"profileSummary"];
+    NSDictionary* dictJobs = [userProfile objectForKey:@"positions"];
+    if ( dictJobs )
+    {
+        NSArray* jobs = [dictJobs objectForKey:@"values"];
+        [user setObject:jobs forKey:@"profilePositions"];        
+        for ( NSDictionary* job in jobs )
+        {
+            NSNumber* isCurrent = [job objectForKey:@"isCurrent"];
+            if ( isCurrent && isCurrent.integerValue == 1 )
+            {
+                NSDictionary* company = [job objectForKey:@"company"];
+                NSString* strEmployer = [company objectForKey:@"name"];
+                if ( strEmployer )
+                    [user setObject:strEmployer forKey:@"profileEmployer"];
+            }
+        }
+    }
+    
+    // Avatar and profile page
+    NSString* strAvatar = [userProfile objectForKey:@"pictureUrl"];
+    if ( strAvatar )
+        [user setObject:strAvatar forKey:@"urlAvatar"];
+    NSString* strProfile = [userProfile objectForKey:@"publicProfileUrl"];
+    if ( strProfile )
+        [user setObject:strProfile forKey:@"urlProfile"];
+    
+    // Connections
+    NSDictionary* connectionDict = [userProfile objectForKey:@"connections"];
+    if ( connectionDict )
+    {
+        NSArray* connectionArray = [connectionDict objectForKey:@"values"];
+        for ( NSDictionary* connection in connectionArray )
+        {
+            NSString* strId = [connection objectForKey:@"id"];
+            [pCurrentUser addUniqueObject:strId forKey:@"fbFriends"];
+        }
+    }
 }
 
 - (void)initialize:(id)target selector:(SEL)callback failed:(SEL)failure
@@ -73,9 +126,9 @@ static LinkedinLoader *sharedInstance = nil;
     [client getAuthorizationCode:^(NSString * code) {
         [client getAccessToken:code success:^(NSDictionary *accessTokenData) {
             accessToken = [accessTokenData objectForKey:@"access_token"];
-            [client getPath:[NSString stringWithFormat:@"https://api.linkedin.com/v1/people/~:(id,first-name,last-name,headline,industry,picture-url,public-profile-url,email-address,positions,summary,specialties)?oauth2_access_token=%@&format=json", accessToken] parameters:nil success:^(AFHTTPRequestOperation * operation, NSDictionary *result) {
+            [client getPath:[NSString stringWithFormat:@"https://api.linkedin.com/v1/people/~:(id,first-name,last-name,headline,industry,picture-url,public-profile-url,email-address,positions,summary,specialties,connections)?oauth2_access_token=%@&format=json", accessToken] parameters:nil success:^(AFHTTPRequestOperation * operation, NSDictionary *result) {
                 
-                NSLog(@"current user %@", result);
+                //NSLog(@"current user %@", result);
                 userProfile = result;
                 
                 NSString* strId = [result objectForKey:@"id"];
