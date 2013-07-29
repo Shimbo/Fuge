@@ -73,8 +73,13 @@
 #define APP_STORE_PATH              @"http://itunes.apple.com/app/id662139655"
 
 // Feedback bot ID
+#ifdef TARGET_FUGE
 #define FEEDBACK_BOT_ID             @"100004580194936"
 #define FEEDBACK_BOT_OBJECT         @"zQceZ994lt"
+#elif defined TARGET_S2C
+#define FEEDBACK_BOT_ID             @"gpT8c6BpfU"
+#define FEEDBACK_BOT_OBJECT         @"W7FFRVtAIr"
+#endif
 
 // Viral
 #define FB_INVITE_MESSAGE           @"Discover new friends and local activities!"

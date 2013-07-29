@@ -106,7 +106,7 @@ static Boolean bRotating = true;
             else if ( thisVersion < curVersion )
             {
                 bShowPopup = TRUE;
-                UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"New version is out!" message:@"You're running old version of the application. We recommend you updating the application." delegate:ctrl cancelButtonTitle:@"OK" otherButtonTitles:@"Later",nil];
+                UIAlertView *message = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"LOADING_TITLE_NEWVERSION",nil) message:NSLocalizedString(@"LOADING_TEXT_NEWVERSION",nil) delegate:ctrl cancelButtonTitle:@"OK" otherButtonTitles:@"Later",nil];
                 [message show];
             }
             
@@ -382,8 +382,8 @@ static Boolean bRotating = true;
     _titleText.hidden = FALSE;
     _miscText.hidden = FALSE;
     
-    _titleText.text = @"Welcome!";
-    _descriptionText.text = @"Fuge is a social discovery service. Explore\n surroundings for people and activites. Or\n create your own and invite friends!";
+    _titleText.text = NSLocalizedString(@"LOADING_TITLE_FIRSTPAGE",nil);
+    _descriptionText.text = NSLocalizedString(@"LOADING_TEXT_FIRSTPAGE",nil);
     
     [self showAll];
 }
@@ -399,8 +399,8 @@ static Boolean bRotating = true;
     _titleText.hidden = FALSE;
     _miscText.hidden = TRUE;
     
-    _titleText.text = @"Ooups!";
-    _descriptionText.text = @"It seems like you don’t have internet \n connection at the moment. Try \n again when you will get some!";
+    _titleText.text = NSLocalizedString(@"LOADING_TITLE_NOINTERNET",nil);
+    _descriptionText.text = NSLocalizedString(@"LOADING_TEXT_NOINTERNET",nil);
     
     [self showAll];
 }
@@ -419,8 +419,8 @@ static Boolean bRotating = true;
     _titleText.hidden = FALSE;
     _miscText.hidden = FALSE;
     
-    _titleText.text = @"Ooups!";
-    _descriptionText.text = @"Looks like you haven’t finished \n login process or wasn’t able to do so. \n Please, try again!";
+    _titleText.text = NSLocalizedString(@"LOADING_TITLE_LOGINFAILED",nil);
+    _descriptionText.text = NSLocalizedString(@"LOADING_TEXT_LOGINFAILED",nil);
     
     [self showAll];
 }
@@ -436,8 +436,8 @@ static Boolean bRotating = true;
     _titleText.hidden = FALSE;
     _miscText.hidden = TRUE;
     
-    _titleText.text = @"Outdated version!";
-    _descriptionText.text = @"What age did you come from? Why\n still using this version instead\n of a new and shiny one?";
+    _titleText.text = NSLocalizedString(@"LOADING_TITLE_OLDVERSION",nil);
+    _descriptionText.text = NSLocalizedString(@"LOADING_TEXT_OLDVERSION",nil);
     
     [self showAll];
 }

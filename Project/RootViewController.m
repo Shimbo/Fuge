@@ -100,7 +100,12 @@
 
 - (void) viewDidLoad {
     [super viewDidLoad];
+
+#ifdef TARGET_FUGE
     sortingMode = SORTING_RANK;
+#elif defined TARGET_S2C
+    sortingMode = SORTING_DISTANCE;
+#endif
     
     // Navigation bar
     [self.navigationItem setHidesBackButton:true animated:false];
@@ -113,9 +118,14 @@
     self.tableView.rowHeight = ROW_HEIGHT;
     
     // Buttons
+#ifdef TARGET_FUGE
     matchBtn = [[UIBarButtonItem alloc] initWithTitle:sortingModeTitles[sortingMode+1] style:UIBarButtonItemStyleBordered target:self action:@selector(matchClicked)];
-    UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithTitle:@"Reload" style:UIBarButtonItemStyleBordered target:self action:@selector(reloadClicked)];
+    UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"BUTTONS_RELOAD",nil) style:UIBarButtonItemStyleBordered target:self action:@selector(reloadClicked)];
     [self.navigationItem setRightBarButtonItems:@[reloadBtn, matchBtn]];
+#elif defined TARGET_S2C
+    UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"BUTTONS_RELOAD",nil) style:UIBarButtonItemStyleBordered target:self action:@selector(reloadClicked)];
+    [self.navigationItem setRightBarButtonItems:@[reloadBtn]];
+#endif
     
     // Engagement admin info
     [self recalcEngagement];

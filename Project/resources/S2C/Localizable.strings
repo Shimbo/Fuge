@@ -1,0 +1,32 @@
+/* 
+  S2C.strings
+  S2C
+
+  Created by Mikhail Larionov on 7/29/13.
+
+*/
+
+"LOADING_TITLE_NEWVERSION"      = "New version is out!";
+"LOADING_TEXT_NEWVERSION"       = "You're running old version of the application. We recommend you updating the application.";
+"LOADING_TITLE_FIRSTPAGE"       = "Welcome!";
+"LOADING_TEXT_FIRSTPAGE"        = "S2C is a social discovery service. Explore\n surroundings for people and activites. Or\n create your own and invite friends!";
+"LOADING_TITLE_NOINTERNET"      = "Ooups!";
+"LOADING_TEXT_NOINTERNET"       = "It seems like you don’t have internet \n connection at the moment. Try \n again when you will get some!";
+"LOADING_TITLE_LOGINFAILED"     = "Ooups!";
+"LOADING_TEXT_LOGINFAILED"      = "Looks like you haven’t finished \n login process or wasn’t able to do so. \n Please, try again!";
+"LOADING_TITLE_OLDVERSION"      = "Outdated version!";
+"LOADING_TEXT_OLDVERSION"       = "What age did you come from? Why\n still using this version instead\n of a new and shiny one?";
+
+"BUTTONS_RELOAD"                = "Reload";
+
+"STATUS_WINDOW_TITLE"           = "What are you up to?";
+"STATUS_WINDOW_TEXT"            = "Tell others what are you looking for or what would you like to do!";
+"STATUS_WINDOW_BTN_SKIP"        = "Skip";
+"STATUS_WINDOW_BTN_ENTER"       = "Enter";
+"STATUS_WINDOW_PLACEHOLDER"     = "Example: Open for coffee and chat!";
+
+"MENU_ITEM_INBOX"               = "Inbox";
+"MENU_ITEM_PEOPLE"              = "People";
+"MENU_ITEM_EXPLORE"             = "Explore";
+"MENU_ITEM_STATUS"              = "Status";
+"MENU_ITEM_SETTINGS"            = "Settings";

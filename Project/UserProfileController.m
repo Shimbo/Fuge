@@ -56,11 +56,10 @@
     // Comments
     [globalData loadMessageThread:personThis target:self selector:@selector(messagesLoaded:error:)];
     
-    //[profileImage loadImageFromURL:personThis.largeImageURL];
-    
     // Avatar
-    profileImageView.profileID = personThis.strId;
-    profileImageView.pictureCropping = FBProfilePictureCroppingSquare;
+    //profileImageView.profileID = personThis.strId;
+    //profileImageView.pictureCropping = FBProfilePictureCroppingSquare;
+    [profileImage loadImageFromURL:personThis.largeAvatarUrl];
     
     // Labels
     labelFriendName.text = [personThis fullName];
@@ -186,10 +185,10 @@
     labelDistance = nil;
     labelCircle = nil;
     [self setActivityIndicator:nil];
-    profileImageView = nil;
     labelFriendName = nil;
     labelTimePassed = nil;
     btnThingsInCommon = nil;
+    profileImage = nil;
     [super viewDidUnload];
 }
 

@@ -25,7 +25,8 @@
     NSUInteger  nThingsInCommon;
     
     NSUInteger  messagesCount;
-    IBOutlet FBProfilePictureView *profileImageView;
+    //IBOutlet FBProfilePictureView *profileImageView;
+    IBOutlet AsyncImageView *profileImage;
     
     Message*    currentMessage;
 }

@@ -39,7 +39,7 @@
 {
     [super viewDidLoad];
     
-    _items = [NSMutableArray arrayWithObjects:@"Inbox", @"People", @"Explore", @"Status", @"Settings", nil];
+    _items = [NSMutableArray arrayWithObjects:NSLocalizedString(@"MENU_ITEM_INBOX",nil), NSLocalizedString(@"MENU_ITEM_PEOPLE",nil), NSLocalizedString(@"MENU_ITEM_EXPLORE",nil), NSLocalizedString(@"MENU_ITEM_STATUS",nil), NSLocalizedString(@"MENU_ITEM_SETTINGS",nil),  nil];
     _selectors = [NSMutableArray arrayWithObjects:@"showInbox", @"showCicles", @"showMap", @"askStatus", @"showUser", nil];
     
     if ( [globalVariables isUserAdmin])
@@ -95,14 +95,13 @@
 
 -(void)askStatus{
     
-    statusPrompt = [[UIAlertView alloc] initWithTitle:@"What are you up to?"
-                                                     message:@"Tell others what are you looking for or what would you like to do!"
-                                                    delegate:self
-                                           cancelButtonTitle:@"Skip"
-                                           otherButtonTitles:@"Enter", nil];
+    statusPrompt = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"STATUS_WINDOW_TITLE",nil)
+            message:NSLocalizedString(@"STATUS_WINDOW_TEXT",nil) delegate:self
+            cancelButtonTitle:NSLocalizedString(@"STATUS_WINDOW_BTN_SKIP",nil)
+            otherButtonTitles:NSLocalizedString(@"STATUS_WINDOW_BTN_ENTER",nil), nil];
     [statusPrompt setAlertViewStyle:UIAlertViewStylePlainTextInput];
     [[statusPrompt textFieldAtIndex:0] setDelegate:self];
-    [[statusPrompt textFieldAtIndex:0] setPlaceholder:@"Example: Open for coffee and chat!"];
+    [[statusPrompt textFieldAtIndex:0] setPlaceholder:NSLocalizedString(@"STATUS_WINDOW_PLACEHOLDER",nil)];
     [[statusPrompt textFieldAtIndex:0] setFont:[UIFont systemFontOfSize:14]];
     [statusPrompt show];
 }

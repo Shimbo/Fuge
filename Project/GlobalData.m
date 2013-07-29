@@ -276,6 +276,10 @@ NSInteger sortByName(id num1, id num2, void *context)
                     
                     // EB Meetups
                     [self loadEBMeetups];
+                    
+#elif defined TARGET_S2C
+                    [self incrementMapLoadingStage];
+                    [self incrementMapLoadingStage];
 #endif
                     
                     // Inbox
@@ -378,7 +382,10 @@ NSInteger sortByName(id num1, id num2, void *context)
     else
         friendIds = [pCurrentUser objectForKey:@"fbFriends"];
     if ( ! friendIds || friendIds.count == 0 )
+    {
+        [self incrementCirclesLoadingStage];
         return;
+    }
     
     // FB friends query
     PFQuery *friendQuery = [PFUser query];
