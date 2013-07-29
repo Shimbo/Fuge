@@ -179,7 +179,11 @@
 #ifdef TARGET_FUGE
     return [fbLoader getLargeAvatarUrl:strId];
 #elif defined TARGET_S2C
-    return [personData objectForKey:@"urlAvatar"];
+    NSArray* photos = [personData objectForKey:@"urlPhotos"];
+    if ( photos && photos.count > 0 )
+        return photos[0];
+    else
+        return [personData objectForKey:@"urlAvatar"];
 #endif
 }
 

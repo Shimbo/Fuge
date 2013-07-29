@@ -113,6 +113,15 @@ static LinkedinLoader *sharedInstance = nil;
             [pCurrentUser addUniqueObject:strId forKey:@"fbFriends"];
         }
     }
+    
+    // Big photo
+    NSDictionary* photos = [userProfile objectForKey:@"pictureUrls"];
+    if ( photos )
+    {
+        NSArray* values = [photos objectForKey:@"values"];
+        if ( values )
+            [user setObject:values forKey:@"urlPhotos"];
+    }
 }
 
 - (void)initialize:(id)target selector:(SEL)callback failed:(SEL)failure
@@ -126,7 +135,7 @@ static LinkedinLoader *sharedInstance = nil;
     [client getAuthorizationCode:^(NSString * code) {
         [client getAccessToken:code success:^(NSDictionary *accessTokenData) {
             accessToken = [accessTokenData objectForKey:@"access_token"];
-            [client getPath:[NSString stringWithFormat:@"https://api.linkedin.com/v1/people/~:(id,first-name,last-name,headline,industry,picture-url,public-profile-url,email-address,positions,summary,specialties,connections)?oauth2_access_token=%@&format=json", accessToken] parameters:nil success:^(AFHTTPRequestOperation * operation, NSDictionary *result) {
+            [client getPath:[NSString stringWithFormat:@"https://api.linkedin.com/v1/people/~:(id,first-name,last-name,headline,industry,picture-url,public-profile-url,email-address,positions,summary,specialties,connections,picture-urls::(original))?oauth2_access_token=%@&format=json", accessToken] parameters:nil success:^(AFHTTPRequestOperation * operation, NSDictionary *result) {
                 
                 //NSLog(@"current user %@", result);
                 userProfile = result;
@@ -180,7 +189,7 @@ static LinkedinLoader *sharedInstance = nil;
                                      
                                  } else {
                                      NSString *errorString = [[error userInfo] objectForKey:@"error"];
-                                     NSLog(@"Error: %@", errorString);
+                                     NSLog(@"Linkedin: user signup failed, error: %@", errorString);
                                      [target performSelector:failure withObject:error];
                                  }
                              }];
@@ -189,18 +198,18 @@ static LinkedinLoader *sharedInstance = nil;
                  }];
                 
             } failure:^(AFHTTPRequestOperation * operation, NSError *error) {
-                NSLog(@"failed to fetch current user %@", error);
+                NSLog(@"Linkedin: failed to fetch current user %@", error);
                 [target performSelector:failure withObject:error];
             }];
         } failure:^(NSError *error) {
-            NSLog(@"Quering accessToken failed %@", error);
+            NSLog(@"Linkedin: quering accessToken failed %@", error);
             [target performSelector:failure withObject:error];
         }];
     } cancel:^{
-        NSLog(@"Authorization was cancelled by user");
+        NSLog(@"Linkedin: authorization was cancelled by user");
         [target performSelector:failure withObject:nil];
     } failure:^(NSError *error) {
-        NSLog(@"Authorization failed %@", error);
+        NSLog(@"Linkedin: authorization failed %@", error);
         [target performSelector:failure withObject:error];
     }];
 
