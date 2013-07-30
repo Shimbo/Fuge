@@ -509,16 +509,11 @@ static Boolean bRotating = true;
     }];
 }
 
-- (void)lnLoadFailed:(NSError*)error
-{
-    [self loginFailed];
-}
-
 - (IBAction)linkedinDown:(id)sender {
     
     [self hideAll];
 #ifdef TARGET_S2C
-    [lnLoader initialize:self selector:@selector(loadSequencePart3) failed:@selector(lnLoadFailed:)];
+    [lnLoader initialize:self selector:@selector(loadSequencePart3) failed:@selector(loginFailed)];
 #endif
 }
 

@@ -406,6 +406,8 @@
 		4C9A1577179D5C25006736E7 /* CommentData.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C9A1576179D5C24006736E7 /* CommentData.m */; };
 		4C9D1B5317A6A098007B0FEA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4C9D1B5217A6A098007B0FEA /* Localizable.strings */; };
 		4C9D1B5517A6A09F007B0FEA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4C9D1B5417A6A09F007B0FEA /* Localizable.strings */; };
+		4C9D1B5817A7F271007B0FEA /* MeetupLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C9D1B5717A7F270007B0FEA /* MeetupLoader.m */; };
+		4C9D1B5917A7F271007B0FEA /* MeetupLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C9D1B5717A7F270007B0FEA /* MeetupLoader.m */; };
 		4CA3F06517170D8A00271E7A /* LoadingController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CA3F06317170D8A00271E7A /* LoadingController.m */; };
 		4CA3F06617170D8A00271E7A /* LoadingController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CA3F06417170D8A00271E7A /* LoadingController.xib */; };
 		4CA463F116F1DF7600F354FC /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CA463F016F1DF7600F354FC /* LocationManager.m */; };
@@ -729,6 +731,8 @@
 		4C9A1576179D5C24006736E7 /* CommentData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentData.m; sourceTree = "<group>"; };
 		4C9D1B5217A6A098007B0FEA /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = resources/Localizable.strings; sourceTree = "<group>"; };
 		4C9D1B5417A6A09F007B0FEA /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = resources/S2C/Localizable.strings; sourceTree = "<group>"; };
+		4C9D1B5617A7F270007B0FEA /* MeetupLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeetupLoader.h; path = Project/ExternalLibs/MeetupLoader.h; sourceTree = "<group>"; };
+		4C9D1B5717A7F270007B0FEA /* MeetupLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeetupLoader.m; path = Project/ExternalLibs/MeetupLoader.m; sourceTree = "<group>"; };
 		4CA3F06217170D8A00271E7A /* LoadingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadingController.h; sourceTree = "<group>"; };
 		4CA3F06317170D8A00271E7A /* LoadingController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadingController.m; sourceTree = "<group>"; };
 		4CA3F06417170D8A00271E7A /* LoadingController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoadingController.xib; sourceTree = "<group>"; };
@@ -1105,6 +1109,8 @@
 				4CF697C317956DE70064ACE7 /* XMLDictionary.m */,
 				4C7CE99C1796183F0005A70F /* PCLineChartView.h */,
 				4C7CE99D1796183F0005A70F /* PCLineChartView.m */,
+				4C9D1B5617A7F270007B0FEA /* MeetupLoader.h */,
+				4C9D1B5717A7F270007B0FEA /* MeetupLoader.m */,
 			);
 			name = libs;
 			sourceTree = "<group>";
@@ -1807,6 +1813,7 @@
 				4C7CE99E1796183F0005A70F /* PCLineChartView.m in Sources */,
 				4C9A1575179D583C006736E7 /* Comment.m in Sources */,
 				4C9A1577179D5C25006736E7 /* CommentData.m in Sources */,
+				4C9D1B5817A7F271007B0FEA /* MeetupLoader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1900,6 +1907,7 @@
 				4C444EA817A0045700288139 /* AFXMLRequestOperation.m in Sources */,
 				4C444EA917A0045700288139 /* UIImageView+AFNetworking.m in Sources */,
 				4C444F4317A04F4400288139 /* LinkedinLoader.m in Sources */,
+				4C9D1B5917A7F271007B0FEA /* MeetupLoader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

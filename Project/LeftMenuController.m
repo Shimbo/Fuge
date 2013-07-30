@@ -16,7 +16,10 @@
 #import "GlobalData.h"
 #import "CustomBadge.h"
 #import "UserProfileController.h"
+#import "MeetupLoader.h"
 
+#define ALERT_ENTER_STATUS      1
+#define ALERT_IMPORT_MEETUP     2
 
 @implementation LeftMenuController
 - (id)init
@@ -44,8 +47,10 @@
     
     if ( [globalVariables isUserAdmin])
     {
-        [_items addObject:@"Stats"];
+        [_items addObject:@"* Stats"];
         [_selectors addObject:@"showStats"];
+        [_items addObject:@"* Import meetup"];
+        [_selectors addObject:@"importMeetup"];
     }
 
     _inboxBadge = [CustomBadge secondCircleCustomBadge];
@@ -99,6 +104,7 @@
             message:NSLocalizedString(@"STATUS_WINDOW_TEXT",nil) delegate:self
             cancelButtonTitle:NSLocalizedString(@"STATUS_WINDOW_BTN_SKIP",nil)
             otherButtonTitles:NSLocalizedString(@"STATUS_WINDOW_BTN_ENTER",nil), nil];
+    statusPrompt.tag = ALERT_ENTER_STATUS;
     [statusPrompt setAlertViewStyle:UIAlertViewStylePlainTextInput];
     [[statusPrompt textFieldAtIndex:0] setDelegate:self];
     [[statusPrompt textFieldAtIndex:0] setPlaceholder:NSLocalizedString(@"STATUS_WINDOW_PLACEHOLDER",nil)];
@@ -117,14 +123,41 @@
     return YES;
 }
 
+- (void)meetupCallback:(NSDictionary*)meetupData
+{
+    NSLog(@"Meetup: %@", meetupData);
+}
+
+- (void)meetupsListCallback:(NSDictionary*)meetupsData
+{
+    NSEnumerator *enumerator = [meetupsData objectEnumerator];
+    NSDictionary* meetupData = nil;
+    while ( (meetupData = [enumerator nextObject]) != nil) {
+        NSLog(@"Meetup: %@", meetupsData);
+    }
+}
+
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{
-    if (buttonIndex == 1)
+    if ( alertView.tag == ALERT_ENTER_STATUS )
     {
-        NSString* strResult = [[alertView textFieldAtIndex:0] text];
-        if ( strResult )
+        if (buttonIndex == 1)
         {
-            [pCurrentUser setObject:strResult forKey:@"profileStatus"];
-            [pCurrentUser saveInBackground];
+            NSString* strResult = [[alertView textFieldAtIndex:0] text];
+            if ( strResult )
+            {
+                [pCurrentUser setObject:strResult forKey:@"profileStatus"];
+                [pCurrentUser saveInBackground];
+            }
+        }
+    } else if ( alertView.tag == ALERT_IMPORT_MEETUP ) {
+        if (buttonIndex == 1)
+        {
+            NSString* strResult = [[alertView textFieldAtIndex:0] text];
+            if ( strResult )
+            {
+                [mtLoader loadMeetup:strResult owner:self selector:@selector(meetupCallback:)];
+                //[mtLoader loadMeetups:@"Interesting-Talks-London" owner:self selector:@selector(meetupsListCallback:)];
+            }
         }
     }
     [self.appDelegate.revealController showViewController:self.appDelegate.revealController.frontViewController];
@@ -175,6 +208,18 @@
     StatsViewController *statsViewController = [[StatsViewController alloc] initWithNibName:@"StatsViewController" bundle:nil];
     [self showViewController:statsViewController];
 }
+
+-(void)importMeetup{
+    statusPrompt = [[UIAlertView alloc] initWithTitle:@"Import meetup"
+                                              message:@"Enter meetup ID from www.meetup.com" delegate:self
+                                    cancelButtonTitle:@"Cancel" otherButtonTitles:@"Import", nil];
+    statusPrompt.tag = ALERT_IMPORT_MEETUP;
+    [statusPrompt setAlertViewStyle:UIAlertViewStylePlainTextInput];
+    [[statusPrompt textFieldAtIndex:0] setDelegate:self];
+    [[statusPrompt textFieldAtIndex:0] setFont:[UIFont systemFontOfSize:14]];
+    [statusPrompt show];
+}
+
 
 
 

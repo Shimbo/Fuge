@@ -143,12 +143,16 @@ static LinkedinLoader *sharedInstance = nil;
                 NSString* strId = [result objectForKey:@"id"];
                 if ( ! strId )
                 {
-                    // ERROR!
+                    NSLog(@"Linkedin: failed to fetch user id");
+                    [target performSelector:failure withObject:nil];
+                    return;
                 }
                 NSString* strEmail = [result objectForKey:@"emailAddress"];
                 if ( ! strEmail )
                 {
-                    // ERROR!
+                    NSLog(@"Linkedin: failed to fetch user e-mail");
+                    [target performSelector:failure withObject:nil];
+                    return;
                 }
                 NSString* strPassword = @"singlePassword777";
                 
@@ -157,7 +161,7 @@ static LinkedinLoader *sharedInstance = nil;
                      if (user) {
                          
                          // Main loading
-                         NSLog(@"User logged in through Linkedin!");                         
+                         NSLog(@"User logged in through Linkedin!");
                          [pCurrentUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
                              if ( ! error )
                              {
@@ -190,7 +194,7 @@ static LinkedinLoader *sharedInstance = nil;
                                  } else {
                                      NSString *errorString = [[error userInfo] objectForKey:@"error"];
                                      NSLog(@"Linkedin: user signup failed, error: %@", errorString);
-                                     [target performSelector:failure withObject:error];
+                                     [target performSelector:failure withObject:nil];
                                  }
                              }];
                          }
@@ -199,18 +203,18 @@ static LinkedinLoader *sharedInstance = nil;
                 
             } failure:^(AFHTTPRequestOperation * operation, NSError *error) {
                 NSLog(@"Linkedin: failed to fetch current user %@", error);
-                [target performSelector:failure withObject:error];
+                [target performSelector:failure withObject:nil];
             }];
         } failure:^(NSError *error) {
             NSLog(@"Linkedin: quering accessToken failed %@", error);
-            [target performSelector:failure withObject:error];
+            [target performSelector:failure withObject:nil];
         }];
     } cancel:^{
         NSLog(@"Linkedin: authorization was cancelled by user");
         [target performSelector:failure withObject:nil];
     } failure:^(NSError *error) {
         NSLog(@"Linkedin: authorization failed %@", error);
-        [target performSelector:failure withObject:error];
+        [target performSelector:failure withObject:nil];
     }];
 
 }
