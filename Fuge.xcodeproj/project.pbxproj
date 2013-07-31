@@ -116,6 +116,10 @@
 		4C05732A166AEF9B00EF6FAD /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C057328166AEF9B00EF6FAD /* ProfileViewController.m */; };
 		4C05733B166B73D900EF6FAD /* UserProfileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C057339166B73D900EF6FAD /* UserProfileController.m */; };
 		4C05733C166B73D900EF6FAD /* UserProfile.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C05733A166B73D900EF6FAD /* UserProfile.xib */; };
+		4C08525017A818D500517D37 /* iconMeetup.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C08524E17A818D500517D37 /* iconMeetup.png */; };
+		4C08525117A818D500517D37 /* iconMeetup.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C08524E17A818D500517D37 /* iconMeetup.png */; };
+		4C08525217A818D500517D37 /* iconMeetup@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C08524F17A818D500517D37 /* iconMeetup@2x.png */; };
+		4C08525317A818D500517D37 /* iconMeetup@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C08524F17A818D500517D37 /* iconMeetup@2x.png */; };
 		4C08DDD3163C88580093C851 /* Circle.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD0163C88580093C851 /* Circle.m */; };
 		4C08DDD4163C88580093C851 /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD2163C88580093C851 /* Person.m */; };
 		4C08DDDB163C88640093C851 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD6163C88640093C851 /* RootViewController.m */; };
@@ -608,6 +612,8 @@
 		4C057338166B73D900EF6FAD /* UserProfileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserProfileController.h; sourceTree = "<group>"; };
 		4C057339166B73D900EF6FAD /* UserProfileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserProfileController.m; sourceTree = "<group>"; };
 		4C05733A166B73D900EF6FAD /* UserProfile.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserProfile.xib; sourceTree = "<group>"; };
+		4C08524E17A818D500517D37 /* iconMeetup.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMeetup.png; sourceTree = "<group>"; };
+		4C08524F17A818D500517D37 /* iconMeetup@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconMeetup@2x.png"; sourceTree = "<group>"; };
 		4C08DDCF163C88580093C851 /* Circle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Circle.h; sourceTree = "<group>"; };
 		4C08DDD0163C88580093C851 /* Circle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Circle.m; sourceTree = "<group>"; };
 		4C08DDD1163C88580093C851 /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
@@ -1021,6 +1027,8 @@
 				4C6C3A001727FE4000F5F1B3 /* iconFacebook@2x.png */,
 				4C14CD9A1775E26000BC2533 /* iconEventbrite.png */,
 				4C14CD9B1775E26000BC2533 /* iconEventbrite@2x.png */,
+				4C08524E17A818D500517D37 /* iconMeetup.png */,
+				4C08524F17A818D500517D37 /* iconMeetup@2x.png */,
 				47B203E017100C7300B756FA /* meetPinBlue.png */,
 				47B203E117100C7300B756FA /* meetPinBlue@2x.png */,
 				47B203E217100C7300B756FA /* meetPinGray.png */,
@@ -1576,6 +1584,8 @@
 				4C76EB2517A47937007770D1 /* LinkedinLogin.png in Resources */,
 				4C76EB2617A4793B007770D1 /* LinkedinLogin@2x.png in Resources */,
 				4C9D1B5317A6A098007B0FEA /* Localizable.strings in Resources */,
+				4C08525017A818D500517D37 /* iconMeetup.png in Resources */,
+				4C08525217A818D500517D37 /* iconMeetup@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1702,6 +1712,8 @@
 				4C76EB2717A4793D007770D1 /* FacebookLogin@2x.png in Resources */,
 				4C76EB2817A47940007770D1 /* FacebookLogin.png in Resources */,
 				4C9D1B5517A6A09F007B0FEA /* Localizable.strings in Resources */,
+				4C08525117A818D500517D37 /* iconMeetup.png in Resources */,
+				4C08525317A818D500517D37 /* iconMeetup@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

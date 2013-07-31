@@ -98,7 +98,9 @@ static Boolean bFirstZoom = true;
     NSDateComponents* comps = [[NSDateComponents alloc] init];
     [comps setDay:daySelector];
     NSDate* startDay = [[NSCalendar currentCalendar] dateByAddingComponents:comps toDate:[NSDate date] options:0];
-    if ( daySelector == 7 ) // whole week selected
+    if ( daySelector == 8 ) // whole month selected
+        [comps setDay:30];
+    else if ( daySelector == 7 ) // whole week selected
         [comps setDay:7];
     else
         [comps setDay:daySelector+1];
@@ -270,10 +272,10 @@ static Boolean bFirstZoom = true;
 
 - (void) focusMapOnMeetup:(NSNotification *)notification
 {
-    daySelector = 0;
+    daySelector = 8;
     daySelectButton.title = dayButtonLabels[ daySelector ];
     [self reloadStatusChanged];
-
+    
     Meetup *meetup = [[notification userInfo] objectForKey:@"meetup"];
     MKCoordinateRegion region = mapView.region;
     region.center.latitude = meetup.location.latitude;
@@ -306,8 +308,8 @@ static Boolean bFirstZoom = true;
     NSDateFormatter* theDateFormatter2 = [[NSDateFormatter alloc] init];
     [theDateFormatter2 setFormatterBehavior:NSDateFormatterBehavior10_4];
     [theDateFormatter2 setDateFormat:@"dd MMM"];
-    dayButtonLabels = [NSMutableArray arrayWithCapacity:7];
-    selectionChoices = [NSMutableArray arrayWithCapacity:8];
+    dayButtonLabels = [NSMutableArray arrayWithCapacity:9];
+    selectionChoices = [NSMutableArray arrayWithCapacity:9];
     for ( NSUInteger n = 0; n < 7; n++ )
     {
         NSDate* day = [NSDate dateWithTimeIntervalSinceNow:24*n*3600];
@@ -322,6 +324,8 @@ static Boolean bFirstZoom = true;
     }
     [dayButtonLabels addObject:@"All week"];
     [selectionChoices addObject:@"All week"];
+    [dayButtonLabels addObject:@"All month"];
+    [selectionChoices addObject:@"All month"];
     
     // Misc
     [mapView setMapType:MKMapTypeStandard];
@@ -559,7 +563,7 @@ static Boolean bFirstZoom = true;
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
     
-    return 8;
+    return 9;
 }
 
 

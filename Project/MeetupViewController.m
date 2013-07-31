@@ -333,11 +333,7 @@
     // Comments
     NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
     if ( meetup.strOriginalURL && meetup.strOriginalURL.length > 0 )
-    {
-        [stringComments appendString:@"    Original post: "];
-        [stringComments appendString:meetup.strOriginalURL];
-        [stringComments appendString:@"\n"];
-    }
+        [stringComments appendString:[NSString stringWithFormat:@"    Original post: %@\n", meetup.strOriginalURL]];
     
     for (Comment *comment in commentsList)
     {

@@ -163,13 +163,19 @@
     else
         inboxCell.pinImage = nil;*/
     Person* person = nil;
+    NSString* strPersonId;
     if ( [item.fromId compare:strCurrentUserId] == NSOrderedSame && item.type != INBOX_ITEM_COMMENT )
-        person = [globalData getPersonById:item.toId];
+        strPersonId = item.toId;
     else
-        person = [globalData getPersonById:item.fromId];
+        strPersonId = item.fromId;
+    if ( [strPersonId compare:strCurrentUserId] == NSOrderedSame )
+        person = currentPerson;
+    else
+        person = [globalData getPersonById:strPersonId];
     if ( person )
         [inboxCell.mainImage loadImageFromURL:[person smallAvatarUrl]];
-    // TODO: add unknown person avatar
+    else
+        inboxCell.mainImage = nil; // TODO: add unknown person avatar
     
 	return inboxCell;
 }

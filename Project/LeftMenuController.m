@@ -125,7 +125,48 @@
 
 - (void)meetupCallback:(NSDictionary*)meetupData
 {
+    if ( ! meetupData )
+    {
+        UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Meetup not found" message:@"Probably, wrong id" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [errorAlert show];
+        return;
+    }
+    
     NSLog(@"Meetup: %@", meetupData);
+    NSString* strId = [ [NSString alloc] initWithFormat:@"mtmt_%@", [meetupData objectForKey:@"id"]];
+    PFQuery *meetupQuery = [PFQuery queryWithClassName:@"Meetup"];
+    [meetupQuery whereKey:@"meetupId" equalTo:strId];
+    [meetupQuery getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        if ( object )
+        {
+            UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Meetup already exists" message:@"This meetup was already added" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [errorAlert show];
+        }
+        else
+        {
+            Meetup* meetup = [[Meetup alloc] initWithMtEvent:meetupData];
+            if ( ! meetup )
+            {
+                UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Meetup initizalization failed" message:@"Check the data." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [errorAlert show];
+            }
+            else
+            {
+                Boolean bSaved = [meetup save];
+                if ( bSaved )
+                {
+                    [globalData addMeetup:meetup];
+                    NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:meetup, @"meetup", nil];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kNewMeetupCreated object:nil userInfo:userInfo];
+                }
+                else
+                {
+                    UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Meetup save failed" message:@"Probably, no connection. Try it all again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                    [errorAlert show];
+                }
+            }
+        }
+    }];
 }
 
 - (void)meetupsListCallback:(NSDictionary*)meetupsData

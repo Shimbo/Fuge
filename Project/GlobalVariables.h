@@ -56,7 +56,7 @@
 #define DISTANCE_FOR_GROUPING_PINS  [globalVariables globalParam:@"DistanceForGroupingPins" default:500000]
 
 // Otherwise not showing at all
-#define MAX_DAYS_TILL_MEETUP        [globalVariables globalParam:@"MaxDaysTillMeetup" default:7]
+#define MAX_DAYS_TILL_MEETUP        [globalVariables globalParam:@"MaxDaysTillMeetup" default:30]
 #define MAX_SECONDS_FROM_PERSON_LOGIN [globalVariables globalParam:@"MaxSecondsFromPersonLogin" default:86400*100]
 
 #define WELCOME_MESSAGE             (NSString*)[globalVariables getGlobalParam:@"WelcomeMessage"]

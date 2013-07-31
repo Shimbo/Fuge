@@ -21,16 +21,18 @@
 -(id) init
 {
     if (self = [super init]) {
-        meetupType = TYPE_THREAD;
+        meetupType = TYPE_MEETUP;
         meetupData = nil;
         attendees = nil;
         decliners = nil;
         numComments = 0;
+        strId = nil;
         strAddress = @"";
         strVenueId = @"";
         bImportedEvent = FALSE;
         iconNumber = 0;
         isCanceled = FALSE;
+        importedType = IMPORTED_NOT;
     }
     
     return self;
@@ -93,7 +95,7 @@
     return self;
 }
 
--(id) initWithEbEvent:(NSDictionary*)eventData
+-(id) initWithEbEvent:(NSDictionary*)data
 {
     self = [self init];
     
@@ -102,10 +104,10 @@
     meetupType = TYPE_MEETUP;
     privacy = MEETUP_PUBLIC;
     
-    strId = [ [NSString alloc] initWithFormat:@"ebmt_%@", [eventData objectForKey:@"id"]];
+    strId = [ [NSString alloc] initWithFormat:@"ebmt_%@", [data objectForKey:@"id"]];
     strOwnerId = @"";
 
-    NSDictionary* organizer = [eventData objectForKey:@"organizer"];
+    NSDictionary* organizer = [data objectForKey:@"organizer"];
     if ( organizer )
     {
         if ( [organizer objectForKey:@"name"] )
@@ -113,23 +115,23 @@
     }
     else
         strOwnerName = @"Unknown";
-    if ( [eventData objectForKey:@"title"] )
-        strSubject = [eventData objectForKey:@"title"];
+    if ( [data objectForKey:@"title"] )
+        strSubject = [data objectForKey:@"title"];
     else
         strSubject = @"Unknown";
-    if ( [eventData objectForKey:@"description"] )
-        strDescription = [eventData objectForKey:@"description"];
+    if ( [data objectForKey:@"description"] )
+        strDescription = [data objectForKey:@"description"];
     
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     
-    NSString* strStartDate = [eventData objectForKey:@"start_date"];
+    NSString* strStartDate = [data objectForKey:@"start_date"];
     if ( ! strStartDate )
         return nil;
     dateTime = [dateFormatter dateFromString:strStartDate];
     if ( ! dateTime )
         return nil;
-    NSString* strEndDate = [eventData objectForKey:@"end_date"];
+    NSString* strEndDate = [data objectForKey:@"end_date"];
     if ( ! strEndDate )
         return nil;
     NSDate* endDate = [dateFormatter dateFromString:strEndDate];
@@ -140,7 +142,7 @@
         return nil;
     dateTimeExp = endDate;
     
-    NSDictionary* venue = [eventData objectForKey:@"venue"];
+    NSDictionary* venue = [data objectForKey:@"venue"];
     if ( ! venue )
         return nil;
     if ( ! [venue objectForKey:@"Lat-Long"] )
@@ -163,12 +165,120 @@
     return self;
 }
 
+-(id) initWithMtEvent:(NSDictionary*)data
+{
+    self = [self init];
+    
+    importedType = IMPORTED_MEETUP;
+    meetupType = TYPE_MEETUP;
+    privacy = MEETUP_PUBLIC;
+    
+    strId = [ [NSString alloc] initWithFormat:@"mtmt_%@", [data objectForKey:@"id"]];
+    strOwnerId = strCurrentUserId;
+    
+    NSDictionary* organizer = [data objectForKey:@"group"];
+    if ( organizer )
+    {
+        if ( [organizer objectForKey:@"name"] )
+            strOwnerName = [organizer objectForKey:@"name"];
+    }
+    else
+        strOwnerName = @"Unknown";
+    if ( [data objectForKey:@"name"] )
+        strSubject = [data objectForKey:@"name"];
+    else
+        strSubject = @"Unknown";
+    
+    // Description and how-to-find
+    NSMutableString* description = nil;
+    if ( [data objectForKey:@"description"] )
+    {
+        description = [data objectForKey:@"description"];
+        if ( [data objectForKey:@"yes_rsvp_count"] )
+            [description insertString:[NSString stringWithFormat:@"Meetup.com attendees: %d<BR>", [[data objectForKey:@"yes_rsvp_count"] integerValue]] atIndex:0];
+        if ( [data objectForKey:@"how_to_find_us"] )
+            [description insertString:[NSString stringWithFormat:@"How to find: %@<BR>", [data objectForKey:@"how_to_find_us"]] atIndex:0];
+    }
+    strDescription = description;
+    
+    //NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    //[dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    
+    NSString* strStartDate = [data objectForKey:@"time"];
+    if ( ! strStartDate )
+        return nil;
+    NSTimeInterval timeInterval = [strStartDate longLongValue];
+    timeInterval /= 1000;
+    dateTime = [NSDate dateWithTimeIntervalSince1970:timeInterval];
+    if ( ! dateTime )
+        return nil;
+    
+    NSString* strDuration = [data objectForKey:@"duration"];
+    if ( strDuration )
+    {
+        durationSeconds = [strDuration integerValue] / 1000;
+        if ( durationSeconds > 3600*24*3 )  // Exclude events more than tree days in duration
+            return nil;
+    }
+    else
+        durationSeconds = 3600*3;
+    dateTimeExp = [dateTime dateByAddingTimeInterval:durationSeconds];
+    
+    NSDictionary* venue = [data objectForKey:@"venue"];
+    if ( ! venue )
+        return nil;
+    
+    NSString* strLat = [venue objectForKey:@"lat"];
+    NSString* strLon = [venue objectForKey:@"lon"];
+    if ( ! strLat || ! strLon )
+        return nil;
+    
+    double lat = [strLat doubleValue];
+    double lon = [strLon doubleValue];
+    location = [PFGeoPoint geoPointWithLatitude:lat longitude:lon];
+    
+    strVenue = [venue objectForKey:@"name"];
+    if ( ! strVenue || ! [strVenue isKindOfClass:[NSString class]] )
+        strVenue = [NSString stringWithFormat:@"%f : %f", lat, lon];
+    if ( [venue objectForKey:@"address_1"] )
+    {
+        NSMutableString* address = [venue objectForKey:@"address_1"];
+        if ( [venue objectForKey:@"city"] )
+        {
+            [address appendString:@", "];
+            [address appendString:[venue objectForKey:@"city"]];
+        }
+        if ( [venue objectForKey:@"address_2"] )
+        {
+            [address appendString:@", "];
+            [address appendString:[venue objectForKey:@"address_2"]];
+        }
+        strAddress = address;
+    }
+    
+    NSDictionary* feeInfo = [data objectForKey:@"fee"];
+    if ( feeInfo )
+    {
+        NSMutableString* price = [feeInfo objectForKey:@"amount"];
+        if ( [feeInfo objectForKey:@"currency"] )
+        {
+            [price appendString:@" "];
+            [price appendString:[feeInfo objectForKey:@"currency"]];
+        }
+        strPrice = price;
+    }
+    
+    strOriginalURL = [data objectForKey:@"event_url"];
+    
+    return self;
+}
 
 - (Boolean) save
 {
     // We're not changing or saving Facebook events nor creating our own as a copy
-    if ( bImportedEvent )
-        return true;
+    //if ( bImportedEvent )
+    //    return true;
+    // UPDATE: but we are saving these meetups as admins!
     
     NSNumber* timestamp = [[NSNumber alloc] initWithDouble:[dateTime timeIntervalSince1970]];
     
@@ -184,7 +294,8 @@
         
         // Id, fromStr, fromId
         [meetupData setObject:[NSNumber numberWithInt:meetupType] forKey:@"type"];
-        strId = [[NSString alloc] initWithFormat:@"%d_%@", [timestamp integerValue], strOwnerId];
+        if ( ! strId )
+            strId = [[NSString alloc] initWithFormat:@"%d_%@", [timestamp integerValue], strOwnerId];
         [meetupData setObject:strId forKey:@"meetupId"];
         [meetupData setObject:strOwnerId forKey:@"userFromId"];
         [meetupData setObject:strOwnerName forKey:@"userFromName"];
@@ -269,6 +380,10 @@
     iconNumber = [[meetupData objectForKey:@"icon"] integerValue];
     if ( [meetupData objectForKey:@"canceled"] )
         isCanceled = [[meetupData objectForKey:@"canceled"] boolValue];
+    
+    // Imported type
+    if ( [[strId substringToIndex:4] compare:@"mtmt"] == NSOrderedSame )
+        importedType = IMPORTED_MEETUP;
 }
 
 -(NSUInteger)getUnreadMessagesCount

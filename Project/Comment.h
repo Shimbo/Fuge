@@ -44,7 +44,7 @@
 @property (nonatomic, copy) NSDate *dateCreated;
 
 -(id) init;
--(void) save;
+-(void) save:(id)target selector:(SEL)callback;;
 -(void) unpack:(PFObject*)data;
 
 @end

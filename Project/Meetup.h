@@ -27,8 +27,10 @@ typedef enum kEMeetupPrivacy
 
 typedef enum kEImportedType
 {
-    IMPORTED_FACEBOOK    = 0,
-    IMPORTED_EVENTBRITE  = 1
+    IMPORTED_NOT        = 0,
+    IMPORTED_FACEBOOK   = 1,
+    IMPORTED_EVENTBRITE = 2,
+    IMPORTED_MEETUP     = 3
 }EImportedType;
 
 @class FSVenue;
@@ -102,7 +104,8 @@ typedef enum kEImportedType
 -(void) unpack:(PFObject*)data;
 
 -(id) initWithFbEvent:(NSDictionary*)data;
--(id) initWithEbEvent:(NSDictionary*)eventData;
+-(id) initWithEbEvent:(NSDictionary*)data;
+-(id) initWithMtEvent:(NSDictionary*)data;
 
 -(Boolean) addedToCalendar;
 -(void) addToCalendar;

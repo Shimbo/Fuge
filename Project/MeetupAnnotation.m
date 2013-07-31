@@ -35,7 +35,7 @@
             nAttendeesCount = meetup.attendees.count;
         
         // Don't trim name for imported events as organizers are not people
-        NSString* strName = meetup.bImportedEvent ? meetup.strOwnerName : [globalVariables trimName:meetup.strOwnerName];
+        NSString* strName = ( meetup.importedType != IMPORTED_NOT ) ? meetup.strOwnerName : [globalVariables trimName:meetup.strOwnerName];
         
         if ( self.attendedPersons.count )
             self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Attending: %d", strName, self.attendedPersons.count ];

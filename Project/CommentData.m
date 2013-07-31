@@ -153,6 +153,21 @@
     }];
 }
 
+-(void)commentCreated:(Comment*)comment
+{
+    [globalData updateConversation:comment.dateCreated count:nil thread:comment.strMeetupId meetup:TRUE];
+    
+    // Add comment to the list of threads
+    [self addComment:comment];
+    
+    // Send push for normal comment
+    if ( [comment.systemType integerValue] == COMMENT_PLAIN )
+        [pushManager sendPushCommentedMeetup:comment.strMeetupId];
+    
+    // Subscription
+    [globalData subscribeToThread:comment.strMeetupId];
+}
+
 -(void)createCommentForMeetup:(Meetup*)meetup commentType:(CommentType)type commentText:(NSString*)text
 {
     // Creating comment about meetup creation in db
@@ -205,17 +220,7 @@
     comment.meetupData = meetup.meetupData;
     comment.strComment = strComment;
     comment.typeNum = typeNum;
-    [comment save];
-    
-    // Add comment to the list of threads
-    [self addComment:comment];
-    
-    // Subscription
-    [globalData subscribeToThread:meetup.strId];
-    
-    // Send push for normal comment
-    if ( type == COMMENT_PLAIN )
-        [pushManager sendPushCommentedMeetup:meetup.strId];
+    [comment save:self selector:@selector(commentCreated:)];
 }
 
 

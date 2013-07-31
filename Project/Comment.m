@@ -22,7 +22,7 @@
     return self;
 }
 
-- (void) save
+- (void) save:(id)target selector:(SEL)callback;
 {
     // Already saved
     if ( commentData )
@@ -48,6 +48,11 @@
     [commentData saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if ( error )
             NSLog( @"Comment saving failed: %@", error );
+        else
+        {
+            dateCreated = commentData.createdAt;
+            [target performSelector:callback withObject:self];
+        }
     }];
 }
 

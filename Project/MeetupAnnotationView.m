@@ -126,10 +126,13 @@
         _icon.image = [UIImage imageNamed:@"iconPrivate.png"];
     else if ( meetup.bImportedEvent )
     {
-        switch ( meetup.importedType )
         {
-        case IMPORTED_FACEBOOK: _icon.image = [UIImage imageNamed:@"iconFacebook.png"]; break;
-        case IMPORTED_EVENTBRITE: _icon.image = [UIImage imageNamed:@"iconEventbrite.png"]; break;
+            switch ( meetup.importedType )
+            {
+            case IMPORTED_FACEBOOK: _icon.image = [UIImage imageNamed:@"iconFacebook.png"]; break;
+            case IMPORTED_EVENTBRITE: _icon.image = [UIImage imageNamed:@"iconEventbrite.png"]; break;
+            case IMPORTED_MEETUP: _icon.image = [UIImage imageNamed:@"iconMeetup.png"]; break;
+            }
         }
     }
     else
