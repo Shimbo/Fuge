@@ -10,7 +10,7 @@
 
 @implementation Person
 
-@synthesize strId, strFirstName, strLastName, strAge, strGender, distance, /*role, strArea,*/ strEmployer, strPosition, strCircle, strStatus, idCircle, personData, numUnreadMessages, friendsFb, friends2O, likes, isCurrentUser;
+@synthesize strId, strFirstName, strLastName, strAge, strGender, distance, /*role, strArea,*/ strEmployer, strPosition, strCircle, strStatus, idCircle, personData, numUnreadMessages, friendsFb, friends2O, likes, isCurrentUser, discoverable;
 
 + (void)initialize {
 	if (self == [Person class]) {
@@ -33,6 +33,10 @@
         strPosition = [user objectForKey:@"profilePosition"];
         strStatus = [user objectForKey:@"profileStatus"];
         idCircle = nCircle;
+        if ( [user objectForKey:@"discoverable"] )
+            discoverable = [[user objectForKey:@"discoverable"] boolValue];
+        else
+            discoverable = TRUE;
         
         // Location
         location = [user objectForKey:@"location"];
@@ -136,8 +140,10 @@
 {
     if ( ! distance )
         return @"";
-    else if ( [distance floatValue] < 1000.0f )
-        return [[NSString alloc] initWithFormat:@"%.0f m", [distance floatValue]];
+    else if ( [distance floatValue] < 100.0f )
+        return NSLocalizedString(@"USER_PROFILE_NEARBY",nil);
+//    else if ( [distance floatValue] < 1000.0f )
+//        return [[NSString alloc] initWithFormat:@"%.0f m", [distance floatValue]];
     else if ( [distance floatValue] < 10000.0f )
         return [[NSString alloc] initWithFormat:@"%.1f km", [distance floatValue]/1000.0f];
     else

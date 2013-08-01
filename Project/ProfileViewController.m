@@ -82,7 +82,9 @@
         [discoverySwitch setOn:[[[PFUser currentUser] objectForKey:@"profileDiscoverable"] boolValue]];
     else
         [discoverySwitch setOn:TRUE];
-
+    
+    [buttonLogout setTitle:NSLocalizedString(@"SETTINGS_LOGOUT_TEXT",nil) forState:UIControlStateNormal];
+    
     /*if ( [[PFUser currentUser] objectForKey:@"profileRole"] )
         selection = [[pCurrentUser objectForKey:@"profileRole"] integerValue];
     else
@@ -202,6 +204,7 @@
     labelRoles = nil;
     discoverySwitch = nil;
     buttonRoles = nil;
+    buttonLogout = nil;
     [super viewDidUnload];
 }
 

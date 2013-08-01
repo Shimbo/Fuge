@@ -120,6 +120,7 @@
 		4C08525117A818D500517D37 /* iconMeetup.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C08524E17A818D500517D37 /* iconMeetup.png */; };
 		4C08525217A818D500517D37 /* iconMeetup@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C08524F17A818D500517D37 /* iconMeetup@2x.png */; };
 		4C08525317A818D500517D37 /* iconMeetup@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C08524F17A818D500517D37 /* iconMeetup@2x.png */; };
+		4C08525517AA895000517D37 /* PersonCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C08525417AA895000517D37 /* PersonCell.xib */; };
 		4C08DDD3163C88580093C851 /* Circle.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD0163C88580093C851 /* Circle.m */; };
 		4C08DDD4163C88580093C851 /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD2163C88580093C851 /* Person.m */; };
 		4C08DDDB163C88640093C851 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD6163C88640093C851 /* RootViewController.m */; };
@@ -270,7 +271,6 @@
 		4C444ED517A0045700288139 /* RootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4706D10D16C11BA200CAF9AF /* RootViewController.xib */; };
 		4C444ED617A0045700288139 /* reveal_menu_icon_portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 4706D10F16C11CA600CAF9AF /* reveal_menu_icon_portrait.png */; };
 		4C444ED717A0045700288139 /* reveal_menu_icon_portrait@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4706D11016C11CA600CAF9AF /* reveal_menu_icon_portrait@2x.png */; };
-		4C444ED817A0045700288139 /* PersonCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47A5ED2916C7C2CD00084ED9 /* PersonCell.xib */; };
 		4C444ED917A0045700288139 /* InboxViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C1C438216C9B125008BA9CA /* InboxViewController.xib */; };
 		4C444EDA17A0045700288139 /* InboxCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C1C438816C9BF64008BA9CA /* InboxCell.xib */; };
 		4C444EDB17A0045700288139 /* MeetupInviteViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47BDBC9116EA268F008B12CF /* MeetupInviteViewController.xib */; };
@@ -614,6 +614,7 @@
 		4C05733A166B73D900EF6FAD /* UserProfile.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserProfile.xib; sourceTree = "<group>"; };
 		4C08524E17A818D500517D37 /* iconMeetup.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMeetup.png; sourceTree = "<group>"; };
 		4C08524F17A818D500517D37 /* iconMeetup@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconMeetup@2x.png"; sourceTree = "<group>"; };
+		4C08525417AA895000517D37 /* PersonCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PersonCell.xib; path = resources/S2C/PersonCell.xib; sourceTree = "<group>"; };
 		4C08DDCF163C88580093C851 /* Circle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Circle.h; sourceTree = "<group>"; };
 		4C08DDD0163C88580093C851 /* Circle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Circle.m; sourceTree = "<group>"; };
 		4C08DDD1163C88580093C851 /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
@@ -1279,6 +1280,7 @@
 				4706D10D16C11BA200CAF9AF /* RootViewController.xib */,
 				4CDE8D431789D27900844B7E /* MatchesViewController.xib */,
 				47A5ED2916C7C2CD00084ED9 /* PersonCell.xib */,
+				4C08525417AA895000517D37 /* PersonCell.xib */,
 				4CDE8D461789E03200844B7E /* LikeCell.xib */,
 				4C1C438816C9BF64008BA9CA /* InboxCell.xib */,
 				4C057325166AEF4800EF6FAD /* ProfileView.xib */,
@@ -1612,7 +1614,6 @@
 				4C444ED517A0045700288139 /* RootViewController.xib in Resources */,
 				4C444ED617A0045700288139 /* reveal_menu_icon_portrait.png in Resources */,
 				4C444ED717A0045700288139 /* reveal_menu_icon_portrait@2x.png in Resources */,
-				4C444ED817A0045700288139 /* PersonCell.xib in Resources */,
 				4C444ED917A0045700288139 /* InboxViewController.xib in Resources */,
 				4C444EDA17A0045700288139 /* InboxCell.xib in Resources */,
 				4C444EDB17A0045700288139 /* MeetupInviteViewController.xib in Resources */,
@@ -1714,6 +1715,7 @@
 				4C9D1B5517A6A09F007B0FEA /* Localizable.strings in Resources */,
 				4C08525117A818D500517D37 /* iconMeetup.png in Resources */,
 				4C08525317A818D500517D37 /* iconMeetup@2x.png in Resources */,
+				4C08525517AA895000517D37 /* PersonCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

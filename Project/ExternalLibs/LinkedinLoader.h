@@ -29,4 +29,6 @@
 
 - (void)initialize:(id)target selector:(SEL)callback failed:(SEL)failure;
 
+- (NSString*)getProfileInHtml:(NSString*)profileStatus summary:(NSString*)profileSummary jobs:(NSArray*)profileJobs;
+
 @end

@@ -107,7 +107,11 @@
     statusPrompt.tag = ALERT_ENTER_STATUS;
     [statusPrompt setAlertViewStyle:UIAlertViewStylePlainTextInput];
     [[statusPrompt textFieldAtIndex:0] setDelegate:self];
-    [[statusPrompt textFieldAtIndex:0] setPlaceholder:NSLocalizedString(@"STATUS_WINDOW_PLACEHOLDER",nil)];
+    NSString* strCurrentStatus = currentPerson.strStatus;
+    if ( strCurrentStatus && strCurrentStatus.length > 0 )
+        [[statusPrompt textFieldAtIndex:0] setPlaceholder:strCurrentStatus];
+    else
+        [[statusPrompt textFieldAtIndex:0] setPlaceholder:NSLocalizedString(@"STATUS_WINDOW_PLACEHOLDER",nil)];
     [[statusPrompt textFieldAtIndex:0] setFont:[UIFont systemFontOfSize:14]];
     [statusPrompt show];
 }

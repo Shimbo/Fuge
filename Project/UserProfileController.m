@@ -13,7 +13,8 @@
 #import "GlobalData.h"
 #import "NewMeetupViewController.h"
 #import "MatchesViewController.h"
-#include "Message.h"
+#import "Message.h"
+#import "LinkedinLoader.h"
 
 @implementation UserProfileController
 
@@ -23,6 +24,7 @@
     if (self) {
         self.title = NSLocalizedString(@"", @"");
         messagesCount = 0;
+        profileMode = PROFILE_MODE_MESSAGES;
     }
     return self;
 }
@@ -39,22 +41,113 @@
     [self.navigationController presentViewController:navigation animated:YES completion:nil];
 }
 
+- (void)resizeScroll
+{
+    CGRect frame;
+    NSUInteger newHeight;
+    
+    // Resizing scroll view frame
+    frame = scrollView.frame;
+    if ( profileMode == PROFILE_MODE_MESSAGES )
+        frame.size.height = self.view.size.height-40;
+    else
+        frame.size.height = self.view.size.height;
+    scrollView.frame = frame;
+    
+    // Resizing comments
+    newHeight = messageHistory.contentSize.height;
+    frame = messageHistory.frame;
+    frame.size.height = newHeight;
+    messageHistory.frame = frame;
+    
+#ifdef TARGET_S2C
+    // Resizing web view
+    newHeight = [[webView stringByEvaluatingJavaScriptFromString:@"document.body.scrollHeight"] floatValue];
+    frame = webView.frame;
+    frame.size.height = newHeight;
+    webView.frame = frame;
+#endif
+    
+    // Resizing scroll view contents
+    if ( profileMode == PROFILE_MODE_MESSAGES )
+        [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width, messageHistory.frame.origin.y + messageHistory.frame.size.height)];
+    else
+        [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width, webView.frame.origin.y + webView.frame.size.height)];
+    
+    // Scrolling down
+    if ( profileMode == PROFILE_MODE_MESSAGES )
+        [scrollView scrollRectToVisible:CGRectMake(0, scrollView.frame.size.height-1, scrollView.frame.size.width, scrollView.frame.size.height) animated:TRUE];
+    else
+        [scrollView scrollRectToVisible:CGRectMake(0, 0, scrollView.frame.size.width, 1) animated:TRUE];
+}
+
+- (void)updateUI
+{
+    if ( profileMode == PROFILE_MODE_MESSAGES )
+    {
+        messageHistory.hidden = FALSE;
+        textView.hidden = FALSE;
+        containerView.hidden = FALSE;
+        webView.hidden = TRUE;
+#ifdef TARGET_S2C
+        [btnThingsInCommon setTitle:@"Full profile" forState:UIControlStateNormal];
+#endif
+    }
+    else
+    {
+        messageHistory.hidden = TRUE;
+        textView.hidden = TRUE;
+        containerView.hidden = TRUE;
+        webView.hidden = FALSE;
+        [btnThingsInCommon setTitle:@"Message" forState:UIControlStateNormal];
+    }
+    [self resizeScroll];
+}
+
+-(void) setProfileMode:(NSUInteger)mode
+{
+    profileMode = mode;
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+    if ( profileMode == PROFILE_MODE_SUMMARY )
+        [self resizeScroll];
+}
+
+-(BOOL) webView:(UIWebView *)inWeb shouldStartLoadWithRequest:(NSURLRequest *)inRequest navigationType:(UIWebViewNavigationType)inType {
+    if ( inType == UIWebViewNavigationTypeLinkClicked ) {
+        [[UIApplication sharedApplication] openURL:[inRequest URL]];
+        return NO;
+    }
+    
+    return YES;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
+    NSMutableArray* buttonArray = [NSMutableArray arrayWithCapacity:2];
 #ifdef TARGET_FUGE
     NSString* strProfileTitle = @"FB Profile";
+    [buttonArray addObject:[[UIBarButtonItem alloc] initWithTitle:@"Meet" style:UIBarButtonItemStylePlain target:self action:@selector(meetClicked)]];
 #elif defined TARGET_S2C
     NSString* strProfileTitle = @"LN Profile";
 #endif
-    self.navigationItem.rightBarButtonItems = @[
-                                                [[UIBarButtonItem alloc] initWithTitle:@"Meet" style:UIBarButtonItemStylePlain target:self action:@selector(meetClicked)],                                                                                                                                                                                                                 [[UIBarButtonItem alloc] initWithTitle:strProfileTitle style:UIBarButtonItemStylePlain target:self action:@selector(profileClicked)]];
+    [buttonArray addObject:[[UIBarButtonItem alloc] initWithTitle:strProfileTitle style:UIBarButtonItemStylePlain target:self action:@selector(profileClicked)]];
+    self.navigationItem.rightBarButtonItems = buttonArray;
     
     textView.editable = FALSE;
     
     // Comments
     [globalData loadMessageThread:personThis target:self selector:@selector(messagesLoaded:error:)];
+    
+#ifdef TARGET_S2C
+    // Summary
+    NSString* strResult = [lnLoader getProfileInHtml:personThis.strStatus summary:[personThis.personData objectForKey:@"profileSummary"] jobs:[personThis.personData objectForKey:@"profilePositions"]];
+    [webView loadHTMLString:strResult baseURL:nil];
+#endif
     
     // Avatar
     //profileImageView.profileID = personThis.strId;
@@ -69,7 +162,9 @@
     else
         labelDistance.text = @"";
     labelTimePassed.text = [[NSString alloc] initWithFormat:@"%@ ago", [personThis timeString]];
-    labelCircle.text = personThis.strCircle;
+    labelStatus.text = personThis.strStatus;
+    
+#ifdef TARGET_FUGE
     nThingsInCommon = [personThis matchesTotal];
     NSString* strTitle = @"No matches";
     if ( nThingsInCommon == 1 )
@@ -79,6 +174,10 @@
     if ( bIsAdmin )
         strTitle = [strTitle stringByAppendingString:[NSString stringWithFormat:@"+%d", personThis.matchesAdminBonus]];
     [btnThingsInCommon setTitle:strTitle forState:UIControlStateNormal];
+#endif
+    
+    // UI stuff, scroll, texts
+    [self updateUI];
     
     personThis.numUnreadMessages = 0;
 }
@@ -162,15 +261,27 @@
     messagesCount = messages.count;
     
     textView.editable = TRUE;
+    
+    if ( profileMode == PROFILE_MODE_MESSAGES )
+        [self resizeScroll];
 }
 
 - (IBAction)showMatchesList:(id)sender {
+    
+#ifdef TARGET_FUGE
     if ( nThingsInCommon + personThis.matchesAdminBonus == 0 )
         return;
     MatchesViewController *matchesViewController = [[MatchesViewController alloc] initWithNibName:@"MatchesViewController" bundle:nil];
     [matchesViewController setPerson:personThis];
     UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:matchesViewController];
     [self.navigationController presentViewController:navigation animated:YES completion:nil];
+#elif defined TARGET_S2C
+    if ( profileMode == PROFILE_MODE_MESSAGES )
+        profileMode = PROFILE_MODE_SUMMARY;
+    else
+        profileMode = PROFILE_MODE_MESSAGES;
+    [self updateUI];
+#endif
 }
 
 -(void) setPerson:(Person*)person
@@ -183,12 +294,14 @@
 - (void)viewDidUnload {
     messageHistory = nil;
     labelDistance = nil;
-    labelCircle = nil;
     [self setActivityIndicator:nil];
     labelFriendName = nil;
     labelTimePassed = nil;
     btnThingsInCommon = nil;
     profileImage = nil;
+    labelStatus = nil;
+    scrollView = nil;
+    webView = nil;
     [super viewDidUnload];
 }
 
@@ -276,10 +389,8 @@ double animatedDistance;
     [stringHistory appendString:textView.text];
     [messageHistory setText:stringHistory];
     
-    // Scrolling
-    NSRange range;
-    range.location = range.length = 0;
-    [messageHistory scrollRangeToVisible:range];
+    // Scrolling, sizing, etc.
+    [self resizeScroll];
     
     // Emptying message field
     [textView setText:@""];

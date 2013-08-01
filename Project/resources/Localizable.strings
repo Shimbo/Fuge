@@ -7,7 +7,7 @@
 */
 
 "LOADING_TITLE_NEWVERSION"      = "New version is out!";
-"LOADING_TEXT_NEWVERSION"       = "You're running old version of the application. We recommend you updating the application.";
+"LOADING_TEXT_NEWVERSION"       = "You're running an old version of the application. We recommend you updating the application.";
 "LOADING_TITLE_FIRSTPAGE"       = "Welcome!";
 "LOADING_TEXT_FIRSTPAGE"        = "Fuge is a social discovery service. Explore\n surroundings for people and activites. Or\n create your own and invite friends!";
 "LOADING_TITLE_NOINTERNET"      = "Ooups!";
@@ -30,3 +30,9 @@
 "MENU_ITEM_EXPLORE"             = "Explore";
 "MENU_ITEM_STATUS"              = "Status";
 "MENU_ITEM_SETTINGS"            = "Settings";
+
+"USER_PROFILE_NEARBY"           = "Nearby";
+
+"SETTINGS_LOGOUT_TEXT"          = "Logout from Facebook";
+
+"WELCOME_MESSAGE"               = "Greetings and welcome to Fuge. Why not to spend some time exploring the surroundings? Try to find interesting people or activities to join. And don't forget to invite your friends to accompany you. In case of any trouble please feel free to share with me. Any feedback would be much appreciated as well. Have a good day!";

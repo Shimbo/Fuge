@@ -392,7 +392,6 @@ NSInteger sortByName(id num1, id num2, void *context)
     friendQuery.limit = 1000;
     [friendQuery orderByDescending:@"updatedAt"];
     [friendQuery whereKey:@"fbId" containedIn:friendIds];
-    [friendQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
     [friendQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
     {
         NSArray *friendUsers = objects;

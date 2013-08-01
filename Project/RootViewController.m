@@ -249,6 +249,10 @@
     personCell.color = [UIColor whiteColor];
     personCell.personInfo.text = @"";
     
+#ifdef TARGET_S2C
+    personCell.personStatus.text = person.strStatus;
+    personCell.personRole.text = [person jobInfo];
+#elif defined TARGET_FUGE
     // Matches
     if ( person.idCircle != CIRCLE_FBOTHERS )
     {
@@ -283,6 +287,7 @@
         personCell.personStatus.text = [person jobInfo];
         personCell.personStatus.textColor = [UIColor blackColor];
     }
+#endif
     
 	return personCell;
 }
@@ -322,6 +327,9 @@
     else {
         UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
         [userProfileController setPerson:person];
+#ifdef TARGET_S2C
+        [userProfileController setProfileMode:PROFILE_MODE_SUMMARY];
+#endif
         [self.navigationController pushViewController:userProfileController animated:YES];
     }
     

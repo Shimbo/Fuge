@@ -24,6 +24,7 @@
     NSArray* likes;
     
     NSUInteger  numUnreadMessages;
+    Boolean     discoverable;
     
     PFGeoPoint* location;
     
@@ -45,6 +46,7 @@
 @property (nonatomic, retain) NSString *strCircle;
 @property (nonatomic) NSUInteger idCircle;
 @property (nonatomic, assign) NSUInteger numUnreadMessages;
+@property (nonatomic, readonly) Boolean discoverable;
 @property (nonatomic, retain) NSString *strStatus;
 @property (nonatomic, assign) Boolean isCurrentUser;
 

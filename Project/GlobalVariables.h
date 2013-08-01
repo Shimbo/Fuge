@@ -59,7 +59,7 @@
 #define MAX_DAYS_TILL_MEETUP        [globalVariables globalParam:@"MaxDaysTillMeetup" default:30]
 #define MAX_SECONDS_FROM_PERSON_LOGIN [globalVariables globalParam:@"MaxSecondsFromPersonLogin" default:86400*100]
 
-#define WELCOME_MESSAGE             (NSString*)[globalVariables getGlobalParam:@"WelcomeMessage"]
+#define WELCOME_MESSAGE             NSLocalizedString(@"WELCOME_MESSAGE",nil)//(NSString*)[globalVariables getGlobalParam:@"WelcomeMessage"]
 
 #define MEETUP_TEMPLATE_DESCRIPTION (NSString*)[globalVariables getGlobalParam:@"MeetupTemplateDescription"]
 #define MEETUP_TEMPLATE_PRICE       (NSString*)[globalVariables getGlobalParam:@"MeetupTemplatePrice"]

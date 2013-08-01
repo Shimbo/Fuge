@@ -23,6 +23,12 @@ static LinkedinLoader *sharedInstance = nil;
     return sharedInstance;
 }
 
+- (void) showErrorMessage:(NSString*)strMessage
+{
+    UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:strMessage delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [errorAlert show];
+}
+
 // Initialization
 - (id)init
 {
@@ -144,6 +150,7 @@ static LinkedinLoader *sharedInstance = nil;
                 if ( ! strId )
                 {
                     NSLog(@"Linkedin: failed to fetch user id");
+                    [self showErrorMessage:@"Linkedin: failed to fetch user id"];
                     [target performSelector:failure withObject:nil];
                     return;
                 }
@@ -151,6 +158,7 @@ static LinkedinLoader *sharedInstance = nil;
                 if ( ! strEmail )
                 {
                     NSLog(@"Linkedin: failed to fetch user e-mail");
+                    [self showErrorMessage:@"Linkedin: failed to fetch user e-mail"];
                     [target performSelector:failure withObject:nil];
                     return;
                 }
@@ -170,7 +178,10 @@ static LinkedinLoader *sharedInstance = nil;
                                  [target performSelector:callback withObject:nil];
                              }
                              else
+                             {
+                                 [self showErrorMessage:[NSString stringWithFormat:@"Refresh error: %@", error]];
                                  [target performSelector:failure withObject:error];
+                             }
                          }];
                      } else {
                          if ( error.code == 101 ) // not found
@@ -192,31 +203,106 @@ static LinkedinLoader *sharedInstance = nil;
                                      [target performSelector:callback withObject:nil];
                                      
                                  } else {
-                                     NSString *errorString = [[error userInfo] objectForKey:@"error"];
-                                     NSLog(@"Linkedin: user signup failed, error: %@", errorString);
+                                     NSLog(@"Linkedin: user signup failed, error: %@", error);
+                                     [self showErrorMessage:[NSString stringWithFormat:@"Linkedin: user signup failed, error: %@", error]];
                                      [target performSelector:failure withObject:nil];
                                  }
                              }];
+                         }
+                         else
+                         {
+                             NSLog(@"User login error (other than not found): %@", error);
+                             [self showErrorMessage:[NSString stringWithFormat:@"User login failed, error: %@", error]];
+                             [target performSelector:failure withObject:nil];
                          }
                      }
                  }];
                 
             } failure:^(AFHTTPRequestOperation * operation, NSError *error) {
+                [self showErrorMessage:[NSString stringWithFormat:@"Linkedin: failed to fetch current user, error: %@", error]];
                 NSLog(@"Linkedin: failed to fetch current user %@", error);
                 [target performSelector:failure withObject:nil];
             }];
         } failure:^(NSError *error) {
+            [self showErrorMessage:[NSString stringWithFormat:@"Linkedin: quering accessToken failed, error: %@", error]];
             NSLog(@"Linkedin: quering accessToken failed %@", error);
             [target performSelector:failure withObject:nil];
         }];
     } cancel:^{
         NSLog(@"Linkedin: authorization was cancelled by user");
+        [self showErrorMessage:@"Linkedin: authorization was cancelled by user"];
         [target performSelector:failure withObject:nil];
     } failure:^(NSError *error) {
+        [self showErrorMessage:[NSString stringWithFormat:@"Linkedin: authorization failed, error: %@", error]];
         NSLog(@"Linkedin: authorization failed %@", error);
         [target performSelector:failure withObject:nil];
     }];
-
 }
+
+- (NSString*)getProfileInHtml:(NSString*)profileStatus summary:(NSString*)profileSummary jobs:(NSArray*)profileJobs
+{
+    NSMutableString* stringResult = [NSMutableString stringWithString:@""];
+    if ( profileStatus && profileStatus.length > 0 )
+    {
+        //[stringResult appendString:@"<h3>Status</h3>"];
+        [stringResult appendString:profileStatus];
+        [stringResult appendString:@"<BR>"];
+    }
+    if ( profileSummary && profileSummary.length > 0 )
+    {
+        [stringResult appendString:@"<h3>Summary</h3>"];
+        [stringResult appendString:profileSummary];
+        [stringResult appendString:@"<BR>"];
+    }
+    if ( profileJobs )
+    {
+        NSDateFormatter *df = [[NSDateFormatter alloc] init];
+        
+        [stringResult appendString:@"<h3>Positions</h3>"];
+        for ( NSDictionary* job in profileJobs )
+        {
+            if ( [job objectForKey:@"title"] )
+                [stringResult appendString:[NSString stringWithFormat:@"<b>%@</b><BR>", [job objectForKey:@"title"]]];
+            if ( [job objectForKey:@"company"] )
+            {
+                NSDictionary* company = [job objectForKey:@"company"];
+                if ( [company objectForKey:@"name"] )
+                    [stringResult appendString:[NSString stringWithFormat:@"%@<BR>", [company objectForKey:@"name"]]];
+            }
+            if ( [job objectForKey:@"startDate"] )
+            {
+                NSDictionary* startDate = [job objectForKey:@"startDate"];
+                if ( [startDate objectForKey:@"month"] )
+                {
+                    NSInteger month = [[startDate objectForKey:@"month"] integerValue];
+                    [stringResult appendString:[NSString stringWithFormat:@"%@ ", [[df monthSymbols] objectAtIndex:month-1]]];
+                }
+                
+                if ( [startDate objectForKey:@"year"] )
+                    [stringResult appendString:[NSString stringWithFormat:@"%@ - ", [startDate objectForKey:@"year"]]];
+            }
+            if ( [job objectForKey:@"isCurrent"] && [[job objectForKey:@"isCurrent"] boolValue] == TRUE )
+                [stringResult appendString:@"Present<BR>"];
+            else
+            {
+                NSDictionary* endDate = [job objectForKey:@"endDate"];
+                if ( [endDate objectForKey:@"month"] )
+                {
+                    NSInteger month = [[endDate objectForKey:@"month"] integerValue];
+                    [stringResult appendString:[NSString stringWithFormat:@"%@ ", [[df monthSymbols] objectAtIndex:month-1]]];
+                }
+                
+                if ( [endDate objectForKey:@"year"] )
+                    [stringResult appendString:[NSString stringWithFormat:@"%@", [endDate objectForKey:@"year"]]];
+                [stringResult appendString:@"<BR>"];
+            }
+            if ( [job objectForKey:@"summary"] )
+                [stringResult appendString:[NSString stringWithFormat:@"<BR>%@<BR>", [job objectForKey:@"summary"]]];
+            [stringResult appendString:@"<BR>"];
+        }
+    }
+    return stringResult;
+}
+
 
 @end

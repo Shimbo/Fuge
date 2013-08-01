@@ -77,7 +77,7 @@ static Boolean bFirstZoom = true;
     int n = 0;
     for (Person* person in [circle getPersons] )
     {
-        if ( ! person.getLocation )
+        if ( ! person.getLocation || ! person.discoverable )
             continue;
         PersonAnnotation *ann = [[PersonAnnotation alloc] initWithPerson:person];
         [_personsAnnotations addObject:ann];
@@ -411,12 +411,14 @@ static Boolean bFirstZoom = true;
     // Persons and meetups adding
     NSUInteger nLimit = MAX_ANNOTATIONS_ON_THE_MAP;
     
+#ifndef TARGET_S2C
     if ( daySelector == 0 ) // Show people only for "today" selection
     {
         nLimit -= [self loadPersonAnnotations:CIRCLE_FB limit:nLimit];
         nLimit -= [self loadPersonAnnotations:CIRCLE_2O limit:nLimit];
         nLimit -= [self loadPersonAnnotations:CIRCLE_RANDOM limit:nLimit];
     }
+#endif
     nLimit -= [self loadMeetupAndThreadAnnotations:nLimit];
     
     if (_userLocation)
