@@ -347,7 +347,7 @@ static Boolean bFirstZoom = true;
     
     // Navigation bar: new meetup
     [self.navigationItem setHidesBackButton:true animated:false];
-    self.navigationItem.rightBarButtonItems = @[[[UIBarButtonItem alloc] initWithTitle:@"New meetup" style:UIBarButtonItemStyleBordered target:self action:@selector(newMeetupClicked)]];
+    self.navigationItem.rightBarButtonItems = @[[[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"MAP_BUTTON_NEWMEETUP",nil) style:UIBarButtonItemStyleBordered target:self action:@selector(newMeetupClicked)]];
     
     // Navigation bar: date selector
     NSArray* oldLeft = self.navigationItem.leftBarButtonItems;

@@ -84,8 +84,13 @@ static GlobalData *sharedInstance = nil;
     if ( result == nil )
     {
         result = [[Circle alloc] init:circle];
-        [circles setObject:result forKey:[Circle getCircleName:circle]];
-        _circleByNumber[@(result.idCircle-1)] = result;
+#ifdef TARGET_S2C
+        if ( circle != CIRCLE_FBOTHERS )
+#endif
+        {
+            [circles setObject:result forKey:[Circle getCircleName:circle]];
+            _circleByNumber[@(result.idCircle-1)] = result;
+        }
     }
     
     return result;
@@ -262,7 +267,7 @@ NSInteger sortByName(id num1, id num2, void *context)
                     [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMainComplete object:nil];
                     
                     // Push channels initialization
-                    [pushManager initChannelsForTheFirstTime:strCurrentUserId];
+                    [pushManager initChannels];
                     
                     // FB friends, 2O friends, fb friends not installed the app
                     [self reloadFriendsInBackground];

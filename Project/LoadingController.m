@@ -152,7 +152,12 @@ static Boolean bRotating = true;
         __weak LoadingController *ctrl = self;
         [pCurrentUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
             if ( error )
-                [ctrl noInternet];
+            {
+                if ( error.code == 101) // user not found, relogin no matter why
+                    [self notLoggedIn];
+                else
+                    [ctrl noInternet];
+            }
             else
             {
                 Boolean bBanned = FALSE;

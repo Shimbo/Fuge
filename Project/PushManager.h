@@ -38,9 +38,10 @@ enum EPushType
 // All other pushes are cloud-based
 //- (void)sendPushNewMessage:(NSInteger)pushType idTo:(NSString*)strTo;
 
-- (void)initChannelsForTheFirstTime:(NSString*)strId;
+- (void)initChannels;
 - (void)addChannels:(NSArray*)channels;
 - (void)removeChannels:(NSArray*)channels;
+- (void)logout;
 
 @end
 

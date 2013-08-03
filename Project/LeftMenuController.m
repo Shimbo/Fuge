@@ -42,8 +42,13 @@
 {
     [super viewDidLoad];
     
-    _items = [NSMutableArray arrayWithObjects:NSLocalizedString(@"MENU_ITEM_INBOX",nil), NSLocalizedString(@"MENU_ITEM_PEOPLE",nil), NSLocalizedString(@"MENU_ITEM_EXPLORE",nil), NSLocalizedString(@"MENU_ITEM_STATUS",nil), NSLocalizedString(@"MENU_ITEM_SETTINGS",nil),  nil];
-    _selectors = [NSMutableArray arrayWithObjects:@"showInbox", @"showCicles", @"showMap", @"askStatus", @"showUser", nil];
+#ifdef TARGET_FUGE
+    _items = [NSMutableArray arrayWithObjects:NSLocalizedString(@"MENU_ITEM_EXPLORE",nil), NSLocalizedString(@"MENU_ITEM_INBOX",nil), NSLocalizedString(@"MENU_ITEM_PEOPLE",nil), NSLocalizedString(@"MENU_ITEM_STATUS",nil), NSLocalizedString(@"MENU_ITEM_SETTINGS",nil),  nil];
+    _selectors = [NSMutableArray arrayWithObjects:@"showMap", @"showInbox", @"showCicles", @"askStatus", @"showUser", nil];
+#elif defined TARGET_S2C
+    _items = [NSMutableArray arrayWithObjects:NSLocalizedString(@"MENU_ITEM_PEOPLE",nil), NSLocalizedString(@"MENU_ITEM_INBOX",nil), NSLocalizedString(@"MENU_ITEM_EXPLORE",nil), NSLocalizedString(@"MENU_ITEM_STATUS",nil), NSLocalizedString(@"MENU_ITEM_SETTINGS",nil),  nil];
+    _selectors = [NSMutableArray arrayWithObjects:@"showCicles", @"showInbox", @"showMap", @"askStatus", @"showUser", nil];
+#endif
     
     if ( [globalVariables isUserAdmin])
     {

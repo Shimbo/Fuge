@@ -484,7 +484,6 @@
     
     // Add to attending list and update meetup attending list (only on client)
     [globalData attendMeetup:meetup];
-    [meetup addAttendee:strCurrentUserId];
     
     // Invites
     MeetupInviteViewController *inviteController = [[MeetupInviteViewController alloc]init];

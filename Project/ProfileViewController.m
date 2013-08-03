@@ -10,8 +10,8 @@
 #import "AppDelegate.h"
 #import "LeftMenuController.h"
 #import "ProfileViewController.h"
-#include "RootViewController.h"
-
+#import "RootViewController.h"
+#import "PushManager.h"
 #import "TestFlightSDK/TestFlight.h"
 
 @implementation ProfileViewController
@@ -180,6 +180,7 @@
         [PFUser logOut];
         [(LeftMenuController*)AppDelegate.revealController.leftViewController clean];
         [globalVariables setUnloaded];
+        [pushManager logout];
         [AppDelegate userDidLogout];
     }
 }

@@ -276,11 +276,11 @@ static PushManager *sharedInstance = nil;
     [push sendPushInBackground];
 }
 
-- (void)initChannelsForTheFirstTime:(NSString*)strId
+- (void)initChannels
 {
     //NSString* strUserChannel =[[NSString alloc] initWithFormat:@"fb%@", strId];
-    NSString* strMessageChannel =[[NSString alloc] initWithFormat:@"fb%@_message", strId];
-    NSString* strInviteChannel =[[NSString alloc] initWithFormat:@"fb%@_invite", strId];
+    NSString* strMessageChannel =[[NSString alloc] initWithFormat:@"fb%@_message", strCurrentUserId];
+    NSString* strInviteChannel =[[NSString alloc] initWithFormat:@"fb%@_invite", strCurrentUserId];
     
     //[[PFInstallation currentInstallation] addUniqueObject:strUserChannel forKey:@"channels"];
     [[PFInstallation currentInstallation] addUniqueObject:@"" forKey:@"channels"];
@@ -292,7 +292,7 @@ static PushManager *sharedInstance = nil;
     [[PFInstallation currentInstallation] addUniqueObject:@"newComment" forKey:@"channels"];
     [[PFInstallation currentInstallation] addUniqueObject:@"newMeetupNearby" forKey:@"channels"];
     
-    [[PFInstallation currentInstallation] setObject:strId forKey:@"ownerId"];
+    [[PFInstallation currentInstallation] setObject:strCurrentUserId forKey:@"ownerId"];
     [[PFInstallation currentInstallation] setObject:pCurrentUser forKey:@"ownerData"];
     [[PFInstallation currentInstallation] saveInBackground];
     
@@ -305,6 +305,21 @@ static PushManager *sharedInstance = nil;
     [PFPush subscribeToChannelInBackground:@"newJoin" target:self selector:@selector(subscribeFinished:error:)];
     [PFPush subscribeToChannelInBackground:@"newComment" target:self selector:@selector(subscribeFinished:error:)];
     [PFPush subscribeToChannelInBackground:@"newMeetupNearby" target:self selector:@selector(subscribeFinished:error:)];
+}
+
+- (void)logout
+{
+    NSString* strMessageChannel =[[NSString alloc] initWithFormat:@"fb%@_message", strCurrentUserId];
+    NSString* strInviteChannel =[[NSString alloc] initWithFormat:@"fb%@_invite", strCurrentUserId];
+    
+    [PFPush unsubscribeFromChannelInBackground:@""];
+    [PFPush unsubscribeFromChannelInBackground:@"newFbFriend"];
+    [PFPush unsubscribeFromChannelInBackground:@"new2OFriend"];
+    [PFPush unsubscribeFromChannelInBackground:strMessageChannel];
+    [PFPush unsubscribeFromChannelInBackground:strInviteChannel];
+    [PFPush unsubscribeFromChannelInBackground:@"newJoin"];
+    [PFPush unsubscribeFromChannelInBackground:@"newComment"];
+    [PFPush unsubscribeFromChannelInBackground:@"newMeetupNearby"];
 }
 
 - (void)addChannels:(NSArray*)channels

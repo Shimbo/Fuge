@@ -397,6 +397,10 @@
     // Description
     if ( meetup.strDescription || meetup.strPrice || meetup.strImageURL || meetup.strOriginalURL )
     {
+        // Showing description
+        descriptionView.hidden = FALSE;
+        
+        // Setting text
         NSMutableString *html = [NSMutableString stringWithString: @"<html><head><title></title></head><body>"];
         Boolean bWasSomethingBefore = false;
         if ( meetup.strImageURL && meetup.strImageURL.length > 0 )
@@ -430,7 +434,11 @@
         //    [html appendString:strHtml];
         //    bWasSomethingBefore = true;
         //}
+        
+        //[html appendString:@"<div style='width:100%; text-align:left;'><iframe src='http://www.eventbrite.com/tickets-external?eid=4653432542&ref=etckt' frameborder='0' height='256' width='100%' vspace='0' hspace='0' marginheight='5' marginwidth='5' scrolling='auto' allowtransparency='true'></iframe></div>"];
+        
         [html appendString:@"</body></html>"];
+        
         [descriptionView loadHTMLString:html baseURL:nil];
     }
     else
