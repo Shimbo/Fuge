@@ -132,7 +132,7 @@ static LinkedinLoader *sharedInstance = nil;
 
 - (void)initialize:(id)target selector:(SEL)callback failed:(SEL)failure
 {
-    application = [LIALinkedInApplication applicationWithRedirectURL:@"http://www.ancientprogramming.com"
+    application = [LIALinkedInApplication applicationWithRedirectURL:@"http://www.shimbotech.com"
             clientId:@"wizm9maq6ucs" clientSecret:@"AfVbpBqqyuOiya0U"
             state:@"DCEEFWF45453sdffef424"
             grantedAccess:@[@"r_fullprofile", @"r_network", @"r_emailaddress", @"r_contactinfo", @"rw_groups"]];

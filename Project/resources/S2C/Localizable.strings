@@ -9,18 +9,18 @@
 "LOADING_TITLE_NEWVERSION"      = "New version is available!";
 "LOADING_TEXT_NEWVERSION"       = "You're running an old version of the application. Updating the application will only take a few moments!";
 "LOADING_TITLE_FIRSTPAGE"       = "Welcome!";
-"LOADING_TEXT_FIRSTPAGE"        = "S2C is a location-based professional networking application for smartphones. Explore profiles of people around you and make you networking more targeted!";
+"LOADING_TEXT_FIRSTPAGE"        = "Simple2Connect is a location-based professional networking application for smartphones. Explore profiles of people around you and make you networking more targeted!";
 "LOADING_TITLE_NOINTERNET"      = "No internet connection.";
 "LOADING_TEXT_NOINTERNET"       = "It seems like you don’t have internet connection at the moment.";
 "LOADING_TITLE_LOGINFAILED"     = "Login failure.";
-"LOADING_TEXT_LOGINFAILED"      = "Looks like you haven’t finished \n login process or wasn’t able to do so. \n Please, try again!";
+"LOADING_TEXT_LOGINFAILED"      = "It looks like the login was unsuccessful. We apologise for inconvenience. Please, try again.";
 "LOADING_TITLE_OLDVERSION"      = "Update needed";
 "LOADING_TEXT_OLDVERSION"       = "We have released a new version to better accommodate customer feedback. Give it a try and let us know if you have any issue or need help.";
 
 "BUTTONS_RELOAD"                = "Reload";
 
-"STATUS_WINDOW_TITLE"           = "What are you up to?";
-"STATUS_WINDOW_TEXT"            = "Tell others what you are looking for, who you would like to talk to, or what you would like to discuss!";
+"STATUS_WINDOW_TITLE"           = "Your status";
+"STATUS_WINDOW_TEXT"            = "What are you looking for? Who would you like to talk to?";
 "STATUS_WINDOW_BTN_SKIP"        = "Cancel";
 "STATUS_WINDOW_BTN_ENTER"       = "Confirm";
 "STATUS_WINDOW_PLACEHOLDER"     = "e.g. I’d like discuss the new government initiative";
