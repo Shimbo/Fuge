@@ -166,6 +166,9 @@
     
     // Subscription
     [globalData subscribeToThread:comment.strMeetupId];
+    
+    // Update inbox
+    [[NSNotificationCenter defaultCenter]postNotificationName:kInboxUpdated object:nil];
 }
 
 -(void)createCommentForMeetup:(Meetup*)meetup commentType:(CommentType)type commentText:(NSString*)text

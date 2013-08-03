@@ -41,6 +41,15 @@
     [self.navigationController presentViewController:navigation animated:YES completion:nil];
 }
 
+- (void)messageClicked{
+    
+    if ( profileMode == PROFILE_MODE_MESSAGES )
+        profileMode = PROFILE_MODE_SUMMARY;
+    else
+        profileMode = PROFILE_MODE_MESSAGES;
+    [self updateUI];
+}
+
 - (void)resizeScroll
 {
     CGRect frame;
@@ -90,7 +99,7 @@
         containerView.hidden = FALSE;
         webView.hidden = TRUE;
 #ifdef TARGET_S2C
-        [btnThingsInCommon setTitle:@"Full profile" forState:UIControlStateNormal];
+        [messageBtn setTitle:@"Full profile"];
 #endif
     }
     else
@@ -99,7 +108,9 @@
         textView.hidden = TRUE;
         containerView.hidden = TRUE;
         webView.hidden = FALSE;
-        [btnThingsInCommon setTitle:@"Message" forState:UIControlStateNormal];
+#ifdef TARGET_S2C
+        [messageBtn setTitle:@"Message"];
+#endif
     }
     [self resizeScroll];
 }
@@ -134,6 +145,9 @@
     [buttonArray addObject:[[UIBarButtonItem alloc] initWithTitle:@"Meet" style:UIBarButtonItemStylePlain target:self action:@selector(meetClicked)]];
 #elif defined TARGET_S2C
     NSString* strProfileTitle = @"LN Profile";
+    messageBtn = [[UIBarButtonItem alloc] initWithTitle:@"Message" style:UIBarButtonItemStylePlain target:self action:@selector(messageClicked)];
+    [buttonArray addObject:messageBtn];
+    btnThingsInCommon.hidden = TRUE;
 #endif
     [buttonArray addObject:[[UIBarButtonItem alloc] initWithTitle:strProfileTitle style:UIBarButtonItemStylePlain target:self action:@selector(profileClicked)]];
     self.navigationItem.rightBarButtonItems = buttonArray;
@@ -157,12 +171,20 @@
     // Labels
     labelFriendName.text = [personThis fullName];
     NSString* distanceString = [personThis distanceString];
-    if ( distanceString.length > 0 )
-        labelDistance.text = [[NSString alloc] initWithFormat:@"%@ away", distanceString];
-    else
-        labelDistance.text = @"";
+    labelDistance.text = distanceString;
     labelTimePassed.text = [[NSString alloc] initWithFormat:@"%@ ago", [personThis timeString]];
+
+#ifdef TARGET_FUGE
     labelStatus.text = personThis.strStatus;
+    strJobInfo.hidden = TRUE;
+    strIndustry.hidden = TRUE;
+#elif defined TARGET_S2C
+    strJobInfo.text = personThis.jobInfo;
+    strIndustry.text = personThis.industryInfo;
+    labelTimePassed.originY += 37;
+    labelDistance.originY += 37;
+    labelStatus.hidden = TRUE;
+#endif
     
 #ifdef TARGET_FUGE
     nThingsInCommon = [personThis matchesTotal];
@@ -275,20 +297,12 @@
 
 - (IBAction)showMatchesList:(id)sender {
     
-#ifdef TARGET_FUGE
     if ( nThingsInCommon + personThis.matchesAdminBonus == 0 )
         return;
     MatchesViewController *matchesViewController = [[MatchesViewController alloc] initWithNibName:@"MatchesViewController" bundle:nil];
     [matchesViewController setPerson:personThis];
     UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:matchesViewController];
     [self.navigationController presentViewController:navigation animated:YES completion:nil];
-#elif defined TARGET_S2C
-    if ( profileMode == PROFILE_MODE_MESSAGES )
-        profileMode = PROFILE_MODE_SUMMARY;
-    else
-        profileMode = PROFILE_MODE_MESSAGES;
-    [self updateUI];
-#endif
 }
 
 -(void) setPerson:(Person*)person
@@ -309,6 +323,8 @@
     labelStatus = nil;
     scrollView = nil;
     webView = nil;
+    strJobInfo = nil;
+    strIndustry = nil;
     [super viewDidUnload];
 }
 

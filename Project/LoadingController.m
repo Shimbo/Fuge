@@ -274,7 +274,11 @@ static Boolean bRotating = true;
     FugeAppDelegate *delegate = AppDelegate;
     [delegate.revealController dismissViewControllerAnimated:TRUE completion:nil];
     LeftMenuController *leftMenu = (LeftMenuController*)delegate.revealController.leftViewController;
+#ifdef TARGET_FUGE
     [leftMenu showMap];
+#elif defined TARGET_S2C
+    [leftMenu showCircles];
+#endif
 }
 
 - (void) loadingFailed

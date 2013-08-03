@@ -38,6 +38,10 @@ enum EUserProfileMode
     IBOutlet AsyncImageView *profileImage;
     IBOutlet UIScrollView *scrollView;
     
+    UIBarButtonItem* messageBtn;
+    IBOutlet UILabel *strJobInfo;
+    IBOutlet UILabel *strIndustry;
+    
     Message*    currentMessage;
 }
 

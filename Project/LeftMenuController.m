@@ -44,10 +44,10 @@
     
 #ifdef TARGET_FUGE
     _items = [NSMutableArray arrayWithObjects:NSLocalizedString(@"MENU_ITEM_EXPLORE",nil), NSLocalizedString(@"MENU_ITEM_INBOX",nil), NSLocalizedString(@"MENU_ITEM_PEOPLE",nil), NSLocalizedString(@"MENU_ITEM_STATUS",nil), NSLocalizedString(@"MENU_ITEM_SETTINGS",nil),  nil];
-    _selectors = [NSMutableArray arrayWithObjects:@"showMap", @"showInbox", @"showCicles", @"askStatus", @"showUser", nil];
+    _selectors = [NSMutableArray arrayWithObjects:@"showMap", @"showInbox", @"showCircles", @"askStatus", @"showUser", nil];
 #elif defined TARGET_S2C
     _items = [NSMutableArray arrayWithObjects:NSLocalizedString(@"MENU_ITEM_PEOPLE",nil), NSLocalizedString(@"MENU_ITEM_INBOX",nil), NSLocalizedString(@"MENU_ITEM_EXPLORE",nil), NSLocalizedString(@"MENU_ITEM_STATUS",nil), NSLocalizedString(@"MENU_ITEM_SETTINGS",nil),  nil];
-    _selectors = [NSMutableArray arrayWithObjects:@"showCicles", @"showInbox", @"showMap", @"askStatus", @"showUser", nil];
+    _selectors = [NSMutableArray arrayWithObjects:@"showCircles", @"showInbox", @"showMap", @"askStatus", @"showUser", nil];
 #endif
     
     if ( [globalVariables isUserAdmin])
@@ -67,7 +67,7 @@
     [self showViewController:inboxViewController];
 }
 
--(void)showCicles{
+-(void)showCircles{
     if (!_rootViewController) {
         _rootViewController = [[RootViewController alloc]initWithNibName:@"RootViewController" bundle:nil];
     }
@@ -283,7 +283,7 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:ident];
     if (!cell) {
         cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ident];
-        if (indexPath.row == 0) {
+        if (indexPath.row == 1) {
             [cell insertSubview:_inboxBadge atIndex:100];
             _inboxBadge.center = CGPointMake(240, 22);
             [_inboxBadge setNumber:[globalData getInboxUnreadCount]];

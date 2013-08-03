@@ -27,6 +27,7 @@
 @property(nonatomic,weak)FugeAppDelegate *appDelegate;
 
 -(void)showMap;
+-(void)showCircles;
 -(void)showUser;
 -(void)prepareMap;
 -(void)clean;

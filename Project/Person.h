@@ -79,6 +79,9 @@
 -(NSString*)fullName;
 
 -(NSString*)jobInfo;
+#ifdef TARGET_S2C
+-(NSString*)industryInfo;
+#endif
 
 - (PFGeoPoint*) getLocation;
 

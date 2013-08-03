@@ -215,6 +215,13 @@
     return strResult;
 }
 
+#ifdef TARGET_S2C
+-(NSString*)industryInfo
+{
+    return [personData objectForKey:@"profileIndustry"];
+}
+#endif
+
 -(void)showInviteDialog
 {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithObjectsAndKeys: strId, @"to", nil];
