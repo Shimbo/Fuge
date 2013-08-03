@@ -172,7 +172,7 @@
     NSDateComponents *components = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[NSDate dateWithTimeIntervalSinceNow:-100*86400]];
     components.year = 2013;
     components.month = 7;
-    components.day = 18;
+    components.day = 26;
     NSDate *currentDate = [[NSCalendar currentCalendar] dateFromComponents:components];
     NSUInteger nDayShift = 0;
     while ([currentDate compare:[NSDate date]] == NSOrderedAscending)
@@ -247,7 +247,7 @@
         [cc2.points addObject:[NSNumber numberWithFloat:(float)nGotMessages*100.0f/(float)usersThisDay.count]];
         [cc3.points addObject:[NSNumber numberWithFloat:(float)nReturned*100.0f/(float)usersThisDay.count]];
         
-        currentDate = [currentDate dateByAddingTimeInterval:86400];
+        //currentDate = [currentDate dateByAddingTimeInterval:86400];
     }
     chart1.components = [NSMutableArray arrayWithObjects:c1, c2, c3, c4, nil];
     chart1.interval = chart1.maxValue / 5.0f;

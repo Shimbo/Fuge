@@ -217,21 +217,28 @@
     
     // Messages
     NSDate* conversationDate = [personThis getConversationDate:strCurrentUserId meetup:FALSE];
-    Boolean bReadMarkAdded = FALSE;
+    //Boolean bReadMarkAdded = FALSE;
     for ( int n = 0; n < messages.count; n++ )
     {
         Message* message = messages[n];
-        Message* nextMessage = (n == messages.count-1 ? nil : messages[n+1]);
+        //Message* nextMessage = (n == messages.count-1 ? nil : messages[n+1]);
         
         // My or opponents?
         Boolean myMessage = ([personThis.strId compare:message.strUserFrom] != NSOrderedSame);
         
+        // Read or not
+        Boolean thisMessageBefore = [conversationDate compare:message.dateCreated] != NSOrderedAscending;
+        if ( myMessage && thisMessageBefore )
+            [stringHistory appendString:@"*"];
+        else
+            [stringHistory appendString:@" "];
+        
         // Add message
         if ( myMessage )
-            [stringHistory appendString:@"    You: "];
+            [stringHistory appendString:@"   You: "];
         else
         {
-            [stringHistory appendString:@"    "];
+            [stringHistory appendString:@"   "];
             [stringHistory appendString:personThis.strFirstName];
             [stringHistory appendString:@": "];
         }
@@ -240,7 +247,7 @@
         [stringHistory appendString:message.strText];
         
         // Append read mark
-        if ( conversationDate )
+/*        if ( conversationDate )
         {
             Boolean thisMessageBefore = [conversationDate compare:message.dateCreated] != NSOrderedAscending;
             Boolean nextMessageAfter = ( ! nextMessage || [conversationDate compare:nextMessage.dateCreated] == NSOrderedAscending);
@@ -251,7 +258,7 @@
                 
                 bReadMarkAdded = TRUE;
             }
-        }
+        }*/
         
         if ( n != messages.count - 1 )
             [stringHistory appendString:@"\n"];

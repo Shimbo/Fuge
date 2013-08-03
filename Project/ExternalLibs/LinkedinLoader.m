@@ -219,22 +219,22 @@ static LinkedinLoader *sharedInstance = nil;
                  }];
                 
             } failure:^(AFHTTPRequestOperation * operation, NSError *error) {
-                [self showErrorMessage:[NSString stringWithFormat:@"Linkedin: failed to fetch current user, error: %@", error]];
-                NSLog(@"Linkedin: failed to fetch current user %@", error);
+                [self showErrorMessage:[NSString stringWithFormat:@"Failed to fetch Linkedin user, error: %@", error]];
+                NSLog(@"Failed to fetch current Linkedin user, error: %@", error);
                 [target performSelector:failure withObject:nil];
             }];
         } failure:^(NSError *error) {
-            [self showErrorMessage:[NSString stringWithFormat:@"Linkedin: quering accessToken failed, error: %@", error]];
-            NSLog(@"Linkedin: quering accessToken failed %@", error);
+            [self showErrorMessage:[NSString stringWithFormat:@"Linkedin accessToken quering failed, error: %@", error]];
+            NSLog(@"Linkedin accessToken quering failed, error: %@", error);
             [target performSelector:failure withObject:nil];
         }];
     } cancel:^{
-        NSLog(@"Linkedin: authorization was cancelled by user");
-        [self showErrorMessage:@"Linkedin: authorization was cancelled by user"];
+        NSLog(@"Linkedin authorization was cancelled by user.");
+        [self showErrorMessage:@"Linkedin authorization was cancelled by user."];
         [target performSelector:failure withObject:nil];
     } failure:^(NSError *error) {
         [self showErrorMessage:[NSString stringWithFormat:@"Linkedin: authorization failed, error: %@", error]];
-        NSLog(@"Linkedin: authorization failed %@", error);
+        NSLog(@"Linkedin authorization failed, error: %@", error);
         [target performSelector:failure withObject:nil];
     }];
 }

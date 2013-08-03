@@ -467,8 +467,8 @@ NSInteger sortByName(id num1, id num2, void *context)
             [role save];*/
             
             /*PFACL* moderatorACL = [PFACL ACLWithUser:pCurrentUser];
-            [moderatorACL setReadAccess:TRUE forUserId:@"n6cZJLJJnW"];
-            [moderatorACL setWriteAccess:TRUE forUserId:@"n6cZJLJJnW"];
+            [moderatorACL setReadAccess:TRUE forUserId:FEEDBACK_BOT_OBJECT];
+            [moderatorACL setWriteAccess:TRUE forUserId:FEEDBACK_BOT_OBJECT];
             PFRole* role = [PFRole roleWithName:@"Moderator" acl:moderatorACL];
             [role.users addObject:pCurrentUser];
             [role.users addObject:[self getPersonById:@"1377492801"].personData];
