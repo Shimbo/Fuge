@@ -45,7 +45,6 @@
 								<int key="NSvFlags">292</int>
 								<string key="NSFrame">{{10, 5}, {50, 60}}</string>
 								<reference key="NSSuperview" ref="838344727"/>
-								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="16319224"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<object class="NSColor" key="IBUIBackgroundColor" id="181675157">
@@ -59,7 +58,6 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrame">{{70, 5}, {244, 21}}</string>
 								<reference key="NSSuperview" ref="838344727"/>
-								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="524015456"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIOpaque">NO</bool>
@@ -92,9 +90,8 @@
 							<object class="IBUILabel" id="524015456">
 								<reference key="NSNextResponder" ref="838344727"/>
 								<int key="NSvFlags">290</int>
-								<string key="NSFrame">{{70, 26}, {244, 21}}</string>
+								<string key="NSFrame">{{70, 26}, {182, 21}}</string>
 								<reference key="NSSuperview" ref="838344727"/>
-								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="147090880"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIOpaque">NO</bool>
@@ -125,8 +122,7 @@
 								<int key="NSvFlags">292</int>
 								<string key="NSFrame">{{70, 45}, {154, 21}}</string>
 								<reference key="NSSuperview" ref="838344727"/>
-								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="965726022"/>
+								<reference key="NSNextKeyView" ref="828112970"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
@@ -146,7 +142,6 @@
 								<int key="NSvFlags">289</int>
 								<string key="NSFrame">{{219, 45}, {89, 21}}</string>
 								<reference key="NSSuperview" ref="838344727"/>
-								<reference key="NSWindow"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
@@ -165,10 +160,33 @@
 								<reference key="IBUIFont" ref="619137166"/>
 								<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
 							</object>
+							<object class="IBUILabel" id="828112970">
+								<reference key="NSNextResponder" ref="838344727"/>
+								<int key="NSvFlags">289</int>
+								<string key="NSFrame">{{260, 26}, {48, 21}}</string>
+								<reference key="NSSuperview" ref="838344727"/>
+								<reference key="NSNextKeyView" ref="965726022"/>
+								<string key="NSReuseIdentifierKey">_NS:9</string>
+								<bool key="IBUIOpaque">NO</bool>
+								<bool key="IBUIClipsSubviews">YES</bool>
+								<int key="IBUIContentMode">7</int>
+								<bool key="IBUIUserInteractionEnabled">NO</bool>
+								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+								<string key="IBUIText">500 m</string>
+								<object class="NSColor" key="IBUITextColor">
+									<int key="NSColorSpace">1</int>
+									<bytes key="NSRGB">MC4xOTQzOTQ3NjczIDAuMzA5NDY5Nzg5MyAwLjUyNTQ1MDQwODUAA</bytes>
+								</object>
+								<reference key="IBUIHighlightedColor" ref="675032181"/>
+								<int key="IBUIBaselineAdjustment">0</int>
+								<int key="IBUITextAlignment">2</int>
+								<reference key="IBUIFontDescription" ref="328270181"/>
+								<reference key="IBUIFont" ref="619137166"/>
+								<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
+							</object>
 						</array>
 						<string key="NSFrameSize">{320, 69}</string>
 						<reference key="NSSuperview" ref="51214907"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="961484102"/>
 						<string key="NSReuseIdentifierKey">_NS:11</string>
 						<reference key="IBUIBackgroundColor" ref="181675157"/>
@@ -181,7 +199,6 @@
 				</array>
 				<string key="NSFrameSize">{320, 70}</string>
 				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="838344727"/>
 				<string key="NSReuseIdentifierKey">_NS:9</string>
 				<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -230,6 +247,14 @@
 					</object>
 					<int key="connectionID">23</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">distance</string>
+						<reference key="source" ref="51214907"/>
+						<reference key="destination" ref="828112970"/>
+					</object>
+					<int key="connectionID">25</int>
+				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<array key="orderedObjects">
@@ -259,6 +284,7 @@
 							<reference ref="524015456"/>
 							<reference ref="147090880"/>
 							<reference ref="965726022"/>
+							<reference ref="828112970"/>
 						</array>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -287,6 +313,11 @@
 						<reference key="object" ref="965726022"/>
 						<reference key="parent" ref="51214907"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">24</int>
+						<reference key="object" ref="828112970"/>
+						<reference key="parent" ref="51214907"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -299,6 +330,7 @@
 				<string key="2.CustomClassName">MeetupAnnotationCell</string>
 				<string key="2.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="21.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<string key="24.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="4.CustomClassName">MeetupPin</string>
 				<string key="4.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 			</dictionary>
@@ -306,57 +338,9 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">23</int>
+			<int key="maxID">25</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes">
-			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
-				<object class="IBPartialClassDescription">
-					<string key="className">MeetupAnnotationCell</string>
-					<string key="superclassName">UITableViewCell</string>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="annotation">MeetupPin</string>
-						<string key="attending">UILabel</string>
-						<string key="date">UILabel</string>
-						<string key="subtitle">UILabel</string>
-						<string key="title">UILabel</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="annotation">
-							<string key="name">annotation</string>
-							<string key="candidateClassName">MeetupPin</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="attending">
-							<string key="name">attending</string>
-							<string key="candidateClassName">UILabel</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="date">
-							<string key="name">date</string>
-							<string key="candidateClassName">UILabel</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="subtitle">
-							<string key="name">subtitle</string>
-							<string key="candidateClassName">UILabel</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="title">
-							<string key="name">title</string>
-							<string key="candidateClassName">UILabel</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/MeetupAnnotationCell.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">MeetupPin</string>
-					<string key="superclassName">UIView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/MeetupPin.h</string>
-					</object>
-				</object>
-			</array>
-		</object>
+		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaTouchFramework</string>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>

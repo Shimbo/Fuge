@@ -33,6 +33,7 @@ enum EInboxItemType
 @interface InboxViewController : MainViewController {
     
     NSMutableDictionary *inbox;
+    UIRefreshControl    *refreshControl;
 }
 
 @property (nonatomic,retain) IBOutlet UITableView *tableView;

@@ -11,6 +11,8 @@
 #import "MeetupAnnotationView.h"
 #import "ThreadAnnotationView.h"
 #import "PersonAnnotation.h"
+#import "AsyncImageView.h"
+#import "GlobalData.h"
 
 @implementation PersonAnnotationCell
 
@@ -29,8 +31,13 @@
 
 -(void)prepareForAnnotation:(MeetupAnnotation*)annotation{
     
-    Meetup* meetup = annotation.meetup;
+    [self initWithMeetup:annotation.meetup];
     
+    [self.annotation prepareForAnnotation:annotation];
+}
+
+-(void)initWithMeetup:(Meetup*)meetup
+{
     self.title.text = meetup.strSubject;
     self.subtitle.text = [NSString stringWithFormat:@"By: %@", meetup.strOwnerName];
     
@@ -40,14 +47,53 @@
     [formatter setDoesRelativeDateFormatting:TRUE];
     
     self.date.text = [formatter stringFromDate:meetup.dateTime];
-    if ( annotation.attendedPersons.count )
-        self.attending.text = [NSString stringWithFormat:@"Attending: %d", annotation.attendedPersons.count];
+    self.distance.text = [meetup distanceString:TRUE];
+    
+    MeetupAnnotation* tempAnnotation = [[MeetupAnnotation alloc] initWithMeetup:meetup];
+    [self.annotation prepareForAnnotation:tempAnnotation];
+    
+    // Remove old persons (if cell was used before)
+    if ( avatarList )
+        for ( AsyncImageView* person in avatarList )
+            [person removeFromSuperview];
+    
+    // Creating attending friends list
+    avatarList = [NSMutableArray arrayWithCapacity:10];
+    NSMutableArray* personList = [NSMutableArray arrayWithCapacity:10];
+    for ( NSString* strAttendee in meetup.attendees )
+    {
+        Person* person = [globalData getPersonById:strAttendee];
+        if ( ! person || person.idCircle != CIRCLE_FB )
+            continue;
+        [personList addObject:person];
+        if ( personList.count >= 5 )
+            break;
+    }
+    
+    // Attending text
+    self.attending.hidden = FALSE;
+    if ( personList.count > 0 )
+    {
+        if ( meetup.attendees.count-personList.count == 0 )
+            self.attending.text = @"";
+        else
+            self.attending.text = [NSString stringWithFormat:@"+%d", meetup.attendees.count-personList.count];
+    }
+    else if ( meetup.attendees.count > 0 )
+        self.attending.text = [NSString stringWithFormat:@"%d guests", meetup.attendees.count];
     else
-        self.attending.text = [NSString stringWithFormat:@"Joined: %d", annotation.meetup.attendees.count];
-     
-    [self.annotation prepareForAnnotation:annotation];
+        self.attending.hidden = TRUE;
+    
+    // Adding avatars
+    NSUInteger offset = self.attending.text.length > 0 ? self.attending.originX + self.attending.width - [self.attending.text sizeWithFont:self.attending.font].width - 25 : self.frame.size.width-30;
+    for ( Person* person in personList )
+    {
+        AsyncImageView* image = [[AsyncImageView alloc] initWithFrame:CGRectMake(offset-avatarList.count*25, 46, 20, 20)];
+        [image loadImageFromURL:person.smallAvatarUrl];
+        [avatarList addObject:image];
+        [self addSubview:image];
+    }
 }
-
 
 @end
 

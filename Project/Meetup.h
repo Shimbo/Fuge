@@ -9,9 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 #import <Parse/Parse.h>
-
 #import <EventKit/EventKit.h>
 #import <EventKitUI/EventKitUI.h>
+#import "GeoObject.h"
 
 typedef enum kEMeetupType
 {
@@ -34,8 +34,9 @@ typedef enum kEImportedType
 }EImportedType;
 
 @class FSVenue;
+@class Person;
 
-@interface Meetup : NSObject <EKEventEditViewDelegate, UIAlertViewDelegate>
+@interface Meetup : GeoObject <EKEventEditViewDelegate, UIAlertViewDelegate>
 {
     EMeetupType  meetupType;
     
@@ -49,7 +50,6 @@ typedef enum kEImportedType
     NSString    *strAddress;
     NSDate      *dateTime;
     NSDate      *dateTimeExp;
-    PFGeoPoint  *location;
     EMeetupPrivacy  privacy;
     NSUInteger  iconNumber;
     
@@ -79,7 +79,6 @@ typedef enum kEImportedType
 @property (nonatomic, copy) NSString *strDescription;
 @property (nonatomic, copy) NSDate *dateTime;
 @property (nonatomic, copy) NSDate *dateTimeExp;
-@property (nonatomic, copy) PFGeoPoint *location;
 @property (nonatomic, copy) NSString *strVenue;
 @property (nonatomic, copy) NSString *strVenueId;
 @property (nonatomic, copy) NSString *strAddress;
@@ -124,5 +123,8 @@ typedef enum kEImportedType
 
 -(void)setCanceled;
 -(Boolean)isCanceled;
+
+-(Boolean)willStartSoon;
+-(Boolean)isPersonNearby:(Person*)person;
 
 @end

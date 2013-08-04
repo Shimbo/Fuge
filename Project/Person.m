@@ -10,7 +10,7 @@
 
 @implementation Person
 
-@synthesize strId, strFirstName, strLastName, strAge, strGender, distance, /*role, strArea,*/ strEmployer, strPosition, strCircle, strStatus, idCircle, personData, numUnreadMessages, friendsFb, friends2O, likes, isCurrentUser, discoverable;
+@synthesize strId, strFirstName, strLastName, strAge, strGender, /*role, strArea,*/ strEmployer, strPosition, strCircle, strStatus, idCircle, personData, numUnreadMessages, friendsFb, friends2O, likes, isCurrentUser, discoverable;
 
 + (void)initialize {
 	if (self == [Person class]) {
@@ -40,7 +40,6 @@
         
         // Location
         location = [user objectForKey:@"location"];
-        [self calculateDistance];
         
         // Friends and likes
         friendsFb = [user objectForKey:@"fbFriends"];
@@ -78,35 +77,11 @@
 {
     PFGeoPoint* newLocation = [newData objectForKey:@"location"];
     if ( newLocation )
-    {
         location = newLocation;
-        [self calculateDistance];
-    }
     
     strStatus = [newData objectForKey:@"profileStatus"];
     
     personData = newData;
-}
-
-
-- (void)calculateDistance
-{
-    // Distance calculation
-    PFGeoPoint* geoPointUser = [locManager getPosition];
-    
-    if ( ! location || ! geoPointUser )
-    {
-        distance = nil;
-        return;
-    }
-    
-    distance = [NSNumber numberWithDouble:
-                [geoPointUser distanceInKilometersTo:location]*1000.0f];
-}
-
-- (PFGeoPoint*) getLocation
-{
-    return location;
 }
 
 - (void)changeCircle:(NSUInteger)nCircle
@@ -133,21 +108,6 @@
     if ( [personData.updatedAt compare:[NSDate dateWithTimeIntervalSinceNow:-PERSON_OUTDATED_TIME]] == NSOrderedAscending )
         return true;
     return false;
-}
-
-
--(NSString*)distanceString
-{
-    if ( ! distance )
-        return @"";
-    else if ( [distance floatValue] < 100.0f )
-        return NSLocalizedString(@"USER_PROFILE_NEARBY",nil);
-//    else if ( [distance floatValue] < 1000.0f )
-//        return [[NSString alloc] initWithFormat:@"%.0f m", [distance floatValue]];
-    else if ( [distance floatValue] < 10000.0f )
-        return [[NSString alloc] initWithFormat:@"%.1f km", [distance floatValue]/1000.0f];
-    else
-        return [[NSString alloc] initWithFormat:@"%.0f km", [distance floatValue]/1000.0f];
 }
 
 -(NSString*)timeString

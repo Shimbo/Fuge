@@ -652,9 +652,9 @@ NSInteger sortByName(id num1, id num2, void *context)
     }
     
     // Expiration check
-    NSDate* dateTimeExp = [meetupData objectForKey:@"meetupDateExp"];
+    /*NSDate* dateTimeExp = [meetupData objectForKey:@"meetupDateExp"];
     if ( [dateTimeExp compare:[NSDate date]] == NSOrderedAscending )
-        return nil;
+        return nil;*/
     
     meetup = [[Meetup alloc] init];
     [meetup unpack:meetupData];
@@ -813,9 +813,9 @@ NSInteger sortByName(id num1, id num2, void *context)
     if ( subscriptions.count > 0 )
     {
         meetupAnyQuery = [PFQuery queryWithClassName:@"Meetup"];
-        meetupAnyQuery.limit = 1000;
+        meetupAnyQuery.limit = 100;
         [meetupAnyQuery orderByAscending:@"meetupDate"];
-        [meetupAnyQuery whereKey:@"meetupDateExp" greaterThan:dateLate];
+        //[meetupAnyQuery whereKey:@"meetupDateExp" greaterThan:dateLate];
         [meetupAnyQuery whereKey:@"meetupId" containedIn:subscriptions];
         
         // Query for public/2O meetups
@@ -1142,12 +1142,6 @@ NSInteger sortByName(id num1, id num2, void *context)
     {
         // Setting own coords
         [pCurrentUser setObject:geoPoint forKey:@"location"];
-        
-        // Recalculating distances
-        for ( Circle* circle in [circles allValues] )
-            for ( Person* person in [circle getPersons] )
-                 [person calculateDistance];
-        
         return true;
     }
     return false;

@@ -51,17 +51,6 @@
     [self.navigationController pushViewController:filterViewController animated:YES];
 }
 
-- (void) reloadClicked
-{
-    // UI
-    [self.activityIndicator startAnimating];
-    self.navigationController.view.userInteractionEnabled = FALSE;
-    
-    // Loading
-    [globalData reloadFriendsInBackground];
-}
-
-
 - (void) matchClicked
 {
     sortingMode++;
@@ -120,15 +109,17 @@
     // Buttons
 #ifdef TARGET_FUGE
     matchBtn = [[UIBarButtonItem alloc] initWithTitle:sortingModeTitles[sortingMode+1] style:UIBarButtonItemStyleBordered target:self action:@selector(matchClicked)];
-    UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"BUTTONS_RELOAD",nil) style:UIBarButtonItemStyleBordered target:self action:@selector(reloadClicked)];
-    [self.navigationItem setRightBarButtonItems:@[reloadBtn, matchBtn]];
-#elif defined TARGET_S2C
-    UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"BUTTONS_RELOAD",nil) style:UIBarButtonItemStyleBordered target:self action:@selector(reloadClicked)];
-    [self.navigationItem setRightBarButtonItems:@[reloadBtn]];
+    //UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"BUTTONS_RELOAD",nil) style:UIBarButtonItemStyleBordered target:self action:@selector(reloadClicked)];
+    [self.navigationItem setRightBarButtonItems:@[matchBtn]];
 #endif
     
     // Engagement admin info
     [self recalcEngagement];
+    
+    // Refresh control
+    refreshControl = [[UIRefreshControl alloc] init];
+    [refreshControl addTarget:self action:@selector(refreshView:) forControlEvents:UIControlEventValueChanged];
+    [self.tableView addSubview:refreshControl];
 }
 
 - (void) viewDidAppear:(BOOL)animated {
@@ -154,6 +145,7 @@
     // Data refresh
     [self.activityIndicator stopAnimating];
     self.navigationController.view.userInteractionEnabled = TRUE;
+    [refreshControl endRefreshing];
     [[self tableView] reloadData];
 }
 
@@ -167,6 +159,11 @@
 #pragma mark -
 #pragma mark Table view datasource and delegate methods
 
+-(void)refreshView:(UIRefreshControl *)refreshControl {
+
+    self.navigationController.view.userInteractionEnabled = FALSE;
+    [globalData reloadFriendsInBackground];
+}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)aTableView {
     
@@ -239,7 +236,7 @@
         personCell.personDistance.text = @"Invite!";
     else
     {
-        NSString* distanceString = [person distanceString];
+        NSString* distanceString = [person distanceString:FALSE];
         if ( distanceString.length > 0 )
             personCell.personDistance.text = distanceString;
         else

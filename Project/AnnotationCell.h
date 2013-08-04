@@ -30,12 +30,19 @@
 @end
 
 
+@class Meetup;
 @interface MeetupAnnotationCell : UITableViewCell<AnnotationCell>
+{
+    NSMutableArray* avatarList;
+}
 @property (strong, nonatomic) IBOutlet UILabel *title;
 @property (strong, nonatomic) IBOutlet UILabel *subtitle;
 @property (strong, nonatomic) IBOutlet UILabel *date;
 @property (strong, nonatomic) IBOutlet UILabel *attending;
+@property (strong, nonatomic) IBOutlet UILabel *distance;
 @property (strong, nonatomic) IBOutlet MeetupPin *annotation;
+
+-(void)initWithMeetup:(Meetup*)meetup;
 
 @end
 

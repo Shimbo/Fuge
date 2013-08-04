@@ -150,7 +150,7 @@ NSInteger compareDistance(id id1, id id2, void *context)
                 personCell.personDistance.text = @"";
         }
         else
-            personCell.personDistance.text = [person distanceString];
+            personCell.personDistance.text = [person distanceString:FALSE];
         personCell.personInfo.text = @"";
         if ( person.strStatus && person.strStatus.length > 0 )
         {

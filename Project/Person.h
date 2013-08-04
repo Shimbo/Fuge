@@ -2,19 +2,19 @@
 #import "CoreLocation/CLLocationManager.h"
 #import <CoreLocation/CoreLocation.h>
 #import <Parse/Parse.h>
+#import "GeoObject.h"
 
 //@class PersonView;
 
 #define currentPerson [[Person alloc] init:pCurrentUser circle:CIRCLE_NONE]
 
-@interface Person : NSObject {
+@interface Person : GeoObject {
     
     NSString *strId;
     NSString *strFirstName;
     NSString *strLastName;
     NSString *strAge;
     NSString *strGender;
-    NSNumber *distance;
     NSNumber *role;
     NSString* strEmployer;
     NSString* strPosition;
@@ -25,8 +25,6 @@
     
     NSUInteger  numUnreadMessages;
     Boolean     discoverable;
-    
-    PFGeoPoint* location;
     
     NSUInteger idCircle;
     Boolean isCurrentUser;
@@ -40,7 +38,6 @@
 @property (nonatomic, retain) NSString *strLastName;
 @property (nonatomic, retain) NSString *strAge;
 @property (nonatomic, retain) NSString *strGender;
-@property (nonatomic, retain) NSNumber *distance;
 @property (nonatomic, retain) NSString *strEmployer;
 @property (nonatomic, retain) NSString *strPosition;
 @property (nonatomic, retain) NSString *strCircle;
@@ -61,7 +58,6 @@
 - (id)initEmpty:(NSUInteger)nCircle;
 - (void)update:(PFUser*)newData;
 
-- (void)calculateDistance;
 - (void)changeCircle:(NSUInteger)nCircle;
 
 //- (NSUInteger)getFriendsInCommonCount;
@@ -70,8 +66,6 @@
 
 -(NSString*)smallAvatarUrl;
 -(NSString*)largeAvatarUrl;
-
--(NSString*)distanceString;
 
 -(NSString*)timeString;
 
@@ -82,8 +76,6 @@
 #ifdef TARGET_S2C
 -(NSString*)industryInfo;
 #endif
-
-- (PFGeoPoint*) getLocation;
 
 -(void)showInviteDialog;
 -(void)openProfileInBrowser;

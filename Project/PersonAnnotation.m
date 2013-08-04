@@ -21,8 +21,8 @@
             self.subtitle = person.strStatus;
         else
             self.subtitle = [person jobInfo];
-        if ( person.getLocation )
-            self.coordinate = CLLocationCoordinate2DMake(person.getLocation.latitude, person.getLocation.longitude);
+        if ( person.location )
+            self.coordinate = CLLocationCoordinate2DMake(person.location.latitude, person.location.longitude);
         self.person = person;
         self.pinColor = PinBlue;
         if ( [person isOutdated] )

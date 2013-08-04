@@ -170,7 +170,7 @@
     
     // Labels
     labelFriendName.text = [personThis fullName];
-    NSString* distanceString = [personThis distanceString];
+    NSString* distanceString = [personThis distanceString:FALSE];
     labelDistance.text = distanceString;
     labelTimePassed.text = [[NSString alloc] initWithFormat:@"%@ ago", [personThis timeString]];
 

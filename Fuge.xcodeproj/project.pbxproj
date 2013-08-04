@@ -125,6 +125,8 @@
 		4C08525B17AD283000517D37 /* S2C-Icon-72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C08525717AD283000517D37 /* S2C-Icon-72@2x.png */; };
 		4C08525C17AD283000517D37 /* S2C-Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C08525817AD283000517D37 /* S2C-Icon.png */; };
 		4C08525D17AD283000517D37 /* S2C-Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C08525917AD283000517D37 /* S2C-Icon@2x.png */; };
+		4C08526017ADD6AE00517D37 /* GeoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08525F17ADD6AC00517D37 /* GeoObject.m */; };
+		4C08526117ADD6AE00517D37 /* GeoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08525F17ADD6AC00517D37 /* GeoObject.m */; };
 		4C08DDD3163C88580093C851 /* Circle.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD0163C88580093C851 /* Circle.m */; };
 		4C08DDD4163C88580093C851 /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD2163C88580093C851 /* Person.m */; };
 		4C08DDDB163C88640093C851 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD6163C88640093C851 /* RootViewController.m */; };
@@ -619,6 +621,8 @@
 		4C08525717AD283000517D37 /* S2C-Icon-72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "S2C-Icon-72@2x.png"; path = "resources/S2C/S2C-Icon-72@2x.png"; sourceTree = "<group>"; };
 		4C08525817AD283000517D37 /* S2C-Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "S2C-Icon.png"; path = "resources/S2C/S2C-Icon.png"; sourceTree = "<group>"; };
 		4C08525917AD283000517D37 /* S2C-Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "S2C-Icon@2x.png"; path = "resources/S2C/S2C-Icon@2x.png"; sourceTree = "<group>"; };
+		4C08525E17ADD6AB00517D37 /* GeoObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoObject.h; sourceTree = "<group>"; };
+		4C08525F17ADD6AC00517D37 /* GeoObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoObject.m; sourceTree = "<group>"; };
 		4C08DDCF163C88580093C851 /* Circle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Circle.h; sourceTree = "<group>"; };
 		4C08DDD0163C88580093C851 /* Circle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Circle.m; sourceTree = "<group>"; };
 		4C08DDD1163C88580093C851 /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
@@ -1380,6 +1384,8 @@
 				4C9A1576179D5C24006736E7 /* CommentData.m */,
 				4C08DDCF163C88580093C851 /* Circle.h */,
 				4C08DDD0163C88580093C851 /* Circle.m */,
+				4C08525E17ADD6AB00517D37 /* GeoObject.h */,
+				4C08525F17ADD6AC00517D37 /* GeoObject.m */,
 				4C08DDD1163C88580093C851 /* Person.h */,
 				4C08DDD2163C88580093C851 /* Person.m */,
 				4C7E3FDC169A09D10065484F /* Meetup.h */,
@@ -1828,6 +1834,7 @@
 				4C9A1575179D583C006736E7 /* Comment.m in Sources */,
 				4C9A1577179D5C25006736E7 /* CommentData.m in Sources */,
 				4C9D1B5817A7F271007B0FEA /* MeetupLoader.m in Sources */,
+				4C08526017ADD6AE00517D37 /* GeoObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1922,6 +1929,7 @@
 				4C444EA917A0045700288139 /* UIImageView+AFNetworking.m in Sources */,
 				4C444F4317A04F4400288139 /* LinkedinLoader.m in Sources */,
 				4C9D1B5917A7F271007B0FEA /* MeetupLoader.m in Sources */,
+				4C08526117ADD6AE00517D37 /* GeoObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

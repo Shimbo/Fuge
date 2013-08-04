@@ -16,27 +16,34 @@
 @interface MapViewController : MainViewController <MKMapViewDelegate,CLLocationManagerDelegate,UIPickerViewDelegate, UIPickerViewDataSource, UIActionSheetDelegate>
 {
     IBOutlet REVClusterMapView *mapView;
+    IBOutlet UITableView *tableView;
+    IBOutlet UIScrollView *scrollView;
+    IBOutlet UIButton *hiddenButton;
+    UIRefreshControl* refreshControl;
     NSMutableArray *_personsAnnotations;
     NSMutableArray *_meetupAnnotations;
     NSMutableArray *_threadAnnotations;
     CLLocationManager *_locationManager;
     PersonAnnotation *_userLocation;
+    
+    NSArray*             sortedMeetups;
 
     NSUInteger daySelector;
     UIBarButtonItem*     daySelectButton;
+    UIBarButtonItem*     newMeetupButton;
+    UIBarButtonItem*     closeButton;
     UIPopoverController* popover;
     UIActionSheet*       actionSheet;
     
     NSMutableArray* dayButtonLabels;
     NSMutableArray* selectionChoices;
-
 }
 
 @property (nonatomic, retain) IBOutlet REVClusterMapView *mapView;
+@property (nonatomic,retain) IBOutlet UITableView *tableView;
 @property (nonatomic, retain) IBOutlet UIActivityIndicatorView *activityIndicator;
-@property (strong, nonatomic) IBOutlet UIButton *reloadButton;
 
-- (IBAction)reloadTap:(id)sender;
 - (void) reloadStatusChanged;
+- (IBAction)mapTouched:(id)sender;
 
 @end

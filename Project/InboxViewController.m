@@ -55,8 +55,13 @@
     self.tableView.rowHeight = ROW_HEIGHT;
     
     // Reload button
-    UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"BUTTONS_RELOAD",nil) style:UIBarButtonItemStyleBordered target:self action:@selector(reloadClicked)];
-    [self.navigationItem setRightBarButtonItem:reloadBtn];
+    /*UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"BUTTONS_RELOAD",nil) style:UIBarButtonItemStyleBordered target:self action:@selector(reloadClicked)];
+    [self.navigationItem setRightBarButtonItem:reloadBtn];*/
+    
+    // Refresh control
+    refreshControl = [[UIRefreshControl alloc] init];
+    [refreshControl addTarget:self action:@selector(refreshView:) forControlEvents:UIControlEventValueChanged];
+    [self.tableView addSubview:refreshControl];
 }
 
 - (void) viewDidAppear:(BOOL)animated
@@ -78,20 +83,10 @@
     }
 }
 
-- (void) reloadClicked
-{
-    // UI
-    [self.activityIndicator startAnimating];
-    _tableView.userInteractionEnabled = FALSE;
-    
-    // Loading
-    if ( [globalData getLoadingStatus:LOADING_INBOX] != LOAD_STARTED )
-        [globalData reloadInboxInBackground];
-}
-
 - (void) refreshData {
     
     [self.activityIndicator stopAnimating];
+    [refreshControl endRefreshing];
     _tableView.userInteractionEnabled = TRUE;
     
     inbox = [globalData getInbox];
@@ -109,6 +104,15 @@
 #pragma mark -
 #pragma mark Table view datasource and delegate methods
 
+
+-(void)refreshView:(UIRefreshControl *)refreshControl {
+    
+    _tableView.userInteractionEnabled = FALSE;
+    
+    // Loading
+    if ( [globalData getLoadingStatus:LOADING_INBOX] != LOAD_STARTED )
+        [globalData reloadInboxInBackground];
+}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)aTableView {
 	
@@ -154,14 +158,15 @@
     inboxCell.message.text = item.message;
     inboxCell.misc.text = item.misc;
     inboxCell.mainImage.shoulCacheCircledImage = YES;
-/*    if ( item.meetup )
+    if ( item.meetup )
     {
+        inboxCell.pinImage.hidden = FALSE;
         MeetupAnnotation* temp = [[MeetupAnnotation alloc] initWithMeetup:item.meetup];
-        inboxCell.pinImage = [[MeetupPin alloc] init];
         [inboxCell.pinImage prepareForAnnotation:temp];
+        inboxCell.pinImage.backgroundColor = inboxCell.color;
     }
     else
-        inboxCell.pinImage = nil;*/
+        inboxCell.pinImage.hidden = TRUE;
     Person* person = nil;
     NSString* strPersonId;
     if ( [item.fromId compare:strCurrentUserId] == NSOrderedSame && item.type != INBOX_ITEM_COMMENT )

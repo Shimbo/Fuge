@@ -16,6 +16,7 @@ typedef enum ESortingRank
     NSUInteger      sortingMode;
     UIBarButtonItem *matchBtn;
     NSMutableArray  *arrayEngagementUsers;
+    UIRefreshControl *refreshControl;
 }
 
 @property (nonatomic,retain) IBOutlet UITableView *tableView;

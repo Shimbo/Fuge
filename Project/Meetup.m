@@ -16,7 +16,7 @@
 
 @implementation Meetup
 
-@synthesize strId,strOwnerId,strOwnerName,strSubject,strDescription,dateTime,privacy,meetupType,location,strVenue,strVenueId,strAddress,meetupData,numComments,attendees,decliners,dateTimeExp,durationSeconds,bImportedEvent,importedType,iconNumber,strPrice,strImageURL,strOriginalURL;
+@synthesize strId,strOwnerId,strOwnerName,strSubject,strDescription,dateTime,privacy,meetupType,strVenue,strVenueId,strAddress,meetupData,numComments,attendees,decliners,dateTimeExp,durationSeconds,bImportedEvent,importedType,iconNumber,strPrice,strImageURL,strOriginalURL;
 
 -(id) init
 {
@@ -629,5 +629,30 @@
 {
     return isCanceled;
 }
+
+-(Boolean)willStartSoon
+{
+    if ( [self isCanceled] )
+        return FALSE;
+    if ( [self hasPassed] )
+        return FALSE;
+    if ( meetupType != TYPE_MEETUP )
+        return FALSE;
+    
+    if ( [self getTimerTill] > TIME_FOR_JOIN_PERSON_AND_MEETUP)
+        return TRUE;
+    return FALSE;
+}
+
+-(Boolean)isPersonNearby:(Person*)person
+{
+    CLLocation *loc1 = [[CLLocation alloc]initWithLatitude:person.location.latitude longitude:person.location.longitude];
+    CLLocation *loc2 = [[CLLocation alloc]initWithLatitude:location.latitude longitude:location.longitude];
+    if ([loc1 distanceFromLocation:loc2] < DISTANCE_FOR_JOIN_PERSON_AND_MEETUP) {
+        return YES;
+    }
+    return NO;
+}
+
 
 @end

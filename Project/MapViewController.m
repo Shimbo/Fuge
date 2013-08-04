@@ -28,10 +28,11 @@
 #import "LocationManager.h"
 #import <QuartzCore/QuartzCore.h>
 #import "TableAnnotationsViewController.h"
+#import "AnnotationCell.h"
 
 @implementation MapViewController
 
-@synthesize mapView;
+@synthesize mapView, tableView;
 
 static Boolean bFirstZoom = true;
 
@@ -68,127 +69,11 @@ static Boolean bFirstZoom = true;
     return self;
 }
 
-- (NSUInteger)loadPersonAnnotations:(CircleType)circleNumber limit:(NSInteger)l
+-(void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-    Circle* circle = [globalData getCircle:circleNumber];
-    if ( ! circle )
-        return 0;
-    
-    int n = 0;
-    for (Person* person in [circle getPersons] )
-    {
-        if ( ! person.getLocation || ! person.discoverable )
-            continue;
-        PersonAnnotation *ann = [[PersonAnnotation alloc] initWithPerson:person];
-        [_personsAnnotations addObject:ann];
-        n++;
-        if ( n >= l )
-            break;
-    }
-    return n;
-}
-
-- (NSArray*) getMeetupsByDate
-{
-    // Calculating date windows
-    NSDate* windowStart = [NSDate date];
-    NSDate* windowEnd = [NSDate date];
-    
-    // Changing day
-    NSDateComponents* comps = [[NSDateComponents alloc] init];
-    [comps setDay:daySelector];
-    NSDate* startDay = [[NSCalendar currentCalendar] dateByAddingComponents:comps toDate:[NSDate date] options:0];
-    if ( daySelector == 8 ) // whole month selected
-        [comps setDay:30];
-    else if ( daySelector == 7 ) // whole week selected
-        [comps setDay:7];
-    else
-        [comps setDay:daySelector+1];
-    NSDate* endDay = [[NSCalendar currentCalendar] dateByAddingComponents:comps toDate:[NSDate date] options:0];
-    
-    // Calculating start date for this new day
-    comps = [[NSCalendar currentCalendar] components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:startDay];
-    [comps setHour:5];
-    [comps setMinute:0];
-    if ( daySelector > 0 && daySelector < 7 )
-        windowStart = [[NSCalendar currentCalendar] dateFromComponents:comps];
-    
-    // Calculating end date for this new day
-    comps = [[NSCalendar currentCalendar] components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:endDay];
-    [comps setHour:5];
-    [comps setMinute:0];
-    windowEnd = [[NSCalendar currentCalendar] dateFromComponents:comps];
-    
-    // Loading annotations
-    NSMutableArray* resultMeetups = [NSMutableArray arrayWithCapacity:30];
-    for (Meetup *meetup in [globalData getMeetups])
-    {
-        if (meetup.meetupType == TYPE_MEETUP)
-            if ( ! meetup.hasPassed && ! meetup.isCanceled && [meetup isWithinTimeFrame:windowStart till:windowEnd] )
-                [resultMeetups addObject:meetup];
-    }
-    return resultMeetups;
-}
-
-- (NSUInteger)loadMeetupAndThreadAnnotations:(NSInteger)l
-{
-    PFGeoPoint *geoPointUser = [pCurrentUser objectForKey:@"location"];
-    MKCoordinateRegion region = mapView.region;
-    Boolean bZoom = FALSE;
-    
-    CLLocationCoordinate2D upper, lower;
-    if ( geoPointUser )
-        upper = lower = CLLocationCoordinate2DMake(geoPointUser.latitude, geoPointUser.longitude);
-    
-    // Loading annotations
-    NSUInteger n = 0;
-    NSArray* meetups = [self getMeetupsByDate];
-    if ( meetups.count == 0 )
-        return 0;
-    for (Meetup *meetup in meetups)
-    {
-        if (meetup.meetupType == TYPE_MEETUP) {
-            MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
-            [_meetupAnnotations addObject:ann];
-            
-            // Creating zoom for the map
-            if ( geoPointUser && [globalData isAttendingMeetup:meetup.strId])
-            {
-                PFGeoPoint* pt = meetup.location;
-                if(pt.latitude > upper.latitude) upper.latitude = pt.latitude;
-                if(pt.latitude < lower.latitude) lower.latitude = pt.latitude;
-                if(pt.longitude > upper.longitude) upper.longitude = pt.longitude;
-                if(pt.longitude < lower.longitude) lower.longitude = pt.longitude;
-                bZoom = TRUE;
-            }
-        }else{ // Warning! Now getMeetupsByDate will never return any thread at all!
-            ThreadAnnotation *ann = [[ThreadAnnotation alloc] initWithMeetup:meetup];
-            [_threadAnnotations addObject:ann];
-        }
-        
-        n++;
-        if ( n >= l )
-            break;
-    }
-    
-    // Default map location
-    if ( geoPointUser && bFirstZoom && bZoom )
-    {
-        MKCoordinateSpan locationSpan;
-        locationSpan.latitudeDelta = upper.latitude - lower.latitude;
-        locationSpan.longitudeDelta = upper.longitude - lower.longitude;
-        CLLocationCoordinate2D locationCenter;
-        locationCenter.latitude = (upper.latitude + lower.latitude) / 2;
-        locationCenter.longitude = (upper.longitude + lower.longitude) / 2;
-        
-        region = MKCoordinateRegionMake(locationCenter, locationSpan);
-        region.span.latitudeDelta *= 1.1f;
-        region.span.longitudeDelta *= 1.1f;
-        [mapView setRegion:region animated:YES];
-    }
-    
-    bFirstZoom = false;
-    return n;
+    if ( ! _userLocation )
+        [self addCurrentPerson];
+    _userLocation.coordinate = newLocation.coordinate;
 }
 
 - (void)newThreadClicked{
@@ -199,7 +84,6 @@ static Boolean bFirstZoom = true;
 
 }
 
-
 - (void)newMeetupClicked{
     NewMeetupViewController *newMeetupViewController = [[NewMeetupViewController alloc] initWithNibName:@"NewMeetupViewController" bundle:nil];
     [newMeetupViewController setType:TYPE_MEETUP];
@@ -207,10 +91,32 @@ static Boolean bFirstZoom = true;
     [self.navigationController presentViewController:navigation animated:YES completion:nil];
 }
 
-- (IBAction)reloadTap:(id)sender {
+- (void)filterClicked{
+    FilterViewController *filterViewController = [[FilterViewController alloc] initWithNibName:@"FilterView" bundle:nil];
+    [self.navigationController pushViewController:filterViewController animated:YES];
+    //[self.navigationController setNavigationBarHidden:true animated:true];
+}
+
+- (void)resizeScroll
+{
+    // Resizing comments
+    NSUInteger newHeight = tableView.contentSize.height;
+    CGRect frame = tableView.frame;
+    frame.size.height = newHeight;
+    tableView.frame = frame;
+    
+    // Resizing scroll view
+    [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width, tableView.frame.origin.y + tableView.frame.size.height)];
+}
+
+-(void)refreshView:(UIRefreshControl *)refreshControl {
+    
+    [self reload];
+}
+
+- (void)reload {
     // UI
     [self.activityIndicator startAnimating];
-    _reloadButton.hidden = TRUE;
     self.navigationController.view.userInteractionEnabled = NO;
     
     // Reload data
@@ -229,29 +135,63 @@ static Boolean bFirstZoom = true;
 
 - (void) reloadStatusChanged
 {
+    // Stop animating refresh control
+    if ( refreshControl )
+        [refreshControl endRefreshing];
+    
     // UI
     if ( [globalData getLoadingStatus:LOADING_CIRCLES] != LOAD_STARTED &&
             [globalData getLoadingStatus:LOADING_MAP] != LOAD_STARTED )
     {
-        _reloadButton.hidden = FALSE;
         self.navigationController.view.userInteractionEnabled = YES;
         [self.activityIndicator stopAnimating];
     }
     else
     {
         [self.activityIndicator startAnimating];
-        _reloadButton.hidden = TRUE;
     }
+    
+    sortedMeetups = [self getMeetupsByDate];
     
     // Refresh map
     [self reloadMapAnnotations];
+    
+    // Refresh table
+    [tableView reloadData];
+    
+    // Resize scroll
+    [self resizeScroll];
 }
 
--(void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
-{
-    if ( ! _userLocation )
-        [self addCurrentPerson];
-    _userLocation.coordinate = newLocation.coordinate;
+#pragma mark -
+#pragma mark Map Operations
+
+static CGRect oldMapFrame;
+
+-(IBAction)mapTouched:(id)sender {
+    hiddenButton.hidden = TRUE;
+    [UIView animateWithDuration:0.2 animations:^{
+        oldMapFrame = mapView.frame;
+        mapView.frame = self.view.frame;
+    } completion:^(BOOL finished) {
+        mapView.userInteractionEnabled = TRUE;
+        scrollView.scrollEnabled = FALSE;
+        tableView.hidden = TRUE;
+        self.navigationItem.rightBarButtonItems = @[ closeButton ];
+    }];
+}
+
+-(void)closeMap {
+    
+    self.navigationItem.rightBarButtonItems = @[ newMeetupButton ];
+    tableView.hidden = FALSE;
+    [UIView animateWithDuration:0.2 animations:^{
+        mapView.frame = oldMapFrame;
+    } completion:^(BOOL finished) {
+        mapView.userInteractionEnabled = FALSE;
+        scrollView.scrollEnabled = TRUE;
+        hiddenButton.hidden = FALSE;
+    }];
 }
 
 - (void)focusMapOnUser
@@ -297,9 +237,55 @@ static Boolean bFirstZoom = true;
     [self focusMapOnUser];
 }
 
+-(void)joinPersonsAndMeetups{
+    NSMutableArray *personsAnnotationForRemove = [NSMutableArray arrayWithCapacity:4];
+    for (PersonAnnotation* per in _personsAnnotations) {
+        for (MeetupAnnotation* meet in _meetupAnnotations) {
+            if ([meet.meetup willStartSoon]&&
+                [meet.meetup isPersonNearby:per.person]) {
+                [meet addPerson:per.person];
+                [personsAnnotationForRemove addObject:per];
+                break;
+            }
+        }
+    }
+    [_personsAnnotations removeObjectsInArray:personsAnnotationForRemove];
+}
+
+-(BOOL)fitMapViewForAnotations:(NSArray*)annotations onlyTest:(Boolean)test{
+    if ([self.mapView isMaximumZoom])
+        return NO;
+    
+    MKMapRect zoomRect = MKMapRectNull;
+    for (id <MKAnnotation> annotation in annotations){
+        MKMapPoint annotationPoint = MKMapPointForCoordinate(annotation.coordinate);
+        MKMapRect pointRect = MKMapRectMake(annotationPoint.x, annotationPoint.y,
+                                            0.1, 0.1);
+        zoomRect = MKMapRectUnion(zoomRect, pointRect);
+    }
+    
+    NSInteger newLevel = [self.mapView zoomLevelForMarRect:zoomRect];
+    if (newLevel < MAX_ZOOM_LEVEL) {
+        if ( ! test )
+            [mapView setVisibleMapRect:zoomRect
+                           edgePadding:UIEdgeInsetsMake(60, 30, 20, 30)
+                              animated:YES];
+        return YES;
+    }
+    
+    return NO;
+}
+
+
+#pragma mark -
+#pragma mark Main Cycle
+
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    //[self.navigationItem setHidesBackButton:true animated:false];
     
     // Texts for buttons
     NSDateFormatter* theDateFormatter = [[NSDateFormatter alloc] init];
@@ -328,14 +314,10 @@ static Boolean bFirstZoom = true;
     [selectionChoices addObject:@"All month"];
     
     // Misc
-    [mapView setMapType:MKMapTypeStandard];
-    [mapView setZoomEnabled:YES];
-    [mapView setScrollEnabled:YES];
-    [mapView setDelegate:self];
-    mapView.showsUserLocation = NO;
 #ifdef IOS7_ENABLE
     mapView.rotateEnabled = FALSE;
 #endif
+    mapView.userInteractionEnabled = FALSE;
     
     _locationManager = [[CLLocationManager alloc]init];
     _locationManager.delegate = self;
@@ -346,8 +328,11 @@ static Boolean bFirstZoom = true;
         [self addCurrentPerson];
     
     // Navigation bar: new meetup
-    [self.navigationItem setHidesBackButton:true animated:false];
-    self.navigationItem.rightBarButtonItems = @[[[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"MAP_BUTTON_NEWMEETUP",nil) style:UIBarButtonItemStyleBordered target:self action:@selector(newMeetupClicked)]];
+    newMeetupButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"MAP_BUTTON_NEWMEETUP",nil) style:UIBarButtonItemStyleBordered target:self action:@selector(newMeetupClicked)];
+    self.navigationItem.rightBarButtonItems = @[ newMeetupButton ];
+    
+    // Close button (for the map)
+    closeButton = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStyleBordered target:self action:@selector(closeMap)];
     
     // Navigation bar: date selector
     NSArray* oldLeft = self.navigationItem.leftBarButtonItems;
@@ -355,11 +340,20 @@ static Boolean bFirstZoom = true;
     if ( oldLeft.count > 0 )
         self.navigationItem.leftBarButtonItems = @[ oldLeft[0], daySelectButton ];
     
+    // Table
+    UINib *nib = [UINib nibWithNibName:@"AnnotationCellMeetup" bundle:nil];
+    [tableView registerNib:nib forCellReuseIdentifier:@"MeetupCell"];
+    
     // Setting user location and focusing map
     [self focusMapOnUser];
     
     // Data updating
     [self reloadStatusChanged];
+    
+    // Refresh control
+    refreshControl = [[UIRefreshControl alloc] init];
+    [refreshControl addTarget:self action:@selector(refreshView:) forControlEvents:UIControlEventValueChanged];
+    [scrollView addSubview:refreshControl];
     
     [TestFlight passCheckpoint:@"Map"];
 }
@@ -370,38 +364,132 @@ static Boolean bFirstZoom = true;
     [self reloadMapAnnotations];
 }
 
--(BOOL)isPerson:(PersonAnnotation*)per
-   nearbyMeetup:(MeetupAnnotation*)meet{
-    CLLocation *loc1 = [[CLLocation alloc]initWithLatitude:per.coordinate.latitude longitude:per.coordinate.longitude];
-    CLLocation *loc2 = [[CLLocation alloc]initWithLatitude:meet.coordinate.latitude longitude:meet.coordinate.longitude];
-    if ([loc1 distanceFromLocation:loc2] < DISTANCE_FOR_JOIN_PERSON_AND_MEETUP) {
-        return YES;
+- (NSArray*) getMeetupsByDate
+{
+    // Calculating date windows
+    NSDate* windowStart = [NSDate date];
+    NSDate* windowEnd = [NSDate date];
+    
+    // Changing day
+    NSDateComponents* comps = [[NSDateComponents alloc] init];
+    [comps setDay:daySelector];
+    NSDate* startDay = [[NSCalendar currentCalendar] dateByAddingComponents:comps toDate:[NSDate date] options:0];
+    if ( daySelector == 8 ) // whole month selected
+        [comps setDay:30];
+    else if ( daySelector == 7 ) // whole week selected
+        [comps setDay:7];
+    else
+        [comps setDay:daySelector+1];
+    NSDate* endDay = [[NSCalendar currentCalendar] dateByAddingComponents:comps toDate:[NSDate date] options:0];
+    
+    // Calculating start date for this new day
+    comps = [[NSCalendar currentCalendar] components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:startDay];
+    [comps setHour:5];
+    [comps setMinute:0];
+    if ( daySelector > 0 && daySelector < 7 )
+        windowStart = [[NSCalendar currentCalendar] dateFromComponents:comps];
+    
+    // Calculating end date for this new day
+    comps = [[NSCalendar currentCalendar] components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:endDay];
+    [comps setHour:5];
+    [comps setMinute:0];
+    windowEnd = [[NSCalendar currentCalendar] dateFromComponents:comps];
+    
+    // Loading annotations
+    NSMutableArray* resultMeetups = [NSMutableArray arrayWithCapacity:30];
+    for (Meetup *meetup in [globalData getMeetups])
+    {
+        if (meetup.meetupType == TYPE_MEETUP)
+            if ( ! meetup.hasPassed && ! meetup.isCanceled && [meetup isWithinTimeFrame:windowStart till:windowEnd] )
+                [resultMeetups addObject:meetup];
     }
-    return NO;
+    
+    // Sorting meetups by distance
+    
+    return resultMeetups;
 }
 
--(BOOL)isMeetupWillStartSoon:(MeetupAnnotation*)meet{
-    if (meet.time > TIME_FOR_JOIN_PERSON_AND_MEETUP) {
-        return YES;
-    }
-    return NO;
-}
-
--(void)joinPersonsAndMeetups{
-    NSMutableArray *personsAnnotationForRemove = [NSMutableArray arrayWithCapacity:4];
-    for (PersonAnnotation* per in _personsAnnotations) {
-        for (MeetupAnnotation* meet in _meetupAnnotations) {
-            if ([self isMeetupWillStartSoon:meet]&&
-                [self isPerson:per nearbyMeetup:meet]) {
-                [meet addPerson:per.person];
-                [personsAnnotationForRemove addObject:per];
-                break;
+- (NSUInteger)loadMeetupAndThreadAnnotations:(NSInteger)l
+{
+    PFGeoPoint *geoPointUser = [pCurrentUser objectForKey:@"location"];
+    MKCoordinateRegion region = mapView.region;
+    Boolean bZoom = FALSE;
+    
+    CLLocationCoordinate2D upper, lower;
+    if ( geoPointUser )
+        upper = lower = CLLocationCoordinate2DMake(geoPointUser.latitude, geoPointUser.longitude);
+    
+    // Loading annotations
+    NSUInteger n = 0;
+    if ( ! sortedMeetups )
+        sortedMeetups = [self getMeetupsByDate];
+    if ( sortedMeetups.count == 0 )
+        return 0;
+    for (Meetup *meetup in sortedMeetups)
+    {
+        if (meetup.meetupType == TYPE_MEETUP) {
+            MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
+            [_meetupAnnotations addObject:ann];
+            
+            // Creating zoom for the map
+            if ( geoPointUser && [globalData isAttendingMeetup:meetup.strId])
+            {
+                PFGeoPoint* pt = meetup.location;
+                if(pt.latitude > upper.latitude) upper.latitude = pt.latitude;
+                if(pt.latitude < lower.latitude) lower.latitude = pt.latitude;
+                if(pt.longitude > upper.longitude) upper.longitude = pt.longitude;
+                if(pt.longitude < lower.longitude) lower.longitude = pt.longitude;
+                bZoom = TRUE;
             }
+        }else{ // Warning! Now getMeetupsByDate will never return any thread at all!
+            ThreadAnnotation *ann = [[ThreadAnnotation alloc] initWithMeetup:meetup];
+            [_threadAnnotations addObject:ann];
         }
+        
+        n++;
+        if ( n >= l )
+            break;
     }
-    [_personsAnnotations removeObjectsInArray:personsAnnotationForRemove];
+    
+    // Default map location
+    if ( geoPointUser && bFirstZoom && bZoom )
+    {
+        MKCoordinateSpan locationSpan;
+        locationSpan.latitudeDelta = upper.latitude - lower.latitude;
+        locationSpan.longitudeDelta = upper.longitude - lower.longitude;
+        CLLocationCoordinate2D locationCenter;
+        locationCenter.latitude = (upper.latitude + lower.latitude) / 2;
+        locationCenter.longitude = (upper.longitude + lower.longitude) / 2;
+        
+        region = MKCoordinateRegionMake(locationCenter, locationSpan);
+        region.span.latitudeDelta *= 1.1f;
+        region.span.longitudeDelta *= 1.1f;
+        [mapView setRegion:region animated:YES];
+    }
+    
+    bFirstZoom = false;
+    return n;
 }
 
+- (NSUInteger)loadPersonAnnotations:(CircleType)circleNumber limit:(NSInteger)l
+{
+    Circle* circle = [globalData getCircle:circleNumber];
+    if ( ! circle )
+        return 0;
+    
+    int n = 0;
+    for (Person* person in [circle getPersons] )
+    {
+        if ( ! person.location || ! person.discoverable )
+            continue;
+        PersonAnnotation *ann = [[PersonAnnotation alloc] initWithPerson:person];
+        [_personsAnnotations addObject:ann];
+        n++;
+        if ( n >= l )
+            break;
+    }
+    return n;
+}
 
 -(void)reloadMapAnnotations{
     _personsAnnotations = [NSMutableArray arrayWithCapacity:20];
@@ -436,6 +524,8 @@ static Boolean bFirstZoom = true;
     }
 }
 
+#pragma mark -
+#pragma mark Map View delegate
 
 -(MKAnnotationView *)mapView:(MKMapView *)mV viewForAnnotation:(id <MKAnnotation>)annotation
 {
@@ -493,30 +583,6 @@ static Boolean bFirstZoom = true;
     }
 }
 
--(BOOL)fitMapViewForAnotations:(NSArray*)annotations onlyTest:(Boolean)test{
-    if ([self.mapView isMaximumZoom])
-        return NO;
-    
-    MKMapRect zoomRect = MKMapRectNull;
-    for (id <MKAnnotation> annotation in annotations){
-        MKMapPoint annotationPoint = MKMapPointForCoordinate(annotation.coordinate);
-        MKMapRect pointRect = MKMapRectMake(annotationPoint.x, annotationPoint.y,
-                                            0.1, 0.1);
-        zoomRect = MKMapRectUnion(zoomRect, pointRect);
-    }
-
-    NSInteger newLevel = [self.mapView zoomLevelForMarRect:zoomRect];
-    if (newLevel < MAX_ZOOM_LEVEL) {
-        if ( ! test )
-            [mapView setVisibleMapRect:zoomRect
-                       edgePadding:UIEdgeInsetsMake(60, 30, 20, 30)
-                          animated:YES];
-        return YES;
-    }
-    
-    return NO;
-}
-
 - (void)mapView:(MKMapView *)mv didSelectAnnotationView:(MKAnnotationView *)view
 {
     if ([view isKindOfClass:[REVClusterAnnotationView class]]) {
@@ -543,19 +609,16 @@ static Boolean bFirstZoom = true;
 
 - (void)viewDidUnload {
     [self setMapView:nil];
+    tableView = nil;
+    [self setTableView:nil];
+    scrollView = nil;
+    hiddenButton = nil;
     [super viewDidUnload];
 }
 
 
-- (void)filterClicked{
-    FilterViewController *filterViewController = [[FilterViewController alloc] initWithNibName:@"FilterView" bundle:nil];
-    [self.navigationController pushViewController:filterViewController animated:YES];
-    //[self.navigationController setNavigationBarHidden:true animated:true];
-}
-
-
 #pragma mark -
-#pragma mark Picker View
+#pragma mark Picker View delegate
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
     
@@ -595,19 +658,19 @@ static Boolean bFirstZoom = true;
     [pickerView selectRow:daySelector inComponent:0 animated:NO];
     
     // Close button
-    UISegmentedControl *closeButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"Close"]];
-    closeButton.momentary = YES;
-    closeButton.frame = CGRectMake(260, 7, 50, 30);
-    closeButton.segmentedControlStyle = UISegmentedControlStyleBar;
-    closeButton.tintColor = [UIColor blackColor];
-    [closeButton addTarget:self action:@selector(dismissPopup) forControlEvents:UIControlEventValueChanged];
+    UISegmentedControl *closeBtn = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"Close"]];
+    closeBtn.momentary = YES;
+    closeBtn.frame = CGRectMake(260, 7, 50, 30);
+    closeBtn.segmentedControlStyle = UISegmentedControlStyleBar;
+    closeBtn.tintColor = [UIColor blackColor];
+    [closeBtn addTarget:self action:@selector(dismissPopup) forControlEvents:UIControlEventValueChanged];
     
     if ( IPAD )
     {
         // View and VC
         UIView *view = [[UIView alloc] init];
         [view addSubview:pickerView];
-        [view addSubview:closeButton];
+        [view addSubview:closeBtn];
         UIViewController *vc = [[UIViewController alloc] init];
         [vc setView:view];
         [vc setContentSizeForViewInPopover:CGSizeMake(320, 260)];
@@ -621,7 +684,7 @@ static Boolean bFirstZoom = true;
         actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:nil cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
         [actionSheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
         [actionSheet addSubview:pickerView];
-        [actionSheet addSubview:closeButton];
+        [actionSheet addSubview:closeBtn];
         [actionSheet showInView:self.view];
         [actionSheet setBounds:CGRectMake(0, 0, 320, 485)];
     }
@@ -634,5 +697,55 @@ static Boolean bFirstZoom = true;
     else
         [actionSheet dismissWithClickedButtonIndex:0 animated:YES];
 }
+
+
+#pragma mark -
+#pragma mark Table View delegate
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 70;//(50+10*indexPath.item); // I put some padding on it.
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)aTableView {
+    
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)aTableView numberOfRowsInSection:(NSInteger)section {
+	
+    return sortedMeetups.count;
+}
+
+- (NSString *)tableView:(UITableView *)aTableView titleForHeaderInSection:(NSInteger)section {
+
+    return @"Upcoming meetups";
+}
+
+- (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath  {
+    
+	MeetupAnnotationCell *meetupCell = (MeetupAnnotationCell *)[table dequeueReusableCellWithIdentifier:@"MeetupCell"];
+	
+    [meetupCell initWithMeetup:sortedMeetups[indexPath.row]];
+    
+	return meetupCell;
+}
+
+/*- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    cell.backgroundColor = ((PersonCell*)cell).color;
+}*/
+
+- (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    MeetupViewController *meetupController = [[MeetupViewController alloc] initWithNibName:@"MeetupView" bundle:nil];
+    [meetupController setMeetup:sortedMeetups[indexPath.row]];
+    [self.navigationController pushViewController:meetupController animated:YES];
+    
+	[table deselectRowAtIndexPath:indexPath animated:YES];
+}
+
+
 
 @end
