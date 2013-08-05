@@ -38,3 +38,7 @@
 "SETTINGS_LOGOUT_TEXT"          = "Logout from LinkedIn";
 
 "WELCOME_MESSAGE"               = "Welcome to Simple2Connect! We are transforming the way professionals network. Explore the profiles of people around you and make your networking more efficient!";
+
+"NEW_MEETUP_NOSUBJECT"          = "Please, enter the subject of the meetup in the text above!";
+"NEW_MEETUP_NOVENUE"            = "We were unable to retrieve your current location, please, select a venue for the meetup.";
+"NEW_MEETUP_BLOCKEDPUBLIC"      = "Public meetups are available only for experienced users, registered at least a week ago. Try creating private meetup and invite your friends, so you will become familiar with how it works.";

@@ -38,3 +38,7 @@
 "SETTINGS_LOGOUT_TEXT"          = "Logout from Facebook";
 
 "WELCOME_MESSAGE"               = "Greetings and welcome to Fuge. Why not to spend some time exploring the surroundings? Try to find interesting people or activities to join. And don't forget to invite your friends to accompany you. In case of any trouble please feel free to share with me. Any feedback would be much appreciated as well. Have a good day!";
+
+"NEW_MEETUP_NOSUBJECT"          = "Please, enter the subject of the meetup in the text above!";
+"NEW_MEETUP_NOVENUE"            = "We were unable to retrieve your current location, please, select a venue for the meetup.";
+"NEW_MEETUP_BLOCKEDPUBLIC"      = "Public meetups are available only for experienced users, registered at least a week ago. Try creating private meetup and invite your friends, so you will become familiar with how it works.";

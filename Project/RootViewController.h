@@ -15,7 +15,7 @@ typedef enum ESortingRank
 @interface RootViewController : MainViewController {
     NSUInteger      sortingMode;
     UIBarButtonItem *matchBtn;
-    NSMutableArray  *arrayEngagementUsers;
+    NSMutableArray  *sortedUsers;
     UIRefreshControl *refreshControl;
 }
 

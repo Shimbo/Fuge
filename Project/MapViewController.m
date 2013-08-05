@@ -362,6 +362,7 @@ static CGRect oldMapFrame;
 {
     [super viewDidAppear:animated];
     [self reloadMapAnnotations];
+    [tableView reloadData];
 }
 
 - (NSArray*) getMeetupsByDate

@@ -313,6 +313,9 @@ NSInteger sortByName(id num1, id num2, void *context)
 #elif defined TARGET_S2C
     [self loadFbFriendsInBackground:nil];
 #endif
+    
+    // Random friends
+    [self loadRandomPeopleInBackground];
 }
 
 // Will use secondary load status to show problems with connection
@@ -320,9 +323,6 @@ NSInteger sortByName(id num1, id num2, void *context)
 {
     nMapLoadingStage = 0;
     nLoadStatusMap = LOAD_STARTED;
-    
-    // Random friends
-    [self loadRandomPeopleInBackground:southWest toNorthEast:northEast];
     
     // Meetups
     [self loadMeetupsInBackground:southWest toNorthEast:northEast];
@@ -532,7 +532,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     }];
 }
 
-- (void) loadRandomPeopleInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast
+- (void) loadRandomPeopleInBackground
 {
     // Query
     PFQuery *friendAnyQuery = [PFUser query];
@@ -543,15 +543,15 @@ NSInteger sortByName(id num1, id num2, void *context)
     [friendAnyQuery orderByDescending:@"updatedAt"];
     
     // We could load based on player location or map rect if he moved the map later
-    if ( ! southWest )
-    {
+//    if ( ! southWest )
+//    {
         NSUInteger nDistance = [globalVariables isUserAdmin] ? RANDOM_PERSON_KILOMETERS_ADMIN : RANDOM_PERSON_KILOMETERS_NORMAL;
         [friendAnyQuery whereKey:@"location" nearGeoPoint:[globalVariables currentLocation] withinKilometers:nDistance];
-    }
-    else
-    {
-        [friendAnyQuery whereKey:@"location" withinGeoBoxFromSouthwest:southWest toNortheast:northEast];
-    }
+//    }
+//    else
+//    {
+//        [friendAnyQuery whereKey:@"location" withinGeoBoxFromSouthwest:southWest toNortheast:northEast];
+//    }
     [friendAnyQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
     NSDate* dateToHide = [NSDate dateWithTimeIntervalSinceNow:-(NSTimeInterval)MAX_SECONDS_FROM_PERSON_LOGIN];
     [friendAnyQuery whereKey:@"updatedAt" greaterThan:dateToHide];
@@ -578,8 +578,8 @@ NSInteger sortByName(id num1, id num2, void *context)
                 [circleRandom sort];
         }
         
-        // In any case, increment loading stage
-        [self incrementMapLoadingStage];
+        // Increment loading stages
+        [self incrementCirclesLoadingStage];
     }];
 }
 

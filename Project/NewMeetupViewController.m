@@ -384,14 +384,14 @@
 -(BOOL)validateForm{
     if ( subject.text.length == 0 )
     {
-        UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Not yet!" message:@"Please, enter the subject of the meetup in the text above!" delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
+        UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Not yet!" message:NSLocalizedString(@"NEW_MEETUP_NOSUBJECT",nil) delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
         [errorAlert show];
         return NO;
     }
     
     if ( ! self.selectedVenue && ! meetup && ! [locManager getPosition] )
     {
-        UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Not yet!" message:@"We were unable to retrieve your current location, please, select a venue for the meetup." delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
+        UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Not yet!" message:NSLocalizedString(@"NEW_MEETUP_NOVENUE",nil) delegate:nil cancelButtonTitle:@"Sure man!" otherButtonTitles:nil];
         [errorAlert show];
         return NO;
     }
@@ -505,7 +505,7 @@
 - (IBAction)privacyChanged:(id)sender {
     if ( [pCurrentUser.createdAt compare:[NSDate dateWithTimeIntervalSinceNow:-24*3600*7]] == NSOrderedDescending )
     {
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Too early" message:@"Public meetups are available only for experienced users, registered at least a week ago. Try creating private meetup and invite your friends, so you will become familiar with how it works." delegate:self cancelButtonTitle:@"Alright" otherButtonTitles:nil, nil];
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Too early" message:NSLocalizedString(@"NEW_MEETUP_BLOCKEDPUBLIC",nil) delegate:self cancelButtonTitle:@"Alright" otherButtonTitles:nil, nil];
         [alert show];
         [notifySwitch setOn:FALSE animated:TRUE];
         notifySwitch.enabled = FALSE;

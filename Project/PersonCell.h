@@ -12,5 +12,6 @@
 @property (strong, nonatomic) IBOutlet UILabel *personRole;
 #endif
 @property (strong, nonatomic) UIColor *color;
+@property (nonatomic, assign) Boolean shouldDrawMatches;
 
 @end
