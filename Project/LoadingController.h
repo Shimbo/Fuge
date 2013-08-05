@@ -13,6 +13,7 @@
     Boolean bVersionChecked;
     NSUInteger  nAnimationStage;
     Boolean     bAnimation;
+    Boolean     bDemoMode;
 }
 @property (strong, nonatomic) IBOutlet UIButton *loginButton;
 @property (strong, nonatomic) IBOutlet UIButton *linkedinButton;
@@ -23,6 +24,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *miscText;
 @property (strong, nonatomic) IBOutlet UIImageView *backgroundImage;
 @property (strong, nonatomic) IBOutlet UIImageView *whiteImage;
+@property (nonatomic, assign) Boolean bDemoMode;
 
 - (IBAction)loginDown:(id)sender;
 - (IBAction)retryDown:(id)sender;

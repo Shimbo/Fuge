@@ -22,6 +22,8 @@
 
 @implementation LoadingController
 
+@synthesize bDemoMode;
+
 static Boolean bRotating = true;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -42,6 +44,7 @@ static Boolean bRotating = true;
         bAnimation = true;
         nAnimationStage = 0;
         _backgroundImage.alpha = 0.0f;
+        bDemoMode = false;
         
         [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:NO];
     }
@@ -224,7 +227,8 @@ static Boolean bRotating = true;
 {
     [super viewDidLoad];
     
-    [self performSelector:@selector(loadSequencePart0) withObject:nil afterDelay:0.01f];
+    if ( ! bDemoMode )
+        [self performSelector:@selector(loadSequencePart0) withObject:nil afterDelay:0.01f];
 }
 
 - (void)didReceiveMemoryWarning
@@ -245,6 +249,17 @@ static Boolean bRotating = true;
     _backgroundImage.hidden = FALSE;
     _backgroundImage.alpha = 0.0f;
     [self animateHypno];
+    
+    if ( bDemoMode )
+    {
+        _backgroundImage.alpha = 1.0f;
+        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:NO];
+        [self.navigationController setNavigationBarHidden:TRUE];
+        CGRect frame = AppDelegate.revealController.view.frame;
+        frame.size.height += frame.origin.y;
+        frame.origin.y = 0;
+        AppDelegate.revealController.view.frame = frame;
+    }
 }
 
 - (void) viewDidDisappear:(BOOL)animated
@@ -561,4 +576,5 @@ static Boolean bRotating = true;
     [self setLinkedinButton:nil];
     [super viewDidUnload];
 }
+
 @end

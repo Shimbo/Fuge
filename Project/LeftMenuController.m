@@ -17,6 +17,7 @@
 #import "CustomBadge.h"
 #import "UserProfileController.h"
 #import "MeetupLoader.h"
+#import "LoadingController.h"
 
 #define ALERT_ENTER_STATUS      1
 #define ALERT_IMPORT_MEETUP     2
@@ -56,6 +57,8 @@
         [_selectors addObject:@"showStats"];
         [_items addObject:@"* Import meetup"];
         [_selectors addObject:@"importMeetup"];
+        [_items addObject:@"* Demo mode"];
+        [_selectors addObject:@"showDemo"];
     }
 
     _inboxBadge = [CustomBadge secondCircleCustomBadge];
@@ -78,9 +81,15 @@
     if (!_profileViewController) {
         _profileViewController = [[ProfileViewController alloc] initWithNibName:@"ProfileView" bundle:nil];
     }
-    if (_mapViewController)
+    if (_mapViewController || _rootViewController)
         _profileViewController.main = YES;
     [self showViewController:_profileViewController];
+}
+
+-(void)showDemo{
+    LoadingController* loading = [[LoadingController alloc] initWithNibName:@"LoadingController" bundle:nil];
+    loading.bDemoMode = TRUE;
+    [self showViewController:loading];
 }
 
 -(void)prepareMap

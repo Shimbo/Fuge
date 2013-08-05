@@ -404,7 +404,10 @@ static CGRect oldMapFrame;
                 [resultMeetups addObject:meetup];
     }
     
-    // Sorting meetups by distance
+    // Sorting meetups by date
+    [resultMeetups sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        return [((Meetup*)obj1).dateTime compare:((Meetup*)obj2).dateTime ];
+    }];
     
     return resultMeetups;
 }

@@ -25,7 +25,6 @@
 		4706D0FF16C10D0600CAF9AF /* UIViewController+PKRevealController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4706D0FC16C10D0600CAF9AF /* UIViewController+PKRevealController.m */; };
 		4706D10316C10DBF00CAF9AF /* LeftMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4706D10116C10DBF00CAF9AF /* LeftMenuController.m */; };
 		4706D10416C10DBF00CAF9AF /* LeftMenuController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4706D10216C10DBF00CAF9AF /* LeftMenuController.xib */; };
-		4706D10816C1188300CAF9AF /* RightViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4706D10616C1188300CAF9AF /* RightViewController.m */; };
 		4706D10916C1188300CAF9AF /* RightViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4706D10716C1188300CAF9AF /* RightViewController.xib */; };
 		4706D10C16C11A2400CAF9AF /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4706D10B16C11A2300CAF9AF /* MainViewController.m */; };
 		4706D10E16C11BA200CAF9AF /* RootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4706D10D16C11BA200CAF9AF /* RootViewController.xib */; };
@@ -180,7 +179,6 @@
 		4C444E7017A0045700288139 /* PKRevealControllerContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4706D0FA16C10D0600CAF9AF /* PKRevealControllerContainerView.m */; };
 		4C444E7117A0045700288139 /* UIViewController+PKRevealController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4706D0FC16C10D0600CAF9AF /* UIViewController+PKRevealController.m */; };
 		4C444E7217A0045700288139 /* LeftMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4706D10116C10DBF00CAF9AF /* LeftMenuController.m */; };
-		4C444E7317A0045700288139 /* RightViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4706D10616C1188300CAF9AF /* RightViewController.m */; };
 		4C444E7417A0045700288139 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4706D10B16C11A2300CAF9AF /* MainViewController.m */; };
 		4C444E7517A0045700288139 /* InboxViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C1C438116C9B125008BA9CA /* InboxViewController.m */; };
 		4C444E7617A0045700288139 /* MeetupInviteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 47BDBC9016EA268F008B12CF /* MeetupInviteViewController.m */; };
@@ -487,8 +485,6 @@
 		4706D10016C10DBF00CAF9AF /* LeftMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeftMenuController.h; sourceTree = "<group>"; };
 		4706D10116C10DBF00CAF9AF /* LeftMenuController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LeftMenuController.m; sourceTree = "<group>"; };
 		4706D10216C10DBF00CAF9AF /* LeftMenuController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LeftMenuController.xib; sourceTree = "<group>"; };
-		4706D10516C1188200CAF9AF /* RightViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RightViewController.h; sourceTree = "<group>"; };
-		4706D10616C1188300CAF9AF /* RightViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RightViewController.m; sourceTree = "<group>"; };
 		4706D10716C1188300CAF9AF /* RightViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RightViewController.xib; sourceTree = "<group>"; };
 		4706D10A16C11A2300CAF9AF /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
 		4706D10B16C11A2300CAF9AF /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
@@ -1256,8 +1252,6 @@
 				47A1AC6B16A7DDB9004B4CFA /* VenueCell.m */,
 				4706D10A16C11A2300CAF9AF /* MainViewController.h */,
 				4706D10B16C11A2300CAF9AF /* MainViewController.m */,
-				4706D10516C1188200CAF9AF /* RightViewController.h */,
-				4706D10616C1188300CAF9AF /* RightViewController.m */,
 				4706D10016C10DBF00CAF9AF /* LeftMenuController.h */,
 				4706D10116C10DBF00CAF9AF /* LeftMenuController.m */,
 				47BDBC8F16EA268F008B12CF /* MeetupInviteViewController.h */,
@@ -1791,7 +1785,6 @@
 				4706D0FE16C10D0600CAF9AF /* PKRevealControllerContainerView.m in Sources */,
 				4706D0FF16C10D0600CAF9AF /* UIViewController+PKRevealController.m in Sources */,
 				4706D10316C10DBF00CAF9AF /* LeftMenuController.m in Sources */,
-				4706D10816C1188300CAF9AF /* RightViewController.m in Sources */,
 				4706D10C16C11A2400CAF9AF /* MainViewController.m in Sources */,
 				4C1C438316C9B126008BA9CA /* InboxViewController.m in Sources */,
 				47BDBC9216EA268F008B12CF /* MeetupInviteViewController.m in Sources */,
@@ -1872,7 +1865,6 @@
 				4C444E7017A0045700288139 /* PKRevealControllerContainerView.m in Sources */,
 				4C444E7117A0045700288139 /* UIViewController+PKRevealController.m in Sources */,
 				4C444E7217A0045700288139 /* LeftMenuController.m in Sources */,
-				4C444E7317A0045700288139 /* RightViewController.m in Sources */,
 				4C444E7417A0045700288139 /* MainViewController.m in Sources */,
 				4C444E7517A0045700288139 /* InboxViewController.m in Sources */,
 				4C444E7617A0045700288139 /* MeetupInviteViewController.m in Sources */,

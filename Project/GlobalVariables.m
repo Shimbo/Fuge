@@ -129,8 +129,10 @@ static GlobalVariables *sharedInstance = nil;
 - (NSString*)trimName:(NSString*)name
 {
     NSRange range = [name rangeOfString:@" "];
-    NSString* newString = [NSString stringWithFormat:@"%@.", [name substringToIndex:range.location+2]];
-    return newString;
+    if ( range.location > 0 && range.location+2 < name.length )
+        return [NSString stringWithFormat:@"%@.", [name substringToIndex:range.location+2]];
+    else
+        return name;
 }
 
 - (NSString*)shortName:(NSString*)firstName last:(NSString*)lastName
