@@ -106,9 +106,6 @@
     _firstCircle = [[[globalData getCircle:CIRCLE_FB] getPersons]
                     filteredArrayUsingPredicate:predicate];
     
-    _secondCircle = [[[globalData getCircle:CIRCLE_2O] getPersons]
-                     filteredArrayUsingPredicate:predicate];
-    
     _facebookFriends = [[[globalData getCircle:CIRCLE_FBOTHERS] getPersons]
                         filteredArrayUsingPredicate:predicate];
 }
@@ -133,23 +130,20 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)aTableView {
 	// Number of sections is the number of regions
 //    NSInteger nCount = [[globalData getCircles] count];
-	return 4;
+	return 3;
 }
 
 -(NSUInteger)translateSectionNumberToCircleNumber:(NSUInteger)section{
-    if (section == 1){
-        return 0;
+    if (section == 1) {
+        return CIRCLE_FB;
     }
     else if (section == 2){
-        return 1;
+        return CIRCLE_FBOTHERS;
     }
-    else if (section == 3){
-        return 3;
-    }
-    return 0;
+    return CIRCLE_NONE;
 }
 
--(NSArray*)getArrayForSecionNumber:(NSUInteger)section{
+-(NSArray*)getArrayForSectionNumber:(NSUInteger)section{
     switch (section) {
         case 0:
             return _recentPersons;
@@ -158,9 +152,6 @@
             return _firstCircle;
             break;
         case 2:
-            return _secondCircle;
-            break;
-        case 3:
             return _facebookFriends;
             break;
         default:
@@ -171,17 +162,17 @@
 
 - (NSInteger)tableView:(UITableView *)aTableView numberOfRowsInSection:(NSInteger)section {
 	// Number of rows is the number of time zones in the region for the specified section
-    return [[self getArrayForSecionNumber:section] count];
+    return [[self getArrayForSectionNumber:section] count];
 }
 
 - (NSString *)tableView:(UITableView *)aTableView titleForHeaderInSection:(NSInteger)section {
 	// Section title is the region name
-    if ([self getArrayForSecionNumber:section].count == 0) 
+    if ([self getArrayForSectionNumber:section].count == 0)
         return nil;
 
     if (section == 0)
         return @"Recent";
-    Circle *circle = [globalData getCircleByNumber:[self translateSectionNumberToCircleNumber:section]];
+    Circle *circle = [globalData getCircle:[self translateSectionNumberToCircleNumber:section]];
 	return [Circle getCircleName:circle.idCircle];
 }
 
@@ -191,7 +182,7 @@
     
 	PersonInviteCell *personCell = (PersonInviteCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	// Get the time zones for the region for the section
-	Person *person = [self getArrayForSecionNumber:indexPath.section][indexPath.row];
+	Person *person = [self getArrayForSectionNumber:indexPath.section][indexPath.row];
     personCell.personName.text = [person fullName];
     [personCell.personImage loadImageFromURL:person.smallAvatarUrl];
     if ([selected objectForKey:person.strId]) {
@@ -205,7 +196,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-	Person *person = [self getArrayForSecionNumber:indexPath.section][indexPath.row];
+	Person *person = [self getArrayForSectionNumber:indexPath.section][indexPath.row];
     
     if ([selected objectForKey:person.strId]) {
         [selected removeObjectForKey:person.strId];

@@ -258,15 +258,15 @@
     
     [personCell.personImage loadImageFromURL:person.smallAvatarUrl];
     
-#ifdef TARGET_S2C
+#ifdef TARGET_FUGE
+    personCell.personName.text = [person fullName];
+#elif defined TARGET_S2C
     NSMutableString* strPersonName = [NSMutableString stringWithString:[person fullName]];
     if ( person.idCircle == CIRCLE_FB )
         [strPersonName appendString:@" (1st)"];
     else if ( person.idCircle == CIRCLE_2O )
         [strPersonName appendString:@" (2nd)"];
     personCell.personName.text = strPersonName;
-#elif defined TARGET_S2C
-    personCell.personName.text = [person fullName];
 #endif
     if ( person.idCircle == CIRCLE_FBOTHERS )
         personCell.personDistance.text = @"Invite!";

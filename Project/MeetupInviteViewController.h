@@ -19,7 +19,6 @@
     
     NSArray *_recentPersons;
     NSArray *_firstCircle;
-    NSArray *_secondCircle;
     NSArray *_facebookFriends;
 }
 @property (strong, nonatomic) IBOutlet UITableView *tableView;

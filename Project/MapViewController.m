@@ -334,9 +334,13 @@ static CGRect oldMapFrame;
     // Close button (for the map)
     closeButton = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStyleBordered target:self action:@selector(closeMap)];
     
+#ifdef TARGET_S2C
+    daySelector = 8;
+#endif
+    
     // Navigation bar: date selector
     NSArray* oldLeft = self.navigationItem.leftBarButtonItems;
-    daySelectButton = [[UIBarButtonItem alloc] initWithTitle:@"Today" style:UIBarButtonItemStyleBordered target:self action:@selector(dateSelectorClicked)];
+    daySelectButton = [[UIBarButtonItem alloc] initWithTitle:dayButtonLabels[ daySelector ] style:UIBarButtonItemStyleBordered target:self action:@selector(dateSelectorClicked)];
     if ( oldLeft.count > 0 )
         self.navigationItem.leftBarButtonItems = @[ oldLeft[0], daySelectButton ];
     

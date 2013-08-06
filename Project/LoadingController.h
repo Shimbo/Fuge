@@ -14,6 +14,7 @@
     NSUInteger  nAnimationStage;
     Boolean     bAnimation;
     Boolean     bDemoMode;
+    UIImageView* pyramid;
 }
 @property (strong, nonatomic) IBOutlet UIButton *loginButton;
 @property (strong, nonatomic) IBOutlet UIButton *linkedinButton;

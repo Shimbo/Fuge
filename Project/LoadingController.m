@@ -65,17 +65,24 @@ static Boolean bRotating = true;
     [PFACL setDefaultACL:defaultACL withAccessForCurrentUser:YES];
     
     // Zoom in animated
+#ifdef TARGET_FUGE
     _backgroundImage.hidden = FALSE;
     _backgroundImage.alpha = 0.0f;
-#ifdef TARGET_FUGE
     _whiteImage.hidden = FALSE;
     _whiteImage.transform = CGAffineTransformScale(CGAffineTransformIdentity, 4.0, 4.0);
+#elif defined TARGET_S2C
+    pyramid.alpha = 0.0f;
+    pyramid.hidden = FALSE;
+#endif
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
     [UIView setAnimationDuration:1.0];
+#ifdef TARGET_FUGE
     _backgroundImage.alpha = 1.0f;
-    [UIView commitAnimations];
+#elif defined TARGET_S2C
+    pyramid.alpha = 1.0f;
 #endif
+    [UIView commitAnimations];
     
     [self performSelector:@selector(loadSequencePart1) withObject:nil afterDelay:0.01f];
 }
@@ -88,7 +95,7 @@ static Boolean bRotating = true;
     PFQuery *systemQuery = [PFQuery queryWithClassName:@"System"];
     __weak LoadingController *ctrl = self;
     [systemQuery getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-        
+    
         if (error)
         {
             [ctrl noInternet];
@@ -186,6 +193,7 @@ static Boolean bRotating = true;
     [locManager startUpdating];
 }
 
+#ifdef TARGET_FUGE
 - (void)animateHypno
 {
     NSUInteger nOptions = UIViewAnimationOptionCurveLinear;
@@ -193,24 +201,10 @@ static Boolean bRotating = true;
         nOptions = UIViewAnimationOptionCurveEaseIn;
     if ( nAnimationStage == 2 )
         nOptions = UIViewAnimationOptionCurveEaseOut;
-#ifdef TARGET_FUGE
     float fPower = bAnimation ? M_PI/2 : M_PI/6;
     [UIView animateWithDuration: 0.5f delay: 0.0f options: nOptions animations: ^ {
         _backgroundImage.transform = CGAffineTransformRotate(_backgroundImage.transform, fPower);
     }
-#elif defined TARGET_S2C
-    [UIView animateWithDuration: bAnimation? 0.5f : 1.0 delay: 0.0f options: nOptions animations: ^ {
-        if (nAnimationStage == 0)
-            _backgroundImage.alpha = 0.0f;
-        else
-        {
-            if ( _backgroundImage.alpha == 1.0f )
-                _backgroundImage.alpha = bAnimation ? 0.2f : 0.5f;
-            else
-                _backgroundImage.alpha = 1.0f;
-        }
-    }
-#endif
     completion: ^(BOOL finished) {
         
         if (nAnimationStage == 0)
@@ -222,6 +216,7 @@ static Boolean bRotating = true;
             [self animateHypno];
     }];
 }
+#endif
 
 - (void)viewDidLoad
 {
@@ -245,10 +240,79 @@ static Boolean bRotating = true;
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
+#ifdef TARGET_FUGE
+    
     bRotating = TRUE;
     _backgroundImage.hidden = FALSE;
     _backgroundImage.alpha = 0.0f;
     [self animateHypno];
+    
+#elif defined TARGET_S2C
+    
+    _backgroundImage.hidden = TRUE;
+    if ( ! pyramid )
+    {
+        CGPoint ptSize;
+        if ( IPAD )
+            ptSize = CGPointMake(306*2, 312*2);
+        else
+            ptSize = CGPointMake(306, 312);
+        CGRect frame = self.view.frame;
+        frame.origin.x = ( frame.size.width - ptSize.x ) / 2;
+        frame.size.width = ptSize.x;
+        frame.origin.y = ( frame.size.height - ptSize.y ) / 2;
+        frame.size.height = ptSize.y;
+        pyramid = [[UIImageView alloc] initWithFrame:frame];
+        
+        // load all the frames of our animation
+        if ( IPAD )
+        {
+            pyramid.animationImages = [NSArray arrayWithObjects:
+                                       [UIImage imageNamed:@"pyramid_0000@2x.png"],
+                                       [UIImage imageNamed:@"pyramid_0011@2x.png"],
+                                       [UIImage imageNamed:@"pyramid_0022@2x.png"],
+                                       [UIImage imageNamed:@"pyramid_0033@2x.png"],
+                                       [UIImage imageNamed:@"pyramid_0044@2x.png"],
+                                       [UIImage imageNamed:@"pyramid_0055@2x.png"],
+                                       [UIImage imageNamed:@"pyramid_0066@2x.png"],
+                                       [UIImage imageNamed:@"pyramid_0077@2x.png"],
+                                       [UIImage imageNamed:@"pyramid_0088@2x.png"],
+                                       [UIImage imageNamed:@"pyramid_0099@2x.png"],
+                                       [UIImage imageNamed:@"pyramid_0110@2x.png"], nil];
+        }
+        else
+        {
+            pyramid.animationImages = [NSArray arrayWithObjects:
+                                       [UIImage imageNamed:@"pyramid_0000.png"],
+                                       [UIImage imageNamed:@"pyramid_0011.png"],
+                                       [UIImage imageNamed:@"pyramid_0022.png"],
+                                       [UIImage imageNamed:@"pyramid_0033.png"],
+                                       [UIImage imageNamed:@"pyramid_0044.png"],
+                                       [UIImage imageNamed:@"pyramid_0055.png"],
+                                       [UIImage imageNamed:@"pyramid_0066.png"],
+                                       [UIImage imageNamed:@"pyramid_0077.png"],
+                                       [UIImage imageNamed:@"pyramid_0088.png"],
+                                       [UIImage imageNamed:@"pyramid_0099.png"],
+                                       [UIImage imageNamed:@"pyramid_0110.png"], nil];
+
+        }
+        
+        // all frames will execute in 1.75 seconds
+        pyramid.animationDuration = 0.8;
+        // repeat the annimation forever
+        pyramid.animationRepeatCount = 0;
+        // start animating
+        [pyramid startAnimating];
+        // add the animation view to the main window
+        [self.view addSubview:pyramid];
+        if ( bDemoMode )
+            pyramid.hidden = FALSE;
+        else
+            pyramid.hidden = TRUE;
+    }
+    
+#endif
     
     if ( bDemoMode )
     {

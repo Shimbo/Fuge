@@ -179,7 +179,8 @@ static LinkedinLoader *sharedInstance = nil;
                              }
                              else
                              {
-                                 [self showErrorMessage:[NSString stringWithFormat:@"Refresh error: %@", error]];
+                                 //[self showErrorMessage:[NSString stringWithFormat:@"Refresh error: %@", error]];
+                                 NSLog(@"Refresh error: %@", error);
                                  [target performSelector:failure withObject:error];
                              }
                          }];
@@ -204,7 +205,7 @@ static LinkedinLoader *sharedInstance = nil;
                                      
                                  } else {
                                      NSLog(@"Linkedin: user signup failed, error: %@", error);
-                                     [self showErrorMessage:[NSString stringWithFormat:@"Linkedin: user signup failed, error: %@", error]];
+                                     //[self showErrorMessage:[NSString stringWithFormat:@"Linkedin: user signup failed, error: %@", error]];
                                      [target performSelector:failure withObject:nil];
                                  }
                              }];
@@ -212,19 +213,19 @@ static LinkedinLoader *sharedInstance = nil;
                          else
                          {
                              NSLog(@"User login error (other than not found): %@", error);
-                             [self showErrorMessage:[NSString stringWithFormat:@"User login failed, error: %@", error]];
+                             //[self showErrorMessage:[NSString stringWithFormat:@"User login failed, error: %@", error]];
                              [target performSelector:failure withObject:nil];
                          }
                      }
                  }];
                 
             } failure:^(AFHTTPRequestOperation * operation, NSError *error) {
-                [self showErrorMessage:[NSString stringWithFormat:@"Failed to fetch Linkedin user, error: %@", error]];
+                //[self showErrorMessage:[NSString stringWithFormat:@"Failed to fetch Linkedin user, error: %@", error]];
                 NSLog(@"Failed to fetch current Linkedin user, error: %@", error);
                 [target performSelector:failure withObject:nil];
             }];
         } failure:^(NSError *error) {
-            [self showErrorMessage:[NSString stringWithFormat:@"Linkedin accessToken quering failed, error: %@", error]];
+            //[self showErrorMessage:[NSString stringWithFormat:@"Linkedin accessToken quering failed, error: %@", error]];
             NSLog(@"Linkedin accessToken quering failed, error: %@", error);
             [target performSelector:failure withObject:nil];
         }];
@@ -233,7 +234,7 @@ static LinkedinLoader *sharedInstance = nil;
         [self showErrorMessage:@"Linkedin authorization was cancelled by user."];
         [target performSelector:failure withObject:nil];
     } failure:^(NSError *error) {
-        [self showErrorMessage:[NSString stringWithFormat:@"Linkedin: authorization failed, error: %@", error]];
+        //[self showErrorMessage:[NSString stringWithFormat:@"Linkedin: authorization failed, error: %@", error]];
         NSLog(@"Linkedin authorization failed, error: %@", error);
         [target performSelector:failure withObject:nil];
     }];
@@ -303,6 +304,5 @@ static LinkedinLoader *sharedInstance = nil;
     }
     return stringResult;
 }
-
 
 @end
