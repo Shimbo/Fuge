@@ -408,7 +408,11 @@ double animatedDistance;
     containerView.userInteractionEnabled = TRUE;
     
     if ( ! message )
+    {
+        UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"No connection" message:@"Message send failed, check your internet connection or try again later." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [errorAlert show];
         return;
+    }
     
     // Updating conversation
     messagesCount++;

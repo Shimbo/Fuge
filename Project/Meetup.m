@@ -616,7 +616,10 @@
     if ( ! attendees )
         attendees = [[NSMutableArray alloc] initWithObjects:strId,nil];
     else
+    {
+        [attendees removeObjectIdenticalTo:str];
         [attendees addObject:str];
+    }
 }
 
 -(void)removeAttendee:(NSString*)str

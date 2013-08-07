@@ -915,16 +915,6 @@ NSInteger sortByName(id num1, id num2, void *context)
             if ( [str compare:meetup.strId] == NSOrderedSame )
                 return;
     
-    // Update invite
-    [globalData updateInvite:meetup.strId attending:INVITE_ACCEPTED];
-    
-    // Attending list in user itself
-    [pCurrentUser addUniqueObject:meetup.strId forKey:@"attending"];
-    [pCurrentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        if ( error )
-            NSLog(@"Parse save for current user (attending meetup) error: %@", error);
-    }];
-    
     // Attendee in db (to store the data and update counters)
     PFObject* attendee = [PFObject objectWithClassName:@"Attendee"];
     [attendee setObject:strCurrentUserId forKey:@"userId"];
@@ -935,14 +925,38 @@ NSInteger sortByName(id num1, id num2, void *context)
     [attendee setObject:meetup.meetupData forKey:@"meetupData"];
     [attendee saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if ( error )
+        {
             NSLog(@"Parse save for attendee error: %@", error);
+            UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"No connection" message:@"Meetup wasn't joined, check your internet connection or try again later." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [errorAlert show];
+
+        }
+        else
+        {
+            // Attending list in user itself
+            [pCurrentUser addUniqueObject:meetup.strId forKey:@"attending"];
+            [pCurrentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                if ( error )
+                {
+                    NSLog(@"Parse save for current user (attending meetup) error: %@", error);
+                    UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"No connection" message:@"Meetup wasn't joined, check your internet connection or try again later." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                    [errorAlert show];
+
+                }
+                else
+                {
+                    // Creating comment about joining in db
+                    [globalData createCommentForMeetup:meetup commentType:COMMENT_JOINED commentText:nil target:nil selector:nil];
+                    
+                    // Push notification to all attendees
+                    [pushManager sendPushAttendingMeetup:meetup.strId];
+                    
+                    // Update invite
+                    [globalData updateInvite:meetup.strId attending:INVITE_ACCEPTED];
+                }
+            }];
+        }
     }];
-    
-    // Creating comment about joining in db
-    [globalData createCommentForMeetup:meetup commentType:COMMENT_JOINED commentText:nil target:nil selector:nil];
-    
-    // Push notification to all attendees
-    [pushManager sendPushAttendingMeetup:meetup.strId];
     
     // Adding attendee to the local copy of the meetup
     [meetup addAttendee:strCurrentUserId];
@@ -950,14 +964,6 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 - (void) unattendMeetup:(Meetup*)meetup
 {
-    // Remove from attending list and add to left list in user
-    [pCurrentUser removeObject:meetup.strId forKey:@"attending"];
-    [pCurrentUser addUniqueObject:meetup.strId forKey:@"meetupsLeft"];
-    [pCurrentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        if ( error )
-            NSLog(@"Parse save for current user (unattend meetup) error: %@", error);
-    }];
-    
     // Attendee in db (to store the data and update counters)
     PFObject* attendee = [PFObject objectWithClassName:@"Attendee"];
     [attendee setObject:strCurrentUserId forKey:@"userId"];
@@ -969,14 +975,34 @@ NSInteger sortByName(id num1, id num2, void *context)
     [attendee setObject:[NSNumber numberWithBool:TRUE] forKey:@"leaving"];
     [attendee saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if ( error )
+        {
             NSLog(@"Parse save for (leaving) attendee error: %@", error);
+            UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"No connection" message:@"Meetup wasn't left, check your internet connection or try again later." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [errorAlert show];
+        }
+        else
+        {
+            // Remove from attending list and add to left list in user
+            [pCurrentUser removeObject:meetup.strId forKey:@"attending"];
+            [pCurrentUser addUniqueObject:meetup.strId forKey:@"meetupsLeft"];
+            [pCurrentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                if ( error )
+                {
+                    NSLog(@"Parse save for current user (unattend meetup) error: %@", error);
+                    UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"No connection" message:@"Meetup wasn't left, check your internet connection or try again later." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                    [errorAlert show];
+                }
+                else
+                {
+                    // Creating comment about leaving in db
+                    [globalData createCommentForMeetup:meetup commentType:COMMENT_LEFT commentText:nil target:nil selector:nil];
+                    
+                    // Push notification to all attendees
+                    [pushManager sendPushLeftMeetup:meetup.strId];
+                }
+            }];
+        }
     }];
-    
-    // Creating comment about leaving in db
-    [globalData createCommentForMeetup:meetup commentType:COMMENT_LEFT commentText:nil target:nil selector:nil];
-    
-    // Push notification to all attendees
-    [pushManager sendPushLeftMeetup:meetup.strId];
     
     // Removing attendee to the local copy of meetup
     [meetup removeAttendee:strCurrentUserId];
