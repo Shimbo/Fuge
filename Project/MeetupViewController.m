@@ -322,7 +322,7 @@
     [self updateButtons];
 }
 
--(void) callback:(NSArray*)commentsList error:(NSError *)error
+-(void) callbackCommentsLoaded:(NSArray*)commentsList error:(NSError *)error
 {
     if (error || ! commentsList )
     {
@@ -366,7 +366,7 @@
     
     // Make new comment editable now
     if ( ! meetup.bImportedEvent )
-        textView.editable = TRUE;
+        containerView.userInteractionEnabled = TRUE;
     
     // Buttons setup
     [self initButtons];
@@ -378,7 +378,7 @@
     
     self.title = @"";
     
-    textView.editable = FALSE;
+    containerView.userInteractionEnabled = FALSE;
     
     // Map
 #ifdef IOS7_ENABLE
@@ -453,7 +453,7 @@
     }
     
     // Loading comments
-    [globalData loadCommentThread:meetup target:self selector:@selector(callback:error:)];    
+    [globalData loadCommentThread:meetup target:self selector:@selector(callbackCommentsLoaded:error:)];
 }
 
 -(void)reloadAnnotation{
@@ -558,6 +558,7 @@
     labelLocation = nil;
     descriptionView = nil;
     scrollView = nil;
+    activityIndicator = nil;
     [super viewDidUnload];
 }
 
@@ -570,6 +571,28 @@
     [self resizeComments];
 }
 
+- (void) callbackCommentSaved:(Comment*)comment
+{
+    [activityIndicator stopAnimating];
+    containerView.userInteractionEnabled = TRUE;
+    
+    if ( ! comment )
+        return;
+    
+    // Updating conversation
+    meetup.numComments++;
+    [globalData updateConversation:comment.dateCreated count:[NSNumber numberWithInteger:meetup.numComments] thread:comment.strMeetupId meetup:TRUE];
+    
+    // Adding comment to the list
+    [self addComment:[NSString stringWithFormat:@"    %@: %@\n", [globalVariables fullUserName], textView.text]];
+    
+    // Reseting text field
+    [textView setText:@""];
+    
+    // Scrolling down
+    [scrollView scrollRectToVisible:CGRectMake(0, scrollView.frame.size.height-1, scrollView.frame.size.width, scrollView.frame.size.height) animated:TRUE];
+}
+
 -(void)send{
     [super send];
     if ( textView.text.length == 0 )
@@ -577,14 +600,11 @@
     
     // Creating comment in db
     [globalData createCommentForMeetup:meetup commentType:COMMENT_PLAIN
-                           commentText:textView.text];
+                           commentText:textView.text target:self selector:@selector(callbackCommentSaved:)];
     
-    // Adding comment to the list
-    [self addComment:[NSString stringWithFormat:@"    %@: %@\n", [globalVariables fullUserName], textView.text]];
-    
-    [textView setText:@""];
-    
-    [self updateButtons];
+    // Start animating
+    [activityIndicator startAnimating];
+    containerView.userInteractionEnabled = FALSE;
 }
 
 

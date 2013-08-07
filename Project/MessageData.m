@@ -202,5 +202,18 @@
     }];
 }
 
+-(void)createMessage:(NSString*)strText person:(Person*)personTo target:(id)target selector:(SEL)callback
+{
+    // Adding message with callback on save
+    Message* message = [[Message alloc] init];
+    message.strUserFrom = strCurrentUserId;
+    message.strUserTo = personTo.strId;
+    message.strText = strText;
+    message.objUserFrom = [PFUser currentUser];
+    message.objUserTo = personTo.personData;
+    message.strNameUserFrom = [globalVariables fullUserName];
+    message.strNameUserTo = [personTo fullName];
+    [message save:target selector:callback];
+}
 
 @end

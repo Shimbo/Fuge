@@ -170,7 +170,7 @@
             }
             else
             {
-                Boolean bSaved = [meetup save];
+                Boolean bSaved = [meetup save:nil selector:nil];
                 if ( bSaved )
                 {
                     [globalData addMeetup:meetup];

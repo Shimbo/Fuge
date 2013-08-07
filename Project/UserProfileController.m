@@ -152,7 +152,7 @@
     [buttonArray addObject:[[UIBarButtonItem alloc] initWithTitle:strProfileTitle style:UIBarButtonItemStylePlain target:self action:@selector(profileClicked)]];
     self.navigationItem.rightBarButtonItems = buttonArray;
     
-    textView.editable = FALSE;
+    containerView.userInteractionEnabled = FALSE;
     
     // Comments
     [globalData loadMessageThread:personThis target:self selector:@selector(messagesLoaded:error:)];
@@ -289,7 +289,7 @@
     [messageHistory setText:stringHistory];
     messagesCount = messages.count;
     
-    textView.editable = TRUE;
+    containerView.userInteractionEnabled = TRUE;
     
     if ( profileMode == PROFILE_MODE_MESSAGES )
         [self resizeScroll];
@@ -392,17 +392,27 @@ double animatedDistance;
 
 */
 
-- (void) callbackMessageSave:(NSNumber *)result error:(NSError *)error
+-(void) keyboardWillShow:(NSNotification *)note{
+    [super keyboardWillShow:note];
+    messageHistory.userInteractionEnabled = NO;
+}
+
+-(void) keyboardWillHide:(NSNotification *)note{
+    [super keyboardWillHide:note];
+    messageHistory.userInteractionEnabled = YES;
+}
+
+- (void) callbackMessageSaved:(Message*)message
 {
     [self.activityIndicator stopAnimating];
-    textView.editable = YES;
+    containerView.userInteractionEnabled = TRUE;
     
-    if ( error )
-    {
-        UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"No connection" message:@"Message send failed, check your internet connection or try again later." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [errorAlert show];
+    if ( ! message )
         return;
-    }
+    
+    // Updating conversation
+    messagesCount++;
+    [globalData updateConversation:message.dateCreated count:[NSNumber numberWithInteger:messagesCount] thread:personThis.strId meetup:FALSE];
     
     // Updating history
     NSMutableString* stringHistory = [NSMutableString stringWithString:messageHistory.text];
@@ -415,28 +425,8 @@ double animatedDistance;
     // Scrolling, sizing, etc.
     [self resizeScroll];
     
-    // Emptying message field
+    // Reseting text field
     [textView setText:@""];
-    
-    // Updating conversation
-    messagesCount++;
-    [globalData updateConversation:nil count:[NSNumber numberWithInteger:messagesCount] thread:personThis.strId meetup:FALSE];
-    
-    // Adding to inbox
-    [globalData addMessage:currentMessage];
-    
-    // Sending push
-    [pushManager sendPushNewMessage:currentMessage.strUserTo text:currentMessage.strText];
-}
-
--(void) keyboardWillShow:(NSNotification *)note{
-    [super keyboardWillShow:note];
-    messageHistory.userInteractionEnabled = NO;
-}
-
--(void) keyboardWillHide:(NSNotification *)note{
-    [super keyboardWillHide:note];
-    messageHistory.userInteractionEnabled = YES;
 }
 
 -(void)send{
@@ -445,19 +435,11 @@ double animatedDistance;
         return;
     
     // Adding message with callback on save
-    currentMessage = [[Message alloc] init];
-    currentMessage.strUserFrom = strCurrentUserId;
-    currentMessage.strUserTo = personThis.strId;
-    currentMessage.strText = textView.text;
-    currentMessage.objUserFrom = [PFUser currentUser];
-    currentMessage.objUserTo = personThis.personData;
-    currentMessage.strNameUserFrom = [globalVariables fullUserName];
-    currentMessage.strNameUserTo = [personThis fullName];
-    [currentMessage save:self selector:@selector(callbackMessageSave:error:)];
+    [globalData createMessage:textView.text person:personThis target:self selector:@selector(callbackMessageSaved:)];
     
     // Start animating
     [self.activityIndicator startAnimating];
-    textView.editable = NO;
+    containerView.userInteractionEnabled = FALSE;
 }
 
 

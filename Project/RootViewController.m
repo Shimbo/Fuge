@@ -210,6 +210,9 @@
 }
 
 - (NSString *)tableView:(UITableView *)aTableView titleForHeaderInSection:(NSInteger)section {
+#ifdef TARGET_S2C
+    return nil;
+#endif
     Circle *circle;
 	switch ( sortingMode )
     {

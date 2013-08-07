@@ -169,6 +169,7 @@ typedef  enum EMeetupCommentType
 - (void)loadMessages;
 - (NSArray*)getUniqueMessages;
 - (void)loadMessageThread:(Person*)person target:(id)target selector:(SEL)callback;
+- (void)createMessage:(NSString*)strText person:(Person*)personTo target:(id)target selector:(SEL)callback;
 @end
 
 @interface GlobalData (Comments)
@@ -176,5 +177,5 @@ typedef  enum EMeetupCommentType
 - (void)loadComments;
 - (NSArray*)getUniqueThreads;
 - (void)loadCommentThread:(Meetup*)meetup target:(id)target selector:(SEL)callback;
--(void)createCommentForMeetup:(Meetup*)meetup commentType:(CommentType)type commentText:(NSString*)text;
+-(void)createCommentForMeetup:(Meetup*)meetup commentType:(CommentType)type commentText:(NSString*)text target:(id)target selector:(SEL)callback;
 @end

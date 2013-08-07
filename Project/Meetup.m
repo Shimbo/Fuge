@@ -273,7 +273,7 @@
     return self;
 }
 
-- (Boolean) save
+- (Boolean) save:(id)target selector:(SEL)selector
 {
     // We're not changing or saving Facebook events nor creating our own as a copy
     //if ( bImportedEvent )
@@ -337,6 +337,8 @@
             [alert show];
             return false;
         }
+        if ( target )
+            [target performSelector:selector withObject:(error?nil:self)];
         
         return true;
     }
@@ -348,6 +350,8 @@
                 UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"No internet" message:@"Be aware: the meetup or thread you recently edited wasn't saved due to lack of connection!" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
                 [alert show];
             }
+            if ( target )
+                [target performSelector:selector withObject:(error?nil:self)];
         }];
         return true;
     }

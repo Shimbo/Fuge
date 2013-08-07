@@ -8,6 +8,7 @@
 
 #import "Comment.h"
 #import "GlobalData.h"
+#import "PushManager.h"
 
 @implementation Comment
 
@@ -47,12 +48,31 @@
     
     [commentData saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if ( error )
+        {
             NSLog( @"Comment saving failed: %@", error );
+            UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"No connection" message:@"Comment send failed, check your internet connection or try again later." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [errorAlert show];
+        }
         else
         {
             dateCreated = commentData.createdAt;
-            [target performSelector:callback withObject:self];
+            
+            // Add comment to the list of threads
+            [globalData addComment:self];
+            
+            // Send push for normal comment
+            if ( [systemType integerValue] == COMMENT_PLAIN )
+                [pushManager sendPushCommentedMeetup:strMeetupId];
+            
+            // Subscription
+            [globalData subscribeToThread:strMeetupId];
+            
+            // Update inbox
+            [[NSNotificationCenter defaultCenter]postNotificationName:kInboxUpdated object:nil];
         }
+        
+        if ( target )
+            [target performSelector:callback withObject:(error?nil:self)];
     }];
 }
 

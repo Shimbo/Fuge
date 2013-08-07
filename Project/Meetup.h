@@ -99,7 +99,7 @@ typedef enum kEImportedType
 @property (nonatomic, copy) PFObject *meetupData;
 
 -(id) init;
--(Boolean) save;
+-(Boolean) save:(id)target selector:(SEL)selector;
 -(void) unpack:(PFObject*)data;
 
 -(id) initWithFbEvent:(NSDictionary*)data;

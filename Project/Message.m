@@ -8,6 +8,7 @@
 
 #import "Message.h"
 #import "GlobalData.h"
+#import "PushManager.h"
 
 @implementation Message
 
@@ -40,7 +41,7 @@
     return self;
 }
 
-- (void) save:(id)t selector:(SEL)s
+- (void) save:(id)target selector:(SEL)selector
 {
     // Already saved
     if ( messageData )
@@ -62,9 +63,31 @@
     [messageData setObject:strNameUserFrom forKey:@"nameUserFrom"];
     [messageData setObject:strNameUserTo forKey:@"nameUserTo"];
     
-    dateCreated = [NSDate date];
-    
-    [messageData saveInBackgroundWithTarget:t selector:s];
+    [messageData saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        
+        if ( error )
+        {
+            NSLog( @"Message saving failed: %@", error );
+            UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"No connection" message:@"Message send failed, check your internet connection or try again later." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [errorAlert show];
+        }
+        else
+        {
+            dateCreated = messageData.createdAt;
+            
+            // Adding to inbox
+            [globalData addMessage:self];
+            
+            // Sending push
+            [pushManager sendPushNewMessage:strUserTo text:strText];
+            
+            // Update inbox
+            [[NSNotificationCenter defaultCenter]postNotificationName:kInboxUpdated object:nil];
+        }
+        
+        if ( target )
+            [target performSelector:selector withObject:(error?nil:self)];
+    }];
 }
 
 -(void) unpack:(PFObject*)data

@@ -523,7 +523,7 @@
 		<dictionary class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
 			<string key="FacebookLogin.png">{280, 47}</string>
 			<string key="LinkedinLogin.png">{280, 47}</string>
-			<string key="bg.png">{16, 16}</string>
+			<string key="bg.png">{655, 655}</string>
 			<string key="white.png">{384, 568}</string>
 		</dictionary>
 		<string key="IBCocoaTouchPluginVersion">2083</string>

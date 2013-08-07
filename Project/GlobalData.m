@@ -939,7 +939,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     }];
     
     // Creating comment about joining in db
-    [globalData createCommentForMeetup:meetup commentType:COMMENT_JOINED commentText:nil];
+    [globalData createCommentForMeetup:meetup commentType:COMMENT_JOINED commentText:nil target:nil selector:nil];
     
     // Push notification to all attendees
     [pushManager sendPushAttendingMeetup:meetup.strId];
@@ -973,7 +973,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     }];
     
     // Creating comment about leaving in db
-    [globalData createCommentForMeetup:meetup commentType:COMMENT_LEFT commentText:nil];
+    [globalData createCommentForMeetup:meetup commentType:COMMENT_LEFT commentText:nil target:nil selector:nil];
     
     // Push notification to all attendees
     [pushManager sendPushLeftMeetup:meetup.strId];
@@ -982,18 +982,23 @@ NSInteger sortByName(id num1, id num2, void *context)
     [meetup removeAttendee:strCurrentUserId];
 }
 
+- (void) callbackMeetupCanceled:(Meetup*)meetup
+{
+    if ( ! meetup )
+        return;
+    
+    // Creating comment about canceling
+    [globalData createCommentForMeetup:meetup commentType:COMMENT_CANCELED commentText:nil target:nil selector:nil];
+    
+    // Push notification to all attendees
+    [pushManager sendPushCanceledMeetup:meetup.strId];
+}
+
 - (void) cancelMeetup:(Meetup*)meetup
 {
     // Saving meetup
     [meetup setCanceled];
-    [meetup save];
-    
-    // Creating comment about canceling
-    [globalData createCommentForMeetup:meetup commentType:COMMENT_CANCELED commentText:nil];
-    
-    // Push notification to all attendees
-    [pushManager sendPushCanceledMeetup:meetup.strId];
-
+    [meetup save:self selector:@selector(callbackMeetupCanceled:)];
 }
 
 - (Boolean) isAttendingMeetup:(NSString*)strMeetup

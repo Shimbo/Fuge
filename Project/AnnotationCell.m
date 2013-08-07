@@ -88,7 +88,7 @@
     NSUInteger offset = self.attending.text.length > 0 ? self.attending.originX + self.attending.width - [self.attending.text sizeWithFont:self.attending.font].width - 25 : self.frame.size.width-30;
     for ( Person* person in personList )
     {
-        AsyncImageView* image = [[AsyncImageView alloc] initWithFrame:CGRectMake(offset-avatarList.count*25, 46, 20, 20)];
+        AsyncImageView* image = [[AsyncImageView alloc] initWithFrame:CGRectMake(offset-avatarList.count*22, 46, 20, 20)];
         [image loadImageFromURL:person.smallAvatarUrl];
         [avatarList addObject:image];
         [self addSubview:image];

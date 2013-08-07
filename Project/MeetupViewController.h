@@ -37,6 +37,7 @@ enum EMeetupButtons
     IBOutlet UILabel *labelLocation;
     IBOutlet UIWebView *descriptionView;
     IBOutlet UIScrollView *scrollView;
+    IBOutlet UIActivityIndicatorView *activityIndicator;
     
     id delegate;
     NSMutableArray*    buttons;

@@ -35,7 +35,7 @@
 
 -(id) init;
 -(id) initWithWelcomeMessage;
--(void) save:(id)t selector:(SEL)s;
+-(void) save:(id)target selector:(SEL)selector;
 -(void) unpack:(PFObject*)data;
 
 @end

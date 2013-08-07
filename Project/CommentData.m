@@ -153,25 +153,7 @@
     }];
 }
 
--(void)commentCreated:(Comment*)comment
-{
-    [globalData updateConversation:comment.dateCreated count:nil thread:comment.strMeetupId meetup:TRUE];
-    
-    // Add comment to the list of threads
-    [self addComment:comment];
-    
-    // Send push for normal comment
-    if ( [comment.systemType integerValue] == COMMENT_PLAIN )
-        [pushManager sendPushCommentedMeetup:comment.strMeetupId];
-    
-    // Subscription
-    [globalData subscribeToThread:comment.strMeetupId];
-    
-    // Update inbox
-    [[NSNotificationCenter defaultCenter]postNotificationName:kInboxUpdated object:nil];
-}
-
--(void)createCommentForMeetup:(Meetup*)meetup commentType:(CommentType)type commentText:(NSString*)text
+-(void)createCommentForMeetup:(Meetup*)meetup commentType:(CommentType)type commentText:(NSString*)text target:(id)target selector:(SEL)callback
 {
     // Creating comment about meetup creation in db
     Comment* comment = [[Comment alloc] init];
@@ -209,8 +191,6 @@
             break;
         case COMMENT_PLAIN:
             [strComment appendString:text];
-            meetup.numComments++;
-            [globalData updateConversation:nil count:[NSNumber numberWithInteger:meetup.numComments] thread:meetup.strId meetup:TRUE];
             break;
     }
     
@@ -223,7 +203,7 @@
     comment.meetupData = meetup.meetupData;
     comment.strComment = strComment;
     comment.typeNum = typeNum;
-    [comment save:self selector:@selector(commentCreated:)];
+    [comment save:target selector:callback];
 }
 
 

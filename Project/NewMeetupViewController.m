@@ -425,14 +425,10 @@
         [meetup populateWithCoords];
 }
 
--(void)save{
-    if (![self validateForm])
+- (void) callbackMeetupSaved:(Meetup*)m
+{
+    if ( ! m )
         return;
-    
-    // Saving meetup on server
-    [self populateMeetupWithData];
-    
-    [meetup save];
     
     // Creating comment
     if ( bLocationChanged || bDateChanged || bDurationChanged )
@@ -459,8 +455,18 @@
             bShouldAddComma = true;
         }
         [strChanged appendString:@" of the meetup."];
-        [globalData createCommentForMeetup:meetup commentType:COMMENT_SAVED commentText:strChanged];
+        [globalData createCommentForMeetup:meetup commentType:COMMENT_SAVED commentText:strChanged target:nil selector:nil];
     }
+}
+
+-(void)save{
+    if (![self validateForm])
+        return;
+    
+    // Saving meetup on server
+    [self populateMeetupWithData];
+    
+    [meetup save:self selector:@selector(callbackMeetupSaved:)];
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }
@@ -470,7 +476,7 @@
     // Saving meetup on server
     meetup = [[Meetup alloc] init];
     [self populateMeetupWithData];
-    Boolean bResult = [meetup save];
+    Boolean bResult = [meetup save:nil selector:nil];
     
     // Loading ended
     [activityIndicator stopAnimating];
@@ -480,7 +486,7 @@
     
     // Adding to the list on client and creating comment
     [globalData addMeetup:meetup];
-    [globalData createCommentForMeetup:meetup commentType:COMMENT_CREATED commentText:nil];
+    [globalData createCommentForMeetup:meetup commentType:COMMENT_CREATED commentText:nil target:nil selector:nil];
     
     // Add to attending list and update meetup attending list (only on client)
     [globalData attendMeetup:meetup];
