@@ -494,7 +494,8 @@ NSInteger sortByName(id num1, id num2, void *context)
         friend2OQuery.limit = SECOND_PERSON_MAX_COUNT;
     [friend2OQuery orderByDescending:@"updatedAt"];
     [friend2OQuery whereKey:@"fbId" containedIn:friend2OIds];
-    [friend2OQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
+    if ( ! [globalVariables isUserAdmin] )
+        [friend2OQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
     [friend2OQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
         if ( error )
@@ -552,7 +553,8 @@ NSInteger sortByName(id num1, id num2, void *context)
 //    {
 //        [friendAnyQuery whereKey:@"location" withinGeoBoxFromSouthwest:southWest toNortheast:northEast];
 //    }
-    [friendAnyQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
+    if ( ! [globalVariables isUserAdmin] )
+        [friendAnyQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
     NSDate* dateToHide = [NSDate dateWithTimeIntervalSinceNow:-(NSTimeInterval)MAX_SECONDS_FROM_PERSON_LOGIN];
     [friendAnyQuery whereKey:@"updatedAt" greaterThan:dateToHide];
     
@@ -581,6 +583,34 @@ NSInteger sortByName(id num1, id num2, void *context)
         // Increment loading stages
         [self incrementCirclesLoadingStage];
     }];
+    
+    // Additional admin-only query for people without location
+    if ( [globalVariables isUserAdmin] )
+    {
+        friendAnyQuery = [PFUser query];
+        friendAnyQuery.limit = 100;
+        [friendAnyQuery orderByDescending:@"updatedAt"];
+        [friendAnyQuery whereKeyDoesNotExist:@"location"];
+        [friendAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+            
+            if ( error )
+                NSLog(@"Parse query for admin-only random people error: %@", error);
+            else
+            {
+                NSArray *friendAnyUsers = objects;
+                
+                // Adding users
+                for (PFUser *friendAnyUser in friendAnyUsers)
+                    [self addPerson:friendAnyUser userCircle:CIRCLE_RANDOM];
+                
+                // Sorting random people
+                Circle* circleRandom = [self getCircle:CIRCLE_RANDOM];
+                if ( circleRandom )
+                    [circleRandom sort];
+            }
+        }];
+
+    }
 }
 
 - (void) loadFbOthers:(NSArray*)friends

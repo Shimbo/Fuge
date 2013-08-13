@@ -70,7 +70,11 @@
 #define MAX_ZOOM_LEVEL              19
 
 // App store path
+#ifdef TARGET_FUGE
 #define APP_STORE_PATH              @"http://itunes.apple.com/app/id662139655"
+#elif defined TARGET_S2C
+#define APP_STORE_PATH              @"http://itunes.apple.com/app/id685496110"
+#endif
 
 // Feedback bot ID
 #ifdef TARGET_FUGE

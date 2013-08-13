@@ -50,6 +50,8 @@ static LocationManager *sharedInstance = nil;
     
     if (newLocation.horizontalAccuracy < 0) return;
     
+    if ( ! [pCurrentUser isAuthenticated] ) return;
+    
     /*NSTimeInterval locationAge = -[newLocation.timestamp timeIntervalSinceNow];
     if (locationAge > 5.0)
     {
