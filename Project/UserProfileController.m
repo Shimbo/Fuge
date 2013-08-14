@@ -166,7 +166,8 @@
     // Avatar
     //profileImageView.profileID = personThis.strId;
     //profileImageView.pictureCropping = FBProfilePictureCroppingSquare;
-    [profileImage loadImageFromURL:personThis.largeAvatarUrl];
+    if ( personThis.largeAvatarUrl )
+        [profileImage loadImageFromURL:personThis.largeAvatarUrl];
     
     // Labels
     labelFriendName.text = [personThis fullName];

@@ -35,7 +35,7 @@
 #define LOCATION_UPDATE_KILOMETERS  0.5f
 
 // Pins
-#define PERSON_OUTDATED_TIME        3600*6
+#define PERSON_OUTDATED_TIME        [globalVariables globalParam:@"PersonOutdatedTime" default:3600*6]
 
 // Pushes
 #define PUSH_DISCOVERY_KILOMETERS   [globalVariables globalParam:@"PushDiscoveryKilometers" default:100]
@@ -84,9 +84,6 @@
 #define FEEDBACK_BOT_ID             @"gpT8c6BpfU"
 #define FEEDBACK_BOT_OBJECT         @"W7FFRVtAIr"
 #endif
-
-// Viral
-#define FB_INVITE_MESSAGE           @"Discover new friends and local activities!"
 
 // Grouping
 #define CAN_GROUP_PERSON            NO

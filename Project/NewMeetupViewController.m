@@ -489,7 +489,7 @@
     [globalData createCommentForMeetup:meetup commentType:COMMENT_CREATED commentText:nil target:nil selector:nil];
     
     // Add to attending list and update meetup attending list (only on client)
-    [globalData attendMeetup:meetup];
+    [globalData attendMeetup:meetup addComment:FALSE];
     
     // Invites
     MeetupInviteViewController *inviteController = [[MeetupInviteViewController alloc]init];

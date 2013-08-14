@@ -67,11 +67,11 @@ static FacebookLoader *sharedInstance = nil;
     
     // Looking for job data
     NSArray* work = [user objectForKey:@"work"];
-    if ( work && work.count > 0 )
-    {
-        NSDictionary* current = work[0];
-        if ( current )
+    if ( work )
+        for ( NSDictionary* current in work )
         {
+            if ( [current objectForKey:@"end_date"] )
+                continue;
             NSDictionary* employer = [current objectForKey:@"employer"];
             NSString* strEmployer = @"";
             NSString* strPosition = @"";
@@ -83,7 +83,6 @@ static FacebookLoader *sharedInstance = nil;
             [pCurrentUser setObject:strEmployer forKey:@"profileEmployer"];
             [pCurrentUser setObject:strPosition forKey:@"profilePosition"];
         }
-    }
 }
 
 - (void)loadMeetups:(id)target selector:(SEL)callback

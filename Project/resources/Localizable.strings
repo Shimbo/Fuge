@@ -42,3 +42,10 @@
 "NEW_MEETUP_NOSUBJECT"          = "Please, enter the subject of the meetup in the text above!";
 "NEW_MEETUP_NOVENUE"            = "We were unable to retrieve your current location, please, select a venue for the meetup.";
 "NEW_MEETUP_BLOCKEDPUBLIC"      = "Public meetups are available only for experienced users, registered at least a week ago. Try creating private meetup and invite your friends, so you will become familiar with how it works.";
+
+"PUSH_NEW_FRIEND"               = "Woohoo! Your Facebook friend %@ joined Fuge! Check if you've got new connections!";
+"PUSH_NEW_2OFRIEND"             = "Hurray! %@, a friend of your friend, joined Fuge!";
+
+// Fuge only
+"FB_INVITE_MESSAGE_SIMPLE"      = "Join Fuge to discover new friends and local activities together!";
+"FB_INVITE_MESSAGE_MEETUP"      = "Come join me for %@! You could see who else is coming on Fuge!";

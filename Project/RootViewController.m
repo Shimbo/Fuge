@@ -144,10 +144,10 @@
     if ( [globalData getLoadingStatus:LOADING_CIRCLES] == LOAD_STARTED )
     {
         [self.activityIndicator startAnimating];
-        self.navigationController.view.userInteractionEnabled = FALSE;
+        _tableView.userInteractionEnabled = FALSE;
     }
     else
-        self.navigationController.view.userInteractionEnabled = TRUE;
+        _tableView.userInteractionEnabled = TRUE;
     
     [[self tableView] reloadData];
 }
@@ -159,7 +159,7 @@
     
     // Data refresh
     [self.activityIndicator stopAnimating];
-    self.navigationController.view.userInteractionEnabled = TRUE;
+    _tableView.userInteractionEnabled = TRUE;
     [refreshControl endRefreshing];
     [[self tableView] reloadData];
 }
@@ -167,7 +167,7 @@
 - (void) loadingFailed
 {
     [self.activityIndicator stopAnimating];
-    self.navigationController.view.userInteractionEnabled = TRUE;
+    _tableView.userInteractionEnabled = TRUE;
 }
 
 
@@ -176,7 +176,7 @@
 
 -(void)refreshView:(UIRefreshControl *)refreshControl {
 
-    self.navigationController.view.userInteractionEnabled = FALSE;
+    _tableView.userInteractionEnabled = FALSE;
     [globalData reloadFriendsInBackground];
 }
 

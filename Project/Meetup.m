@@ -611,6 +611,13 @@
     self.strVenue = [[NSString alloc] initWithFormat:@"Lat: %.3f, lon: %.3f", ptLocation.latitude, ptLocation.longitude];
 }
 
+-(Boolean)hasAttendee:(NSString*)str
+{
+    if ( [attendees indexOfObject:str] == NSNotFound )
+        return FALSE;
+    return TRUE;
+}
+
 -(void)addAttendee:(NSString*)str
 {
     if ( ! attendees )

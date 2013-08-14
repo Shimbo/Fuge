@@ -114,7 +114,7 @@
 - (void)joinClicked
 {
     // Change and save all the important data
-    [globalData attendMeetup:meetup];
+    [globalData attendMeetup:meetup addComment:TRUE];
     
     // Add comment to the text field
     [self addComment:@"    You joined the meetup!\n"];
@@ -282,7 +282,11 @@
                     if ( meetup.meetupType == TYPE_MEETUP )
                     {
                         if ( ! bPassed || invite )
+                        {
                             buttons[MB_JOIN] = buttonOn;
+                            if ( ! invite )
+                                buttons[MB_INVITE] = buttonOn;
+                        }
                     }
                     
                     if ( meetup.meetupType == TYPE_THREAD )

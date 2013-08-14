@@ -177,10 +177,17 @@
         person = currentPerson;
     else
         person = [globalData getPersonById:strPersonId];
-    if ( person )
-        [inboxCell.mainImage loadImageFromURL:[person smallAvatarUrl]];
+    if ( ! person )
+    {
+        person = [[Person alloc] initEmpty:CIRCLE_FBOTHERS];
+        person.strFirstName = @"Private";
+        person.strId = strPersonId;
+    }
+    
+    if ( person.smallAvatarUrl )
+        [inboxCell.mainImage loadImageFromURL:person.smallAvatarUrl];
     else
-        inboxCell.mainImage = nil; // TODO: add unknown person avatar
+        inboxCell.mainImage = nil;
     
 	return inboxCell;
 }

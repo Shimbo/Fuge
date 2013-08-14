@@ -111,13 +111,7 @@ static Boolean bFirstZoom = true;
 
 -(void)refreshView:(UIRefreshControl *)refreshControl {
     
-    [self reload];
-}
-
-- (void)reload {
-    // UI
-    [self.activityIndicator startAnimating];
-    self.navigationController.view.userInteractionEnabled = NO;
+    tableView.userInteractionEnabled = FALSE;
     
     // Reload data
     // Crappy sure there's some easier way!
@@ -126,10 +120,10 @@ static Boolean bFirstZoom = true;
     CLLocationCoordinate2D neCoord;
     neCoord = [mapView convertPoint:nePoint toCoordinateFromView:mapView];
     CLLocationCoordinate2D swCoord;
-    swCoord = [mapView convertPoint:swPoint toCoordinateFromView:mapView];    
+    swCoord = [mapView convertPoint:swPoint toCoordinateFromView:mapView];
     PFGeoPoint* northEast = [PFGeoPoint geoPointWithLatitude:neCoord.latitude longitude:neCoord.longitude];
     PFGeoPoint* southWest = [PFGeoPoint geoPointWithLatitude:swCoord.latitude longitude:swCoord.longitude];
-
+    
     [globalData reloadMapInfoInBackground:southWest toNorthEast:northEast];
 }
 
@@ -143,7 +137,7 @@ static Boolean bFirstZoom = true;
     if ( [globalData getLoadingStatus:LOADING_CIRCLES] != LOAD_STARTED &&
             [globalData getLoadingStatus:LOADING_MAP] != LOAD_STARTED )
     {
-        self.navigationController.view.userInteractionEnabled = YES;
+        tableView.userInteractionEnabled = TRUE;
         [self.activityIndicator stopAnimating];
     }
     else
@@ -241,8 +235,10 @@ static CGRect oldMapFrame;
     NSMutableArray *personsAnnotationForRemove = [NSMutableArray arrayWithCapacity:4];
     for (PersonAnnotation* per in _personsAnnotations) {
         for (MeetupAnnotation* meet in _meetupAnnotations) {
-            if ([meet.meetup willStartSoon]&&
-                [meet.meetup isPersonNearby:per.person]) {
+            if ([meet.meetup willStartSoon] &&
+                    [meet.meetup isPersonNearby:per.person] &&
+                    ! per.person.isOutdated &&
+                    [meet.meetup hasAttendee:per.person.strId]) {
                 [meet addPerson:per.person];
                 [personsAnnotationForRemove addObject:per];
                 break;
@@ -280,13 +276,8 @@ static CGRect oldMapFrame;
 #pragma mark -
 #pragma mark Main Cycle
 
-
-- (void)viewDidLoad
+- (void)recalcDateSelectionTexts
 {
-    [super viewDidLoad];
-    
-    //[self.navigationItem setHidesBackButton:true animated:false];
-    
     // Texts for buttons
     NSDateFormatter* theDateFormatter = [[NSDateFormatter alloc] init];
     [theDateFormatter setFormatterBehavior:NSDateFormatterBehavior10_4];
@@ -312,6 +303,13 @@ static CGRect oldMapFrame;
     [selectionChoices addObject:@"All week"];
     [dayButtonLabels addObject:@"All month"];
     [selectionChoices addObject:@"All month"];
+    
+    daySelectButton.title = dayButtonLabels[ daySelector ];
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
     
     // Misc
 #ifdef IOS7_ENABLE
@@ -340,7 +338,8 @@ static CGRect oldMapFrame;
     
     // Navigation bar: date selector
     NSArray* oldLeft = self.navigationItem.leftBarButtonItems;
-    daySelectButton = [[UIBarButtonItem alloc] initWithTitle:dayButtonLabels[ daySelector ] style:UIBarButtonItemStyleBordered target:self action:@selector(dateSelectorClicked)];
+    daySelectButton = [[UIBarButtonItem alloc] initWithTitle:@"Temp" style:UIBarButtonItemStyleBordered target:self action:@selector(dateSelectorClicked)];
+    [self recalcDateSelectionTexts];
     if ( oldLeft.count > 0 )
         self.navigationItem.leftBarButtonItems = @[ oldLeft[0], daySelectButton ];
     
@@ -365,6 +364,7 @@ static CGRect oldMapFrame;
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    [self recalcDateSelectionTexts];
     [self reloadMapAnnotations];
     [tableView reloadData];
 }
@@ -488,8 +488,14 @@ static CGRect oldMapFrame;
     int n = 0;
     for (Person* person in [circle getPersons] )
     {
+        // Location check
         if ( ! person.location || ! person.discoverable )
             continue;
+        
+        // Date check; we should add active section for the people list as well
+        //if ( person.isOutdated )
+        //    continue;
+        
         PersonAnnotation *ann = [[PersonAnnotation alloc] initWithPerson:person];
         [_personsAnnotations addObject:ann];
         n++;

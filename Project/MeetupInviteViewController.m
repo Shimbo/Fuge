@@ -51,7 +51,8 @@
     {
         [strInvitations substringToIndex:strInvitations.length-2];
         NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithObjectsAndKeys:strInvitations, @"to", nil];
-        [FBWebDialogs presentRequestsDialogModallyWithSession:nil message:FB_INVITE_MESSAGE title:nil parameters:params handler:nil];
+        NSString* invitationString = [NSString stringWithFormat:NSLocalizedString(@"FB_INVITE_MESSAGE_MEETUP",nil), meetup.strSubject ];
+        [FBWebDialogs presentRequestsDialogModallyWithSession:nil message:invitationString title:nil parameters:params handler:nil];
     }
     
     // Saving recent

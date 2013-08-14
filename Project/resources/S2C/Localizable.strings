@@ -9,7 +9,7 @@
 "LOADING_TITLE_NEWVERSION"      = "New version is available!";
 "LOADING_TEXT_NEWVERSION"       = "You're running an old version of the application. Updating the application will only take a few moments!";
 "LOADING_TITLE_FIRSTPAGE"       = "Welcome!";
-"LOADING_TEXT_FIRSTPAGE"        = "Simple2Connect is a location-based professional networking service. Explore profiles of people around you and make you networking more targeted!";
+"LOADING_TEXT_FIRSTPAGE"        = "Simple2Connect is a location-based professional networking service. Explore profiles of people around you and make your networking more targeted!";
 "LOADING_TITLE_NOINTERNET"      = "No internet connection.";
 "LOADING_TEXT_NOINTERNET"       = "It seems like you don’t have internet connection at the moment.";
 "LOADING_TITLE_LOGINFAILED"     = "Login failure.";
@@ -42,3 +42,6 @@
 "NEW_MEETUP_NOSUBJECT"          = "Please enter the subject of the event in the text field above!";
 "NEW_MEETUP_NOVENUE"            = "We were unable to retrieve your current location, please, select a venue for the event.";
 "NEW_MEETUP_BLOCKEDPUBLIC"      = "You will be able to create events seen by everyone after a week from your registration. In the meantime, invite your connections to join your event!";
+
+"PUSH_NEW_FRIEND"               = "Woohoo! Your Linkedin friend %@ joined Simple2Connect! Check if you've got new connections!";
+"PUSH_NEW_2OFRIEND"             = "Hurray! %@, a friend of your friend, joined Simple2Connect!";

@@ -52,11 +52,11 @@ static PushManager *sharedInstance = nil;
     switch (pushType)
     {
         case PUSH_NEW_FBFRIEND:
-            strPush = [[NSString alloc] initWithFormat:@"Woohoo! Your Facebook friend %@ joined Fuge! Check if you've got new connections!", strName];
+            strPush = [[NSString alloc] initWithFormat:NSLocalizedString(@"PUSH_NEW_FRIEND",nil), strName];
             strChannel = @"newFbFriend";
             break;
         case PUSH_NEW_2OFRIEND:
-            strPush = [[NSString alloc] initWithFormat:@"Hurray! %@, a friend of your friend, joined Fuge!", strName];
+            strPush = [[NSString alloc] initWithFormat:NSLocalizedString(@"PUSH_NEW_2OFRIEND",nil), strName];
             strChannel = @"new2OFriend";
             break;
     }

@@ -936,7 +936,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 #pragma mark Misc
 
 
-- (void) attendMeetup:(Meetup*)meetup
+- (void) attendMeetup:(Meetup*)meetup addComment:(Boolean)addComment
 {
     // Check if already attending
     NSMutableArray* attending = [pCurrentUser objectForKey:@"attending"];
@@ -976,7 +976,8 @@ NSInteger sortByName(id num1, id num2, void *context)
                 else
                 {
                     // Creating comment about joining in db
-                    [globalData createCommentForMeetup:meetup commentType:COMMENT_JOINED commentText:nil target:nil selector:nil];
+                    if ( addComment )
+                        [globalData createCommentForMeetup:meetup commentType:COMMENT_JOINED commentText:nil target:nil selector:nil];
                     
                     // Push notification to all attendees
                     [pushManager sendPushAttendingMeetup:meetup.strId];

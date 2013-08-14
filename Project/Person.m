@@ -137,7 +137,10 @@
 #ifdef TARGET_FUGE
     return [fbLoader getSmallAvatarUrl:strId];
 #elif defined TARGET_S2C
-    return [personData objectForKey:@"urlAvatar"];
+    if ( personData )
+        return [personData objectForKey:@"urlAvatar"];
+    else
+        return nil;
 #endif
 }
 
@@ -145,6 +148,8 @@
 #ifdef TARGET_FUGE
     return [fbLoader getLargeAvatarUrl:strId];
 #elif defined TARGET_S2C
+    if ( ! personData )
+        return nil;
     NSArray* photos = [personData objectForKey:@"urlPhotos"];
     if ( photos && photos.count > 0 )
         return photos[0];
@@ -185,7 +190,7 @@
 -(void)showInviteDialog
 {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithObjectsAndKeys: strId, @"to", nil];
-    [FBWebDialogs presentRequestsDialogModallyWithSession:nil message:FB_INVITE_MESSAGE title:nil parameters:params handler:nil];
+    [FBWebDialogs presentRequestsDialogModallyWithSession:nil message:NSLocalizedString(@"FB_INVITE_MESSAGE_SIMPLE",nil) title:nil parameters:params handler:nil];
 }
 
 -(void)openProfileInBrowser

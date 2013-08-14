@@ -118,6 +118,7 @@ typedef enum kEImportedType
 -(float)getTimerTill;
 
 // Only in local version, not on server (separate cloud code)
+-(Boolean)hasAttendee:(NSString*)str;
 -(void)addAttendee:(NSString*)str;
 -(void)removeAttendee:(NSString*)str;
 
