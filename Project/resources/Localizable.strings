@@ -13,7 +13,7 @@
 "LOADING_TITLE_NOINTERNET"      = "Ooups!";
 "LOADING_TEXT_NOINTERNET"       = "It seems like you don’t have internet \n connection at the moment. Try \n again when you will get some!";
 "LOADING_TITLE_LOGINFAILED"     = "Ooups!";
-"LOADING_TEXT_LOGINFAILED"      = "Looks like you haven’t finished \n login process or wasn’t able to do so. \n Please, try again!";
+"LOADING_TEXT_LOGINFAILED"      = "Looks like you haven’t finished \n login process or wasn’t able to do so. \n Please try again!";
 "LOADING_TITLE_OLDVERSION"      = "Outdated version!";
 "LOADING_TEXT_OLDVERSION"       = "What age did you come from? Why\n still using this version instead\n of a new and shiny one?";
 

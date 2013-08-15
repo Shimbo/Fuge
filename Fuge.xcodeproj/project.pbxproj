@@ -431,6 +431,10 @@
 		4C9D1B5517A6A09F007B0FEA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4C9D1B5417A6A09F007B0FEA /* Localizable.strings */; };
 		4C9D1B5817A7F271007B0FEA /* MeetupLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C9D1B5717A7F270007B0FEA /* MeetupLoader.m */; };
 		4C9D1B5917A7F271007B0FEA /* MeetupLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C9D1B5717A7F270007B0FEA /* MeetupLoader.m */; };
+		4C9E246A17BD2CAB00D35837 /* featured.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C9E246817BD2CAB00D35837 /* featured.png */; };
+		4C9E246B17BD2CAB00D35837 /* featured@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C9E246917BD2CAB00D35837 /* featured@2x.png */; };
+		4C9E246E17BD2CC300D35837 /* featured.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C9E246C17BD2CC300D35837 /* featured.png */; };
+		4C9E246F17BD2CC300D35837 /* featured@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C9E246D17BD2CC300D35837 /* featured@2x.png */; };
 		4CA3F06517170D8A00271E7A /* LoadingController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CA3F06317170D8A00271E7A /* LoadingController.m */; };
 		4CA3F06617170D8A00271E7A /* LoadingController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CA3F06417170D8A00271E7A /* LoadingController.xib */; };
 		4CA463F116F1DF7600F354FC /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CA463F016F1DF7600F354FC /* LocationManager.m */; };
@@ -778,6 +782,10 @@
 		4C9D1B5417A6A09F007B0FEA /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = resources/S2C/Localizable.strings; sourceTree = "<group>"; };
 		4C9D1B5617A7F270007B0FEA /* MeetupLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeetupLoader.h; path = Project/ExternalLibs/MeetupLoader.h; sourceTree = "<group>"; };
 		4C9D1B5717A7F270007B0FEA /* MeetupLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MeetupLoader.m; path = Project/ExternalLibs/MeetupLoader.m; sourceTree = "<group>"; };
+		4C9E246817BD2CAB00D35837 /* featured.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = featured.png; sourceTree = "<group>"; };
+		4C9E246917BD2CAB00D35837 /* featured@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "featured@2x.png"; sourceTree = "<group>"; };
+		4C9E246C17BD2CC300D35837 /* featured.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = featured.png; path = resources/S2C/featured.png; sourceTree = "<group>"; };
+		4C9E246D17BD2CC300D35837 /* featured@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "featured@2x.png"; path = "resources/S2C/featured@2x.png"; sourceTree = "<group>"; };
 		4CA3F06217170D8A00271E7A /* LoadingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadingController.h; sourceTree = "<group>"; };
 		4CA3F06317170D8A00271E7A /* LoadingController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadingController.m; sourceTree = "<group>"; };
 		4CA3F06417170D8A00271E7A /* LoadingController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoadingController.xib; sourceTree = "<group>"; };
@@ -1024,6 +1032,8 @@
 		470E5D2416F99EB90090A19F /* icons */ = {
 			isa = PBXGroup;
 			children = (
+				4C9E246817BD2CAB00D35837 /* featured.png */,
+				4C9E246917BD2CAB00D35837 /* featured@2x.png */,
 				47C7402B172BE5E900087C2A /* grey-comb.png */,
 				47C7402C172BE5E900087C2A /* grey-comb@2x.png */,
 				47C74027172BE5DE00087C2A /* orange-comb.png */,
@@ -1428,6 +1438,8 @@
 				4C08525717AD283000517D37 /* S2C-Icon-72@2x.png */,
 				4C08525817AD283000517D37 /* S2C-Icon.png */,
 				4C08525917AD283000517D37 /* S2C-Icon@2x.png */,
+				4C9E246C17BD2CC300D35837 /* featured.png */,
+				4C9E246D17BD2CC300D35837 /* featured@2x.png */,
 			);
 			name = S2C;
 			sourceTree = "<group>";
@@ -1654,6 +1666,8 @@
 				4C9D1B5317A6A098007B0FEA /* Localizable.strings in Resources */,
 				4C08525017A818D500517D37 /* iconMeetup.png in Resources */,
 				4C08525217A818D500517D37 /* iconMeetup@2x.png in Resources */,
+				4C9E246A17BD2CAB00D35837 /* featured.png in Resources */,
+				4C9E246B17BD2CAB00D35837 /* featured@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1800,6 +1814,8 @@
 				4C02D38917B12DD0008E19EB /* pyramid_0110@2x.png in Resources */,
 				4C02D38C17B12ED1008E19EB /* pyramid_0022.png in Resources */,
 				4C02D38D17B12ED1008E19EB /* pyramid_0022@2x.png in Resources */,
+				4C9E246E17BD2CC300D35837 /* featured.png in Resources */,
+				4C9E246F17BD2CC300D35837 /* featured@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

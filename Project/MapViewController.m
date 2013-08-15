@@ -719,7 +719,11 @@ static CGRect oldMapFrame;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 70;//(50+10*indexPath.item); // I put some padding on it.
+    Meetup* meetup = sortedMeetups[indexPath.row];
+    if ( meetup.strFeatured )
+        return 92;
+    else
+        return 70;//(50+10*indexPath.item); // I put some padding on it.
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)aTableView {

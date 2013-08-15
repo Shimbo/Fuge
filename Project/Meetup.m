@@ -16,7 +16,7 @@
 
 @implementation Meetup
 
-@synthesize strId,strOwnerId,strOwnerName,strSubject,strDescription,dateTime,privacy,meetupType,strVenue,strVenueId,strAddress,meetupData,numComments,attendees,decliners,dateTimeExp,durationSeconds,bImportedEvent,importedType,iconNumber,strPrice,strImageURL,strOriginalURL;
+@synthesize strId,strOwnerId,strOwnerName,strSubject,strDescription,dateTime,privacy,meetupType,strVenue,strVenueId,strAddress,meetupData,numComments,attendees,decliners,dateTimeExp,durationSeconds,bImportedEvent,importedType,iconNumber,strPrice,strImageURL,strOriginalURL,strFeatured;
 
 -(id) init
 {
@@ -273,6 +273,22 @@
     return self;
 }
 
+- (Boolean) feature:(NSString*)feature
+{
+    strFeatured = feature;
+    [meetupData setObject:strFeatured forKey:@"featured"];
+    [meetupData setObject:pCurrentUser forKey:@"featuredBy"];
+    NSError* error = [[NSError alloc] init];
+    [meetupData save:&error];
+    if ( error.code != 0 )
+    {
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"No internet" message:[NSString stringWithFormat:@"Featuring failed, error: %@", error] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        [alert show];
+        return FALSE;
+    }
+    return TRUE;
+}
+
 - (Boolean) save:(id)target selector:(SEL)selector
 {
     // We're not changing or saving Facebook events nor creating our own as a copy
@@ -384,6 +400,7 @@
     iconNumber = [[meetupData objectForKey:@"icon"] integerValue];
     if ( [meetupData objectForKey:@"canceled"] )
         isCanceled = [[meetupData objectForKey:@"canceled"] boolValue];
+    strFeatured = [meetupData objectForKey:@"featured"];
     
     // Imported type
     if ( [[strId substringToIndex:4] compare:@"mtmt"] == NSOrderedSame )
@@ -520,16 +537,19 @@
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    // No
-    if ( buttonIndex == 2 )
-        return;
-    
-    // Always
-    if ( buttonIndex == 0 )
-        [globalVariables setToAlwaysAddToCalendar];
-    
-    // Yes
-    [self addToCalendarInternal];
+    if ( alertView.tag == 1 )
+    {
+        // No
+        if ( buttonIndex == 2 )
+            return;
+        
+        // Always
+        if ( buttonIndex == 0 )
+            [globalVariables setToAlwaysAddToCalendar];
+        
+        // Yes
+        [self addToCalendarInternal];
+    }
 }
 
 -(void) addToCalendar
@@ -538,6 +558,7 @@
     if ( [self addedToCalendar] )
     {
         UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Calendar" message:@"This meetup is already added to your calendar." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil,nil];
+        message.tag = 1;
         [message show];
         return;
     }

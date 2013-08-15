@@ -66,6 +66,8 @@
     UIBarButtonItem *editBtn = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(editClicked)];
     UIBarButtonItem *calendarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Calendar-Day"] style:UIBarButtonItemStyleBordered  target:self action:@selector(calendarClicked)];
     
+    UIBarButtonItem *featureBtn = [[UIBarButtonItem alloc] initWithTitle:@"Feature" style:UIBarButtonItemStyleBordered target:self action:@selector(featureClicked)];
+    
     NSMutableArray* actualButtons = [[NSMutableArray alloc] init];
     if ( [buttons[MB_JOIN] boolValue] )
         [actualButtons addObject:joinBtn];
@@ -83,6 +85,8 @@
         [actualButtons addObject:cancelBtn];
     if ( [buttons[MB_EDIT] boolValue] )
         [actualButtons addObject:editBtn];
+    if ( [buttons[MB_FEATURE] boolValue] )
+        [actualButtons addObject:featureBtn];
     
     [self.navigationItem setRightBarButtonItems:actualButtons];
     
@@ -155,6 +159,20 @@
     return;
 }
 
+- (void)featureClicked
+{
+    UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Feature event" message:@"Enter featuring text, not too long." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Feature",nil];
+    message.tag = 777; // Jackpot!
+    [message setAlertViewStyle:UIAlertViewStylePlainTextInput];
+    [[message textFieldAtIndex:0] setDelegate:self];
+    NSString* strCurrentFeature = meetup.strFeatured;
+    if ( strCurrentFeature && strCurrentFeature.length > 0 )
+        [[message textFieldAtIndex:0] setPlaceholder:strCurrentFeature];
+    [[message textFieldAtIndex:0] setFont:[UIFont systemFontOfSize:14]];
+    [message show];
+    return;
+}
+
 - (void)leaveClicked
 {
     UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Really?" message:@"You won't be able to join this meetup again (to eliminate ambiguity)!" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes",nil];
@@ -211,6 +229,16 @@
         // Annotation
         [self reloadAnnotation];
     }
+    
+    if ( alertView.tag == 777 ) // Feature
+    {
+        if (buttonIndex == 1)
+        {
+            NSString* strResult = [[alertView textFieldAtIndex:0] text];
+            if ( strResult )
+                [meetup feature:strResult];
+        }
+    }
 }
 
 
@@ -258,6 +286,10 @@
     
     // Time check
     Boolean bPassed = meetup.hasPassed;
+    
+    // Featuring
+    if ( bIsAdmin )
+        buttons[MB_FEATURE] = buttonOn;
     
     // Facebook/EB/etc or not
     if ( meetup.bImportedEvent )

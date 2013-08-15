@@ -13,7 +13,7 @@
 "LOADING_TITLE_NOINTERNET"      = "No internet connection.";
 "LOADING_TEXT_NOINTERNET"       = "It seems like you don’t have internet connection at the moment.";
 "LOADING_TITLE_LOGINFAILED"     = "Login failure.";
-"LOADING_TEXT_LOGINFAILED"      = "It looks like the login was unsuccessful. We apologise for inconvenience. Please, try again.";
+"LOADING_TEXT_LOGINFAILED"      = "It looks like the login was unsuccessful. We apologise for inconvenience. Please try again.";
 "LOADING_TITLE_OLDVERSION"      = "Update needed";
 "LOADING_TEXT_OLDVERSION"       = "We have released a new version to better accommodate customer feedback. Give it a try and let us know if you have any issue or need help.";
 

@@ -120,6 +120,7 @@ static GlobalVariables *sharedInstance = nil;
 
 - (void)setToAlwaysAddToCalendar
 {
+    [self checkSettings];
     NSNumber* trueNum = [[NSNumber alloc] initWithBool:true];
     [personalSettings setValue:[trueNum stringValue] forKey:@"addToCalendar"];
     [[PFUser currentUser] setObject:personalSettings forKey:@"settings"];

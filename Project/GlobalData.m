@@ -463,9 +463,16 @@ NSInteger sortByName(id num1, id num2, void *context)
             [self load2OFriendsInBackground:friends];
             
             // Admin role creation, DEV CODE, don't uncomment!
+            
+            // Adding people without recreating the role, TO TEST!
+            /*PFRole* role = [PFRole roleWithName:@"Moderator"];
+            [role fetch];
+            [role.users addObject:[self getPersonById:@"1377492801"].personData];
+            [role save];*/
+            
             /*PFACL* adminACL = [PFACL ACLWithUser:pCurrentUser];
-            [adminACL setReadAccess:TRUE forUserId:@"n6cZJLJJnW"];
-            [adminACL setWriteAccess:TRUE forUserId:@"n6cZJLJJnW"];
+            [adminACL setReadAccess:TRUE forUserId:FEEDBACK_BOT_OBJECT];
+            [adminACL setWriteAccess:TRUE forUserId:FEEDBACK_BOT_OBJECT];
             PFRole* role = [PFRole roleWithName:@"Admin" acl:adminACL];
             [role.users addObject:pCurrentUser];
             [role.users addObject:[self getPersonById:@"1377492801"].personData];

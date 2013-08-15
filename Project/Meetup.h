@@ -66,6 +66,8 @@ typedef enum kEImportedType
     Boolean     bImportedEvent;
     NSUInteger  importedType;
     
+    NSString    *strFeatured;
+    
     Boolean     isCanceled;
     
     // Write only during save method and loading
@@ -91,6 +93,7 @@ typedef enum kEImportedType
 @property (nonatomic, assign) NSUInteger iconNumber;
 @property (nonatomic, assign) Boolean bImportedEvent;
 @property (nonatomic, assign) NSUInteger importedType;
+@property (nonatomic, copy) NSString *strFeatured;
 
 @property (nonatomic, copy) NSString *strPrice;
 @property (nonatomic, copy) NSString *strImageURL;
@@ -101,6 +104,7 @@ typedef enum kEImportedType
 -(id) init;
 -(Boolean) save:(id)target selector:(SEL)selector;
 -(void) unpack:(PFObject*)data;
+-(Boolean) feature:(NSString*)feature;
 
 -(id) initWithFbEvent:(NSDictionary*)data;
 -(id) initWithEbEvent:(NSDictionary*)data;

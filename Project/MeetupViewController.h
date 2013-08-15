@@ -22,13 +22,14 @@ enum EMeetupButtons
     MB_INVITE       = 5,
     MB_CANCEL       = 6,
     MB_EDIT         = 7,
+    MB_FEATURE      = 8,
     
-    MB_TOTAL_COUNT  = 8
+    MB_TOTAL_COUNT  = 9
 };
 #import "GrowingTextViewController.h"
 
 @interface MeetupViewController : GrowingTextViewController
-<UITextViewDelegate, MKMapViewDelegate, UIWebViewDelegate>
+<UITextViewDelegate, MKMapViewDelegate, UIWebViewDelegate, UITextFieldDelegate>
 {
     Meetup* meetup;
     IBOutlet UITextView *comments;
