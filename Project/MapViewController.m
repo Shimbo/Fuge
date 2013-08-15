@@ -237,7 +237,6 @@ static CGRect oldMapFrame;
         for (MeetupAnnotation* meet in _meetupAnnotations) {
             if ([meet.meetup willStartSoon] &&
                     [meet.meetup isPersonNearby:per.person] &&
-                    ! per.person.isOutdated &&
                     [meet.meetup hasAttendee:per.person.strId]) {
                 [meet addPerson:per.person];
                 [personsAnnotationForRemove addObject:per];
@@ -493,8 +492,8 @@ static CGRect oldMapFrame;
             continue;
         
         // Date check; we should add active section for the people list as well
-        //if ( person.isOutdated )
-        //    continue;
+        if ( person.isOutdated )
+            continue;
         
         PersonAnnotation *ann = [[PersonAnnotation alloc] initWithPerson:person];
         [_personsAnnotations addObject:ann];

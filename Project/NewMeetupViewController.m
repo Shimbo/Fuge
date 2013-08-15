@@ -50,6 +50,36 @@
     meetupType = t;
 }
 
+-(void) updateFieldsVisibility
+{
+    if ( ! privacySwitch.isOn )
+    {
+        priceText.hidden = TRUE;
+        priceField.hidden = TRUE;
+        imageURLField.hidden = TRUE;
+        originalURLField.hidden = TRUE;
+        descriptionText.hidden = TRUE;
+        iconButton.hidden = TRUE;
+        
+        CGSize size = scrollView.contentSize;
+        size.height = durationBtn.frame.origin.y + durationBtn.frame.size.height + 10;
+        scrollView.contentSize = size;
+    }
+    else
+    {
+        priceText.hidden = FALSE;
+        priceField.hidden = FALSE;
+        imageURLField.hidden = FALSE;
+        originalURLField.hidden = FALSE;
+        descriptionText.hidden = FALSE;
+        iconButton.hidden = FALSE;
+        
+        CGSize size = scrollView.contentSize;
+        size.height = descriptionText.frame.origin.y + descriptionText.frame.size.height + 10;
+        scrollView.contentSize = size;
+    }
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -82,7 +112,7 @@
     if ( meetup )
     {
         [subject setText:meetup.strSubject];
-        [notifySwitch setOn:(! meetup.privacy)];
+        [privacySwitch setOn:(! meetup.privacy)];
         [location setTitle:meetup.strVenue forState:UIControlStateNormal];
         meetupDate = meetup.dateTime;
         meetupDurationDays = meetup.durationSeconds / (24*3600);
@@ -99,9 +129,9 @@
     else
     {
         if ( invitee )  // Private meetup created from user profile, turn off publicity
-            [notifySwitch setOn:FALSE];
+            [privacySwitch setOn:FALSE];
         if ( bIsAdmin ) // Always public for admins by default
-            [notifySwitch setOn:TRUE];
+            [privacySwitch setOn:TRUE];
         
         // Default time
         NSDateComponents* deltaCompsDefault = [[NSDateComponents alloc] init];
@@ -121,21 +151,8 @@
     
     if ( meetupType == TYPE_THREAD )
         dateBtn.hidden = TRUE;
-    if ( ! bIsAdmin )
-    {
-        priceText.hidden = TRUE;
-        priceField.hidden = TRUE;
-        imageURLField.hidden = TRUE;
-        originalURLField.hidden = TRUE;
-        descriptionText.hidden = TRUE;
-        iconButton.hidden = TRUE;
-    }
-    else
-    {
-        CGSize size = scrollView.contentSize;
-        size.height = descriptionText.frame.origin.y + descriptionText.frame.size.height + 10;
-        scrollView.contentSize = size;
-    }
+    
+    [self updateFieldsVisibility];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
     tap.cancelsTouchesInView = NO;
@@ -403,7 +420,7 @@
     meetup.strOwnerId = (NSString *) [[PFUser currentUser] objectForKey:@"fbId"];
     meetup.strOwnerName = [globalVariables fullUserName];
     meetup.strSubject = subject.text;
-    meetup.privacy = notifySwitch.isOn ? MEETUP_PUBLIC : MEETUP_PRIVATE;
+    meetup.privacy = privacySwitch.isOn ? MEETUP_PUBLIC : MEETUP_PRIVATE;
     meetup.dateTime = meetupDate;
     meetup.durationSeconds = meetupDurationDays*24*3600 + meetupDurationHours*3600;
     meetup.iconNumber = meetupIcon;
@@ -513,9 +530,10 @@
     {
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Too early" message:NSLocalizedString(@"NEW_MEETUP_BLOCKEDPUBLIC",nil) delegate:self cancelButtonTitle:@"Alright" otherButtonTitles:nil, nil];
         [alert show];
-        [notifySwitch setOn:FALSE animated:TRUE];
-        notifySwitch.enabled = FALSE;
+        [privacySwitch setOn:FALSE animated:TRUE];
+        privacySwitch.enabled = FALSE;
     }
+    [self updateFieldsVisibility];
 }
 
 - (IBAction)iconChanged:(id)sender {
@@ -552,6 +570,7 @@
     descriptionText = nil;
     priceText = nil;
     iconButton = nil;
+    privacySwitch = nil;
     [super viewDidUnload];
 }
 

@@ -34,8 +34,8 @@
 // Location update distance (to call save for PFUser
 #define LOCATION_UPDATE_KILOMETERS  0.5f
 
-// Pins
-#define PERSON_OUTDATED_TIME        [globalVariables globalParam:@"PersonOutdatedTime" default:3600*6]
+// Pins on the map
+#define PERSON_OUTDATED_TIME        [globalVariables globalParam:@"PersonOutdatedTime" default:3600*6] // now it's 86400
 
 // Pushes
 #define PUSH_DISCOVERY_KILOMETERS   [globalVariables globalParam:@"PushDiscoveryKilometers" default:100]
@@ -55,11 +55,12 @@
 // Merging pins
 #define DISTANCE_FOR_GROUPING_PINS  [globalVariables globalParam:@"DistanceForGroupingPins" default:500000]
 
-// Otherwise not showing at all
+// Loading limitations
 #define MAX_DAYS_TILL_MEETUP        [globalVariables globalParam:@"MaxDaysTillMeetup" default:30]
 #define MAX_SECONDS_FROM_PERSON_LOGIN [globalVariables globalParam:@"MaxSecondsFromPersonLogin" default:86400*100]
 
-#define WELCOME_MESSAGE             NSLocalizedString(@"WELCOME_MESSAGE",nil)//(NSString*)[globalVariables getGlobalParam:@"WelcomeMessage"]
+#define WELCOME_MESSAGE             NSLocalizedString(@"WELCOME_MESSAGE",nil)
+//Was (NSString*)[globalVariables getGlobalParam:@"WelcomeMessage"], to be removed later
 
 #define MEETUP_TEMPLATE_DESCRIPTION (NSString*)[globalVariables getGlobalParam:@"MeetupTemplateDescription"]
 #define MEETUP_TEMPLATE_PRICE       (NSString*)[globalVariables getGlobalParam:@"MeetupTemplatePrice"]

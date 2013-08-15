@@ -19,7 +19,7 @@
     IBOutlet UIButton *dateBtn;
     IBOutlet UIButton *durationBtn;
     IBOutlet UIButton *location;
-    IBOutlet UISwitch *notifySwitch;
+    IBOutlet UISwitch *privacySwitch;
     IBOutlet UIActivityIndicatorView *activityIndicator;
     UINavigationController *venueNavViewController;
     UIDatePicker *datePicker;

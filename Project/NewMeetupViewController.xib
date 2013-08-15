@@ -439,14 +439,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
-						<string key="label">notifySwitch</string>
-						<reference key="source" ref="372490531"/>
-						<reference key="destination" ref="849034471"/>
-					</object>
-					<int key="connectionID">103</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBCocoaTouchOutletConnection" key="connection">
 						<string key="label">location</string>
 						<reference key="source" ref="372490531"/>
 						<reference key="destination" ref="327594486"/>
@@ -532,6 +524,14 @@
 						<reference key="destination" ref="26646786"/>
 					</object>
 					<int key="connectionID">274</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">privacySwitch</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="849034471"/>
+					</object>
+					<int key="connectionID">275</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
@@ -760,7 +760,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">274</int>
+			<int key="maxID">275</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -808,6 +808,7 @@
 						<string key="originalURLField">UITextField</string>
 						<string key="priceField">UITextField</string>
 						<string key="priceText">UILabel</string>
+						<string key="privacySwitch">UISwitch</string>
 						<string key="scrollView">UIScrollView</string>
 						<string key="subject">UITextField</string>
 					</dictionary>
@@ -855,6 +856,10 @@
 						<object class="IBToOneOutletInfo" key="priceText">
 							<string key="name">priceText</string>
 							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="privacySwitch">
+							<string key="name">privacySwitch</string>
+							<string key="candidateClassName">UISwitch</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="scrollView">
 							<string key="name">scrollView</string>
