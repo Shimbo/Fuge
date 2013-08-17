@@ -13,7 +13,6 @@ typedef enum ECircle
 @interface Circle : NSObject {
     CircleType      idCircle;
 	NSMutableArray  *persons;
-    NSMutableArray  *personsSortedByRank;
 }
 
 @property (nonatomic) CircleType idCircle;
@@ -25,7 +24,6 @@ typedef enum ECircle
 - (id)addPersonWithData:(PFUser*)data;
 
 - (NSMutableArray*) getPersons;
-- (NSMutableArray*) getPersonsSortedByRank;
 
 - (void)sort;
 

@@ -165,7 +165,7 @@
         case COMMENT_CREATED:
             [strComment appendString:[globalVariables fullUserName]];
             if (meetup.meetupType == TYPE_MEETUP)
-                [strComment appendString:@" created the meetup: "];
+                [strComment appendString:@" created the event: "];
             else
                 [strComment appendString:@" created the thread: "];
             [strComment appendString:meetup.strSubject];
@@ -179,15 +179,15 @@
             break;
         case COMMENT_JOINED:
             [strComment appendString:[globalVariables fullUserName]];
-            [strComment appendString:@" joined the meetup."];
+            [strComment appendString:@" joined the event."];
             break;
         case COMMENT_LEFT:
             [strComment appendString:[globalVariables fullUserName]];
-            [strComment appendString:@" has left the meetup."];
+            [strComment appendString:@" has left the event."];
             break;
         case COMMENT_CANCELED:
             [strComment appendString:[globalVariables fullUserName]];
-            [strComment appendString:@" canceled the meetup!"];
+            [strComment appendString:@" canceled the event!"];
             break;
         case COMMENT_PLAIN:
             [strComment appendString:text];

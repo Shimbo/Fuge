@@ -88,9 +88,9 @@
     if ( meetupType == TYPE_MEETUP )
     {
         if (meetup)
-            self.title = @"Meetup";
+            self.title = @"Event";
         else
-            self.title = @"New meetup";
+            self.title = @"New event";
     }
     else
         self.title = @"Thread";
@@ -471,7 +471,7 @@
             [strChanged appendString:@"duration"];
             bShouldAddComma = true;
         }
-        [strChanged appendString:@" of the meetup."];
+        [strChanged appendString:@" of the event."];
         [globalData createCommentForMeetup:meetup commentType:COMMENT_SAVED commentText:strChanged target:nil selector:nil];
     }
 }
@@ -506,7 +506,7 @@
     [globalData createCommentForMeetup:meetup commentType:COMMENT_CREATED commentText:nil target:nil selector:nil];
     
     // Add to attending list and update meetup attending list (only on client)
-    [globalData attendMeetup:meetup addComment:FALSE];
+    [globalData attendMeetup:meetup addComment:FALSE target:nil selector:nil];
     
     // Invites
     MeetupInviteViewController *inviteController = [[MeetupInviteViewController alloc]init];

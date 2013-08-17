@@ -80,8 +80,9 @@
 {
     sortedUsers = [NSMutableArray arrayWithCapacity:100];
     for ( Circle* circle in [globalData getCircles] )
-        if ( circle.idCircle != CIRCLE_FBOTHERS)
-            [sortedUsers addObjectsFromArray:circle.getPersons];
+        if ( circle.idCircle != CIRCLE_FBOTHERS )
+            if ( sortingMode != SORTING_RANK || circle.idCircle != CIRCLE_FB )  // exclude friends from ranking
+                [sortedUsers addObjectsFromArray:circle.getPersons];
     if ( sortingMode == SORTING_ENGAGEMENT )
     {
         [sortedUsers sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
@@ -91,9 +92,46 @@
                 return NSOrderedDescending;
         }];
     }
+    else if ( sortingMode == SORTING_RANK )
+    {
+        usersNearbyNow = [NSMutableArray arrayWithCapacity:100];
+        usersRecent = [NSMutableArray arrayWithCapacity:100];
+        for ( Person* person in sortedUsers )
+            if ( person.matchesRank > 0 )
+            {
+                if ( ! person.isOutdated && [person.distance floatValue] < PERSON_NEARBY_DISTANCE )
+                    [usersNearbyNow addObject:person];
+                else
+                    [usersRecent addObject:person];
+            }
+        
+        [usersNearbyNow sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            if ( ((Person*)obj1).matchesRank > ((Person*)obj2).matchesRank )
+                return NSOrderedAscending;
+            else
+                return NSOrderedDescending;
+        }];
+        [usersRecent sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            if ( ((Person*)obj1).matchesRank > ((Person*)obj2).matchesRank )
+                return NSOrderedAscending;
+            else
+                return NSOrderedDescending;
+        }];
+    }
     else if ( sortingMode == SORTING_DISTANCE )
     {
-        [sortedUsers sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        usersNearbyNow = [NSMutableArray arrayWithCapacity:100];
+        usersRecent = [NSMutableArray arrayWithCapacity:100];
+        for ( Person* person in sortedUsers )
+            if ( ! person.isOutdated && [person.distance floatValue] < PERSON_NEARBY_DISTANCE )
+                [usersNearbyNow addObject:person];
+            else
+                [usersRecent addObject:person];
+        
+        [usersNearbyNow sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            return [((Person*)obj1).updateDate compare:((Person*)obj2).updateDate];
+        }];
+        [usersRecent sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             if ( ! ((Person*)obj1).distance )
                 return NSOrderedDescending;
             if ( ! ((Person*)obj2).distance )
@@ -184,9 +222,9 @@
     
     if ( sortingMode == SORTING_DISTANCE )
 #ifdef TARGET_FUGE
-        return 2;
+        return 3;
 #elif defined TARGET_S2C
-        return 1;
+        return 2;
 #endif
     else if ( sortingMode == SORTING_RANK )
         return 2;
@@ -196,14 +234,16 @@
 
 - (NSInteger)tableView:(UITableView *)aTableView numberOfRowsInSection:(NSInteger)section {
 	
-    Circle *circle;
     switch (sortingMode)
     {
         case SORTING_DISTANCE:
-            return (section == 0 ? sortedUsers.count : [globalData getCircle:CIRCLE_FBOTHERS].getPersons.count );
         case SORTING_RANK:
-            circle = [globalData getCircle:(section == 0 ? CIRCLE_2O : CIRCLE_RANDOM )];
-            return [circle getPersons].count;
+            switch (section)
+            {
+                case 0: return usersNearbyNow.count;
+                case 1: return usersRecent.count;
+                case 2: return [globalData getCircle:CIRCLE_FBOTHERS].getPersons.count;
+            }
         default:    // ENGAGEMENT
             return sortedUsers.count;
     }
@@ -217,12 +257,12 @@
 	switch ( sortingMode )
     {
         case SORTING_DISTANCE:
-            if ( section == 0 )
-                return @"Active users";
-            circle = [globalData getCircle:CIRCLE_FBOTHERS];
-            return [Circle getCircleName:circle.idCircle];
         case SORTING_RANK:
-            circle = [globalData getCircle:(section == 0 ? CIRCLE_2O : CIRCLE_RANDOM )];
+            if ( section == 0 )
+                return @"Nearby today";
+            if ( section == 1 )
+                return @"Recent";
+            circle = [globalData getCircle:CIRCLE_FBOTHERS];
             return [Circle getCircleName:circle.idCircle];
         default:    // ENGAGEMENT
             return @"Sorting by engagement";
@@ -242,17 +282,16 @@
     switch ( sortingMode )
     {
         case SORTING_DISTANCE:
-            if ( indexPath.section == 0 )
-                person = sortedUsers[indexPath.row];
-            else
-            {
-                circle = [globalData getCircle:CIRCLE_FBOTHERS];
-                person = [circle getPersons][indexPath.row];
-            }
-            break;
         case SORTING_RANK:
-            circle = [globalData getCircle:(indexPath.section == 0 ? CIRCLE_2O : CIRCLE_RANDOM )];
-            person = [circle getPersonsSortedByRank][indexPath.row];
+            switch (indexPath.section )
+            {
+                case 0: person = usersNearbyNow[indexPath.row]; break;
+                case 1: person = usersRecent[indexPath.row]; break;
+                case 2:
+                    circle = [globalData getCircle:CIRCLE_FBOTHERS];
+                    person = [circle getPersons][indexPath.row];
+                    break;
+            }
             break;
         default:    // ENGAGEMENT
             person = sortedUsers[indexPath.row];
@@ -338,28 +377,26 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    NSInteger nRow = indexPath.row;
-    NSInteger nSection = indexPath.section;
     Circle *circle;
     Person* person;
     
     switch ( sortingMode )
     {
         case SORTING_DISTANCE:
-            if ( indexPath.section == 0 )
-                person = sortedUsers[indexPath.row];
-            else
+        case SORTING_RANK:
+            
+            switch (indexPath.section )
             {
-                circle = [globalData getCircle:CIRCLE_FBOTHERS];
-                person = [circle getPersons][nRow];
+                case 0: person = usersNearbyNow[indexPath.row]; break;
+                case 1: person = usersRecent[indexPath.row]; break;
+                case 2:
+                    circle = [globalData getCircle:CIRCLE_FBOTHERS];
+                    person = [circle getPersons][indexPath.row];
+                    break;
             }
             break;
-        case SORTING_RANK:
-            circle = [globalData getCircle:(nSection == 0 ? CIRCLE_2O : CIRCLE_RANDOM )];
-            person = [circle getPersonsSortedByRank][nRow];
-            break;
         default:    // ENGAGEMENT
-            person = sortedUsers[nRow];
+            person = sortedUsers[indexPath.row];
             break;
     }
     
@@ -379,6 +416,5 @@
     
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
-
 
 @end

@@ -63,6 +63,7 @@
 //- (NSUInteger)getFriendsInCommonCount;
 
 - (Boolean)isOutdated;
+- (NSDate*)updateDate;
 
 -(NSString*)smallAvatarUrl;
 -(NSString*)largeAvatarUrl;

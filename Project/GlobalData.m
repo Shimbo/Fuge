@@ -503,6 +503,8 @@ NSInteger sortByName(id num1, id num2, void *context)
     [friend2OQuery whereKey:@"fbId" containedIn:friend2OIds];
     if ( ! [globalVariables isUserAdmin] )
         [friend2OQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
+    NSDate* dateToHide = [NSDate dateWithTimeIntervalSinceNow:-(NSTimeInterval)MAX_SECONDS_FROM_PERSON_LOGIN];
+    [friend2OQuery whereKey:@"updatedAt" greaterThan:dateToHide];
     [friend2OQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
         if ( error )
@@ -564,6 +566,12 @@ NSInteger sortByName(id num1, id num2, void *context)
         [friendAnyQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
     NSDate* dateToHide = [NSDate dateWithTimeIntervalSinceNow:-(NSTimeInterval)MAX_SECONDS_FROM_PERSON_LOGIN];
     [friendAnyQuery whereKey:@"updatedAt" greaterThan:dateToHide];
+    
+    NSMutableArray *loadedIds = [pCurrentUser objectForKey:@"fbFriends2O"];
+    if ( loadedIds && [pCurrentUser objectForKey:@"fbFriends2O"] )
+        [loadedIds addObjectsFromArray:[pCurrentUser objectForKey:@"fbFriends2O"]];
+    if ( loadedIds )
+        [friendAnyQuery whereKey:@"fbId" notContainedIn:loadedIds];
     
     // Actual load
     [friendAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
@@ -802,9 +810,8 @@ NSInteger sortByName(id num1, id num2, void *context)
     }
     
     // Expired meetups
-    NSDate* dateLate = [NSDate date];
-    [meetupAnyQuery whereKey:@"meetupDateExp" greaterThan:dateLate];
-    [meetupAnyQuery whereKey:@"canceled" notEqualTo:[NSNumber numberWithBool:TRUE]];
+    [meetupAnyQuery whereKey:@"meetupDateExp" greaterThan:[NSDate date]];
+    //[meetupAnyQuery whereKey:@"canceled" notEqualTo:[NSNumber numberWithBool:TRUE]];
     
     // Meetups too far in the future
     NSDateComponents* deltaCompsMax = [[NSDateComponents alloc] init];
@@ -943,7 +950,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 #pragma mark Misc
 
 
-- (void) attendMeetup:(Meetup*)meetup addComment:(Boolean)addComment
+- (void) attendMeetup:(Meetup*)meetup addComment:(Boolean)addComment target:(id)target selector:(SEL)callback
 {
     // Check if already attending
     NSMutableArray* attending = [pCurrentUser objectForKey:@"attending"];
@@ -983,7 +990,7 @@ NSInteger sortByName(id num1, id num2, void *context)
                 else
                 {
                     // Creating comment about joining in db
-                    if ( addComment )
+                    if ( addComment && meetup.privacy == MEETUP_PRIVATE )
                         [globalData createCommentForMeetup:meetup commentType:COMMENT_JOINED commentText:nil target:nil selector:nil];
                     
                     // Push notification to all attendees
@@ -991,6 +998,10 @@ NSInteger sortByName(id num1, id num2, void *context)
                     
                     // Update invite
                     [globalData updateInvite:meetup.strId attending:INVITE_ACCEPTED];
+                    
+                    // Selector
+                    if ( target )
+                        [target performSelector:callback withObject:nil];
                 }
             }];
         }
@@ -1000,7 +1011,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [meetup addAttendee:strCurrentUserId];
 }
 
-- (void) unattendMeetup:(Meetup*)meetup
+- (void) unattendMeetup:(Meetup*)meetup target:(id)target selector:(SEL)callback
 {
     // Attendee in db (to store the data and update counters)
     PFObject* attendee = [PFObject objectWithClassName:@"Attendee"];
@@ -1033,10 +1044,15 @@ NSInteger sortByName(id num1, id num2, void *context)
                 else
                 {
                     // Creating comment about leaving in db
-                    [globalData createCommentForMeetup:meetup commentType:COMMENT_LEFT commentText:nil target:nil selector:nil];
+                    if ( meetup.privacy == MEETUP_PRIVATE )
+                        [globalData createCommentForMeetup:meetup commentType:COMMENT_LEFT commentText:nil target:nil selector:nil];
                     
                     // Push notification to all attendees
                     [pushManager sendPushLeftMeetup:meetup.strId];
+                    
+                    // Selector
+                    if ( target )
+                        [target performSelector:callback withObject:nil];
                 }
             }];
         }

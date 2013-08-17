@@ -36,6 +36,7 @@
 
 // Pins on the map
 #define PERSON_OUTDATED_TIME        [globalVariables globalParam:@"PersonOutdatedTime" default:3600*6] // now it's 86400
+#define PERSON_NEARBY_DISTANCE      [globalVariables globalParam:@"PersonNearbyDistance" default:20000]
 
 // Pushes
 #define PUSH_DISCOVERY_KILOMETERS   [globalVariables globalParam:@"PushDiscoveryKilometers" default:100]
@@ -56,7 +57,7 @@
 #define DISTANCE_FOR_GROUPING_PINS  [globalVariables globalParam:@"DistanceForGroupingPins" default:500000]
 
 // Loading limitations
-#define MAX_DAYS_TILL_MEETUP        [globalVariables globalParam:@"MaxDaysTillMeetup" default:30]
+#define MAX_DAYS_TILL_MEETUP        [globalVariables globalParam:@"MaxDaysTillMeetup" default:14]
 #define MAX_SECONDS_FROM_PERSON_LOGIN [globalVariables globalParam:@"MaxSecondsFromPersonLogin" default:86400*100]
 
 #define WELCOME_MESSAGE             NSLocalizedString(@"WELCOME_MESSAGE",nil)

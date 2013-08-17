@@ -105,9 +105,14 @@
 
 - (Boolean)isOutdated
 {
-    if ( [personData.updatedAt compare:[NSDate dateWithTimeIntervalSinceNow:-PERSON_OUTDATED_TIME]] == NSOrderedAscending )
+    if ( [personData.updatedAt compare:[NSDate dateWithTimeIntervalSinceNow:-(NSTimeInterval)PERSON_OUTDATED_TIME]] == NSOrderedAscending )
         return true;
     return false;
+}
+
+- (NSDate*)updateDate
+{
+    return personData.updatedAt;
 }
 
 -(NSString*)timeString

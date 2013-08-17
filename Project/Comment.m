@@ -65,6 +65,10 @@
             // Subscription
             [globalData subscribeToThread:strMeetupId];
             
+            // Conversation
+            if ( [typeNum integerValue] != COMMENT_PLAIN )
+                [globalData updateConversation:dateCreated count:nil thread:strMeetupId meetup:TRUE];
+            
             // Update inbox
             [[NSNotificationCenter defaultCenter]postNotificationName:kInboxUpdated object:nil];
         }

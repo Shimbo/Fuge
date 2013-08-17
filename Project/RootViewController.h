@@ -16,6 +16,8 @@ typedef enum ESortingRank
     NSUInteger      sortingMode;
     UIBarButtonItem *matchBtn;
     NSMutableArray  *sortedUsers;
+    NSMutableArray  *usersNearbyNow;
+    NSMutableArray  *usersRecent;
     UIRefreshControl *refreshControl;
 }
 

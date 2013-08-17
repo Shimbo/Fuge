@@ -351,7 +351,7 @@ NSInteger sort2(id item1, id item2, void *context)
     }
     
     // Save
-    [[PFUser currentUser] saveInBackground]; // CHECK: here was Eventually
+    [pCurrentUser saveInBackground]; // CHECK: here was Eventually
 }
 
 -(PFObject*)getInviteForMeetup:(NSString*)strId

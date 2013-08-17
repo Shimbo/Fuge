@@ -172,7 +172,7 @@ static CGRect oldMapFrame;
         scrollView.scrollEnabled = FALSE;
         tableView.hidden = TRUE;
         self.navigationItem.rightBarButtonItems = @[ closeButton ];
-    }];
+    }];    
 }
 
 -(void)closeMap {
@@ -331,16 +331,16 @@ static CGRect oldMapFrame;
     // Close button (for the map)
     closeButton = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStyleBordered target:self action:@selector(closeMap)];
     
-#ifdef TARGET_S2C
+//#ifdef TARGET_S2C
     daySelector = 8;
-#endif
+//#endif
     
     // Navigation bar: date selector
-    NSArray* oldLeft = self.navigationItem.leftBarButtonItems;
+    /*NSArray* oldLeft = self.navigationItem.leftBarButtonItems;
     daySelectButton = [[UIBarButtonItem alloc] initWithTitle:@"Temp" style:UIBarButtonItemStyleBordered target:self action:@selector(dateSelectorClicked)];
     [self recalcDateSelectionTexts];
     if ( oldLeft.count > 0 )
-        self.navigationItem.leftBarButtonItems = @[ oldLeft[0], daySelectButton ];
+        self.navigationItem.leftBarButtonItems = @[ oldLeft[0], daySelectButton ];*/
     
     // Table
     UINib *nib = [UINib nibWithNibName:@"AnnotationCellMeetup" bundle:nil];
@@ -369,6 +369,62 @@ static CGRect oldMapFrame;
 }
 
 - (NSArray*) getMeetupsByDate
+{
+    NSMutableArray* arrayOfDays = [NSMutableArray arrayWithCapacity:MAX_DAYS_TILL_MEETUP];
+    
+    // Day by day selection
+    for ( NSUInteger n = 0; n < MAX_DAYS_TILL_MEETUP; n++ )
+    {
+        // Array
+        NSMutableArray* arrayOfMeetups = [NSMutableArray arrayWithCapacity:10];
+        [arrayOfDays addObject:arrayOfMeetups];
+        
+        // Timeframe
+        NSDate *windowStart, *windowEnd;
+        
+        // Selecting days
+        NSDateComponents* comps = [[NSDateComponents alloc] init];
+        [comps setDay:n];
+        NSDate* startDay = [[NSCalendar currentCalendar] dateByAddingComponents:comps toDate:[NSDate date] options:0];
+        [comps setDay:n+1];
+        NSDate* endDay = [[NSCalendar currentCalendar] dateByAddingComponents:comps toDate:[NSDate date] options:0];
+    
+        // Changing window start if not today
+        if ( n > 0 )
+        {
+            comps = [[NSCalendar currentCalendar] components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:startDay];
+            [comps setHour:5];
+            [comps setMinute:0];
+            windowStart = [[NSCalendar currentCalendar] dateFromComponents:comps];
+        }
+        else
+            windowStart = [NSDate date];
+        
+        // Calculating end date
+        comps = [[NSCalendar currentCalendar] components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:endDay];
+        [comps setHour:5];
+        [comps setMinute:0];
+        windowEnd = [[NSCalendar currentCalendar] dateFromComponents:comps];
+        
+        // Loading annotations
+        for (Meetup *meetup in [globalData getMeetups])
+        {
+            if (meetup.meetupType == TYPE_MEETUP)
+                if ( ! meetup.hasPassed && /*! meetup.isCanceled &&*/ [meetup isWithinTimeFrame:windowStart till:windowEnd] )
+                    [arrayOfMeetups addObject:meetup];
+        }
+        
+        // Sorting meetups by date
+        [arrayOfMeetups sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            return [((Meetup*)obj1).dateTime compare:((Meetup*)obj2).dateTime ];
+        }];
+    }
+    
+    return arrayOfDays;
+}
+
+
+- (NSArray*) getMeetupsByDate2
 {
     // Calculating date windows
     NSDate* windowStart = [NSDate date];
@@ -404,7 +460,7 @@ static CGRect oldMapFrame;
     for (Meetup *meetup in [globalData getMeetups])
     {
         if (meetup.meetupType == TYPE_MEETUP)
-            if ( ! meetup.hasPassed && ! meetup.isCanceled && [meetup isWithinTimeFrame:windowStart till:windowEnd] )
+            if ( ! meetup.hasPassed && /*! meetup.isCanceled &&*/ [meetup isWithinTimeFrame:windowStart till:windowEnd] )
                 [resultMeetups addObject:meetup];
     }
     
@@ -430,33 +486,32 @@ static CGRect oldMapFrame;
     NSUInteger n = 0;
     if ( ! sortedMeetups )
         sortedMeetups = [self getMeetupsByDate];
-    if ( sortedMeetups.count == 0 )
-        return 0;
-    for (Meetup *meetup in sortedMeetups)
-    {
-        if (meetup.meetupType == TYPE_MEETUP) {
-            MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
-            [_meetupAnnotations addObject:ann];
-            
-            // Creating zoom for the map
-            if ( geoPointUser && [globalData isAttendingMeetup:meetup.strId])
-            {
-                PFGeoPoint* pt = meetup.location;
-                if(pt.latitude > upper.latitude) upper.latitude = pt.latitude;
-                if(pt.latitude < lower.latitude) lower.latitude = pt.latitude;
-                if(pt.longitude > upper.longitude) upper.longitude = pt.longitude;
-                if(pt.longitude < lower.longitude) lower.longitude = pt.longitude;
-                bZoom = TRUE;
+    for ( NSMutableArray* meetupsByDay in sortedMeetups )
+        for (Meetup *meetup in meetupsByDay)
+        {
+            if (meetup.meetupType == TYPE_MEETUP) {
+                MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
+                [_meetupAnnotations addObject:ann];
+                
+                // Creating zoom for the map
+                if ( geoPointUser && [globalData isAttendingMeetup:meetup.strId])
+                {
+                    PFGeoPoint* pt = meetup.location;
+                    if(pt.latitude > upper.latitude) upper.latitude = pt.latitude;
+                    if(pt.latitude < lower.latitude) lower.latitude = pt.latitude;
+                    if(pt.longitude > upper.longitude) upper.longitude = pt.longitude;
+                    if(pt.longitude < lower.longitude) lower.longitude = pt.longitude;
+                    bZoom = TRUE;
+                }
+            }else{ // Warning! Now getMeetupsByDate will never return any thread at all!
+                ThreadAnnotation *ann = [[ThreadAnnotation alloc] initWithMeetup:meetup];
+                [_threadAnnotations addObject:ann];
             }
-        }else{ // Warning! Now getMeetupsByDate will never return any thread at all!
-            ThreadAnnotation *ann = [[ThreadAnnotation alloc] initWithMeetup:meetup];
-            [_threadAnnotations addObject:ann];
+            
+            n++;
+            if ( n >= l )
+                break;
         }
-        
-        n++;
-        if ( n >= l )
-            break;
-    }
     
     // Default map location
     if ( geoPointUser && bFirstZoom && bZoom )
@@ -513,7 +568,7 @@ static CGRect oldMapFrame;
     NSUInteger nLimit = MAX_ANNOTATIONS_ON_THE_MAP;
     
 #ifndef TARGET_S2C
-    if ( daySelector == 0 ) // Show people only for "today" selection
+    //if ( daySelector == 0 ) // Show people only for "today" selection
     {
         nLimit -= [self loadPersonAnnotations:CIRCLE_FB limit:nLimit];
         nLimit -= [self loadPersonAnnotations:CIRCLE_2O limit:nLimit];
@@ -718,7 +773,8 @@ static CGRect oldMapFrame;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    Meetup* meetup = sortedMeetups[indexPath.row];
+    NSMutableArray* meetupsByDay = sortedMeetups[indexPath.section];
+    Meetup* meetup = meetupsByDay[indexPath.row];
     if ( meetup.strFeatured )
         return 92;
     else
@@ -727,24 +783,52 @@ static CGRect oldMapFrame;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)aTableView {
     
-    return 1;
+    if ( [globalData getMeetups].count == 0 )
+        return 1;
+    return MAX_DAYS_TILL_MEETUP;
 }
 
 - (NSInteger)tableView:(UITableView *)aTableView numberOfRowsInSection:(NSInteger)section {
 	
-    return sortedMeetups.count;
+    NSMutableArray* meetupsByDay = sortedMeetups[section];
+    return meetupsByDay.count;
 }
 
 - (NSString *)tableView:(UITableView *)aTableView titleForHeaderInSection:(NSInteger)section {
 
-    return @"Upcoming meetups";
+    if ( [globalData getMeetups].count == 0 )
+        return @"Loading events...";
+    
+    NSMutableArray* meetupsByDay = sortedMeetups[section];
+    if ( meetupsByDay.count == 0 )
+        return nil;
+    
+    // Texts for buttons
+    NSDateFormatter* theDateFormatter = [[NSDateFormatter alloc] init];
+    [theDateFormatter setFormatterBehavior:NSDateFormatterBehavior10_4];
+    [theDateFormatter setDateFormat:@"EEEE"];
+    NSDateFormatter* theDateFormatter2 = [[NSDateFormatter alloc] init];
+    [theDateFormatter2 setFormatterBehavior:NSDateFormatterBehavior10_4];
+    [theDateFormatter2 setDateFormat:@"dd MMM"];
+    dayButtonLabels = [NSMutableArray arrayWithCapacity:9];
+    selectionChoices = [NSMutableArray arrayWithCapacity:9];
+    
+    NSDate* day = [NSDate dateWithTimeIntervalSinceNow:86400*section];
+    NSString *weekDay = [theDateFormatter stringFromDate:day];
+    if ( section == 0 )
+        weekDay = @"Today";
+    if ( section == 1 )
+        weekDay = @"Tomorrow";
+    
+    return [NSString stringWithFormat:@"%@, %@", weekDay, [theDateFormatter2 stringFromDate:day]];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath  {
     
 	MeetupAnnotationCell *meetupCell = (MeetupAnnotationCell *)[table dequeueReusableCellWithIdentifier:@"MeetupCell"];
 	
-    [meetupCell initWithMeetup:sortedMeetups[indexPath.row]];
+    NSMutableArray* meetupsByDay = sortedMeetups[indexPath.section];
+    [meetupCell initWithMeetup:meetupsByDay[indexPath.row]];
     
 	return meetupCell;
 }
@@ -757,7 +841,10 @@ static CGRect oldMapFrame;
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     MeetupViewController *meetupController = [[MeetupViewController alloc] initWithNibName:@"MeetupView" bundle:nil];
-    [meetupController setMeetup:sortedMeetups[indexPath.row]];
+    
+    NSMutableArray* meetupsByDay = sortedMeetups[indexPath.section];
+    [meetupController setMeetup:meetupsByDay[indexPath.row]];
+    
     [self.navigationController pushViewController:meetupController animated:YES];
     
 	[table deselectRowAtIndexPath:indexPath animated:YES];

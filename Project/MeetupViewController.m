@@ -77,7 +77,7 @@
         [actualButtons addObject:declineBtn];
     if ( [buttons[MB_LEAVE] boolValue] )
         [actualButtons addObject:leaveBtn];
-    if ( [buttons[MB_CALENDAR] boolValue] && ! [meetup addedToCalendar] )
+    if ( [buttons[MB_CALENDAR] boolValue] && ! [meetup addedToCalendar] && ! [buttons[MB_FEATURE] boolValue] ) // to open some space
         [actualButtons addObject:calendarBtn];
     if ( [buttons[MB_INVITE] boolValue] )
         [actualButtons addObject:inviteBtn];
@@ -118,10 +118,10 @@
 - (void)joinClicked
 {
     // Change and save all the important data
-    [globalData attendMeetup:meetup addComment:TRUE];
+    [globalData attendMeetup:meetup addComment:TRUE target:self selector:@selector(reloadAnnotation)];
     
     // Add comment to the text field
-    [self addComment:@"    You joined the meetup!\n"];
+    [self addComment:@"    You joined the event!\n"];
     
     // If it was opened from invite
     if ( invite )
@@ -138,7 +138,6 @@
             buttons[MB_INVITE] = [NSNumber numberWithBool:TRUE];
         [self updateButtons];
     }
-    [self reloadAnnotation];
     
     // Ask to add to calendar
     //[meetup addToCalendar];
@@ -175,7 +174,7 @@
 
 - (void)leaveClicked
 {
-    UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Really?" message:@"You won't be able to join this meetup again (to eliminate ambiguity)!" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes",nil];
+    UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Really?" message:@"You won't be able to join this event again (to eliminate ambiguity)!" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes",nil];
     message.tag = 3; // Trinity force
     [message show];
     return;
@@ -183,7 +182,7 @@
 
 - (void)cancelClicked
 {
-    UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Are you serious?" message:@"If you cancel this meetup, nobody will be able to find it and join. This change is irreversible." delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes",nil];
+    UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Are you serious?" message:@"If you cancel this event, nobody will be able to find it and join. This change is irreversible." delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes",nil];
     message.tag = 7; // Lucky one
     [message show];
     return;
@@ -198,19 +197,16 @@
     if ( alertView.tag == 3 ) // Leave
     {
         // Leaving
-        [globalData unattendMeetup:meetup];
+        [globalData unattendMeetup:meetup target:self selector:@selector(reloadAnnotation)];
         
         // Add comment to the text field
-        [self addComment:@"    You just left the meetup!\n"];
+        [self addComment:@"    You just left the event!\n"];
         
         // Buttons
         [self flushButtons];
         buttons[MB_SUBSCRIBE] = [NSNumber numberWithBool:TRUE];
         buttons[MB_INVITE] = [NSNumber numberWithBool:TRUE];
-        [self updateButtons];
-        
-        // Annotation
-        [self reloadAnnotation];
+        [self updateButtons];        
     }
     
     if ( alertView.tag == 7 ) // Cancel
@@ -219,7 +215,7 @@
         [globalData cancelMeetup:meetup];
         
         // Add comment to the text field
-        [self addComment:@"    You just canceled the meetup!\n"];
+        [self addComment:@"    You just canceled the event!\n"];
         
         // Buttons
         [self flushButtons];

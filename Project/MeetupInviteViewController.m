@@ -40,7 +40,8 @@
     // Creating invites
     if ( meetup )
         for ( Person* person in [self selectedPersons])
-            [globalData createInvite:meetup stringTo:person.strId];
+            if ( ! [meetup hasAttendee:person.strId] )
+                [globalData createInvite:meetup stringTo:person.strId];
     
     // Facebook invites
     NSMutableString* strInvitations = [NSMutableString stringWithString:@""];

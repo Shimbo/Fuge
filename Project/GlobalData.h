@@ -64,8 +64,8 @@ typedef  enum EMeetupCommentType
     COMMENT_PLAIN   = 0,
     COMMENT_CREATED = 1,
     COMMENT_SAVED   = 2,
-    COMMENT_JOINED  = 3,
-    COMMENT_LEFT    = 4,
+    COMMENT_JOINED  = 3,    // these two types are depricated
+    COMMENT_LEFT    = 4,    // these two types are depricated
     COMMENT_CANCELED = 5
 }CommentType;
 
@@ -132,8 +132,8 @@ typedef  enum EMeetupCommentType
 //- (Boolean) isPersonSeen:(NSString*)strId;
 - (Boolean) setUserPosition:(PFGeoPoint*)geoPoint;
 - (void) removeUserFromNew:(NSString*)strUser;
-- (void) attendMeetup:(Meetup*)meetup addComment:(Boolean)addComment;
-- (void) unattendMeetup:(Meetup*)meetup;
+- (void) attendMeetup:(Meetup*)meetup addComment:(Boolean)addComment target:(id)target selector:(SEL)callback;
+- (void) unattendMeetup:(Meetup*)meetup target:(id)target selector:(SEL)callback;
 - (void) cancelMeetup:(Meetup*)meetup;
 - (Boolean) isAttendingMeetup:(NSString*)strThread;
 - (Boolean) hasLeftMeetup:(NSString*)strMeetup;

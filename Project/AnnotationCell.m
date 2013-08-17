@@ -41,6 +41,7 @@
     self.title.text = meetup.strSubject;
     self.subtitle.text = [NSString stringWithFormat:@"By: %@", meetup.strOwnerName];
     self.featured.text = meetup.strFeatured;
+    self.featuredImage.hidden = meetup.strFeatured ? FALSE : TRUE;
     
     NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
     [formatter setDateStyle:NSDateFormatterMediumStyle];

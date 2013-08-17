@@ -42,6 +42,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *distance;
 @property (strong, nonatomic) IBOutlet MeetupPin *annotation;
 @property (strong, nonatomic) IBOutlet UILabel *featured;
+@property (strong, nonatomic) IBOutlet UIImageView *featuredImage;
 
 -(void)initWithMeetup:(Meetup*)meetup;
 

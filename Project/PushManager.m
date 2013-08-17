@@ -172,7 +172,7 @@ static PushManager *sharedInstance = nil;
     PFPush *push = [[PFPush alloc] init];
     
     NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
-                          @"Meetup canceled!", @"title",
+                          @"Event canceled!", @"title",
                           strText,             @"alert",
                           meetupId,            @"meetup",
                           @"Increment",        @"badge",
@@ -218,10 +218,10 @@ static PushManager *sharedInstance = nil;
     NSString* strInviteChannel =[NSString stringWithFormat:@"fb%@_invite", userId];
     NSString* strText = [NSString stringWithFormat:@"%@ invited you to %@", [globalVariables shortUserName], meetup.strSubject];
     NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
-                          @"New comment!",  @"title",
-                          strText,          @"alert",
-                          meetupId,         @"meetup",
-                          @"Increment",     @"badge",
+                          @"Invite received!",  @"title",
+                          strText,              @"alert",
+                          meetupId,             @"meetup",
+                          @"Increment",         @"badge",
                           nil];
     
     PFPush *push = [[PFPush alloc] init];
@@ -253,8 +253,8 @@ static PushManager *sharedInstance = nil;
     NSString* strTitle;
     if ( meetup.meetupType == TYPE_MEETUP )
     {
-        strText = [NSString stringWithFormat:@"%@ just created a meetup nearby: %@", [globalVariables shortUserName], meetup.strSubject];
-        strTitle = @"New meetup!";
+        strText = [NSString stringWithFormat:@"%@ just created an event nearby: %@", [globalVariables shortUserName], meetup.strSubject];
+        strTitle = @"New event!";
     }
     else
     {
