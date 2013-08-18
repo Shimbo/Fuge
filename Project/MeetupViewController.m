@@ -322,6 +322,9 @@
                     
                     if ( invite )   // Window opened from invite
                         buttons[MB_DECLINE] = buttonOn;
+                    
+                    if ( [globalData isSubscribedToThread:meetup.strId] )
+                        buttons[MB_SUBSCRIBE] = buttonOn;
                 }
                 else    // Attending already
                 {

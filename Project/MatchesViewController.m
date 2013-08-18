@@ -195,7 +195,7 @@ NSInteger compareDistance(id id1, id id2, void *context)
         if ( person.idCircle == CIRCLE_FBOTHERS )
         {
             if ( indexPath.section != 3 )
-                [person showInviteDialog];
+                [fbLoader showInviteDialog:[NSArray arrayWithObject:person.strId] message:NSLocalizedString(@"FB_INVITE_MESSAGE_SIMPLE",nil)];
             else if ( bIsAdmin )
                 [person openProfileInBrowser];
         }

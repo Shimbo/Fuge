@@ -349,6 +349,7 @@
         [meetupData save:&error];
         if ( error.code != 0 )
         {
+            NSLog(@"Meetup save error: %@", error);
             UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"No internet" message:@"Save failed, check your connection and try again." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
             [alert show];
             return false;
@@ -363,6 +364,7 @@
         [meetupData saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if (error)
             {
+                NSLog(@"Meetup save error: %@", error);
                 UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"No internet" message:@"Be aware: the meetup or thread you recently edited wasn't saved due to lack of connection!" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
                 [alert show];
             }

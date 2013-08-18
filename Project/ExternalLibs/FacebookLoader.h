@@ -31,4 +31,7 @@
 - (NSString*)getSmallAvatarUrl:(NSString*)fbId;
 - (NSString*)getLargeAvatarUrl:(NSString*)fbId;
 
+// Virals
+- (void)showInviteDialog:(NSArray*)strIds message:(NSString*)message;
+
 @end

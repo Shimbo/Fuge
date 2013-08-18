@@ -14,6 +14,7 @@
 #import "PersonInviteCell.h"
 #import "MeetupInviteSearch.h"
 #import "PushManager.h"
+#import "FacebookLoader.h"
 
 @implementation MeetupInviteViewController
 - (id)init
@@ -44,17 +45,12 @@
                 [globalData createInvite:meetup stringTo:person.strId];
     
     // Facebook invites
-    NSMutableString* strInvitations = [NSMutableString stringWithString:@""];
+    NSMutableArray* arrayIds = [NSMutableArray arrayWithCapacity:10];
     for ( Person* person in [self selectedPersons])
         if ( person.idCircle == CIRCLE_FBOTHERS )
-            [strInvitations appendFormat:@"%@,", person.strId];
-    if ( strInvitations.length > 0 )
-    {
-        [strInvitations substringToIndex:strInvitations.length-2];
-        NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithObjectsAndKeys:strInvitations, @"to", nil];
-        NSString* invitationString = [NSString stringWithFormat:NSLocalizedString(@"FB_INVITE_MESSAGE_MEETUP",nil), meetup.strSubject ];
-        [FBWebDialogs presentRequestsDialogModallyWithSession:nil message:invitationString title:nil parameters:params handler:nil];
-    }
+            [arrayIds addObject:person.strId];
+    NSString* invitationString = [NSString stringWithFormat:NSLocalizedString(@"FB_INVITE_MESSAGE_MEETUP",nil), meetup.strSubject ];
+    [fbLoader showInviteDialog:arrayIds message:invitationString];
     
     // Saving recent
     NSMutableArray* arrayRecentIds = [[NSMutableArray alloc] init];

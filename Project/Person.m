@@ -192,12 +192,6 @@
 }
 #endif
 
--(void)showInviteDialog
-{
-    NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithObjectsAndKeys: strId, @"to", nil];
-    [FBWebDialogs presentRequestsDialogModallyWithSession:nil message:NSLocalizedString(@"FB_INVITE_MESSAGE_SIMPLE",nil) title:nil parameters:params handler:nil];
-}
-
 -(void)openProfileInBrowser
 {
 #ifdef TARGET_FUGE

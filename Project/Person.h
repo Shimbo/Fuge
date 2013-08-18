@@ -78,7 +78,6 @@
 -(NSString*)industryInfo;
 #endif
 
--(void)showInviteDialog;
 -(void)openProfileInBrowser;
 
 // Matching

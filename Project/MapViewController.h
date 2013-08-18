@@ -28,15 +28,15 @@
     
     NSArray*             sortedMeetups;
 
-    NSUInteger daySelector;
+    //NSUInteger daySelector;
     UIBarButtonItem*     daySelectButton;
     UIBarButtonItem*     newMeetupButton;
     UIBarButtonItem*     closeButton;
     UIPopoverController* popover;
     UIActionSheet*       actionSheet;
     
-    NSMutableArray* dayButtonLabels;
-    NSMutableArray* selectionChoices;
+    //NSMutableArray* dayButtonLabels;
+    //NSMutableArray* selectionChoices;
 }
 
 @property (nonatomic, retain) IBOutlet REVClusterMapView *mapView;

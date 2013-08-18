@@ -567,11 +567,11 @@ NSInteger sortByName(id num1, id num2, void *context)
     NSDate* dateToHide = [NSDate dateWithTimeIntervalSinceNow:-(NSTimeInterval)MAX_SECONDS_FROM_PERSON_LOGIN];
     [friendAnyQuery whereKey:@"updatedAt" greaterThan:dateToHide];
     
-    NSMutableArray *loadedIds = [pCurrentUser objectForKey:@"fbFriends2O"];
-    if ( loadedIds && [pCurrentUser objectForKey:@"fbFriends2O"] )
-        [loadedIds addObjectsFromArray:[pCurrentUser objectForKey:@"fbFriends2O"]];
-    if ( loadedIds )
-        [friendAnyQuery whereKey:@"fbId" notContainedIn:loadedIds];
+    //NSMutableArray *loadedIds = [pCurrentUser objectForKey:@"fbFriends2O"];
+    //if ( loadedIds && [pCurrentUser objectForKey:@"fbFriends2O"] )
+    //    [loadedIds addObjectsFromArray:[pCurrentUser objectForKey:@"fbFriends2O"]];
+    //if ( loadedIds )
+    //    [friendAnyQuery whereKey:@"fbId" notContainedIn:loadedIds];
     
     // Actual load
     [friendAnyQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
@@ -937,6 +937,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [invite saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if ( error )
         {
+            NSLog(@"Invite save error: %@", error);
             UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"No connection" message:@"One of the recent invites was not sent, check your internet connection or try again later." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [errorAlert show];
         }

@@ -34,7 +34,7 @@
 
 @synthesize mapView, tableView;
 
-static Boolean bFirstZoom = true;
+//static Boolean bFirstZoom = true;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -60,9 +60,9 @@ static Boolean bFirstZoom = true;
                                                 selector:@selector(reloadStatusChanged)
                                                 name:kAppRestored
                                                 object:nil];
-        SEL focusMapOnMeetup = NSSelectorFromString(@"focusMapOnMeetup:");  // To avoid stupid warning
+        //SEL focusMapOnMeetup = NSSelectorFromString(@"focusMapOnUserAndMeetups");  // To avoid stupid warning
         [[NSNotificationCenter defaultCenter]addObserver:self
-                                                selector:focusMapOnMeetup
+                                                selector:@selector(reloadStatusChanged)
                                                 name:kNewMeetupCreated
                                                 object:nil];
     }
@@ -155,6 +155,9 @@ static Boolean bFirstZoom = true;
     
     // Resize scroll
     [self resizeScroll];
+    
+    // Focus map
+    [self focusMapOnUserAndMeetups];
 }
 
 #pragma mark -
@@ -197,17 +200,17 @@ static CGRect oldMapFrame;
     CLLocation* locationUser = [[CLLocation alloc] initWithLatitude:geoPointUser.latitude longitude:geoPointUser.longitude];
     _userLocation.coordinate = locationUser.coordinate;
     MKCoordinateRegion region = { {0.0, 0.0 }, { 0.0, 0.0 } };
-    region.center.latitude = locationUser.coordinate.latitude;//..mapView.userLocation.location.coordinate.latitude;
-    region.center.longitude = locationUser.coordinate.longitude;//mapView.userLocation.location.coordinate.longitude;
+    region.center.latitude = locationUser.coordinate.latitude;
+    region.center.longitude = locationUser.coordinate.longitude;
     region.span.longitudeDelta = 0.05f;
     region.span.latitudeDelta = 0.05f;
     [mapView setRegion:region animated:YES];
 }
 
-- (void) focusMapOnMeetup:(NSNotification *)notification
+/*- (void) focusMapOnMeetup:(NSNotification *)notification
 {
-    daySelector = 8;
-    daySelectButton.title = dayButtonLabels[ daySelector ];
+    //daySelector = 8;
+    //daySelectButton.title = dayButtonLabels[ daySelector ];
     [self reloadStatusChanged];
     
     Meetup *meetup = [[notification userInfo] objectForKey:@"meetup"];
@@ -217,6 +220,61 @@ static CGRect oldMapFrame;
     region.span.longitudeDelta = 0.05f;
     region.span.latitudeDelta = 0.05f;
     [mapView setRegion:region animated:YES];
+}*/
+
+- (void) focusMapOnUserAndMeetups
+{
+    PFGeoPoint *geoPointUser = [pCurrentUser objectForKey:@"location"];
+    if ( ! geoPointUser )
+        return;
+    
+    MKCoordinateRegion region = mapView.region;
+    Boolean bZoom = FALSE;
+    
+    CLLocationCoordinate2D upper, lower;
+    upper = lower = CLLocationCoordinate2DMake(geoPointUser.latitude, geoPointUser.longitude);
+    
+    // Calculating zoom
+    if ( ! sortedMeetups )
+        sortedMeetups = [self getMeetupsByDate];
+    for ( NSMutableArray* meetupsByDay in sortedMeetups )
+        for (Meetup *meetup in meetupsByDay)
+        {
+            if (meetup.meetupType == TYPE_MEETUP) {
+
+                // Creating zoom for the map
+                if ( ! meetup.isCanceled && [globalData isAttendingMeetup:meetup.strId])
+                {
+                    PFGeoPoint* pt = meetup.location;
+                    if(pt.latitude > upper.latitude) upper.latitude = pt.latitude;
+                    if(pt.latitude < lower.latitude) lower.latitude = pt.latitude;
+                    if(pt.longitude > upper.longitude) upper.longitude = pt.longitude;
+                    if(pt.longitude < lower.longitude) lower.longitude = pt.longitude;
+                    bZoom = TRUE;
+                }
+            }
+        }
+    
+    // Default map location
+    if ( bZoom )
+    {
+        MKCoordinateSpan locationSpan;
+        locationSpan.latitudeDelta = upper.latitude - lower.latitude;
+        locationSpan.longitudeDelta = upper.longitude - lower.longitude;
+        CLLocationCoordinate2D locationCenter;
+        locationCenter.latitude = (upper.latitude + lower.latitude) / 2;
+        locationCenter.longitude = (upper.longitude + lower.longitude) / 2;
+        
+        region = MKCoordinateRegionMake(locationCenter, locationSpan);
+        region.span.latitudeDelta *= 1.1f;
+        region.span.longitudeDelta *= 1.1f;
+        if ( region.span.longitudeDelta < 0.05f || region.span.latitudeDelta < 0.05f )
+        {
+            region.span.longitudeDelta = 0.05f;
+            region.span.latitudeDelta = 0.05f;
+        }
+        [mapView setRegion:region animated:YES];
+    }
 }
 
 - (void)addCurrentPerson
@@ -228,7 +286,7 @@ static CGRect oldMapFrame;
         _userLocation.subtitle = current.strStatus;
     else
         _userLocation.subtitle = @"This is you";
-    [self focusMapOnUser];
+    [self focusMapOnUserAndMeetups];
 }
 
 -(void)joinPersonsAndMeetups{
@@ -275,7 +333,7 @@ static CGRect oldMapFrame;
 #pragma mark -
 #pragma mark Main Cycle
 
-- (void)recalcDateSelectionTexts
+/*- (void)recalcDateSelectionTexts
 {
     // Texts for buttons
     NSDateFormatter* theDateFormatter = [[NSDateFormatter alloc] init];
@@ -304,7 +362,7 @@ static CGRect oldMapFrame;
     [selectionChoices addObject:@"All month"];
     
     daySelectButton.title = dayButtonLabels[ daySelector ];
-}
+}*/
 
 - (void)viewDidLoad
 {
@@ -332,7 +390,7 @@ static CGRect oldMapFrame;
     closeButton = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStyleBordered target:self action:@selector(closeMap)];
     
 //#ifdef TARGET_S2C
-    daySelector = 8;
+    //daySelector = 8;
 //#endif
     
     // Navigation bar: date selector
@@ -363,7 +421,7 @@ static CGRect oldMapFrame;
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [self recalcDateSelectionTexts];
+    //[self recalcDateSelectionTexts];
     [self reloadMapAnnotations];
     [tableView reloadData];
 }
@@ -424,7 +482,7 @@ static CGRect oldMapFrame;
 }
 
 
-- (NSArray*) getMeetupsByDate2
+/*- (NSArray*) getMeetupsByDate2
 {
     // Calculating date windows
     NSDate* windowStart = [NSDate date];
@@ -460,7 +518,8 @@ static CGRect oldMapFrame;
     for (Meetup *meetup in [globalData getMeetups])
     {
         if (meetup.meetupType == TYPE_MEETUP)
-            if ( ! meetup.hasPassed && /*! meetup.isCanceled &&*/ [meetup isWithinTimeFrame:windowStart till:windowEnd] )
+            if ( ! meetup.hasPassed && //! meetup.isCanceled &&
+                    [meetup isWithinTimeFrame:windowStart till:windowEnd] )
                 [resultMeetups addObject:meetup];
     }
     
@@ -470,18 +529,10 @@ static CGRect oldMapFrame;
     }];
     
     return resultMeetups;
-}
+}*/
 
 - (NSUInteger)loadMeetupAndThreadAnnotations:(NSInteger)l
 {
-    PFGeoPoint *geoPointUser = [pCurrentUser objectForKey:@"location"];
-    MKCoordinateRegion region = mapView.region;
-    Boolean bZoom = FALSE;
-    
-    CLLocationCoordinate2D upper, lower;
-    if ( geoPointUser )
-        upper = lower = CLLocationCoordinate2DMake(geoPointUser.latitude, geoPointUser.longitude);
-    
     // Loading annotations
     NSUInteger n = 0;
     if ( ! sortedMeetups )
@@ -492,17 +543,6 @@ static CGRect oldMapFrame;
             if (meetup.meetupType == TYPE_MEETUP) {
                 MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
                 [_meetupAnnotations addObject:ann];
-                
-                // Creating zoom for the map
-                if ( geoPointUser && [globalData isAttendingMeetup:meetup.strId])
-                {
-                    PFGeoPoint* pt = meetup.location;
-                    if(pt.latitude > upper.latitude) upper.latitude = pt.latitude;
-                    if(pt.latitude < lower.latitude) lower.latitude = pt.latitude;
-                    if(pt.longitude > upper.longitude) upper.longitude = pt.longitude;
-                    if(pt.longitude < lower.longitude) lower.longitude = pt.longitude;
-                    bZoom = TRUE;
-                }
             }else{ // Warning! Now getMeetupsByDate will never return any thread at all!
                 ThreadAnnotation *ann = [[ThreadAnnotation alloc] initWithMeetup:meetup];
                 [_threadAnnotations addObject:ann];
@@ -513,23 +553,6 @@ static CGRect oldMapFrame;
                 break;
         }
     
-    // Default map location
-    if ( geoPointUser && bFirstZoom && bZoom )
-    {
-        MKCoordinateSpan locationSpan;
-        locationSpan.latitudeDelta = upper.latitude - lower.latitude;
-        locationSpan.longitudeDelta = upper.longitude - lower.longitude;
-        CLLocationCoordinate2D locationCenter;
-        locationCenter.latitude = (upper.latitude + lower.latitude) / 2;
-        locationCenter.longitude = (upper.longitude + lower.longitude) / 2;
-        
-        region = MKCoordinateRegionMake(locationCenter, locationSpan);
-        region.span.latitudeDelta *= 1.1f;
-        region.span.longitudeDelta *= 1.1f;
-        [mapView setRegion:region animated:YES];
-    }
-    
-    bFirstZoom = false;
     return n;
 }
 
@@ -702,7 +725,7 @@ static CGRect oldMapFrame;
 
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
     
-    return selectionChoices[row];
+    return @"None";//selectionChoices[row];
     
 }
 
@@ -710,9 +733,9 @@ static CGRect oldMapFrame;
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
     
-    daySelectButton.title = dayButtonLabels[ row ];
-    daySelector = row;
-    [self reloadStatusChanged];
+    //daySelectButton.title = dayButtonLabels[ row ];
+    //daySelector = row;
+    //[self reloadStatusChanged];
 }
 
 - (void) dateSelectorClicked {
@@ -723,7 +746,7 @@ static CGRect oldMapFrame;
     pickerView.showsSelectionIndicator = YES;
     pickerView.dataSource = self;
     pickerView.delegate = self;
-    [pickerView selectRow:daySelector inComponent:0 animated:NO];
+    //[pickerView selectRow:daySelector inComponent:0 animated:NO];
     
     // Close button
     UISegmentedControl *closeBtn = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"Close"]];
@@ -810,8 +833,8 @@ static CGRect oldMapFrame;
     NSDateFormatter* theDateFormatter2 = [[NSDateFormatter alloc] init];
     [theDateFormatter2 setFormatterBehavior:NSDateFormatterBehavior10_4];
     [theDateFormatter2 setDateFormat:@"dd MMM"];
-    dayButtonLabels = [NSMutableArray arrayWithCapacity:9];
-    selectionChoices = [NSMutableArray arrayWithCapacity:9];
+    //dayButtonLabels = [NSMutableArray arrayWithCapacity:9];
+    //selectionChoices = [NSMutableArray arrayWithCapacity:9];
     
     NSDate* day = [NSDate dateWithTimeIntervalSinceNow:86400*section];
     NSString *weekDay = [theDateFormatter stringFromDate:day];

@@ -241,4 +241,20 @@ static FacebookLoader *sharedInstance = nil;
     return [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", fbId];
 }
 
+- (void)showInviteDialog:(NSArray*)strIds message:(NSString*)message
+{
+    if ( ! strIds || strIds.count == 0 )
+        return;
+    
+    NSMutableString* strInvitations = [NSMutableString stringWithString:@""];
+    for ( NSString* strId in strIds )
+        [strInvitations appendFormat:@"%@,", strId];
+    if ( strInvitations.length > 0 )
+    {
+        [strInvitations substringToIndex:strInvitations.length-2];
+        NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithObjectsAndKeys:strInvitations, @"to", nil];
+        [FBWebDialogs presentRequestsDialogModallyWithSession:nil message:message title:nil parameters:params handler:nil];
+    }
+}
+
 @end

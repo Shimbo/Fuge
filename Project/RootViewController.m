@@ -15,7 +15,7 @@
 #import "Circle.h"
 #import "GlobalVariables.h"
 #import "GlobalData.h"
-
+#import "FacebookLoader.h"
 #import "AppDelegate.h"
 #import "AsyncImageView.h"
 
@@ -403,7 +403,7 @@
     // Empty profile, should open invite window
     if ( person.idCircle == CIRCLE_FBOTHERS ) {
         
-        [person showInviteDialog];
+        [fbLoader showInviteDialog:[NSArray arrayWithObject:person.strId] message:NSLocalizedString(@"FB_INVITE_MESSAGE_SIMPLE",nil)];
     }
     else {
         UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
