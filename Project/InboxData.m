@@ -15,19 +15,28 @@
 #pragma mark -
 #pragma mark Main
 
-- (void)reloadInboxInBackground
+- (void)reloadInboxInBackground:(NSUInteger)inboxSection
 {
     nInboxLoadingStage = 0;
     nLoadStatusInbox = LOAD_STARTED;
     
     // Invites
-    [self loadInvites];
+    if ( inboxSection == INBOX_ALL || inboxSection == INBOX_INVITES )
+        [self loadInvites];
+    else
+        [self incrementInboxLoadingStage];
     
     // Unread PMs
-    [self loadMessages];
+    if ( inboxSection == INBOX_ALL || inboxSection == INBOX_MESSAGES )
+        [self loadMessages];
+    else
+        [self incrementInboxLoadingStage];
     
     // Unread comments
-    [self loadComments];
+    if ( inboxSection == INBOX_ALL || inboxSection == INBOX_COMMENTS )
+        [self loadComments];
+    else
+        [self incrementInboxLoadingStage];
 }
 
 NSInteger sort2(id item1, id item2, void *context)

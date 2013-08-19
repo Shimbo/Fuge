@@ -32,6 +32,17 @@ static NSString *const kAppRestored = @"kAppRestored";
 static NSString *const kNewMeetupCreated = @"kNewMeetupCreated";
 static NSString *const kInboxUpdated = @"kInboxUpdated";
 
+static NSString *const kPushReceivedNewFriend = @"kPushReceivedNewFriend";
+static NSString *const kPushReceivedNewMessage = @"kPushReceivedNewMessage";
+static NSString *const kPushReceivedNewComment = @"kPushReceivedNewComment";
+static NSString *const kPushReceivedNewInvite = @"kPushReceivedNewInvite";
+static NSString *const kPushReceivedNewMeetup = @"kPushReceivedNewMeetup";
+// Following are not used yet
+static NSString *const kPushReceivedMeetupAttendee = @"kPushReceivedMeetupAttendee";
+static NSString *const kPushReceivedMeetupLeaver = @"kPushReceivedMeetupLeaver";
+static NSString *const kPushReceivedMeetupCanceled = @"kPushReceivedMeetupCanceled";
+static NSString *const kPushReceivedMeetupChanged = @"kPushReceivedMeetupChanged";
+
 #define globalData [GlobalData sharedInstance]
 
 typedef enum ELoadingSection
@@ -41,6 +52,14 @@ typedef enum ELoadingSection
     LOADING_CIRCLES     = 2,
     LOADING_INBOX       = 3
 }LoadingSection;
+
+typedef enum EInboxLoadingSection
+{
+    INBOX_ALL           = 0,
+    INBOX_INVITES       = 1,
+    INBOX_MESSAGES      = 2,
+    INBOX_COMMENTS      = 3
+}InboxLoadingSection;
 
 typedef enum ELoadingResult
 {
@@ -70,7 +89,7 @@ typedef  enum EMeetupCommentType
 }CommentType;
 
 #define INBOX_LOADED    3   // Number of stages in loading
-#define MAP_LOADED      2
+#define MAP_LOADED      3
 #define CIRCLES_LOADED  2
 
 @interface GlobalData : NSObject
@@ -119,7 +138,7 @@ typedef  enum EMeetupCommentType
 
 // Global data, loading in foreground
 - (void)loadData;
-- (void)reloadFriendsInBackground;
+- (void)reloadFriendsInBackground:(Boolean)loadRandom;
 - (void)reloadMapInfoInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast;
 - (NSUInteger)getLoadingStatus:(NSUInteger)nStage;
 
@@ -153,7 +172,7 @@ typedef  enum EMeetupCommentType
 
 @interface GlobalData (Inbox)
     // Inbox data, loading in background
-- (void)reloadInboxInBackground;
+- (void)reloadInboxInBackground:(NSUInteger)inboxSection;
 - (NSMutableDictionary*) getInbox;
 - (void) incrementInboxLoadingStage;
     // Inbox utils

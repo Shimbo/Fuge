@@ -25,6 +25,11 @@
         self.title = NSLocalizedString(@"", @"");
         messagesCount = 0;
         profileMode = PROFILE_MODE_MESSAGES;
+        
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(messageReceived:)
+                                                name:kPushReceivedNewMessage
+                                                object:nil];
     }
     return self;
 }
@@ -85,7 +90,7 @@
     
     // Scrolling down
     if ( profileMode == PROFILE_MODE_MESSAGES )
-        [scrollView scrollRectToVisible:CGRectMake(0, scrollView.frame.size.height-1, scrollView.frame.size.width, scrollView.frame.size.height) animated:TRUE];
+        [scrollView scrollRectToVisible:CGRectMake(0, scrollView.contentSize.height-1, scrollView.frame.size.width, scrollView.contentSize.height) animated:TRUE];
     else
         [scrollView scrollRectToVisible:CGRectMake(0, 0, scrollView.frame.size.width, 1) animated:TRUE];
 }
@@ -133,6 +138,13 @@
     }
     
     return YES;
+}
+
+- (void)messageReceived:(NSNotification *)notification
+{
+    NSString* userFrom = [notification object];
+    if ( userFrom && [userFrom compare:personThis.strId] == NSOrderedSame )
+        [globalData loadMessageThread:personThis target:self selector:@selector(messagesLoaded:error:)];
 }
 
 - (void)viewDidLoad

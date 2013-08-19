@@ -215,7 +215,7 @@
 -(void)refreshView:(UIRefreshControl *)refreshControl {
 
     _tableView.userInteractionEnabled = FALSE;
-    [globalData reloadFriendsInBackground];
+    [globalData reloadFriendsInBackground:TRUE];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)aTableView {
@@ -253,17 +253,27 @@
 #ifdef TARGET_S2C
     return nil;
 #endif
-    Circle *circle;
 	switch ( sortingMode )
     {
         case SORTING_DISTANCE:
         case SORTING_RANK:
             if ( section == 0 )
-                return @"Nearby today";
+            {
+                if ( usersNearbyNow.count > 0 )
+                    return @"Nearby today";
+                return @"";
+            }
             if ( section == 1 )
-                return @"Recent";
-            circle = [globalData getCircle:CIRCLE_FBOTHERS];
-            return [Circle getCircleName:circle.idCircle];
+            {
+                if ( usersRecent.count > 0 )
+                    return @"Recent";
+                return @"";
+            }
+            if ( section == 2 )
+            {
+                if ( [globalData getCircle:CIRCLE_FBOTHERS].getPersons.count > 0 )
+                    return [Circle getCircleName:[globalData getCircle:CIRCLE_FBOTHERS].idCircle];
+            }
         default:    // ENGAGEMENT
             return @"Sorting by engagement";
     }

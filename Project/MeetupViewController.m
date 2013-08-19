@@ -27,6 +27,15 @@
         self.navigationItem.leftItemsSupplementBackButton = true;
         buttons = [[NSMutableArray alloc] init];
         [self flushButtons];
+        
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(commentReceived:)
+                                                name:kPushReceivedNewComment
+                                                object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(reloadMeetupData)
+                                                name:kLoadingMapComplete
+                                                object:nil];
     }
     return self;
 }
@@ -407,19 +416,15 @@
     [self initButtons];
 }
 
-- (void)viewDidAppear:(BOOL)animated
+- (void)commentReceived:(NSNotification *)notification {
+    
+    NSString* meetupId = [notification object];
+    if ( meetupId && [meetupId compare:meetup.strId] == NSOrderedSame )
+        [globalData loadCommentThread:meetup target:self selector:@selector(callbackCommentsLoaded:error:)];
+}
+
+- (void)reloadMeetupData
 {
-    [super viewDidAppear:animated];
-    
-    self.title = @"";
-    
-    containerView.userInteractionEnabled = FALSE;
-    
-    // Map
-#ifdef IOS7_ENABLE
-    mapView.rotateEnabled = FALSE;
-#endif
-    
     // Setting location and date labels
     [labelLocation setText:meetup.strVenue];
     
@@ -487,6 +492,25 @@
         comments.frame = textFrame;
     }
     
+    [self reloadAnnotation];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    self.title = @"";
+    
+    containerView.userInteractionEnabled = FALSE;
+    
+    // Map
+#ifdef IOS7_ENABLE
+    mapView.rotateEnabled = FALSE;
+#endif
+    
+    // Reload data
+    [self reloadMeetupData];
+    
     // Loading comments
     [globalData loadCommentThread:meetup target:self selector:@selector(callbackCommentsLoaded:error:)];
 }
@@ -522,6 +546,9 @@
     
     // Resizing scroll view
     [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width, comments.frame.origin.y + comments.frame.size.height)];
+    
+    // Scrolling down
+    [scrollView scrollRectToVisible:CGRectMake(0, scrollView.contentSize.height-1, scrollView.frame.size.width, scrollView.contentSize.height) animated:TRUE];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
@@ -627,9 +654,6 @@
     
     // Reseting text field
     [textView setText:@""];
-    
-    // Scrolling down
-    [scrollView scrollRectToVisible:CGRectMake(0, scrollView.frame.size.height-1, scrollView.frame.size.width, scrollView.frame.size.height) animated:TRUE];
 }
 
 -(void)send{

@@ -67,7 +67,8 @@ static PushManager *sharedInstance = nil;
     NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
                           @"New friend!",   @"title",
                           strPush,          @"alert",
-                          strCurrentUserId, @"user",
+                          @"newFriend",     @"type",
+                          strCurrentUserId, @"userId",
                           @"Increment",     @"badge",
                           nil];
     
@@ -88,7 +89,8 @@ static PushManager *sharedInstance = nil;
     NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
                           @"New message!",  @"title",
                           strPush,          @"alert",
-                          userId,           @"user",
+                          @"newMessage",    @"type",
+                          strCurrentUserId, @"userId",
                           @"Increment",     @"badge",
                           nil];
     
@@ -113,14 +115,15 @@ static PushManager *sharedInstance = nil;
     [pushQuery whereKey:@"ownerId" containedIn:meetup.attendees];
     [pushQuery whereKey:@"ownerId" notEqualTo:strCurrentUserId];
     
-    NSString* strText = [NSString stringWithFormat:@"%@ joined meetup %@", [globalVariables shortUserName], meetup.strSubject];
+    NSString* strText = [NSString stringWithFormat:@"%@ joined event %@", [globalVariables shortUserName], meetup.strSubject];
     
     PFPush *push = [[PFPush alloc] init];
     
     NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
                           @"New attendee!", @"title",
                           strText,          @"alert",
-                          meetupId,         @"meetup",
+                          @"meetupAttendee",@"type",
+                          meetupId,         @"meetupId",
                           @"Increment",     @"badge",
                           nil];
     
@@ -140,14 +143,15 @@ static PushManager *sharedInstance = nil;
     [pushQuery whereKey:@"ownerId" containedIn:meetup.attendees];
     [pushQuery whereKey:@"ownerId" notEqualTo:strCurrentUserId];
     
-    NSString* strText = [NSString stringWithFormat:@"%@ left meetup %@", [globalVariables shortUserName], meetup.strSubject];
+    NSString* strText = [NSString stringWithFormat:@"%@ left event %@", [globalVariables shortUserName], meetup.strSubject];
     
     PFPush *push = [[PFPush alloc] init];
     
     NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
                           @"Attendee left", @"title",
                           strText,          @"alert",
-                          meetupId,         @"meetup",
+                          @"meetupLeaver",  @"type",
+                          meetupId,         @"meetupId",
                           @"Increment",     @"badge",
                           nil];
     
@@ -167,14 +171,43 @@ static PushManager *sharedInstance = nil;
     [pushQuery whereKey:@"ownerId" containedIn:meetup.attendees];
     [pushQuery whereKey:@"ownerId" notEqualTo:strCurrentUserId];
     
-    NSString* strText = [NSString stringWithFormat:@"%@ canceled meetup %@", [globalVariables shortUserName], meetup.strSubject];
+    NSString* strText = [NSString stringWithFormat:@"%@ canceled event %@", [globalVariables shortUserName], meetup.strSubject];
     
     PFPush *push = [[PFPush alloc] init];
     
     NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
-                          @"Event canceled!", @"title",
+                          @"Event canceled!",  @"title",
                           strText,             @"alert",
-                          meetupId,            @"meetup",
+                          @"meetupCanceled",   @"type",
+                          meetupId,            @"meetupId",
+                          @"Increment",        @"badge",
+                          nil];
+    
+    [push setQuery:pushQuery];
+    [push setChannel:@""];  // These messages shouldn't be blocked as they are very important
+    [push setData:data];
+    [push sendPushInBackground];
+}
+
+- (void)sendPushChangedMeetup:(NSString*)meetupId
+{
+    Meetup* meetup = [globalData getMeetupById:meetupId];
+    if ( ! meetup )
+        return;
+    
+    PFQuery *pushQuery = [PFInstallation query];
+    [pushQuery whereKey:@"ownerId" containedIn:meetup.attendees];
+    [pushQuery whereKey:@"ownerId" notEqualTo:strCurrentUserId];
+    
+    NSString* strText = [NSString stringWithFormat:@"%@ changed date, location or duration for %@", [globalVariables shortUserName], meetup.strSubject];
+    
+    PFPush *push = [[PFPush alloc] init];
+    
+    NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
+                          @"Event changed!",   @"title",
+                          strText,             @"alert",
+                          @"meetupChanged",    @"type",
+                          meetupId,            @"meetupId",
                           @"Increment",        @"badge",
                           nil];
     
@@ -201,7 +234,8 @@ static PushManager *sharedInstance = nil;
     NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
                           @"New comment!",  @"title",
                           strText,          @"alert",
-                          meetupId,         @"meetup",
+                          @"newComment",    @"type",
+                          meetupId,         @"meetupId",
                           @"Increment",     @"badge",
                           nil];
     [push setChannel:@"newComment"];
@@ -220,7 +254,8 @@ static PushManager *sharedInstance = nil;
     NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
                           @"Invite received!",  @"title",
                           strText,              @"alert",
-                          meetupId,             @"meetup",
+                          @"newInvite",         @"type",
+                          meetupId,             @"meetupId",
                           @"Increment",         @"badge",
                           nil];
     
@@ -267,7 +302,8 @@ static PushManager *sharedInstance = nil;
     NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:
                           strTitle,         @"title",
                           strText,          @"alert",
-                          meetupId,         @"meetup",
+                          @"newMeetup",     @"type",
+                          meetupId,         @"meetupId",
     //                      @"Increment",     @"badge", // Don't increment as not inbox event
                           nil];
     [push setChannel:@"newMeetupNearby"];

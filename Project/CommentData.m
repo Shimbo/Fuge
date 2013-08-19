@@ -133,12 +133,15 @@
     
     [commentsQuery findObjectsInBackgroundWithBlock:^(NSArray *result, NSError* error) {
         
+        NSUInteger numComments = 0;
         NSMutableArray* threadComments = [NSMutableArray arrayWithCapacity:30];
         for ( PFObject* commentData in result )
         {
             Comment* comment = [[Comment alloc] init];
             [comment unpack:commentData];
             [threadComments addObject:comment];
+            if ( [comment.systemType integerValue] == COMMENT_PLAIN )
+                numComments++;
         }
         if ( threadComments.count > 0 )
             [self addComment:[threadComments lastObject]];
@@ -149,7 +152,7 @@
         NSDate* commentDate = nil;
         if ( threadComments.count > 0 )
             commentDate = ((Comment*)[threadComments lastObject]).dateCreated;
-        [globalData updateConversation:commentDate count:[NSNumber numberWithInteger:meetup.numComments] thread:meetup.strId meetup:TRUE];
+        [globalData updateConversation:commentDate count:[NSNumber numberWithInteger:numComments] thread:meetup.strId meetup:TRUE];
     }];
 }
 

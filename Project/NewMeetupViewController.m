@@ -13,6 +13,7 @@
 #import "GlobalData.h"
 #import "MeetupInviteViewController.h"
 #import "LocationManager.h"
+#import "PushManager.h"
 
 @implementation NewMeetupViewController
 
@@ -442,6 +443,11 @@
         [meetup populateWithCoords];
 }
 
+- (void) callbackChangedCommentSaved
+{
+    [[NSNotificationCenter defaultCenter]postNotificationName:kPushReceivedNewComment object:meetup.strId];
+}
+
 - (void) callbackMeetupSaved:(Meetup*)m
 {
     if ( ! m )
@@ -471,8 +477,13 @@
             [strChanged appendString:@"duration"];
             bShouldAddComma = true;
         }
+        
+        // Comment
         [strChanged appendString:@" of the event."];
-        [globalData createCommentForMeetup:meetup commentType:COMMENT_SAVED commentText:strChanged target:nil selector:nil];
+        [globalData createCommentForMeetup:meetup commentType:COMMENT_SAVED commentText:strChanged target:self selector:@selector(callbackChangedCommentSaved)];
+        
+        // Push
+        [pushManager sendPushChangedMeetup:meetup.strId];
     }
 }
 

@@ -414,6 +414,8 @@
     if ( bImportedEvent )
         return 0;
     NSUInteger nOldCount = [currentPerson getConversationCount:strId meetup:TRUE];
+    if ( numComments < nOldCount )
+        return 0;
     return numComments - nOldCount;
 }
 

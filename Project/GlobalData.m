@@ -270,7 +270,7 @@ NSInteger sortByName(id num1, id num2, void *context)
                     [pushManager initChannels];
                     
                     // FB friends, 2O friends, fb friends not installed the app
-                    [self reloadFriendsInBackground];
+                    [self reloadFriendsInBackground:TRUE];
                     
                     // Map data: random people, meetups, threads, etc - location based
                     [self reloadMapInfoInBackground:nil toNorthEast:nil];
@@ -288,7 +288,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 #endif
                     
                     // Inbox
-                    [self reloadInboxInBackground];
+                    [self reloadInboxInBackground:INBOX_ALL];
                 }
             }];
 #ifdef TARGET_FUGE
@@ -303,7 +303,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 }
 
 // Will not use any load status, on fail just nothing
-- (void)reloadFriendsInBackground
+- (void)reloadFriendsInBackground:(Boolean)loadRandom
 {
     nCirclesLoadingStage = 0;
     nLoadStatusCircles = LOAD_STARTED;
@@ -315,7 +315,10 @@ NSInteger sortByName(id num1, id num2, void *context)
 #endif
     
     // Random friends
-    [self loadRandomPeopleInBackground];
+    if ( loadRandom )
+        [self loadRandomPeopleInBackground];
+    else
+        [self incrementCirclesLoadingStage];
 }
 
 // Will use secondary load status to show problems with connection
@@ -991,7 +994,7 @@ NSInteger sortByName(id num1, id num2, void *context)
                 else
                 {
                     // Creating comment about joining in db
-                    if ( addComment && meetup.privacy == MEETUP_PRIVATE )
+                    if ( addComment /*&& meetup.privacy == MEETUP_PRIVATE*/ )
                         [globalData createCommentForMeetup:meetup commentType:COMMENT_JOINED commentText:nil target:nil selector:nil];
                     
                     // Push notification to all attendees

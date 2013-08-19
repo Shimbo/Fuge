@@ -133,12 +133,65 @@
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    [PFPush handlePush:userInfo];
+    
     NSLog(@"Push catched: %@", userInfo);
+    
+    UIApplicationState state = [application applicationState];
+    if (state != UIApplicationStateActive)
+    {
+        [PFPush handlePush:userInfo];
+        return;
+    }
+    
+    // Handle badge count
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-    if ( currentInstallation.badge != 0) {
-        currentInstallation.badge = 0;
-        [currentInstallation saveInBackground];
+    currentInstallation.badge = 0;
+    [currentInstallation saveInBackground];
+    
+    // Handle information
+    NSString *messageType = [userInfo objectForKey:@"type"];
+    if ( messageType && [messageType isKindOfClass:[NSString class]]) {
+        
+        if ( [messageType compare:@"newFriend"] == NSOrderedSame )
+        {
+            [globalData reloadFriendsInBackground:FALSE];
+            
+            NSString *userId = [[userInfo objectForKey:@"userId"] copy];
+            if ( userId && [userId isKindOfClass:[NSString class]])
+                [[NSNotificationCenter defaultCenter]postNotificationName:kPushReceivedNewFriend object:userId];
+                // not handled now
+            
+            [PFPush handlePush:userInfo];
+        }
+        if ( [messageType compare:@"newMessage"] == NSOrderedSame )
+        {
+            [globalData reloadInboxInBackground:INBOX_MESSAGES];
+            
+            NSString *userId = [[userInfo objectForKey:@"userId"] copy];
+            if ( userId && [userId isKindOfClass:[NSString class]])
+                [[NSNotificationCenter defaultCenter]postNotificationName:kPushReceivedNewMessage object:userId];
+        }
+        if ( [messageType compare:@"newComment"] == NSOrderedSame || [messageType compare:@"meetupAttendee"] == NSOrderedSame || [messageType compare:@"meetupLeaver"] == NSOrderedSame || [messageType compare:@"meetupCanceled"] == NSOrderedSame || [messageType compare:@"meetupChanged"] == NSOrderedSame )
+        {
+            [globalData reloadInboxInBackground:INBOX_COMMENTS];
+            if ( [messageType compare:@"meetupCanceled"] == NSOrderedSame ||
+                    [messageType compare:@"meetupChanged"] == NSOrderedSame )
+                [globalData reloadMapInfoInBackground:nil toNorthEast:nil];
+            
+            NSString *meetupId = [[userInfo objectForKey:@"meetupId"] copy];
+            if ( meetupId && [meetupId isKindOfClass:[NSString class]])
+                [[NSNotificationCenter defaultCenter]postNotificationName:kPushReceivedNewComment object:meetupId];
+        }
+        if ( [messageType compare:@"newInvite"] == NSOrderedSame )
+        {
+            [globalData reloadInboxInBackground:INBOX_INVITES];
+            [[NSNotificationCenter defaultCenter]postNotificationName:kPushReceivedNewInvite object:nil]; // not handled now
+        }
+        if ( [messageType compare:@"newMeetup"] == NSOrderedSame )
+        {
+            [globalData reloadMapInfoInBackground:nil toNorthEast:nil];
+            [[NSNotificationCenter defaultCenter]postNotificationName:kPushReceivedNewMeetup object:nil]; // not handled now
+        }
     }
 }
 
@@ -170,9 +223,9 @@
         bFirstActivation = false;
     else if ( [globalVariables isLoaded] )
     {
-        [globalData reloadFriendsInBackground];
+        [globalData reloadFriendsInBackground:TRUE];
         [globalData reloadMapInfoInBackground:nil toNorthEast:nil];
-        [globalData reloadInboxInBackground];
+        [globalData reloadInboxInBackground:INBOX_ALL];
         [[NSNotificationCenter defaultCenter]postNotificationName:kAppRestored
                                                            object:nil];
     }

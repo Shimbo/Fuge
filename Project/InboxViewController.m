@@ -111,7 +111,7 @@
     
     // Loading
     if ( [globalData getLoadingStatus:LOADING_INBOX] != LOAD_STARTED )
-        [globalData reloadInboxInBackground];
+        [globalData reloadInboxInBackground:INBOX_ALL];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)aTableView {

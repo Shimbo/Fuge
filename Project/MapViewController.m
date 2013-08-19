@@ -819,8 +819,11 @@ static CGRect oldMapFrame;
 
 - (NSString *)tableView:(UITableView *)aTableView titleForHeaderInSection:(NSInteger)section {
 
-    if ( [globalData getMeetups].count == 0 )
+    if ( [globalData getLoadingStatus:LOADING_MAP] == LOAD_STARTED )
         return @"Loading events...";
+    
+    if ( [globalData getMeetups].count == 0 )
+        return @"No upcoming events nearby";
     
     NSMutableArray* meetupsByDay = sortedMeetups[section];
     if ( meetupsByDay.count == 0 )
