@@ -10,7 +10,7 @@
 #define TEXT_MESSAGE_FIELD_MAX_LINES    9
 
 // Meetup subject
-#define TEXT_MAX_MEETUP_SUBJECT_LENGTH  30
+#define TEXT_MAX_MEETUP_SUBJECT_LENGTH  40
 
 // Max status length
 #define TEXT_MAX_STATUS_LENGTH          35

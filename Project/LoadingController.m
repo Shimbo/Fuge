@@ -98,7 +98,7 @@ static Boolean bRotating = true;
     
         if (error)
         {
-            [ctrl noInternet];
+            [ctrl noInternet:(error.code == kPFErrorConnectionFailed)];
             return;
         }
         else
@@ -163,10 +163,10 @@ static Boolean bRotating = true;
         [pCurrentUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
             if ( error )
             {
-                if ( error.code == 101) // user not found, relogin no matter why
+                if ( error.code == kPFErrorObjectNotFound) // user not found, relogin no matter why
                     [self notLoggedIn];
                 else
-                    [ctrl noInternet];
+                    [ctrl noInternet:FALSE];
             }
             else
             {
@@ -366,7 +366,7 @@ static Boolean bRotating = true;
     if ( nStatus == LOAD_NOFACEBOOK )
         [self loginFailed];
     else
-        [self noInternet];
+        [self noInternet:FALSE];
 }
 
 - (void) hideAll
@@ -476,7 +476,7 @@ static Boolean bRotating = true;
     [self showAll];
 }
 
-- (void) noInternet
+- (void) noInternet:(Boolean)parseDown
 {
     _loginButton.hidden = TRUE;
     _linkedinButton.hidden = TRUE;
@@ -487,8 +487,16 @@ static Boolean bRotating = true;
     _titleText.hidden = FALSE;
     _miscText.hidden = TRUE;
     
-    _titleText.text = NSLocalizedString(@"LOADING_TITLE_NOINTERNET",nil);
-    _descriptionText.text = NSLocalizedString(@"LOADING_TEXT_NOINTERNET",nil);
+    if ( parseDown )
+    {
+        _titleText.text = NSLocalizedString(@"LOADING_TITLE_NOPARSE",nil);
+        _descriptionText.text = NSLocalizedString(@"LOADING_TEXT_NOPARSE",nil);
+    }
+    else
+    {
+        _titleText.text = NSLocalizedString(@"LOADING_TITLE_NOINTERNET",nil);
+        _descriptionText.text = NSLocalizedString(@"LOADING_TEXT_NOINTERNET",nil);
+    }
     
     [self showAll];
 }

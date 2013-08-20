@@ -65,6 +65,10 @@
                                                 selector:@selector(reloadStatusChanged)
                                                 name:kNewMeetupCreated
                                                 object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(reloadStatusChanged)
+                                                name:kNewMeetupChanged
+                                                object:nil];
     }
     return self;
 }

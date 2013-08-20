@@ -994,6 +994,10 @@ NSInteger sortByName(id num1, id num2, void *context)
                     // Selector
                     if ( target )
                         [target performSelector:callback withObject:nil];
+                    
+                    // Notify map and others about pin change
+                    NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:meetup, @"meetup", nil];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kNewMeetupChanged object:nil userInfo:userInfo];
                 }
             }];
         }
@@ -1045,6 +1049,10 @@ NSInteger sortByName(id num1, id num2, void *context)
                     // Selector
                     if ( target )
                         [target performSelector:callback withObject:nil];
+                    
+                    // Notify map and others about pin change
+                    NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:meetup, @"meetup", nil];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kNewMeetupChanged object:nil userInfo:userInfo];
                 }
             }];
         }
@@ -1063,7 +1071,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     [globalData createCommentForMeetup:meetup commentType:COMMENT_CANCELED commentText:nil target:nil selector:nil];
     
     // Push notification to all attendees
-    [pushManager sendPushCanceledMeetup:meetup.strId];
+    [pushManager sendPushCanceledMeetup:meetup.strId];    
 }
 
 - (void) cancelMeetup:(Meetup*)meetup

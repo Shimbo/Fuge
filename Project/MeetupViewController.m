@@ -137,7 +137,7 @@
     [globalData attendMeetup:meetup addComment:TRUE target:self selector:@selector(reloadAnnotation)];
     
     // Add comment to the text field
-    [self addComment:@"    You joined the event!\n"];
+    [self addComment:@"    You joined the event!\n" scrollDown:FALSE];
     
     // If it was opened from invite
     if ( invite )
@@ -214,7 +214,7 @@
         [globalData unattendMeetup:meetup target:self selector:@selector(reloadAnnotation)];
         
         // Add comment to the text field
-        [self addComment:@"    You just left the event!\n"];
+        [self addComment:@"    You just left the event!\n" scrollDown:FALSE];
         
         // Buttons
         [self flushButtons];
@@ -229,7 +229,7 @@
         [globalData cancelMeetup:meetup];
         
         // Add comment to the text field
-        [self addComment:@"    You just canceled the event!\n"];
+        [self addComment:@"    You just canceled the event!\n" scrollDown:FALSE];
         
         // Buttons
         [self flushButtons];
@@ -292,13 +292,13 @@
 #pragma mark Commenting
 
 
--(void)addComment:(NSString*)strComment
+-(void)addComment:(NSString*)strComment scrollDown:(Boolean)scrollDown
 {
     NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
     [stringComments appendString:comments.text];
     [stringComments appendString:strComment];
     [comments setText:stringComments];
-    [self resizeComments:TRUE];
+    [self resizeComments:scrollDown];
 }
 
 - (void) callbackCommentSaved:(Comment*)comment
@@ -318,7 +318,7 @@
     [globalData updateConversation:comment.dateCreated count:[NSNumber numberWithInteger:meetup.numComments] thread:comment.strMeetupId meetup:TRUE];
     
     // Adding comment to the list
-    [self addComment:[NSString stringWithFormat:@"    %@: %@\n", [globalVariables fullUserName], textView.text]];
+    [self addComment:[NSString stringWithFormat:@"    %@: %@\n", [globalVariables fullUserName], textView.text] scrollDown:TRUE];
     
     // Reseting text field
     [textView setText:@""];

@@ -9,13 +9,15 @@
 "LOADING_TITLE_NEWVERSION"      = "New version is out!";
 "LOADING_TEXT_NEWVERSION"       = "You're running an old version of the application. We recommend you updating the application.";
 "LOADING_TITLE_FIRSTPAGE"       = "Welcome!";
-"LOADING_TEXT_FIRSTPAGE"        = "Fuge is a social discovery service. Explore\n surroundings for people and activites. Or\n create your own and invite friends!";
+"LOADING_TEXT_FIRSTPAGE"        = "Fuge is a social discovery service. Explore surroundings for people and activites. Or create your own and invite friends!";
 "LOADING_TITLE_NOINTERNET"      = "Ooups!";
-"LOADING_TEXT_NOINTERNET"       = "It seems like you don’t have internet \n connection at the moment. Try \n again when you will get some!";
+"LOADING_TEXT_NOINTERNET"       = "It seems like you don’t have internet connection at the moment. Try again when you will get some!";
+"LOADING_TITLE_NOPARSE"         = "Ah and oh!";
+"LOADING_TEXT_NOPARSE"          = "It seems like Parse, our magical backend, is out of service now. Let's wait and hope that they will fix it as soon as possible!";
 "LOADING_TITLE_LOGINFAILED"     = "Ooups!";
-"LOADING_TEXT_LOGINFAILED"      = "Looks like you haven’t finished \n login process or wasn’t able to do so. \n Please try again!";
+"LOADING_TEXT_LOGINFAILED"      = "Looks like you haven’t finished login process or wasn’t able to do so. Please try again!";
 "LOADING_TITLE_OLDVERSION"      = "Outdated version!";
-"LOADING_TEXT_OLDVERSION"       = "What age did you come from? Why\n still using this version instead\n of a new and shiny one?";
+"LOADING_TEXT_OLDVERSION"       = "What age did you come from? Why still using this version instead of a new and shiny one?";
 
 "BUTTONS_RELOAD"                = "Reload";
 

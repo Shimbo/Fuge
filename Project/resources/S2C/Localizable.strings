@@ -12,6 +12,8 @@
 "LOADING_TEXT_FIRSTPAGE"        = "Simple2Connect is a location-based professional networking service. Explore profiles of people around you and make your networking more targeted!";
 "LOADING_TITLE_NOINTERNET"      = "No internet connection.";
 "LOADING_TEXT_NOINTERNET"       = "It seems like you don’t have internet connection at the moment.";
+"LOADING_TITLE_NOPARSE"         = "Ah and oh!";
+"LOADING_TEXT_NOPARSE"          = "It seems like Parse, our magical backend, is not working right now. Let's wait and hope that they will fix it as soon as possible!";
 "LOADING_TITLE_LOGINFAILED"     = "Login failure.";
 "LOADING_TEXT_LOGINFAILED"      = "It looks like the login was unsuccessful. We apologise for inconvenience. Please try again.";
 "LOADING_TITLE_OLDVERSION"      = "Update needed";

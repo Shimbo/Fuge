@@ -463,6 +463,10 @@
 		4C9E249817C3090300D35837 /* iconMtHacks.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C9E247D17C3090300D35837 /* iconMtHacks.png */; };
 		4C9E249917C3090300D35837 /* iconMtHacks@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C9E247E17C3090300D35837 /* iconMtHacks@2x.png */; };
 		4C9E249A17C3090300D35837 /* iconMtHacks@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C9E247E17C3090300D35837 /* iconMtHacks@2x.png */; };
+		4C9E249D17C3DDE000D35837 /* iconMtSocializing.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C9E249B17C3DDDF00D35837 /* iconMtSocializing.png */; };
+		4C9E249E17C3DDE000D35837 /* iconMtSocializing.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C9E249B17C3DDDF00D35837 /* iconMtSocializing.png */; };
+		4C9E249F17C3DDE000D35837 /* iconMtSocializing@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C9E249C17C3DDE000D35837 /* iconMtSocializing@2x.png */; };
+		4C9E24A017C3DDE000D35837 /* iconMtSocializing@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C9E249C17C3DDE000D35837 /* iconMtSocializing@2x.png */; };
 		4CA3F06517170D8A00271E7A /* LoadingController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CA3F06317170D8A00271E7A /* LoadingController.m */; };
 		4CA3F06617170D8A00271E7A /* LoadingController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CA3F06417170D8A00271E7A /* LoadingController.xib */; };
 		4CA463F116F1DF7600F354FC /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CA463F016F1DF7600F354FC /* LocationManager.m */; };
@@ -828,6 +832,8 @@
 		4C9E247C17C3090300D35837 /* iconMtYoga@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconMtYoga@2x.png"; sourceTree = "<group>"; };
 		4C9E247D17C3090300D35837 /* iconMtHacks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMtHacks.png; sourceTree = "<group>"; };
 		4C9E247E17C3090300D35837 /* iconMtHacks@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconMtHacks@2x.png"; sourceTree = "<group>"; };
+		4C9E249B17C3DDDF00D35837 /* iconMtSocializing.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMtSocializing.png; sourceTree = "<group>"; };
+		4C9E249C17C3DDE000D35837 /* iconMtSocializing@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconMtSocializing@2x.png"; sourceTree = "<group>"; };
 		4CA3F06217170D8A00271E7A /* LoadingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadingController.h; sourceTree = "<group>"; };
 		4CA3F06317170D8A00271E7A /* LoadingController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadingController.m; sourceTree = "<group>"; };
 		4CA3F06417170D8A00271E7A /* LoadingController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoadingController.xib; sourceTree = "<group>"; };
@@ -1128,6 +1134,8 @@
 				4C9E247C17C3090300D35837 /* iconMtYoga@2x.png */,
 				4C9E247D17C3090300D35837 /* iconMtHacks.png */,
 				4C9E247E17C3090300D35837 /* iconMtHacks@2x.png */,
+				4C9E249B17C3DDDF00D35837 /* iconMtSocializing.png */,
+				4C9E249C17C3DDE000D35837 /* iconMtSocializing@2x.png */,
 				4C6C3A011727FE4000F5F1B3 /* iconThread.png */,
 				4C6C3A021727FE4000F5F1B3 /* iconThread@2x.png */,
 				4C6C39FF1727FE4000F5F1B3 /* iconFacebook.png */,
@@ -1738,6 +1746,8 @@
 				4C9E249517C3090300D35837 /* iconMtYoga@2x.png in Resources */,
 				4C9E249717C3090300D35837 /* iconMtHacks.png in Resources */,
 				4C9E249917C3090300D35837 /* iconMtHacks@2x.png in Resources */,
+				4C9E249D17C3DDE000D35837 /* iconMtSocializing.png in Resources */,
+				4C9E249F17C3DDE000D35837 /* iconMtSocializing@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1900,6 +1910,8 @@
 				4C9E249617C3090300D35837 /* iconMtYoga@2x.png in Resources */,
 				4C9E249817C3090300D35837 /* iconMtHacks.png in Resources */,
 				4C9E249A17C3090300D35837 /* iconMtHacks@2x.png in Resources */,
+				4C9E249E17C3DDE000D35837 /* iconMtSocializing.png in Resources */,
+				4C9E24A017C3DDE000D35837 /* iconMtSocializing@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -30,6 +30,7 @@ static NSString *const kLoadingInboxFailed = @"kLoadingInboxFailed";
 
 static NSString *const kAppRestored = @"kAppRestored";
 static NSString *const kNewMeetupCreated = @"kNewMeetupCreated";
+static NSString *const kNewMeetupChanged = @"kNewMeetupChanged";
 static NSString *const kInboxUpdated = @"kInboxUpdated";
 
 static NSString *const kPushReceivedNewFriend = @"kPushReceivedNewFriend";
