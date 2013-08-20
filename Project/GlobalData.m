@@ -281,10 +281,6 @@ NSInteger sortByName(id num1, id num2, void *context)
                     
                     // EB Meetups
                     [self loadEBMeetups];
-                    
-#elif defined TARGET_S2C
-                    [self incrementMapLoadingStage];
-                    [self incrementMapLoadingStage];
 #endif
                     
                     // Inbox
@@ -730,8 +726,6 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 - (void)fbMeetupsCallback:(NSArray*)events
 {
-    [self incrementMapLoadingStage];
-
     if ( ! events )
         return;
     
@@ -760,14 +754,10 @@ NSInteger sortByName(id num1, id num2, void *context)
     {
         [fbLoader loadMeetups:self selector:@selector(fbMeetupsCallback:)];
     }
-    else
-        [self incrementMapLoadingStage];
 }
 
 - (void)ebMeetupsCallback:(NSArray*)events
 {
-    [self incrementMapLoadingStage];
-    
     if ( ! events )
         return;
     
@@ -784,9 +774,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     {
         EBloader = [[EventbriteLoader alloc] init];
         [EBloader loadData:self selector:@selector(ebMeetupsCallback:)];
-    }
-    else*/
-        [self incrementMapLoadingStage];
+    }*/
 }
 
 - (void)loadMeetupsInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast
@@ -814,7 +802,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     
     // Expired meetups
     [meetupAnyQuery whereKey:@"meetupDateExp" greaterThan:[NSDate date]];
-    //[meetupAnyQuery whereKey:@"canceled" notEqualTo:[NSNumber numberWithBool:TRUE]];
+    [meetupAnyQuery whereKey:@"canceled" notEqualTo:[NSNumber numberWithBool:TRUE]];
     
     // Meetups too far in the future
     NSDateComponents* deltaCompsMax = [[NSDateComponents alloc] init];

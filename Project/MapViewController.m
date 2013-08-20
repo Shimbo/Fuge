@@ -145,7 +145,8 @@
         [self.activityIndicator startAnimating];
     }
     
-    sortedMeetups = [self getMeetupsByDate];
+    // Filtering meetups
+    [self getMeetupsByDate];
     
     // Refresh map
     [self reloadMapAnnotations];
@@ -236,7 +237,7 @@ static CGRect oldMapFrame;
     
     // Calculating zoom
     if ( ! sortedMeetups )
-        sortedMeetups = [self getMeetupsByDate];
+        [self getMeetupsByDate];
     for ( NSMutableArray* meetupsByDay in sortedMeetups )
         for (Meetup *meetup in meetupsByDay)
         {
@@ -426,16 +427,20 @@ static CGRect oldMapFrame;
     [tableView reloadData];
 }
 
-- (NSArray*) getMeetupsByDate
+- (void) getMeetupsByDate
 {
-    NSMutableArray* arrayOfDays = [NSMutableArray arrayWithCapacity:MAX_DAYS_TILL_MEETUP];
+    if ( [globalData getLoadingStatus:LOADING_MAP] == LOAD_STARTED )
+        return;
+    
+    sortedMeetupsCount = 0;
+    sortedMeetups = [NSMutableArray arrayWithCapacity:MAX_DAYS_TILL_MEETUP];
     
     // Day by day selection
     for ( NSUInteger n = 0; n < MAX_DAYS_TILL_MEETUP; n++ )
     {
         // Array
         NSMutableArray* arrayOfMeetups = [NSMutableArray arrayWithCapacity:10];
-        [arrayOfDays addObject:arrayOfMeetups];
+        [sortedMeetups addObject:arrayOfMeetups];
         
         // Timeframe
         NSDate *windowStart, *windowEnd;
@@ -476,9 +481,9 @@ static CGRect oldMapFrame;
         [arrayOfMeetups sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             return [((Meetup*)obj1).dateTime compare:((Meetup*)obj2).dateTime ];
         }];
+        
+        sortedMeetupsCount += arrayOfMeetups.count;
     }
-    
-    return arrayOfDays;
 }
 
 
@@ -536,7 +541,7 @@ static CGRect oldMapFrame;
     // Loading annotations
     NSUInteger n = 0;
     if ( ! sortedMeetups )
-        sortedMeetups = [self getMeetupsByDate];
+        [self getMeetupsByDate];
     for ( NSMutableArray* meetupsByDay in sortedMeetups )
         for (Meetup *meetup in meetupsByDay)
         {
@@ -806,13 +811,15 @@ static CGRect oldMapFrame;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)aTableView {
     
-    if ( [globalData getMeetups].count == 0 )
+    if ( [globalData getLoadingStatus:LOADING_MAP] == LOAD_STARTED || sortedMeetupsCount == 0 )
         return 1;
     return MAX_DAYS_TILL_MEETUP;
 }
 
 - (NSInteger)tableView:(UITableView *)aTableView numberOfRowsInSection:(NSInteger)section {
 	
+    if ( [globalData getLoadingStatus:LOADING_MAP] == LOAD_STARTED || sortedMeetupsCount == 0 )
+        return 0;
     NSMutableArray* meetupsByDay = sortedMeetups[section];
     return meetupsByDay.count;
 }
@@ -820,10 +827,20 @@ static CGRect oldMapFrame;
 - (NSString *)tableView:(UITableView *)aTableView titleForHeaderInSection:(NSInteger)section {
 
     if ( [globalData getLoadingStatus:LOADING_MAP] == LOAD_STARTED )
-        return @"Loading events...";
+    {
+        if ( section == 0 )
+            return @"Loading events...";
+        else 
+            return nil;
+    }
     
-    if ( [globalData getMeetups].count == 0 )
-        return @"No upcoming events nearby";
+    if ( sortedMeetupsCount == 0 )
+    {
+        if ( section == 0 )
+            return @"No upcoming events nearby";
+        else
+            return nil;
+    }
     
     NSMutableArray* meetupsByDay = sortedMeetups[section];
     if ( meetupsByDay.count == 0 )

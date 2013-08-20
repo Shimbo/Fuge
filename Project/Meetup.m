@@ -16,7 +16,7 @@
 
 @implementation Meetup
 
-@synthesize strId,strOwnerId,strOwnerName,strSubject,strDescription,dateTime,privacy,meetupType,strVenue,strVenueId,strAddress,meetupData,numComments,attendees,decliners,dateTimeExp,durationSeconds,bImportedEvent,importedType,iconNumber,strPrice,strImageURL,strOriginalURL,strFeatured;
+@synthesize strId,strOwnerId,strOwnerName,strSubject,strDescription,dateTime,privacy,meetupType,strVenue,strVenueId,strAddress,meetupData,numComments,attendees,decliners,dateTimeExp,durationSeconds,bImportedEvent,importedType,iconNumber,strPrice,strImageURL,strOriginalURL,strFeatured,maxGuests;
 
 -(id) init
 {
@@ -191,11 +191,16 @@
     
     // Description and how-to-find
     NSMutableString* description = nil;
+    NSUInteger nYesRSVPs = 0;
+    if ( [data objectForKey:@"yes_rsvp_count"] )
+        nYesRSVPs = [[data objectForKey:@"yes_rsvp_count"] integerValue];
+    if ( [data objectForKey:@"rsvp_limit"] )
+        maxGuests = [NSNumber numberWithInteger:[[data objectForKey:@"rsvp_limit"] integerValue] - nYesRSVPs];
     if ( [data objectForKey:@"description"] )
     {
         description = [data objectForKey:@"description"];
-        if ( [data objectForKey:@"yes_rsvp_count"] )
-            [description insertString:[NSString stringWithFormat:@"Meetup.com attendees: %d<BR>", [[data objectForKey:@"yes_rsvp_count"] integerValue]] atIndex:0];
+        if ( nYesRSVPs > 0 )
+            [description insertString:[NSString stringWithFormat:@"Meetup.com attendees: %d<BR>", nYesRSVPs] atIndex:0];
         if ( [data objectForKey:@"how_to_find_us"] )
             [description insertString:[NSString stringWithFormat:@"How to find: %@<BR>", [data objectForKey:@"how_to_find_us"]] atIndex:0];
     }
@@ -335,12 +340,24 @@
         [meetupData setObject:[NSNumber numberWithBool:TRUE] forKey:@"canceled"];
     if ( strDescription )
         [meetupData setObject:strDescription forKey:@"description"];
+    else
+        [meetupData removeObjectForKey:@"description"];
     if ( strPrice)
         [meetupData setObject:strPrice forKey:@"price"];
+    else
+        [meetupData removeObjectForKey:@"price"];
+    if ( maxGuests )
+        [meetupData setObject:maxGuests forKey:@"maxGuests"];
+    else
+        [meetupData removeObjectForKey:@"maxGuests"];
     if ( strImageURL)
         [meetupData setObject:strImageURL forKey:@"imageURL"];
+    else
+        [meetupData removeObjectForKey:@"imageURL"];
     if ( strOriginalURL )
         [meetupData setObject:strOriginalURL forKey:@"originalURL"];
+    else
+        [meetupData removeObjectForKey:@"originalURL"];
     
     // Save
     if ( bFirstSave )
@@ -386,6 +403,7 @@
     strSubject = [meetupData objectForKey:@"subject"];
     strDescription = [meetupData objectForKey:@"description"];
     strPrice = [meetupData objectForKey:@"price"];
+    maxGuests = [meetupData objectForKey:@"maxGuests"];
     strImageURL = [meetupData objectForKey:@"imageURL"];
     strOriginalURL = [meetupData objectForKey:@"originalURL"];
     privacy = [[meetupData objectForKey:@"privacy"] integerValue];
@@ -693,5 +711,13 @@
     return NO;
 }
 
+-(NSInteger)spotsAvailable
+{
+    if ( ! maxGuests )
+        return 999;
+    NSInteger nSpots = [maxGuests integerValue] - (NSInteger)attendees.count;
+    if ( nSpots < 0 ) nSpots = 0;
+    return nSpots;
+}
 
 @end

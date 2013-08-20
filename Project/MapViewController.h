@@ -26,7 +26,8 @@
     CLLocationManager *_locationManager;
     PersonAnnotation *_userLocation;
     
-    NSArray*             sortedMeetups;
+    NSMutableArray*      sortedMeetups;
+    NSInteger            sortedMeetupsCount;
 
     //NSUInteger daySelector;
     UIBarButtonItem*     daySelectButton;

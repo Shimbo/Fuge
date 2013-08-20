@@ -22,7 +22,7 @@
 #define MATCHING_COLOR_COMPONENT_G  86.0f
 #define MATCHING_COLOR_COMPONENT_B  144.0f
 
-#define MATCHING_COLOR_FB_FRIEND    @"ddd7eb"
+//#define MATCHING_COLOR_FB_FRIEND    @"ddd7eb"
 
 // Unread messages color
 #define INBOX_UNREAD_CELL_BG_COLOR  @"d7dfeb"
@@ -32,3 +32,7 @@ typedef enum kPinColor{
     PinBlue,
     PinOrange
 }PinColor;
+
+#define MEETUP_ALERT_COLOR_RED      @"d43506"
+#define MEETUP_ALERT_COLOR_YELLOW   @"eeb300"
+#define MEETUP_ALERT_COLOR_GREEN    @"00ad08"

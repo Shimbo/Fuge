@@ -35,7 +35,9 @@
     IBOutlet UIScrollView *scrollView;
     UITextField* activeField;
     IBOutlet UILabel *priceText;
+    IBOutlet UILabel *maxGuestsText;
     IBOutlet UITextField *priceField;
+    IBOutlet UITextField *maxGuestsField;
     IBOutlet UITextField *imageURLField;
     IBOutlet UITextField *originalURLField;
     IBOutlet UITextField *descriptionText;

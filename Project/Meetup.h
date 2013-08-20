@@ -54,6 +54,7 @@ typedef enum kEImportedType
     NSUInteger  iconNumber;
     
     NSString    *strPrice;
+    NSNumber    *maxGuests;
     NSString    *strImageURL;
     NSString    *strOriginalURL;
     
@@ -96,6 +97,7 @@ typedef enum kEImportedType
 @property (nonatomic, copy) NSString *strFeatured;
 
 @property (nonatomic, copy) NSString *strPrice;
+@property (nonatomic, copy) NSNumber *maxGuests;
 @property (nonatomic, copy) NSString *strImageURL;
 @property (nonatomic, copy) NSString *strOriginalURL;
 
@@ -128,6 +130,8 @@ typedef enum kEImportedType
 
 -(void)setCanceled;
 -(Boolean)isCanceled;
+
+-(NSInteger)spotsAvailable;
 
 -(Boolean)willStartSoon;
 -(Boolean)isPersonNearby:(Person*)person;

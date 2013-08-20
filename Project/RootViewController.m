@@ -250,9 +250,7 @@
 }
 
 - (NSString *)tableView:(UITableView *)aTableView titleForHeaderInSection:(NSInteger)section {
-#ifdef TARGET_S2C
-    return nil;
-#endif
+    
 	switch ( sortingMode )
     {
         case SORTING_DISTANCE:

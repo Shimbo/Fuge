@@ -32,23 +32,29 @@ enum EMeetupButtons
 <UITextViewDelegate, MKMapViewDelegate, UIWebViewDelegate, UITextFieldDelegate>
 {
     Meetup* meetup;
+    NSMutableArray* commentsList;
     IBOutlet UITextView *comments;
     IBOutlet MKMapView *mapView;
     IBOutlet UILabel *labelDate;
     IBOutlet UILabel *labelLocation;
+    IBOutlet UILabel *labelSpotsAvailable;
     IBOutlet UIWebView *descriptionView;
     IBOutlet UIScrollView *scrollView;
-    IBOutlet UIActivityIndicatorView *activityIndicator;
+    IBOutlet UIActivityIndicatorView *activityIndicator;    
+    IBOutlet UIButton *alertTicketsOnline;
     
     id delegate;
     NSMutableArray*    buttons;
     Boolean invite;
     id currentAnnotation;
+    
+    NSMutableArray  *viewsList;
 }
 
 -(void) setMeetup:(Meetup*)m;
 -(void) setInvite;
 
 @property (nonatomic,strong) id delegate;
+- (IBAction)alertTapped:(id)sender;
 
 @end

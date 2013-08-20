@@ -57,6 +57,8 @@
     {
         priceText.hidden = TRUE;
         priceField.hidden = TRUE;
+        maxGuestsText.hidden = TRUE;
+        maxGuestsField.hidden = TRUE;
         imageURLField.hidden = TRUE;
         originalURLField.hidden = TRUE;
         descriptionText.hidden = TRUE;
@@ -70,6 +72,8 @@
     {
         priceText.hidden = FALSE;
         priceField.hidden = FALSE;
+        maxGuestsText.hidden = FALSE;
+        maxGuestsField.hidden = FALSE;
         imageURLField.hidden = FALSE;
         originalURLField.hidden = FALSE;
         descriptionText.hidden = FALSE;
@@ -427,12 +431,24 @@
     meetup.iconNumber = meetupIcon;
     if ( priceField.text.length > 0 )
         meetup.strPrice = priceField.text;
+    else
+        meetup.strPrice = nil;
+    if ( maxGuestsField.text.length > 0 )
+        meetup.maxGuests = [NSNumber numberWithInteger:[maxGuestsField.text integerValue]];
+    else
+        meetup.maxGuests = nil;
     if ( imageURLField.text.length > 0 )
         meetup.strImageURL = imageURLField.text;
+    else
+        meetup.strImageURL = nil;
     if ( originalURLField.text.length > 0 )
         meetup.strOriginalURL = originalURLField.text;
+    else
+        meetup.strOriginalURL = nil;
     if ( descriptionText.text.length > 0 )
         meetup.strDescription = descriptionText.text;
+    else
+        meetup.strDescription = nil;
     
     if ( self.selectedVenue )
     {
@@ -582,6 +598,8 @@
     priceText = nil;
     iconButton = nil;
     privacySwitch = nil;
+    maxGuestsText = nil;
+    maxGuestsField = nil;
     [super viewDidUnload];
 }
 

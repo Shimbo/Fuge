@@ -45,3 +45,8 @@
 
 "PUSH_NEW_FRIEND"               = "Woohoo! Your Linkedin friend %@ joined Simple2Connect! Check if you've got new connections!";
 "PUSH_NEW_2OFRIEND"             = "Hurray! %@, a friend of your friend, joined Simple2Connect!";
+
+"MEETUP_ALERT_PAYONLINE"        = "%@ for a ticket, tap to purchase online";
+"MEETUP_ALERT_REGONLINE"        = "This event is free, tap to register online";
+"MEETUP_ALERT_PAYONSITE"        = "%@ for a ticket, paid on entrance";
+"MEETUP_SPOTS_AVAILABLE"        = "Spots available: %d";

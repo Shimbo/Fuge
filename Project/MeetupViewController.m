@@ -80,8 +80,8 @@
     NSMutableArray* actualButtons = [[NSMutableArray alloc] init];
     if ( [buttons[MB_JOIN] boolValue] )
         [actualButtons addObject:joinBtn];
-    if ( [buttons[MB_SUBSCRIBE] boolValue] )
-        [actualButtons addObject:subscribeBtn];
+//    if ( [buttons[MB_SUBSCRIBE] boolValue] )
+//        [actualButtons addObject:subscribeBtn];
     if ( [buttons[MB_DECLINE] boolValue] )
         [actualButtons addObject:declineBtn];
     if ( [buttons[MB_LEAVE] boolValue] )
@@ -126,6 +126,13 @@
 
 - (void)joinClicked
 {
+    if ( meetup.spotsAvailable == 0 )
+    {
+        UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Oh no!" message:@"Unfortunately, all available spots are taken. Next time!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [message show];
+        return;
+    }
+    
     // Change and save all the important data
     [globalData attendMeetup:meetup addComment:TRUE target:self selector:@selector(reloadAnnotation)];
     
@@ -196,8 +203,6 @@
     [message show];
     return;
 }
-
-#pragma mark Leave and decline here
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{
     if (buttonIndex != 1)
@@ -282,8 +287,105 @@
     [self presentViewController:nav animated:YES completion:nil];
 }
 
+
+#pragma mark -
+#pragma mark Commenting
+
+
+-(void)addComment:(NSString*)strComment
+{
+    NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
+    [stringComments appendString:comments.text];
+    [stringComments appendString:strComment];
+    [comments setText:stringComments];
+    [self resizeComments:TRUE];
+}
+
+- (void) callbackCommentSaved:(Comment*)comment
+{
+    [activityIndicator stopAnimating];
+    containerView.userInteractionEnabled = TRUE;
+    
+    if ( ! comment )
+    {
+        UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"No connection" message:@"Comment send failed, check your internet connection or try again later." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [errorAlert show];
+        return;
+    }
+    
+    // Updating conversation
+    meetup.numComments++;
+    [globalData updateConversation:comment.dateCreated count:[NSNumber numberWithInteger:meetup.numComments] thread:comment.strMeetupId meetup:TRUE];
+    
+    // Adding comment to the list
+    [self addComment:[NSString stringWithFormat:@"    %@: %@\n", [globalVariables fullUserName], textView.text]];
+    
+    // Reseting text field
+    [textView setText:@""];
+}
+
+-(void)send{
+    [super send];
+    if ( textView.text.length == 0 )
+        return;
+    
+    // Creating comment in db
+    [globalData createCommentForMeetup:meetup commentType:COMMENT_PLAIN
+                           commentText:textView.text target:self selector:@selector(callbackCommentSaved:)];
+    
+    // Start animating
+    [activityIndicator startAnimating];
+    containerView.userInteractionEnabled = FALSE;
+}
+
+
 #pragma mark -
 #pragma mark UI stuff
+
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    // Reload data
+    [self reloadMeetupData];
+    
+    // Create list of views and sort
+    viewsList = [NSMutableArray arrayWithCapacity:10];
+    [viewsList addObject:alertTicketsOnline];
+    [viewsList addObject:labelLocation];
+    [viewsList addObject:mapView];
+    [viewsList addObject:labelSpotsAvailable];
+    [viewsList addObject:descriptionView];
+    [viewsList addObject:comments];
+    
+    // Resize and rearrange
+    [self resizeComments:FALSE];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    self.title = @"";
+    
+    containerView.userInteractionEnabled = FALSE;
+    
+    // Map
+#ifdef IOS7_ENABLE
+    mapView.rotateEnabled = FALSE;
+#endif
+    
+    // Loading comments
+    [globalData loadCommentThread:meetup target:self selector:@selector(callbackCommentsLoaded:error:)];
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [self reloadAnnotation];
+    [self reloadMeetupData];
+    [self resizeComments:FALSE];
+}
 
 - (void)initButtons
 {
@@ -366,9 +468,9 @@
     [self updateButtons];
 }
 
--(void) callbackCommentsLoaded:(NSArray*)commentsList error:(NSError *)error
+-(void) callbackCommentsLoaded:(NSArray*)loadedComments error:(NSError *)error
 {
-    if (error || ! commentsList )
+    if (error || ! loadedComments )
     {
         [comments setText:@"Comments loading failed, no connection."];
         return;
@@ -376,10 +478,10 @@
     
     // Comments
     NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
-    if ( meetup.strOriginalURL && meetup.strOriginalURL.length > 0 )
-        [stringComments appendString:[NSString stringWithFormat:@"    Original post: %@\n", meetup.strOriginalURL]];
+    //if ( meetup.strOriginalURL && meetup.strOriginalURL.length > 0 )
+    //    [stringComments appendString:[NSString stringWithFormat:@"    Original post: %@\n", meetup.strOriginalURL]];
     
-    for (Comment *comment in commentsList)
+    for (Comment *comment in loadedComments)
     {
         NSNumber* nSystem = comment.systemType;
         if ( [nSystem integerValue] == COMMENT_CANCELED )
@@ -402,8 +504,10 @@
         [stringComments appendString:comment.strComment];
         [stringComments appendString:@"\n"];
     }
+    Boolean bWasNotEmpty = ( commentsList.count > 0 );
     [comments setText:stringComments];
-    [self resizeComments];
+    commentsList = [NSMutableArray arrayWithArray:loadedComments];
+    [self resizeComments:bWasNotEmpty];
     
     // Update badge number for unread messages
     [globalData postInboxUnreadCountDidUpdate];
@@ -425,17 +529,56 @@
 
 - (void)reloadMeetupData
 {
-    // Setting location and date labels
+    // Location
     [labelLocation setText:meetup.strVenue];
     
+    // Date
     NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
     [formatter setDateStyle:NSDateFormatterMediumStyle];
     [formatter setTimeStyle:NSDateFormatterShortStyle];
     [formatter setDoesRelativeDateFormatting:TRUE];
     [labelDate setText:[formatter stringFromDate:meetup.dateTime]];
     
+    // Spots
+    if ( meetup.maxGuests )
+    {
+        labelSpotsAvailable.hidden = FALSE;
+        
+        [labelSpotsAvailable setText:[NSString stringWithFormat:NSLocalizedString(@"MEETUP_SPOTS_AVAILABLE",nil), meetup.spotsAvailable]];
+    }
+    else
+        labelSpotsAvailable.hidden = TRUE;
+    
+    // Price alert
+    if ( meetup.strPrice || meetup.strOriginalURL )
+    {
+        alertTicketsOnline.hidden = FALSE;
+        alertTicketsOnline.enabled = TRUE;
+        if ( meetup.strPrice && meetup.strOriginalURL)
+        {
+            alertTicketsOnline.backgroundColor = [UIColor colorWithHexString:MEETUP_ALERT_COLOR_RED];
+            NSString* strLabel = [NSString stringWithFormat:NSLocalizedString(@"MEETUP_ALERT_PAYONLINE",nil), meetup.strPrice];
+            [alertTicketsOnline setTitle:strLabel forState:UIControlStateNormal];
+        }
+        else if ( meetup.strOriginalURL )
+        {
+            alertTicketsOnline.backgroundColor = [UIColor colorWithHexString:MEETUP_ALERT_COLOR_YELLOW];
+            NSString* strLabel = NSLocalizedString(@"MEETUP_ALERT_REGONLINE",nil);
+            [alertTicketsOnline setTitle:strLabel forState:UIControlStateNormal];
+        }
+        else
+        {
+            alertTicketsOnline.backgroundColor = [UIColor colorWithHexString:MEETUP_ALERT_COLOR_GREEN];
+            NSString* strLabel = [NSString stringWithFormat:NSLocalizedString(@"MEETUP_ALERT_PAYONSITE",nil), meetup.strPrice];
+            [alertTicketsOnline setTitle:strLabel forState:UIControlStateNormal];
+            alertTicketsOnline.enabled = FALSE;
+        }
+    }
+    else
+        alertTicketsOnline.hidden = TRUE;
+    
     // Description
-    if ( meetup.strDescription || meetup.strPrice || meetup.strImageURL || meetup.strOriginalURL )
+    if ( meetup.strDescription || meetup.strImageURL )
     {
         // Showing description
         descriptionView.hidden = FALSE;
@@ -450,14 +593,14 @@
             [html appendString:strHtml];
             bWasSomethingBefore = true;
         }
-        if ( meetup.strPrice && meetup.strPrice.length > 0 )
+        /*if ( meetup.strPrice && meetup.strPrice.length > 0 )
         {
             if ( bWasSomethingBefore )
                 [html appendString:@"<BR>"];
             NSString* strHtml = [NSString stringWithFormat:MEETUP_TEMPLATE_PRICE, meetup.strPrice];
             [html appendString:strHtml];
             bWasSomethingBefore = true;
-        }
+        }*/
         if ( meetup.strDescription && meetup.strDescription.length > 0 )
         {
             if ( bWasSomethingBefore )
@@ -482,37 +625,9 @@
         [descriptionView loadHTMLString:html baseURL:nil];
     }
     else
-    {
-        // Hiding description view
         descriptionView.hidden = TRUE;
-        
-        // Replacing description with comments
-        CGRect textFrame = comments.frame;
-        textFrame.origin.y = descriptionView.frame.origin.y;
-        comments.frame = textFrame;
-    }
     
     [self reloadAnnotation];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    
-    self.title = @"";
-    
-    containerView.userInteractionEnabled = FALSE;
-    
-    // Map
-#ifdef IOS7_ENABLE
-    mapView.rotateEnabled = FALSE;
-#endif
-    
-    // Reload data
-    [self reloadMeetupData];
-    
-    // Loading comments
-    [globalData loadCommentThread:meetup target:self selector:@selector(callbackCommentsLoaded:error:)];
 }
 
 -(void)reloadAnnotation{
@@ -536,7 +651,7 @@
     }
 }
 
-- (void)resizeComments
+- (void)resizeComments:(Boolean)scrollDown
 {
     // Resizing comments
     NSUInteger newHeight = comments.contentSize.height;
@@ -544,12 +659,34 @@
     frame.size.height = newHeight;
     comments.frame = frame;
     
+    // Arranging subviews
+    NSInteger nYOffset = 0;
+    for ( UIView* view in viewsList )
+    {
+        if ( view.hidden )
+            continue;
+        
+        CGRect viewFrame = view.frame;
+        viewFrame.origin.y = nYOffset;
+        view.frame = viewFrame;
+        nYOffset += viewFrame.size.height;
+    }
+    CGRect dateFrame = labelDate.frame;
+    dateFrame.origin.y = labelLocation.frame.origin.y;
+    labelDate.frame = dateFrame;
+    
     // Resizing scroll view
     [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width, comments.frame.origin.y + comments.frame.size.height)];
     
     // Scrolling down
-    [scrollView scrollRectToVisible:CGRectMake(0, scrollView.contentSize.height-1, scrollView.frame.size.width, scrollView.contentSize.height) animated:TRUE];
+    if ( scrollDown )
+        [scrollView scrollRectToVisible:CGRectMake(0, scrollView.contentSize.height-1, scrollView.frame.size.width, scrollView.contentSize.height) animated:TRUE];
 }
+
+
+#pragma mark -
+#pragma mark WebView
+
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
@@ -577,6 +714,11 @@
     
     return YES;
 }
+
+
+#pragma mark -
+#pragma mark Misc
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -608,11 +750,6 @@
     comments.userInteractionEnabled = YES;
 }
 
--(void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
-    [self reloadAnnotation];
-}
-
 - (void)viewDidUnload {
     comments = nil;
     mapView = nil;
@@ -621,57 +758,15 @@
     descriptionView = nil;
     scrollView = nil;
     activityIndicator = nil;
+    alertTicketsOnline = nil;
+    labelSpotsAvailable = nil;
     [super viewDidUnload];
 }
 
--(void)addComment:(NSString*)strComment
-{
-    NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
-    [stringComments appendString:comments.text];
-    [stringComments appendString:strComment];
-    [comments setText:stringComments];
-    [self resizeComments];
-}
-
-- (void) callbackCommentSaved:(Comment*)comment
-{
-    [activityIndicator stopAnimating];
-    containerView.userInteractionEnabled = TRUE;
-    
-    if ( ! comment )
-    {
-        UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"No connection" message:@"Comment send failed, check your internet connection or try again later." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [errorAlert show];
-        return;
-    }
-    
-    // Updating conversation
-    meetup.numComments++;
-    [globalData updateConversation:comment.dateCreated count:[NSNumber numberWithInteger:meetup.numComments] thread:comment.strMeetupId meetup:TRUE];
-    
-    // Adding comment to the list
-    [self addComment:[NSString stringWithFormat:@"    %@: %@\n", [globalVariables fullUserName], textView.text]];
-    
-    // Reseting text field
-    [textView setText:@""];
-}
-
--(void)send{
-    [super send];
-    if ( textView.text.length == 0 )
-        return;
-    
-    // Creating comment in db
-    [globalData createCommentForMeetup:meetup commentType:COMMENT_PLAIN
-                           commentText:textView.text target:self selector:@selector(callbackCommentSaved:)];
-    
-    // Start animating
-    [activityIndicator startAnimating];
-    containerView.userInteractionEnabled = FALSE;
-}
-
-
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
     [textView resignFirstResponder];
+}
+- (IBAction)alertTapped:(id)sender {
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:meetup.strOriginalURL]];
 }
 @end

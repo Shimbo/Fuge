@@ -8,8 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import <Parse/Parse.h>
+#import "TestFlight.h"
 
 //#define IOS7_ENABLE
+
+#undef NSLog
+#define NSLog(__FORMAT__, ...) TFLog((@"%s [Line %d] " __FORMAT__), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
 
 #define globalVariables [GlobalVariables sharedInstance]
 
@@ -19,7 +23,7 @@
 #define strCurrentUserLastName [[PFUser currentUser] objectForKey:@"fbNameLast"]
 #define bIsAdmin [globalVariables isUserAdmin]
 
-#define meetupIcons @[@"iconMtGeneric", @"iconMtMovie", @"iconMtMusic", @"iconMtSports", @"iconMtGames", @"iconMtStudy", @"iconMtOutdoor", @"iconMtTheatre", @"iconMtArts"]
+#define meetupIcons @[@"iconMtGeneric", @"iconMtMovie", @"iconMtMusic", @"iconMtSports", @"iconMtGames", @"iconMtStudy", @"iconMtOutdoor", @"iconMtTheatre", @"iconMtArts", @"iconMtHacks", @"iconMtCocktail", @"iconMtClubs", @"iconMtPubs", @"iconMtYoga", @"iconMtWalking", @"iconMtCycling"]
 
 #define FACEBOOK_PERMISSIONS @[ @"user_about_me", @"user_relationships", @"user_birthday", @"user_likes", @"user_location", @"user_events", @"email"]
 
