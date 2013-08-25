@@ -50,17 +50,8 @@
             return NSOrderedDescending;
         }
         
-        if (((MeetupAnnotation*)obj1).pinColor != PinGray) {
-            if (((MeetupAnnotation*)obj2).pinColor != PinGray) {
-                return NSOrderedSame;
-            }else{
-                return NSOrderedAscending;
-            }
-        }
-        
-        if (((MeetupAnnotation*)obj2).pinColor != PinGray) {
-            return NSOrderedDescending;
-        }
+        if ([obj1 isKindOfClass:[MeetupAnnotation class]] && [obj2 isKindOfClass:[MeetupAnnotation class]] )
+            return [((MeetupAnnotation*)obj1).meetup.dateTime compare:((MeetupAnnotation*)obj2).meetup.dateTime];
         
         return NSOrderedSame;
     }];

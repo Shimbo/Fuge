@@ -16,7 +16,7 @@
 
 @implementation Meetup
 
-@synthesize strId,strOwnerId,strOwnerName,strSubject,strDescription,dateTime,privacy,meetupType,strVenue,strVenueId,strAddress,meetupData,numComments,attendees,decliners,dateTimeExp,durationSeconds,bImportedEvent,importedType,iconNumber,strPrice,strImageURL,strOriginalURL,strFeatured,maxGuests;
+@synthesize strId,strOwnerId,strOwnerName,strSubject,strDescription,dateTime,privacy,meetupType,strVenue,strVenueId,strAddress,meetupData,numComments,attendees,decliners,dateTimeExp,durationSeconds,bImportedEvent,importedType,iconNumber,strPrice,strImageURL,strOriginalURL,strFeatured,maxGuests,strGroupId;
 
 -(id) init
 {
@@ -99,7 +99,7 @@
 {
     self = [self init];
     
-    bImportedEvent = true;
+    bImportedEvent = false;
     importedType = IMPORTED_EVENTBRITE;
     meetupType = TYPE_MEETUP;
     privacy = MEETUP_PUBLIC;
@@ -115,10 +115,9 @@
     }
     else
         strOwnerName = @"Unknown";
-    if ( [data objectForKey:@"title"] )
-        strSubject = [data objectForKey:@"title"];
-    else
-        strSubject = @"Unknown";
+    if ( ! [data objectForKey:@"title"] || ! [[data objectForKey:@"title"] isKindOfClass:[NSString class]] )
+        return nil;
+    strSubject = [[data objectForKey:@"title"] capitalizedString];
     if ( [data objectForKey:@"description"] )
         strDescription = [data objectForKey:@"description"];
     
@@ -126,7 +125,7 @@
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     
     NSString* strStartDate = [data objectForKey:@"start_date"];
-    if ( ! strStartDate )
+    if ( ! strStartDate || ! [strStartDate isKindOfClass:[NSString class]] )
         return nil;
     dateTime = [dateFormatter dateFromString:strStartDate];
     if ( ! dateTime )
@@ -136,6 +135,9 @@
         return nil;
     NSDate* endDate = [dateFormatter dateFromString:strEndDate];
     if ( ! endDate )
+        return nil;
+    // CHANGE THIS if you'd like to load old events!
+    if ( [endDate compare:[NSDate date]] == NSOrderedAscending )
         return nil;
     durationSeconds = [endDate timeIntervalSince1970] - [dateTime timeIntervalSince1970];
     if ( durationSeconds > 3600*24*3 )  // Exclude events more than tree days in duration
@@ -161,6 +163,48 @@
     if ( ! strVenue || ! [strVenue isKindOfClass:[NSString class]] )
         strVenue = [venue objectForKey:@"Lat-Long"];
     strAddress = [venue objectForKey:@"address"];
+    
+    NSDictionary* ticketsDict = [data objectForKey:@"tickets"];
+    NSArray* tickets = [ticketsDict objectForKey:@"ticket"];
+    if ( [tickets isKindOfClass:[NSDictionary class]] ) // Evenbrite, my ass...
+        tickets = [NSArray arrayWithObject:tickets];
+    NSNumber *minPrice = nil, *maxPrice = nil;
+    NSString* strCurrency = nil;
+    Boolean atLeastOneTicketAvailable = false;
+    for ( NSDictionary* ticket in tickets )
+    {
+        strEndDate = [ticket objectForKey:@"end_date"];
+        if ( strEndDate && [strEndDate isKindOfClass:[NSString class]] )
+        {
+            endDate = [dateFormatter dateFromString:strEndDate];
+            if ( [endDate compare:[NSDate date]] == NSOrderedDescending )
+                atLeastOneTicketAvailable = true;
+        }
+        
+        NSNumber* price = [ticket objectForKey:@"price"];
+        
+        if ( ! price )
+            continue;
+        
+        if ( ! minPrice || [price floatValue] < [minPrice floatValue] )
+            minPrice = price;
+        
+        if ( ! maxPrice || [price floatValue] > [maxPrice floatValue] )
+            maxPrice = price;
+        
+        strCurrency = [ticket objectForKey:@"currency"];
+    }
+    if ( minPrice && maxPrice && [minPrice floatValue] != [maxPrice floatValue] )
+        strPrice = [NSString stringWithFormat:@"%.2f to %.2f %@", [minPrice floatValue], [maxPrice floatValue], strCurrency ? strCurrency : @""];
+    else if ( minPrice && [minPrice floatValue] == 0.0f )
+        strPrice = nil;
+    else if ( minPrice )
+        strPrice = [NSString stringWithFormat:@"%.2f %@", [minPrice floatValue], strCurrency ? strCurrency : @""];
+    
+    if ( ! atLeastOneTicketAvailable )
+        maxGuests = [NSNumber numberWithInteger:0];
+    
+    strOriginalURL = [data objectForKey:@"url"];
     
     return self;
 }
@@ -359,6 +403,9 @@
     else
         [meetupData removeObjectForKey:@"originalURL"];
     
+    if ( strGroupId )
+        [meetupData setObject:strGroupId forKey:@"groupId"];
+    
     // Save
     if ( bFirstSave )
     {
@@ -421,6 +468,7 @@
     if ( [meetupData objectForKey:@"canceled"] )
         isCanceled = [[meetupData objectForKey:@"canceled"] boolValue];
     strFeatured = [meetupData objectForKey:@"featured"];
+    strGroupId = [meetupData objectForKey:@"groupId"];
     
     // Imported type
     if ( [[strId substringToIndex:4] compare:@"mtmt"] == NSOrderedSame )

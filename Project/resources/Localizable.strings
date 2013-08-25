@@ -43,14 +43,15 @@
 
 "NEW_MEETUP_NOSUBJECT"          = "Please, enter the subject of the event in the text above!";
 "NEW_MEETUP_NOVENUE"            = "We were unable to retrieve your current location, please, select a venue for the event.";
-"NEW_MEETUP_BLOCKEDPUBLIC"      = "Public events could be created only by experienced users, registered at least a week ago. Try creating private event and invite your friends, so you will become familiar with how it works.";
+"NEW_MEETUP_BLOCKEDPUBLIC"      = "Be aware that making event private will show it for everybody on the map. To make it visible only for invitees, make it private back.";
 
 "PUSH_NEW_FRIEND"               = "Woohoo! Your Facebook friend %@ joined Fuge! Check if you've got new connections!";
 "PUSH_NEW_2OFRIEND"             = "Hurray! %@, a friend of your friend, joined Fuge!";
 
-"MEETUP_ALERT_PAYONLINE"        = "%@ for a ticket, tap to purchase online";
+"MEETUP_ALERT_PAYONLINE"        = "%@ for a ticket, tap to purchase";
 "MEETUP_ALERT_REGONLINE"        = "This event is free, tap to register online";
 "MEETUP_ALERT_PAYONSITE"        = "%@ for a ticket, paid on entrance";
+"MEETUP_ALERT_SOLDOUT"          = "This event is fully booked, check others";
 "MEETUP_SPOTS_AVAILABLE"        = "Spots available: %d";
 
 // Fuge only

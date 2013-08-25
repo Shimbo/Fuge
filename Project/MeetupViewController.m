@@ -10,7 +10,6 @@
 #import <Parse/Parse.h>
 #import "NewMeetupViewController.h"
 #import "GlobalData.h"
-#import "MeetupAnnotation.h"
 #import "MeetupInviteViewController.h"
 #import "SCAnnotationView.h"
 
@@ -540,21 +539,31 @@
     [labelDate setText:[formatter stringFromDate:meetup.dateTime]];
     
     // Spots
+    Boolean bSoldOut = FALSE;
     if ( meetup.maxGuests )
     {
         labelSpotsAvailable.hidden = FALSE;
         
         [labelSpotsAvailable setText:[NSString stringWithFormat:NSLocalizedString(@"MEETUP_SPOTS_AVAILABLE",nil), meetup.spotsAvailable]];
+        if ( meetup.spotsAvailable == 0 )
+            bSoldOut = TRUE;
     }
     else
         labelSpotsAvailable.hidden = TRUE;
     
     // Price alert
-    if ( meetup.strPrice || meetup.strOriginalURL )
+    if ( meetup.strPrice || meetup.strOriginalURL || bSoldOut )
     {
         alertTicketsOnline.hidden = FALSE;
         alertTicketsOnline.enabled = TRUE;
-        if ( meetup.strPrice && meetup.strOriginalURL)
+        if ( bSoldOut )
+        {
+            alertTicketsOnline.backgroundColor = [UIColor colorWithHexString:MEETUP_ALERT_COLOR_GREY];
+            NSString* strLabel = NSLocalizedString(@"MEETUP_ALERT_SOLDOUT",nil);
+            [alertTicketsOnline setTitle:strLabel forState:UIControlStateNormal];
+            alertTicketsOnline.enabled = FALSE;
+        }
+        else if ( meetup.strPrice && meetup.strOriginalURL)
         {
             alertTicketsOnline.backgroundColor = [UIColor colorWithHexString:MEETUP_ALERT_COLOR_RED];
             NSString* strLabel = [NSString stringWithFormat:NSLocalizedString(@"MEETUP_ALERT_PAYONLINE",nil), meetup.strPrice];
@@ -566,7 +575,7 @@
             NSString* strLabel = NSLocalizedString(@"MEETUP_ALERT_REGONLINE",nil);
             [alertTicketsOnline setTitle:strLabel forState:UIControlStateNormal];
         }
-        else
+        else if ( meetup.strPrice )
         {
             alertTicketsOnline.backgroundColor = [UIColor colorWithHexString:MEETUP_ALERT_COLOR_GREEN];
             NSString* strLabel = [NSString stringWithFormat:NSLocalizedString(@"MEETUP_ALERT_PAYONSITE",nil), meetup.strPrice];
@@ -637,18 +646,28 @@
     [mapView setDelegate:self];
     [mapView setRegion:reg animated:true];
     
-    if (currentAnnotation) {
-        [mapView removeAnnotation:currentAnnotation];
-    }
+    if (currentMeetupAnnotation)
+        [mapView removeAnnotation:currentMeetupAnnotation];
+    if (currentPersonAnnotation)
+        [mapView removeAnnotation:currentPersonAnnotation];
+    
+    Person* current = currentPerson;
+    currentPersonAnnotation = [[PersonAnnotation alloc] initWithPerson:current];
+    currentPersonAnnotation.title = [globalVariables shortUserName];
+    if ( current.strStatus && current.strStatus.length > 0 )
+        currentPersonAnnotation.subtitle = current.strStatus;
+    else
+        currentPersonAnnotation.subtitle = @"This is you";
+    [mapView addAnnotation:currentPersonAnnotation];
+    
     if (meetup.meetupType == TYPE_MEETUP) {
-        MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
-        [mapView addAnnotation:ann];
-        currentAnnotation = ann;
-    }else{
+        currentMeetupAnnotation = [[MeetupAnnotation alloc] initWithMeetup:meetup];
+        [mapView addAnnotation:currentMeetupAnnotation];
+    }/*else{
         ThreadAnnotation *ann = [[ThreadAnnotation alloc] initWithMeetup:meetup];
         [mapView addAnnotation:ann];
         currentAnnotation = ann;
-    }
+    }*/
 }
 
 - (void)resizeComments:(Boolean)scrollDown

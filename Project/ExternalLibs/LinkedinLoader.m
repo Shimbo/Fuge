@@ -70,6 +70,9 @@ static LinkedinLoader *sharedInstance = nil;
     if ( strLastName )
         [user setObject:strLastName forKey:@"fbNameLast"];
     
+    // Fullname for search
+    [user setObject:[[globalVariables fullName:strFirstName last:strLastName] lowercaseString] forKey:@"searchName"];
+    
     // Position, industry
     NSString* strPosition = [userProfile objectForKey:@"headline"];
     if ( strPosition )

@@ -62,6 +62,7 @@
 
 //- (NSUInteger)getFriendsInCommonCount;
 
+- (Boolean)isNotActive;
 - (Boolean)isOutdated;
 - (NSDate*)updateDate;
 
@@ -74,9 +75,7 @@
 -(NSString*)fullName;
 
 -(NSString*)jobInfo;
-#ifdef TARGET_S2C
--(NSString*)industryInfo;
-#endif
+-(NSString*)industryInfo;   // S2C only
 
 -(void)openProfileInBrowser;
 

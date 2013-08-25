@@ -171,6 +171,9 @@
 static CGRect oldMapFrame;
 
 -(IBAction)mapTouched:(id)sender {
+    
+    [scrollView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:TRUE];
+    
     hiddenButton.hidden = TRUE;
     [UIView animateWithDuration:0.2 animations:^{
         oldMapFrame = mapView.frame;
@@ -198,6 +201,10 @@ static CGRect oldMapFrame;
 
 - (void)focusMapOnUser
 {
+    // Don't focus when map is opened
+    if ( hiddenButton.hidden )
+        return;
+    
     PFGeoPoint *geoPointUser = [pCurrentUser objectForKey:@"location"];
     if ( ! geoPointUser )
         geoPointUser = [locManager getDefaultPosition];
@@ -229,6 +236,10 @@ static CGRect oldMapFrame;
 
 - (void) focusMapOnUserAndMeetups
 {
+    // Don't focus when map is opened
+    if ( hiddenButton.hidden )
+        return;
+    
     PFGeoPoint *geoPointUser = [pCurrentUser objectForKey:@"location"];
     if ( ! geoPointUser )
         return;
@@ -599,14 +610,15 @@ static CGRect oldMapFrame;
     // Persons and meetups adding
     NSUInteger nLimit = MAX_ANNOTATIONS_ON_THE_MAP;
     
-#ifndef TARGET_S2C
+#ifdef TARGET_S2C
+    if ( bIsAdmin )
+#endif
     //if ( daySelector == 0 ) // Show people only for "today" selection
     {
         nLimit -= [self loadPersonAnnotations:CIRCLE_FB limit:nLimit];
         nLimit -= [self loadPersonAnnotations:CIRCLE_2O limit:nLimit];
         nLimit -= [self loadPersonAnnotations:CIRCLE_RANDOM limit:nLimit];
     }
-#endif
     nLimit -= [self loadMeetupAndThreadAnnotations:nLimit];
     
     if (_userLocation)

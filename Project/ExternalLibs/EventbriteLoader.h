@@ -8,13 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
+#define EVENTBRITE_API_KEY      @"UVEOELJK66WVH2CFIG"
+
 @interface EventbriteLoader : NSObject <NSURLConnectionDelegate>
 {
     id resultTarget;
     SEL resultCallback;
+    NSMutableData* receivedData;
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data;
-- (void)loadData:(id)target selector:(SEL)callback;
+- (void)loadData:(NSString*)strSource target:(id)target selector:(SEL)callback;
 
 @end

@@ -42,9 +42,9 @@
     
     NSUInteger nCount = 0;
     for (PFUser* user in users)
-        if ( [user.updatedAt compare:[NSDate dateWithTimeIntervalSinceNow:-86400]] == NSOrderedDescending )
+        if ( [user.updatedAt compare:[NSDate dateWithTimeIntervalSinceNow:-(NSTimeInterval)PERSON_OUTDATED_TIME]] == NSOrderedDescending )
             nCount++;
-    self.title = [NSString stringWithFormat:@"24h count: %d", nCount];
+    self.title = [NSString stringWithFormat:@"24h/total count: %d/%d", nCount, users.count];
     
     /*NSNumber *userCount = [[NSNumber alloc] initWithInt:[userQuery countObjects]];
     

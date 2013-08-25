@@ -11,6 +11,8 @@
 #import <EventKit/EventKit.h>
 #import <EventKitUI/EventKitUI.h>
 #import <MapKit/MapKit.h>
+#import "MeetupAnnotation.h"
+#import "PersonAnnotation.h"
 
 enum EMeetupButtons
 {
@@ -46,7 +48,8 @@ enum EMeetupButtons
     id delegate;
     NSMutableArray*    buttons;
     Boolean invite;
-    id currentAnnotation;
+    MeetupAnnotation *currentMeetupAnnotation;
+    PersonAnnotation *currentPersonAnnotation;
     
     NSMutableArray  *viewsList;
 }

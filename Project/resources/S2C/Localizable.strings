@@ -13,7 +13,7 @@
 "LOADING_TITLE_NOINTERNET"      = "No internet connection.";
 "LOADING_TEXT_NOINTERNET"       = "It seems like you don’t have internet connection at the moment.";
 "LOADING_TITLE_NOPARSE"         = "Ah and oh!";
-"LOADING_TEXT_NOPARSE"          = "It seems like Parse, our magical backend, is not working right now. Let's wait and hope that they will fix it as soon as possible!";
+"LOADING_TEXT_NOPARSE"          = "Our backend software, Parse, is temporarily down. Please try again later.";
 "LOADING_TITLE_LOGINFAILED"     = "Login failure.";
 "LOADING_TEXT_LOGINFAILED"      = "It looks like the login was unsuccessful. We apologise for inconvenience. Please try again.";
 "LOADING_TITLE_OLDVERSION"      = "Update needed";
@@ -43,7 +43,7 @@
 
 "NEW_MEETUP_NOSUBJECT"          = "Please enter the subject of the event in the text field above!";
 "NEW_MEETUP_NOVENUE"            = "We were unable to retrieve your current location, please, select a venue for the event.";
-"NEW_MEETUP_BLOCKEDPUBLIC"      = "You will be able to create events seen by everyone after a week from your registration. In the meantime, invite your connections to join your event!";
+"NEW_MEETUP_BLOCKEDPUBLIC"      = "If you make your event public, it will be visible for all users of the app. Change it to private so that it's visible for only those who you invite.";
 
 "PUSH_NEW_FRIEND"               = "Woohoo! Your Linkedin friend %@ joined Simple2Connect! Check if you've got new connections!";
 "PUSH_NEW_2OFRIEND"             = "Hurray! %@, a friend of your friend, joined Simple2Connect!";
@@ -51,4 +51,5 @@
 "MEETUP_ALERT_PAYONLINE"        = "%@ for a ticket, tap to purchase online";
 "MEETUP_ALERT_REGONLINE"        = "This event is free, tap to register online";
 "MEETUP_ALERT_PAYONSITE"        = "%@ for a ticket, paid on entrance";
+"MEETUP_ALERT_SOLDOUT"          = "This event is fully booked, check others";
 "MEETUP_SPOTS_AVAILABLE"        = "Spots available: %d";

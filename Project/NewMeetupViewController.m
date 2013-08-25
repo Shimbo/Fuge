@@ -553,12 +553,12 @@
 }
 
 - (IBAction)privacyChanged:(id)sender {
-    if ( [pCurrentUser.createdAt compare:[NSDate dateWithTimeIntervalSinceNow:-24*3600*7]] == NSOrderedDescending )
+    if ( [pCurrentUser.createdAt compare:[NSDate dateWithTimeIntervalSinceNow:-86400*3]] == NSOrderedDescending )
     {
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Too early" message:NSLocalizedString(@"NEW_MEETUP_BLOCKEDPUBLIC",nil) delegate:self cancelButtonTitle:@"Alright" otherButtonTitles:nil, nil];
         [alert show];
-        [privacySwitch setOn:FALSE animated:TRUE];
-        privacySwitch.enabled = FALSE;
+        //[privacySwitch setOn:FALSE animated:TRUE];
+        //privacySwitch.enabled = FALSE;
     }
     [self updateFieldsVisibility];
 }

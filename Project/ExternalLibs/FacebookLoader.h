@@ -11,8 +11,8 @@
 
 #define fbLoader [FacebookLoader sharedInstance]
 
-#define keys @[@"/me/movies", @"/me/music", @"/me/games", @"/me/books", @"/me/interests", @"/me/likes"]
-#define categories @[@"Movies", @"Music", @"Games", @"Books", @"Interests", @"Likes"]
+#define FACEBOOK_KEYS      @[@"/me/movies", @"/me/music", @"/me/games", @"/me/books", @"/me/interests", @"/me/likes"]
+#define FACEBOOK_CATEGORIES @[@"Movies", @"Music", @"Games", @"Books", @"Interests", @"Likes"]
 
 @interface FacebookLoader : NSObject
 {

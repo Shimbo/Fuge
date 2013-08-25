@@ -256,13 +256,15 @@
     for ( int n = 0; n < messages.count; n++ )
     {
         Message* message = messages[n];
-        //Message* nextMessage = (n == messages.count-1 ? nil : messages[n+1]);
         
         // My or opponents?
         Boolean myMessage = ([personThis.strId compare:message.strUserFrom] != NSOrderedSame);
         
         // Read or not
-        Boolean thisMessageBefore = [conversationDate compare:message.dateCreated] != NSOrderedAscending;
+        Boolean thisMessageBefore = false;
+        if ( conversationDate )
+            if ( [conversationDate compare:message.dateCreated] != NSOrderedAscending )
+                thisMessageBefore = true;
         if ( myMessage && thisMessageBefore )
             [stringHistory appendString:@"*"];
         else

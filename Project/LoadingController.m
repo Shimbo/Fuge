@@ -487,12 +487,13 @@ static Boolean bRotating = true;
     _titleText.hidden = FALSE;
     _miscText.hidden = TRUE;
     
-    if ( parseDown )
+    // Because it seems that we can't destinguish one from another
+    /*if ( parseDown )
     {
         _titleText.text = NSLocalizedString(@"LOADING_TITLE_NOPARSE",nil);
         _descriptionText.text = NSLocalizedString(@"LOADING_TEXT_NOPARSE",nil);
     }
-    else
+    else*/
     {
         _titleText.text = NSLocalizedString(@"LOADING_TITLE_NOINTERNET",nil);
         _descriptionText.text = NSLocalizedString(@"LOADING_TEXT_NOINTERNET",nil);

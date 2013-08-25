@@ -12,6 +12,9 @@
 #import "Meetup.h"
 #import "Message.h"
 #import "Comment.h"
+#import "EventbriteLoader.h"
+#import "FacebookLoader.h"
+#import "MeetupLoader.h"
 
 @class MapViewController;
 @class InboxViewController;
@@ -117,6 +120,10 @@ typedef  enum EMeetupCommentType
     NSUInteger          nLoadStatusMap;
     NSUInteger          nLoadStatusCircles;
     NSUInteger          nLoadStatusInbox;
+    
+    EventbriteLoader*   EBloader;
+    FacebookLoader*     FBloader;
+    MeetupLoader*       MTloader;
 }
 
 + (id)sharedInstance;
@@ -139,9 +146,12 @@ typedef  enum EMeetupCommentType
 
 // Global data, loading in foreground
 - (void)loadData;
+- (NSUInteger)getLoadingStatus:(NSUInteger)nStage;
+
+// Global data callers to load in background
 - (void)reloadFriendsInBackground:(Boolean)loadRandom;
 - (void)reloadMapInfoInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast;
-- (NSUInteger)getLoadingStatus:(NSUInteger)nStage;
+- (void) loadPersonsBySearchString:(NSString*)searchString target:(id)target selector:(SEL)callback;
 
 // Misc
 - (void) addRecentInvites:(NSArray*)recentInvites;

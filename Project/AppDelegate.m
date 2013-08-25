@@ -223,8 +223,8 @@
         bFirstActivation = false;
     else if ( [globalVariables isLoaded] )
     {
-        [globalData reloadFriendsInBackground:TRUE];
-        [globalData reloadMapInfoInBackground:nil toNorthEast:nil];
+        //[globalData reloadFriendsInBackground:TRUE];
+        //[globalData reloadMapInfoInBackground:nil toNorthEast:nil];
         [globalData reloadInboxInBackground:INBOX_ALL];
         [[NSNotificationCenter defaultCenter]postNotificationName:kAppRestored
                                                            object:nil];

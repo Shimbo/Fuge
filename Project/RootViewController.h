@@ -12,17 +12,31 @@ typedef enum ESortingRank
     SORTING_MODES_COUNT = 3
 }SortingRank;
 
-@interface RootViewController : MainViewController {
+@interface RootViewController : MainViewController <UIPickerViewDelegate, UIPickerViewDataSource, UIActionSheetDelegate, UISearchBarDelegate>
+{
     NSUInteger      sortingMode;
     UIBarButtonItem *matchBtn;
     NSMutableArray  *sortedUsers;
-    NSMutableArray  *usersNearbyNow;
+    NSMutableArray  *usersHereNow;
+    NSMutableArray  *usersNearbyToday;
     NSMutableArray  *usersRecent;
     UIRefreshControl *refreshControl;
+    
+    UIBarButtonItem*        filterButton;
+    UIPopoverController*    popover;
+    UIActionSheet*          actionSheet;
+    NSMutableArray*         filterButtonLabels;
+    NSMutableArray*         filterSelectionLabels;
+    NSUInteger              filterSelector;
+    
+    NSString                *searchString;
+    
+    IBOutlet UITableView    *tableView;
+    IBOutlet UISearchBar    *searchView;
+    IBOutlet UIActivityIndicatorView *activityIndicator;
 }
 
-@property (nonatomic,retain) IBOutlet UITableView *tableView;
-@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
-
+//@property (nonatomic,retain) IBOutlet UITableView *tableView;
+//@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
 @end

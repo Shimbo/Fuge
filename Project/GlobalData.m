@@ -277,14 +277,18 @@ NSInteger sortByName(id num1, id num2, void *context)
                     
 #ifdef TARGET_FUGE
                     // FB Meetups
-                    [self loadFBMeetups];
+                    //[self loadFBMeetups];
                     
                     // EB Meetups
-                    [self loadEBMeetups];
+                    //[self loadEBMeetups];
 #endif
                     
                     // Inbox
                     [self reloadInboxInBackground:INBOX_ALL];
+                    
+                    // Admin reload of groups and events recreation
+                    //if ( bIsAdmin )
+                    //    [self reloadGroupsAndCreateEventsInBackground];
                 }
             }];
 #ifdef TARGET_FUGE
@@ -329,7 +333,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 
 #pragma mark -
-#pragma mark Friends
+#pragma mark People
 
 
 - (Person*)addPerson:(PFUser*)user userCircle:(NSUInteger)circleUser
@@ -462,12 +466,14 @@ NSInteger sortByName(id num1, id num2, void *context)
             [self load2OFriendsInBackground:friends];
             
             // Admin role creation, DEV CODE, don't uncomment!
+
+#ifdef TARGET_FUGE
             
             // Adding people without recreating the role, TO TEST!
             /*PFRole* role = [PFRole roleWithName:@"Moderator"];
-            [role fetch];
-            [role.users addObject:[self getPersonById:@"1377492801"].personData];
-            [role save];*/
+             [role fetch];
+             [role.users addObject:[self getPersonById:@"1377492801"].personData];
+             [role save];*/
             
             /*PFACL* adminACL = [PFACL ACLWithUser:pCurrentUser];
             [adminACL setReadAccess:TRUE forUserId:FEEDBACK_BOT_OBJECT];
@@ -485,6 +491,28 @@ NSInteger sortByName(id num1, id num2, void *context)
             [role.users addObject:[self getPersonById:@"1377492801"].personData];
             [role.users addObject:[self getPersonById:@"1302078057"].personData];
             [role save];*/
+            
+#elif defined TARGET_S2C
+            
+            /*PFACL* adminACL = [PFACL ACLWithUser:pCurrentUser];
+            [adminACL setReadAccess:TRUE forUserId:FEEDBACK_BOT_OBJECT];
+            [adminACL setWriteAccess:TRUE forUserId:FEEDBACK_BOT_OBJECT];
+            PFRole* role = [PFRole roleWithName:@"Admin" acl:adminACL];
+            [role.users addObject:pCurrentUser];
+            if ( [self getPersonById:@"gehOLBFC2C"] )
+                [role.users addObject:[self getPersonById:@"gehOLBFC2C"].personData];
+            [role save];
+            
+            PFACL* moderatorACL = [PFACL ACLWithUser:pCurrentUser];
+            [moderatorACL setReadAccess:TRUE forUserId:FEEDBACK_BOT_OBJECT];
+            [moderatorACL setWriteAccess:TRUE forUserId:FEEDBACK_BOT_OBJECT];
+            role = [PFRole roleWithName:@"Moderator" acl:moderatorACL];
+            [role.users addObject:pCurrentUser];
+            if ( [self getPersonById:@"gehOLBFC2C"] )
+                [role.users addObject:[self getPersonById:@"gehOLBFC2C"].personData];
+            [role.users addObject:[self getPersonById:@"GL6l5UrcmK"].personData];
+            [role save];*/
+#endif
         }
     }];
 }
@@ -666,6 +694,189 @@ NSInteger sortByName(id num1, id num2, void *context)
         [fbCircle sort];
 }
 
+- (void) loadPersonsBySearchString:(NSString*)searchString target:(id)target selector:(SEL)callback
+{
+    // Query
+    PFQuery *personQuery = [PFUser query];
+    personQuery.limit = 20;
+    [personQuery orderByDescending:@"updatedAt"];
+    [personQuery whereKey:@"searchName" containsString:searchString];
+    [personQuery whereKey:@"profileDiscoverable" notEqualTo:[NSNumber numberWithBool:FALSE]];
+    
+    // Actual load
+    [personQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        
+        if ( error )
+        {
+            NSLog(@"Parse query for random people error: %@", error);
+            [target performSelector:callback];
+        }
+        else
+        {
+            NSArray *personData = objects;
+            
+            // Adding users
+            for (PFUser *person in personData)
+                [self addPerson:person userCircle:CIRCLE_RANDOM];
+            
+            // Sorting random people
+            Circle* circleRandom = [self getCircle:CIRCLE_RANDOM];
+            if ( circleRandom )
+                [circleRandom sort];
+            
+            [target performSelector:callback];
+        }
+    }];
+}
+
+
+#pragma mark -
+#pragma mark Admin load of meetups
+
+static NSArray* groupsData;
+static NSInteger groupCounter;
+static NSInteger meetupsAdded;
+
+static NSUInteger category;
+static NSString* strGroupName;
+static NSString* strGroupId;
+
+- (void)processNextGroup
+{
+    // Load ended
+    if ( groupCounter >= groupsData.count )
+    {
+        if ( meetupsAdded > 0 )
+        {
+            UIAlertView *alertDone = [[UIAlertView alloc] initWithTitle:@"Done" message:[NSString stringWithFormat:@"Groups updated, total new meetups loaded: %d.", meetupsAdded] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alertDone show];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMeetupChanged object:nil userInfo:nil];
+        }
+        return;
+    }
+    
+    PFObject *groupData = groupsData[groupCounter];
+    groupCounter++;
+    
+    // Skip recently updated groups
+    /*if ( [groupData.updatedAt compare:[NSDate dateWithTimeIntervalSinceNow:-86400]] == NSOrderedDescending )
+    {
+        [self processNextGroup];
+        return;
+    }
+    else*/
+    {
+        [groupData incrementKey:@"fetchCounter"];
+        [groupData saveInBackground];
+    }
+    
+    // Params to pass to loader
+    NSUInteger groupType = [[groupData objectForKey:@"sourceType"] integerValue];
+    NSString* strSource = [groupData objectForKey:@"sourceId"];
+    
+    // Params to pass to resulted meetup
+    category = [[groupData objectForKey:@"category"] integerValue];
+    strGroupName = [groupData objectForKey:@"groupName"];
+    strGroupId = [groupData objectForKey:@"groupId"];
+    
+    switch (groupType)
+    {
+        case IMPORTED_FACEBOOK: [self loadFBMeetups:strSource]; break;
+        case IMPORTED_EVENTBRITE: [self loadEBMeetups:strSource]; break;
+        case IMPORTED_MEETUP: [self loadMTMeetups:strSource]; break;
+    }
+}
+
+- (void)updateMeetupWithGroupDataAndSave:(Meetup*)meetup
+{
+    meetup.iconNumber = category;
+    meetup.strOwnerName = strGroupName;
+    meetup.strGroupId = strGroupId;
+    
+    [self addMeetup:meetup];
+}
+
+- (void)reloadGroupsAndCreateEventsInBackground
+{
+    groupCounter = 0;
+    meetupsAdded = 0;
+    
+    PFQuery *groupQuery = [PFQuery queryWithClassName:@"Group"];
+    groupQuery.limit = 1000;
+    [groupQuery orderByDescending:@"updateDate"];
+    
+    // Query for public/2O meetups
+    [groupQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if ( error )
+        {
+            NSLog(@"Parse query for groups failed: %@", error);
+        }
+        else
+        {
+            if ( objects.count == 1000 )
+            {
+                UIAlertView *alertDone = [[UIAlertView alloc] initWithTitle:@"Sure" message:@"You've reached max of 1000 groups, please, update the code accordingly" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [alertDone show];
+            }
+            
+            groupsData = objects;
+            [self processNextGroup];
+        }
+    }];
+}
+
+- (void)fbMeetupsCallback:(NSArray*)events
+{
+    if ( ! events )
+        return;
+    
+    for ( NSDictionary* event in events )
+    {
+        Meetup* meetup = [[Meetup alloc] initWithFbEvent:event];
+        if ( meetup )
+        {
+            meetupsAdded++;
+            [self addMeetup:meetup];
+        }
+    }
+    
+    [self processNextGroup];
+}
+
+- (void)loadFBMeetups:(NSString*)strSource
+{
+    //[fbLoader loadMeetups:self selector:@selector(fbMeetupsCallback:)];
+    [self processNextGroup];
+}
+
+- (void)ebMeetupsCallback:(NSArray*)events
+{
+    for ( NSDictionary* event in events )
+    {
+        Meetup* meetup = [[Meetup alloc] initWithEbEvent:event];
+        if ( meetup )
+        {
+            meetupsAdded++;
+            [self updateMeetupWithGroupDataAndSave:meetup];
+        }
+    }
+    
+    [self processNextGroup];
+}
+
+- (void)loadEBMeetups:(NSString*)strSource
+{
+    if ( ! EBloader )
+        EBloader = [[EventbriteLoader alloc] init];
+    [EBloader loadData:strSource target:self selector:@selector(ebMeetupsCallback:)];
+}
+
+- (void)loadMTMeetups:(NSString*)strSource
+{
+    //[fbLoader loadMeetups:self selector:@selector(fbMeetupsCallback:)];
+    [self processNextGroup];
+}
+
 
 #pragma mark -
 #pragma mark Meetups
@@ -722,59 +933,6 @@ NSInteger sortByName(id num1, id num2, void *context)
     [meetups addObject:meetup];
     
     return meetup;
-}
-
-- (void)fbMeetupsCallback:(NSArray*)events
-{
-    if ( ! events )
-        return;
-    
-    for ( NSDictionary* event in events )
-    {
-        Meetup* meetup = [[Meetup alloc] initWithFbEvent:event];
-        [self addMeetup:meetup];
-    }
-}
-
-- (void)fbLikesCallback:(NSArray*)likes
-{
-    if ( likes )
-    {
-        [pCurrentUser setObject:likes forKey:@"fbLikes"];
-        [pCurrentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-            if ( error )
-                NSLog(@"Parse save for likes failed, error: %@", error);
-        }];
-    }
-}
-
-- (void)loadFBMeetups
-{
-    if ( bIsAdmin )
-    {
-        [fbLoader loadMeetups:self selector:@selector(fbMeetupsCallback:)];
-    }
-}
-
-- (void)ebMeetupsCallback:(NSArray*)events
-{
-    if ( ! events )
-        return;
-    
-    for ( NSDictionary* event in events )
-    {
-        Meetup* meetup = [[Meetup alloc] initWithEbEvent:event];
-        [self addMeetup:meetup];
-    }
-}
-
-- (void)loadEBMeetups
-{
-    /*if ( bIsAdmin )
-    {
-        EBloader = [[EventbriteLoader alloc] init];
-        [EBloader loadData:self selector:@selector(ebMeetupsCallback:)];
-    }*/
 }
 
 - (void)loadMeetupsInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast
@@ -1261,5 +1419,18 @@ NSInteger sortByName(id num1, id num2, void *context)
                                                            object:nil];
     }
 }
+
+- (void)fbLikesCallback:(NSArray*)likes
+{
+    if ( likes )
+    {
+        [pCurrentUser setObject:likes forKey:@"fbLikes"];
+        [pCurrentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if ( error )
+                NSLog(@"Parse save for likes failed, error: %@", error);
+        }];
+    }
+}
+
 
 @end

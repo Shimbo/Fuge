@@ -39,7 +39,9 @@
 #define LOCATION_UPDATE_KILOMETERS  0.5f
 
 // Pins on the map
-#define PERSON_OUTDATED_TIME        [globalVariables globalParam:@"PersonOutdatedTime" default:3600*6] // now it's 86400
+#define PERSON_NOTACTIVE_TIME       [globalVariables globalParam:@"PersonNotActiveTime" default:3600*6]
+#define PERSON_OUTDATED_TIME        [globalVariables globalParam:@"PersonOutdatedTime" default:86400]
+#define PERSON_HERE_DISTANCE        [globalVariables globalParam:@"PersonHereDistance" default:1000]
 #define PERSON_NEARBY_DISTANCE      [globalVariables globalParam:@"PersonNearbyDistance" default:20000]
 
 // Pushes

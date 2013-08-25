@@ -66,6 +66,7 @@ typedef enum kEImportedType
     
     Boolean     bImportedEvent;
     NSUInteger  importedType;
+    NSString*   strGroupId;
     
     NSString    *strFeatured;
     
@@ -95,6 +96,7 @@ typedef enum kEImportedType
 @property (nonatomic, assign) Boolean bImportedEvent;
 @property (nonatomic, assign) NSUInteger importedType;
 @property (nonatomic, copy) NSString *strFeatured;
+@property (nonatomic, copy) NSString *strGroupId;
 
 @property (nonatomic, copy) NSString *strPrice;
 @property (nonatomic, copy) NSNumber *maxGuests;

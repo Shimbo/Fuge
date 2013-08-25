@@ -103,6 +103,13 @@
     return self;
 }
 
+- (Boolean)isNotActive
+{
+    if ( [personData.updatedAt compare:[NSDate dateWithTimeIntervalSinceNow:-(NSTimeInterval)PERSON_NOTACTIVE_TIME]] == NSOrderedAscending )
+        return true;
+    return false;
+}
+
 - (Boolean)isOutdated
 {
     if ( [personData.updatedAt compare:[NSDate dateWithTimeIntervalSinceNow:-(NSTimeInterval)PERSON_OUTDATED_TIME]] == NSOrderedAscending )
@@ -185,12 +192,10 @@
     return strResult;
 }
 
-#ifdef TARGET_S2C
 -(NSString*)industryInfo
 {
     return [personData objectForKey:@"profileIndustry"];
 }
-#endif
 
 -(void)openProfileInBrowser
 {

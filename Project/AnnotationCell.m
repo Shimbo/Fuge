@@ -36,6 +36,8 @@
     [self.annotation prepareForAnnotation:annotation];
 }
 
+#define MINI_AVATAR_SIZE    20
+
 -(void)initWithMeetup:(Meetup*)meetup
 {
     self.title.text = meetup.strSubject;
@@ -87,10 +89,10 @@
         self.attending.hidden = TRUE;
     
     // Adding avatars
-    NSUInteger offset = self.attending.text.length > 0 ? self.attending.originX + self.attending.width - [self.attending.text sizeWithFont:self.attending.font].width - 25 : self.frame.size.width-30;
+    NSUInteger offset = self.attending.text.length > 0 ? self.attending.originX + self.attending.width - [self.attending.text sizeWithFont:self.attending.font].width - MINI_AVATAR_SIZE - 3 : self.attending.originX + self.attending.width - MINI_AVATAR_SIZE;
     for ( Person* person in personList )
     {
-        AsyncImageView* image = [[AsyncImageView alloc] initWithFrame:CGRectMake(offset-avatarList.count*22, 46, 20, 20)];
+        AsyncImageView* image = [[AsyncImageView alloc] initWithFrame:CGRectMake(offset-avatarList.count*(MINI_AVATAR_SIZE+1), 46, MINI_AVATAR_SIZE, MINI_AVATAR_SIZE)];
         [image loadImageFromURL:person.smallAvatarUrl];
         [avatarList addObject:image];
         [self addSubview:image];

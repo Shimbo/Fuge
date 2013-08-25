@@ -142,6 +142,9 @@ static GlobalVariables *sharedInstance = nil;
         return firstName;
     if ( ! firstName || firstName.length == 0 )
         return lastName;
+    if ( ( ! firstName || firstName.length == 0 ) &&
+        ( ! lastName || lastName.length == 0 ) )
+        return @"Noname";
     return [NSString stringWithFormat:@"%@ %@.", firstName, [lastName substringToIndex:1]];
 }
 
@@ -151,6 +154,9 @@ static GlobalVariables *sharedInstance = nil;
         return firstName;
     if ( ! firstName || firstName.length == 0 )
         return lastName;
+    if ( ( ! firstName || firstName.length == 0 ) &&
+        ( ! lastName || lastName.length == 0 ) )
+        return @"Noname";
     return [NSString stringWithFormat:@"%@ %@", firstName, lastName];
 }
 

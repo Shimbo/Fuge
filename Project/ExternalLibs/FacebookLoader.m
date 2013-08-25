@@ -57,6 +57,7 @@ static FacebookLoader *sharedInstance = nil;
         [pCurrentUser setObject:user.first_name forKey:@"fbNameFirst"];
     if ( user.last_name )
         [pCurrentUser setObject:user.last_name forKey:@"fbNameLast"];
+    [pCurrentUser setObject:[[globalVariables fullUserName] lowercaseString] forKey:@"searchName"];
     if ( user.birthday )
         [pCurrentUser setObject:user.birthday forKey:@"fbBirthday"];
     if ( [user objectForKey:@"gender"] )
@@ -142,7 +143,7 @@ static FacebookLoader *sharedInstance = nil;
 
 - (void)loadLikesData:(NSInteger)stage result:(NSMutableArray*)data caller:(id)target selector:(SEL)callback
 {
-    [FBRequestConnection startWithGraphPath:keys[stage] completionHandler:^(FBRequestConnection *connection, id likes, NSError *error) {
+    [FBRequestConnection startWithGraphPath:FACEBOOK_KEYS[stage] completionHandler:^(FBRequestConnection *connection, id likes, NSError *error) {
         
         if (error)
         {
@@ -162,7 +163,7 @@ static FacebookLoader *sharedInstance = nil;
                     // Grab data
                     NSString* strName = [item objectForKey:@"name"];
                     NSString* strId = [item objectForKey:@"id"];
-                    NSDictionary* newItem = [NSDictionary dictionaryWithObjectsAndKeys:strId, @"id", strName, @"name", categories[stage], @"cat", nil];
+                    NSDictionary* newItem = [NSDictionary dictionaryWithObjectsAndKeys:strId, @"id", strName, @"name", FACEBOOK_CATEGORIES[stage], @"cat", nil];
                     
                     // Check for duplicants
                     Boolean bFound = false;
@@ -180,7 +181,7 @@ static FacebookLoader *sharedInstance = nil;
             }
             
             // Proceed to the next stage or call selector if finished
-            if ( stage < keys.count - 1 )
+            if ( stage < FACEBOOK_KEYS.count - 1 )
                 [self loadLikesData:stage+1 result:data caller:target selector:callback];
             else if ( target )
                 [target performSelector:callback withObject:data];

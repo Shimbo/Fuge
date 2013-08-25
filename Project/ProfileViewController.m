@@ -41,10 +41,12 @@
 - (void)save
 {
     NSNumber *boolDiscovery = [NSNumber numberWithBool:discoverySwitch.on];
-    [[PFUser currentUser] setObject:boolDiscovery forKey:@"profileDiscoverable"];
+    [pCurrentUser setObject:boolDiscovery forKey:@"profileDiscoverable"];
+    if ( ! discoverySwitch.on )
+        [pCurrentUser removeObjectForKey:@"location"];
     //[[PFUser currentUser] setObject:[NSNumber numberWithInt:selection] forKey:@"profileRole"];
     //[[PFUser currentUser] setObject:areaEdit.text forKey:@"profileArea"];
-    [[PFUser currentUser] saveInBackground];
+    [pCurrentUser saveInBackground];
 }
 
 - (void)viewDidDisappear:(BOOL)animated

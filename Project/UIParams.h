@@ -36,3 +36,4 @@ typedef enum kPinColor{
 #define MEETUP_ALERT_COLOR_RED      @"d43506"
 #define MEETUP_ALERT_COLOR_YELLOW   @"eeb300"
 #define MEETUP_ALERT_COLOR_GREEN    @"00ad08"
+#define MEETUP_ALERT_COLOR_GREY     @"888888"
