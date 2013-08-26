@@ -112,7 +112,7 @@ typedef  enum EMeetupCommentType
     NSUInteger          nMapLoadingStage;
     NSUInteger          nCirclesLoadingStage;
     NSMutableArray      *newFriendsFb;
-    NSMutableArray      *newFriends2O;
+    NSMutableArray      *oldFriends2O, *newFriends2O;
     
     NSMutableDictionary *_circleByNumber;
     

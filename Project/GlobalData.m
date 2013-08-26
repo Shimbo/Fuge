@@ -373,7 +373,7 @@ NSInteger sortByName(id num1, id num2, void *context)
 {
     // Storing old friends lists (to calculate new friends later in this call)
     NSArray* oldFriendsFb = [[pCurrentUser objectForKey:@"fbFriends"] copy];
-    NSArray* oldFriends2O = [[pCurrentUser objectForKey:@"fbFriends2O"] copy];
+    oldFriends2O = [[pCurrentUser objectForKey:@"fbFriends2O"] copy];
     
     // Saving user FB friends
     NSMutableArray* friendIds;
@@ -411,12 +411,18 @@ NSInteger sortByName(id num1, id num2, void *context)
         }
         else
         {
+            newFriends2O = [NSMutableArray arrayWithCapacity:5];    // 5000
+            
             // Data collection
             for (PFUser *friendUser in friendUsers)
             {
                 // Collecting second circle data
-                NSMutableArray *friendFriendIds = [friendUser objectForKey:@"fbFriends"];
-                [pCurrentUser addUniqueObjectsFromArray:friendFriendIds forKey:@"fbFriends2O"];
+                /*NSMutableArray *friendFriendIds = [friendUser objectForKey:@"fbFriends"];
+                
+                //[pCurrentUser addUniqueObjectsFromArray:friendFriendIds forKey:@"fbFriends2O"];
+                for ( NSString* friendId in friendFriendIds )
+                    if ( ! [newFriends2O containsObject:friendId] )
+                        [newFriends2O addObject:friendId];*/
                 
                 // Adding first circle friends
                 [self addPerson:friendUser userCircle:CIRCLE_FB];
@@ -430,21 +436,23 @@ NSInteger sortByName(id num1, id num2, void *context)
                 [circleFB sort];
             
             // Excluding FB friends and user himself from 2O friends
-            NSMutableArray* temp2O = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
-            if ( temp2O )
-            {
-                [temp2O removeObjectsInArray:friendIds];
-                [temp2O removeObject:strCurrentUserId];
-            }
-            else
-                temp2O = [[NSMutableArray alloc] initWithCapacity:30];
-            [[PFUser currentUser] setObject:temp2O forKey:@"fbFriends2O"];
+            //NSMutableArray* temp2O = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
+            //if ( temp2O )
+            //{
+                //[temp2O removeObjectsInArray:friendIds];
+                //[temp2O removeObject:strCurrentUserId];
+            [newFriends2O removeObjectsInArray:friendIds];
+            [newFriends2O removeObject:strCurrentUserId];
+            //}
+            //else
+            //    temp2O = [[NSMutableArray alloc] initWithCapacity:30];
+            //[[PFUser currentUser] setObject:temp2O forKey:@"fbFriends2O"];
             
             // Creating new friends list
             if ( oldFriendsFb )
             {
-                newFriendsFb = [[[PFUser currentUser] objectForKey:@"fbFriends"] mutableCopy];
-                newFriends2O = [[[PFUser currentUser] objectForKey:@"fbFriends2O"] mutableCopy];
+                newFriendsFb = [[pCurrentUser objectForKey:@"fbFriends"] mutableCopy];
+                //newFriends2O = [[[PFUser currentUser] objectForKey:@"fbFriends2O"] mutableCopy];
                 [newFriendsFb removeObjectsInArray:oldFriendsFb];
                 if ( oldFriends2O )
                     [newFriends2O removeObjectsInArray:oldFriends2O];
@@ -519,8 +527,18 @@ NSInteger sortByName(id num1, id num2, void *context)
 
 - (void) load2OFriendsInBackground:(NSArray*)friends
 {
-    // Second circle friends query
-    NSMutableArray *friend2OIds = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
+    [pCurrentUser saveInBackground]; // CHECK: here was Eventually - ?
+    
+    // FB friends out of the app
+    [self loadFbOthers:friends];
+    
+    [self incrementCirclesLoadingStage];
+
+    return;
+}
+
+/*    // Second circle friends query
+    //NSMutableArray *friend2OIds = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
     PFQuery *friend2OQuery = [PFUser query];
     if ( [globalVariables isUserAdmin] )
         friend2OQuery.limit = 1000;
@@ -567,7 +585,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         
         [self incrementCirclesLoadingStage];
     }];
-}
+}*/
 
 - (void) loadRandomPeopleInBackground
 {
@@ -918,13 +936,13 @@ static NSString* strGroupId;
     if ( meetup.privacy == MEETUP_PRIVATE )
     {
         Boolean bSkip = true;
-        NSArray* friends = [[PFUser currentUser] objectForKey:@"fbFriends2O"];
-        if ( [friends containsObject:meetup.strOwnerId ] )
+        NSArray* friends = [pCurrentUser objectForKey:@"fbFriends2O"];
+        if ( friends && [friends containsObject:meetup.strOwnerId ] )
             bSkip = false;
-        friends = [[PFUser currentUser] objectForKey:@"fbFriends"];
-        if ( [friends containsObject:meetup.strOwnerId ] )
+        friends = [pCurrentUser objectForKey:@"fbFriends"];
+        if ( friends && [friends containsObject:meetup.strOwnerId ] )
             bSkip = false;
-        if ( [meetup.strOwnerId compare:[[PFUser currentUser] objectForKey:@"fbId"] ] == NSOrderedSame )
+        if ( [meetup.strOwnerId compare:[pCurrentUser objectForKey:@"fbId"] ] == NSOrderedSame )
             bSkip = false;
         if ( bSkip )
             return nil;

@@ -23,7 +23,7 @@
 #define strCurrentUserLastName [[PFUser currentUser] objectForKey:@"fbNameLast"]
 #define bIsAdmin [globalVariables isUserAdmin]
 
-#define meetupIcons @[@"iconMtGeneric", @"iconMtMovie", @"iconMtMusic", @"iconMtSports", @"iconMtGames", @"iconMtStudy", @"iconMtOutdoor", @"iconMtTheatre", @"iconMtArts", @"iconMtHacks", @"iconMtCocktail", @"iconMtClubs", @"iconMtPubs", @"iconMtYoga", @"iconMtWalking", @"iconMtCycling", @"iconMtSocializing"]
+#define meetupIcons @[@"iconMtGeneric", @"iconMtMovie", @"iconMtMusic", @"iconMtSports", @"iconMtGames", @"iconMtStudy", @"iconMtOutdoor", @"iconMtTheatre", @"iconMtArts", @"iconMtHacks", @"iconMtCocktail", @"iconMtClubs", @"iconMtPubs", @"iconMtYoga", @"iconMtWalking", @"iconMtCycling", @"iconMtSocializing", @"iconMtStartups", @"iconMtFinance", @"iconMtProfessionals"]
 
 #define FACEBOOK_PERMISSIONS @[ @"user_about_me", @"user_relationships", @"user_birthday", @"user_likes", @"user_location", @"user_events", @"email"]
 

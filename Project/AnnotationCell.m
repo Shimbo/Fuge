@@ -70,7 +70,7 @@
         if ( ! person || person.idCircle != CIRCLE_FB )
             continue;
         [personList addObject:person];
-        if ( personList.count >= 5 )
+        if ( personList.count >= 4 )
             break;
     }
     
