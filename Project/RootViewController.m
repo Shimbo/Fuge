@@ -105,9 +105,9 @@
                     continue;
             if ( person.matchesRank > 0 )
             {
-                if ( ! person.isNotActive && [person.distance floatValue] < PERSON_HERE_DISTANCE )
+                if ( ! person.isNotActive && person.distance && [person.distance floatValue] < PERSON_HERE_DISTANCE )
                     [usersHereNow addObject:person];
-                else if ( ! person.isOutdated && [person.distance floatValue] < PERSON_NEARBY_DISTANCE )
+                else if ( ! person.isOutdated && person.distance && [person.distance floatValue] < PERSON_NEARBY_DISTANCE )
                     [usersNearbyToday addObject:person];
                 else
                     [usersRecent addObject:person];
@@ -162,9 +162,9 @@
                 }
             }
 #endif
-            if ( ! person.isNotActive && [person.distance floatValue] < PERSON_HERE_DISTANCE )
+            if ( ! person.isNotActive && person.distance && [person.distance floatValue] < PERSON_HERE_DISTANCE )
                 [usersHereNow addObject:person];
-            else if ( ! person.isOutdated && [person.distance floatValue] < PERSON_NEARBY_DISTANCE )
+            else if ( ! person.isOutdated && person.distance && [person.distance floatValue] < PERSON_NEARBY_DISTANCE )
                 [usersNearbyToday addObject:person];
             else
                 [usersRecent addObject:person];

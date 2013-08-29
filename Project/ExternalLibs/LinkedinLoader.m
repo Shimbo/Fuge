@@ -89,16 +89,19 @@ static LinkedinLoader *sharedInstance = nil;
     if ( dictJobs )
     {
         NSArray* jobs = [dictJobs objectForKey:@"values"];
-        [user setObject:jobs forKey:@"profilePositions"];        
-        for ( NSDictionary* job in jobs )
+        if ( jobs )
         {
-            NSNumber* isCurrent = [job objectForKey:@"isCurrent"];
-            if ( isCurrent && isCurrent.integerValue == 1 )
+            [user setObject:jobs forKey:@"profilePositions"];
+            for ( NSDictionary* job in jobs )
             {
-                NSDictionary* company = [job objectForKey:@"company"];
-                NSString* strEmployer = [company objectForKey:@"name"];
-                if ( strEmployer )
-                    [user setObject:strEmployer forKey:@"profileEmployer"];
+                NSNumber* isCurrent = [job objectForKey:@"isCurrent"];
+                if ( isCurrent && isCurrent.integerValue == 1 )
+                {
+                    NSDictionary* company = [job objectForKey:@"company"];
+                    NSString* strEmployer = [company objectForKey:@"name"];
+                    if ( strEmployer )
+                        [user setObject:strEmployer forKey:@"profileEmployer"];
+                }
             }
         }
     }
@@ -116,12 +119,18 @@ static LinkedinLoader *sharedInstance = nil;
     if ( connectionDict )
     {
         NSArray* connectionArray = [connectionDict objectForKey:@"values"];
-        for ( NSDictionary* connection in connectionArray )
+        if ( connectionArray )
         {
-            NSString* strId = [connection objectForKey:@"id"];
-            [pCurrentUser addUniqueObject:strId forKey:@"fbFriends"];
+            NSMutableArray* tempIdsArray = [NSMutableArray arrayWithCapacity:connectionArray.count];
+            for ( NSDictionary* connection in connectionArray )
+            {
+                NSString* strId = [connection objectForKey:@"id"];
+                [tempIdsArray addObject:strId];
+            }
+            [pCurrentUser addUniqueObjectsFromArray:tempIdsArray forKey:@"fbFriends"];
         }
     }
+    
     
     // Big photo
     NSDictionary* photos = [userProfile objectForKey:@"pictureUrls"];

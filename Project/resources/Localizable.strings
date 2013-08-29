@@ -27,7 +27,7 @@
 "STATUS_WINDOW_TEXT"            = "Tell others what are you looking for or what would you like to do!";
 "STATUS_WINDOW_BTN_SKIP"        = "Cancel";
 "STATUS_WINDOW_BTN_ENTER"       = "Enter";
-"STATUS_WINDOW_PLACEHOLDER"     = "Example: Open for coffee and chat!";
+"STATUS_WINDOW_PLACEHOLDER"     = "Example: open for coffee and chat!";
 
 "MENU_ITEM_INBOX"               = "Inbox";
 "MENU_ITEM_PEOPLE"              = "People";

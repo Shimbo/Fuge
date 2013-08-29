@@ -561,7 +561,7 @@
             alertTicketsOnline.backgroundColor = [UIColor colorWithHexString:MEETUP_ALERT_COLOR_GREY];
             NSString* strLabel = NSLocalizedString(@"MEETUP_ALERT_SOLDOUT",nil);
             [alertTicketsOnline setTitle:strLabel forState:UIControlStateNormal];
-            alertTicketsOnline.enabled = FALSE;
+            //alertTicketsOnline.enabled = FALSE;
         }
         else if ( meetup.strPrice && meetup.strOriginalURL)
         {

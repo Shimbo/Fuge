@@ -27,7 +27,7 @@
 "STATUS_WINDOW_TEXT"            = "What are you looking for? Who would you like to talk to?";
 "STATUS_WINDOW_BTN_SKIP"        = "Cancel";
 "STATUS_WINDOW_BTN_ENTER"       = "Confirm";
-"STATUS_WINDOW_PLACEHOLDER"     = "e.g. I’d like discuss the new government initiative";
+"STATUS_WINDOW_PLACEHOLDER"     = "e.g. looking for a tax advice";
 
 "MENU_ITEM_INBOX"               = "Activity";
 "MENU_ITEM_PEOPLE"              = "People";
