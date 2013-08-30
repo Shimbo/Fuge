@@ -35,6 +35,7 @@ static NSString *const kAppRestored = @"kAppRestored";
 static NSString *const kNewMeetupCreated = @"kNewMeetupCreated";
 static NSString *const kNewMeetupChanged = @"kNewMeetupChanged";
 static NSString *const kInboxUpdated = @"kInboxUpdated";
+static NSString *const kLocationEnabled = @"kLocationEnabled";
 
 static NSString *const kPushReceivedNewFriend = @"kPushReceivedNewFriend";
 static NSString *const kPushReceivedNewMessage = @"kPushReceivedNewMessage";

@@ -191,7 +191,7 @@ static GlobalVariables *sharedInstance = nil;
 
 - (PFGeoPoint*) currentLocation
 {
-    PFGeoPoint* ptUser = [[PFUser currentUser] objectForKey:@"location"];
+    PFGeoPoint* ptUser = [locManager getPosition];
     if ( ! ptUser )
         ptUser = [locManager getDefaultPosition];
     return ptUser;

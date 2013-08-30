@@ -15,6 +15,7 @@
 @synthesize locationManager;
 
 static LocationManager *sharedInstance = nil;
+static NSUInteger fireLocationEnabledNotification = 0;
 
 // Get the shared instance and create it if necessary.
 + (LocationManager *)sharedInstance {
@@ -79,6 +80,12 @@ static LocationManager *sharedInstance = nil;
         NSLog(@"Location updated");
     }
     
+    if ( fireLocationEnabledNotification == 1 )
+    {
+        [[NSNotificationCenter defaultCenter]postNotificationName:kLocationEnabled object:nil];
+        fireLocationEnabledNotification = 2;
+    }
+    
     // Let's try not to stop
     //[locationManager stopUpdatingLocation];
 }
@@ -120,10 +127,15 @@ static LocationManager *sharedInstance = nil;
 
 -(Boolean) getLocationStatus
 {
-    if([CLLocationManager locationServicesEnabled] &&
-            [CLLocationManager authorizationStatus] != kCLAuthorizationStatusDenied)
+    if([CLLocationManager locationServicesEnabled] && [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized)
         return TRUE;
     return FALSE;
+}
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+    if([CLLocationManager locationServicesEnabled] && [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized && fireLocationEnabledNotification == 0 )
+        fireLocationEnabledNotification = 1;
 }
 
 @end

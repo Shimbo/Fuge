@@ -56,11 +56,15 @@
                                                 selector:@selector(reloadStatusChanged)
                                                 name:kLoadingCirclesFailed
                                                 object:nil];
-        [[NSNotificationCenter defaultCenter]addObserver:self
+        /*[[NSNotificationCenter defaultCenter]addObserver:self
                                                 selector:@selector(reloadStatusChanged)
                                                 name:kAppRestored
-                                                object:nil];
+                                                object:nil];*/
         //SEL focusMapOnMeetup = NSSelectorFromString(@"focusMapOnUserAndMeetups");  // To avoid stupid warning
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(locationEnabled)
+                                                name:kLocationEnabled
+                                                object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self
                                                 selector:@selector(reloadStatusChanged)
                                                 name:kNewMeetupCreated
@@ -111,6 +115,14 @@
     
     // Resizing scroll view
     [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width, tableView.frame.origin.y + tableView.frame.size.height)];
+}
+
+-(void)locationEnabled
+{
+    tableView.userInteractionEnabled = FALSE;
+    [self.activityIndicator startAnimating];
+    [globalData reloadMapInfoInBackground:nil toNorthEast:nil];
+    [globalData reloadFriendsInBackground:TRUE];
 }
 
 -(void)refreshView:(UIRefreshControl *)refreshControl {
@@ -245,7 +257,7 @@ static CGRect oldMapFrame;
         return;
     
     MKCoordinateRegion region = mapView.region;
-    Boolean bZoom = FALSE;
+    Boolean bAttendingMeetup = FALSE;
     
     CLLocationCoordinate2D upper, lower;
     upper = lower = CLLocationCoordinate2DMake(geoPointUser.latitude, geoPointUser.longitude);
@@ -266,31 +278,35 @@ static CGRect oldMapFrame;
                     if(pt.latitude < lower.latitude) lower.latitude = pt.latitude;
                     if(pt.longitude > upper.longitude) upper.longitude = pt.longitude;
                     if(pt.longitude < lower.longitude) lower.longitude = pt.longitude;
-                    bZoom = TRUE;
+                    bAttendingMeetup = TRUE;
                 }
             }
         }
     
-    // Default map location
-    if ( bZoom )
+    // Focus on user
+    if ( ! bAttendingMeetup )
     {
-        MKCoordinateSpan locationSpan;
-        locationSpan.latitudeDelta = upper.latitude - lower.latitude;
-        locationSpan.longitudeDelta = upper.longitude - lower.longitude;
-        CLLocationCoordinate2D locationCenter;
-        locationCenter.latitude = (upper.latitude + lower.latitude) / 2;
-        locationCenter.longitude = (upper.longitude + lower.longitude) / 2;
-        
-        region = MKCoordinateRegionMake(locationCenter, locationSpan);
-        region.span.latitudeDelta *= 1.1f;
-        region.span.longitudeDelta *= 1.1f;
-        if ( region.span.longitudeDelta < 0.05f || region.span.latitudeDelta < 0.05f )
-        {
-            region.span.longitudeDelta = 0.05f;
-            region.span.latitudeDelta = 0.05f;
-        }
-        [mapView setRegion:region animated:YES];
+        [self focusMapOnUser];
+        return;
     }
+    
+    // Focus on user plus meetups
+    MKCoordinateSpan locationSpan;
+    locationSpan.latitudeDelta = upper.latitude - lower.latitude;
+    locationSpan.longitudeDelta = upper.longitude - lower.longitude;
+    CLLocationCoordinate2D locationCenter;
+    locationCenter.latitude = (upper.latitude + lower.latitude) / 2;
+    locationCenter.longitude = (upper.longitude + lower.longitude) / 2;
+    
+    region = MKCoordinateRegionMake(locationCenter, locationSpan);
+    region.span.latitudeDelta *= 1.1f;
+    region.span.longitudeDelta *= 1.1f;
+    if ( region.span.longitudeDelta < 0.05f || region.span.latitudeDelta < 0.05f )
+    {
+        region.span.longitudeDelta = 0.05f;
+        region.span.latitudeDelta = 0.05f;
+    }
+    [mapView setRegion:region animated:YES];
 }
 
 - (void)addCurrentPerson
@@ -488,7 +504,7 @@ static CGRect oldMapFrame;
         for (Meetup *meetup in [globalData getMeetups])
         {
             if (meetup.meetupType == TYPE_MEETUP)
-                if ( ! meetup.hasPassed && /*! meetup.isCanceled &&*/ [meetup isWithinTimeFrame:windowStart till:windowEnd] )
+                if ( ! meetup.hasPassed && /*! meetup.isCanceled &&*/ [meetup isWithinTimeFrame:windowStart till:windowEnd] && ( [meetup.distance floatValue] < RANDOM_EVENT_KILOMETERS*1000 || [globalData isAttendingMeetup:meetup.strId] ) )
                     [arrayOfMeetups addObject:meetup];
         }
         

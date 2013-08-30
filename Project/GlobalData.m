@@ -600,7 +600,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     // We could load based on player location or map rect if he moved the map later
 //    if ( ! southWest )
 //    {
-        NSUInteger nDistance = [globalVariables isUserAdmin] ? RANDOM_PERSON_KILOMETERS_ADMIN : RANDOM_PERSON_KILOMETERS_NORMAL;
+        NSUInteger nDistance = RANDOM_PERSON_KILOMETERS;
         [friendAnyQuery whereKey:@"location" nearGeoPoint:[globalVariables currentLocation] withinKilometers:nDistance];
 //    }
 //    else
@@ -964,11 +964,9 @@ static NSString* strGroupId;
     // Location filter
     if ( ! southWest )
     {
-        PFGeoPoint* ptUser = [[PFUser currentUser] objectForKey:@"location"];
-        if ( ! ptUser )
-            ptUser = [locManager getDefaultPosition];
+        PFGeoPoint* ptUser = [globalVariables currentLocation];
         
-        NSUInteger nDistance = [globalVariables isUserAdmin] ? RANDOM_EVENT_KILOMETERS_ADMIN : RANDOM_EVENT_KILOMETERS_NORMAL;
+        NSUInteger nDistance = RANDOM_EVENT_KILOMETERS;
         [meetupAnyQuery whereKey:@"location" nearGeoPoint:ptUser withinKilometers:nDistance];
     }
     else
