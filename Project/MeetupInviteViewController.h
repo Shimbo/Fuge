@@ -19,9 +19,11 @@
     
     NSArray *_recentPersons;
     NSArray *_firstCircle;
+    NSArray *_otherPersons;
     NSArray *_facebookFriends;
+    
+    IBOutlet UITableView *tableViewInvites;
 }
-@property (strong, nonatomic) IBOutlet UITableView *tableView;
 
 -(NSArray*)selectedPersons;
 

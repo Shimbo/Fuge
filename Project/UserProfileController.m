@@ -154,14 +154,14 @@
     NSMutableArray* buttonArray = [NSMutableArray arrayWithCapacity:2];
 #ifdef TARGET_FUGE
     NSString* strProfileTitle = @"FB Profile";
-    [buttonArray addObject:[[UIBarButtonItem alloc] initWithTitle:@"Meet" style:UIBarButtonItemStylePlain target:self action:@selector(meetClicked)]];
 #elif defined TARGET_S2C
-    NSString* strProfileTitle = @"LN Profile";
+    NSString* strProfileTitle = @"LI Profile";
     messageBtn = [[UIBarButtonItem alloc] initWithTitle:@"Message" style:UIBarButtonItemStylePlain target:self action:@selector(messageClicked)];
     [buttonArray addObject:messageBtn];
     btnThingsInCommon.hidden = TRUE;
 #endif
     [buttonArray addObject:[[UIBarButtonItem alloc] initWithTitle:strProfileTitle style:UIBarButtonItemStylePlain target:self action:@selector(profileClicked)]];
+    [buttonArray addObject:[[UIBarButtonItem alloc] initWithTitle:@"Meet" style:UIBarButtonItemStylePlain target:self action:@selector(meetClicked)]];
     self.navigationItem.rightBarButtonItems = buttonArray;
     
     containerView.userInteractionEnabled = FALSE;

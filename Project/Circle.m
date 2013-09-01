@@ -55,7 +55,7 @@
 {
     switch (circle)
     {
-        case CIRCLE_FB: return @"Facebook friend";
+        case CIRCLE_FB: return @"Friend";
         case CIRCLE_2O: return @"Friend of a friend";
         case CIRCLE_RANDOM: return @"Random encounter";
         case CIRCLE_FBOTHERS: return @"Facebook friend";
@@ -67,9 +67,9 @@
 {
     switch (circle)
     {
-        case CIRCLE_FB: return @"First circle";
+        case CIRCLE_FB: return @"Connections";
         case CIRCLE_2O: return @"Second circle";
-        case CIRCLE_RANDOM: return @"Random connections";
+        case CIRCLE_RANDOM: return @"Encounters";
         case CIRCLE_FBOTHERS: return @"Facebook friends";
     }
     return @"";

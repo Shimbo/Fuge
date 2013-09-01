@@ -135,7 +135,7 @@
     {
         if ( invitee )  // Private meetup created from user profile, turn off publicity
             [privacySwitch setOn:FALSE];
-        if ( bIsAdmin ) // Always public for admins by default
+        else if ( bIsAdmin ) // Always public for admins by default
             [privacySwitch setOn:TRUE];
         
         // Default time

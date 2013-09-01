@@ -53,11 +53,25 @@
     [fbLoader showInviteDialog:arrayIds message:invitationString];
     
     // Saving recent
-    NSMutableArray* arrayRecentIds = [[NSMutableArray alloc] init];
-    for ( Person* person in [self selectedPersons])
-        if ( person.idCircle != CIRCLE_FBOTHERS )
-                [arrayRecentIds addObject:person.strId];
-    [globalData addRecentInvites:arrayRecentIds];
+    if ( [self selectedPersons].count > 0 )
+    {
+        NSArray* arrayRecentIds = (NSArray*)[_recentPersons valueForKeyPath:@"strId"];
+        NSMutableArray* arrayNewIds = [[NSMutableArray alloc] initWithArray:[[self selectedPersons] valueForKeyPath:@"strId"]];
+        for ( Person* person in [self selectedPersons])
+            if ( person.idCircle != CIRCLE_FBOTHERS )
+                [arrayNewIds addObject:person.strId];
+        if ( arrayNewIds.count > MAX_RECENT_PEOPLE_COUNT )
+            [arrayNewIds removeObjectsInRange:NSMakeRange(MAX_RECENT_PEOPLE_COUNT, arrayNewIds.count-1)];
+        NSInteger m = arrayRecentIds.count - 1;
+        for ( NSUInteger n = arrayNewIds.count; n < MAX_RECENT_PEOPLE_COUNT; n++ )
+        {
+            if ( m < 0 ) break;
+            if ( ! [arrayNewIds containsObject:arrayRecentIds[m]] )
+                [arrayNewIds addObject:arrayRecentIds[m]];
+            m--;
+        }
+        [globalData setRecentInvites:arrayNewIds];
+    }
     
     // Push for everybody NOT invited and only in case meetup will happen in next 12 hours
     if ( bNewMeetup )
@@ -77,17 +91,43 @@
     }];
 }
 
+static Boolean bTurnOn = true;
+
+- (void)addAll
+{
+    for (NSInteger j = 0; j < [tableViewInvites numberOfSections]; ++j)
+        for (NSInteger i = 0; i < [tableViewInvites numberOfRowsInSection:j]; ++i)
+        {
+            NSIndexPath* indexPath = [NSIndexPath indexPathForRow:i inSection:j];
+            UITableViewCell *cell = [tableViewInvites cellForRowAtIndexPath:indexPath];
+            Person *person = [self getArrayForSectionNumber:indexPath.section][indexPath.row];
+            if ( bTurnOn )
+            {
+                selected[person.strId] = person;
+                cell.accessoryType = UITableViewCellAccessoryCheckmark;
+            }
+            else
+            {
+                [selected removeObjectForKey:person.strId];
+                cell.accessoryType = UITableViewCellAccessoryNone;
+            }
+        }
+    [tableViewInvites reloadData];
+    bTurnOn = ! bTurnOn;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.title = @"Invite";
     self.navigationItem.hidesBackButton = YES;
+    UIBarButtonItem *addAll = [[UIBarButtonItem alloc] initWithTitle:@"Select all" style:UIBarButtonItemStyleBordered target:self action:@selector(addAll)];
     UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done)];
+    [self.navigationItem setLeftBarButtonItem:addAll];
     [self.navigationItem setRightBarButtonItem:done];
     
-    
     UINib *nib = [UINib nibWithNibName:@"PersonInviteCell" bundle:nil];
-    [self.tableView registerNib:nib forCellReuseIdentifier:@"PersonCellIdent"];
+    [tableViewInvites registerNib:nib forCellReuseIdentifier:@"PersonCellIdent"];
     [self.searchDisplayController.searchResultsTableView registerNib:nib forCellReuseIdentifier:@"PersonCellIdent"];
     
     searcher = [[MeetupInviteSearch alloc]init];
@@ -97,15 +137,32 @@
     self.searchDisplayController.searchBar.delegate = searcher;
     
     
-    // This code works! Use it for recent users!
-    _recentPersons = [globalData getRecentPersons];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"NOT (self.strId in %@)",
-                              [_recentPersons valueForKeyPath:@"strId"]];
-    _firstCircle = [[[globalData getCircle:CIRCLE_FB] getPersons]
-                    filteredArrayUsingPredicate:predicate];
+    NSPredicate *predicateRecent = [NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        Person* person = evaluatedObject;
+        NSArray* ids = (NSArray*)[_recentPersons valueForKeyPath:@"strId"];
+        Boolean bFound = [ids indexOfObjectIdenticalTo:person.strId] != NSNotFound;
+        return ! bFound;
+    }];
+    NSPredicate* predicateRandom = [NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        Person* person = evaluatedObject;
+        NSArray* ids = (NSArray*)[_recentPersons valueForKeyPath:@"strId"];
+        Boolean bFound = [ids indexOfObjectIdenticalTo:person.strId] != NSNotFound;
+        if ( bFound )
+            return FALSE;
+        if ( bIsAdmin )
+            return TRUE;
+        if ( [selected objectForKey:person.strId] )
+            return TRUE;
+        return FALSE;
+    }];
     
+    _recentPersons = [globalData getRecentPersons];
+    _firstCircle = [[[globalData getCircle:CIRCLE_FB] getPersons]
+                    filteredArrayUsingPredicate:predicateRecent];
+    _otherPersons = [[[globalData getCircle:CIRCLE_RANDOM] getPersons]
+                     filteredArrayUsingPredicate:predicateRandom];
     _facebookFriends = [[[globalData getCircle:CIRCLE_FBOTHERS] getPersons]
-                        filteredArrayUsingPredicate:predicate];
+                        filteredArrayUsingPredicate:predicateRecent];
 }
 
 - (void)searchDisplayController:(UISearchDisplayController *)controller willShowSearchResultsTableView:(UITableView *)tableView{
@@ -116,7 +173,7 @@
 }
 
 - (void)searchDisplayController:(UISearchDisplayController *)controller willHideSearchResultsTableView:(UITableView *)tableView{
-    [self.tableView reloadData];
+    [tableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning
@@ -128,7 +185,7 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)aTableView {
 	// Number of sections is the number of regions
 //    NSInteger nCount = [[globalData getCircles] count];
-	return 3;
+	return 4;
 }
 
 -(NSUInteger)translateSectionNumberToCircleNumber:(NSUInteger)section{
@@ -136,6 +193,9 @@
         return CIRCLE_FB;
     }
     else if (section == 2){
+        return CIRCLE_RANDOM;
+    }
+    else if (section == 3){
         return CIRCLE_FBOTHERS;
     }
     return CIRCLE_NONE;
@@ -145,15 +205,12 @@
     switch (section) {
         case 0:
             return _recentPersons;
-            break;
         case 1:
             return _firstCircle;
-            break;
         case 2:
+            return _otherPersons;
+        case 3:
             return _facebookFriends;
-            break;
-        default:
-            break;
     }
 	return nil;
 }
@@ -167,7 +224,7 @@
 	// Section title is the region name
     if ([self getArrayForSectionNumber:section].count == 0)
         return nil;
-
+    
     if (section == 0)
         return @"Recent";
     Circle *circle = [globalData getCircle:[self translateSectionNumberToCircleNumber:section]];
@@ -210,7 +267,6 @@
 }
 
 - (void)viewDidUnload {
-    [self setTableView:nil];
     [super viewDidUnload];
 }
 

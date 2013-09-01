@@ -155,7 +155,7 @@ typedef  enum EMeetupCommentType
 - (void) loadPersonsBySearchString:(NSString*)searchString target:(id)target selector:(SEL)callback;
 
 // Misc
-- (void) addRecentInvites:(NSArray*)recentInvites;
+- (void) setRecentInvites:(NSArray*)recentInvites;
 - (void) addRecentVenue:(FSVenue*)recentVenue;
 - (NSArray*) getRecentPersons;
 - (NSArray*) getRecentVenues;

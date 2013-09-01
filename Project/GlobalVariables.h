@@ -51,6 +51,7 @@
 #define MAX_ANNOTATIONS_ON_THE_MAP  200
 
 // To keep recent venues list clean
+#define MAX_RECENT_PEOPLE_COUNT     10
 #define MAX_RECENT_VENUES_COUNT     [globalVariables globalParam:@"MaxRecentVenuesCount" default:5]
 
 // Merging meetups with persons

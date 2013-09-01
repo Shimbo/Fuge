@@ -1329,9 +1329,9 @@ static NSString* strGroupId;
     return false;
 }
 
-- (void) addRecentInvites:(NSArray*)recentInvites
+- (void) setRecentInvites:(NSArray*)recentInvites
 {
-    [[PFUser currentUser] addUniqueObjectsFromArray:recentInvites forKey:@"recentInvites"];
+    [[PFUser currentUser] setObject:recentInvites forKey:@"recentInvites"];
     [[PFUser currentUser] saveInBackground]; // CHECK: here was Eventually
 }
 
