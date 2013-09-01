@@ -1066,7 +1066,7 @@ static NSString* strGroupId;
 #pragma mark -
 #pragma mark Invites
 
-- (void)createInvite:(Meetup*)meetup stringTo:(NSString*)strRecipient
+- (void)createInvite:(Meetup*)meetup stringTo:(NSString*)strRecipient target:(id)target selector:(SEL)callback
 {
     Person* recipient = [self getPersonById:strRecipient];
     
@@ -1107,7 +1107,11 @@ static NSString* strGroupId;
             [errorAlert show];
         }
         else
+        {
             [pushManager sendPushInviteForMeetup:meetup.strId user:strRecipient];
+            if ( target )
+                [target performSelector:callback];
+        }
     }];
 }
 

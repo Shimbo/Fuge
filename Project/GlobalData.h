@@ -174,7 +174,7 @@ typedef  enum EMeetupCommentType
 
 // Invites
 // One of two last parameters should be nil
-- (void)createInvite:(Meetup*)meetup stringTo:(NSString*)strRecipient;
+- (void)createInvite:(Meetup*)meetup stringTo:(NSString*)strRecipient target:(id)target selector:(SEL)callback;
 
 // For internal use
 - (void)loadingFailed:(NSUInteger)nStage status:(NSUInteger)nStatus;

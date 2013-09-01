@@ -150,9 +150,9 @@ static Boolean bRotating = true;
         }
     
     // Login or load
-    if ( ! PFFacebookUtils.session.isOpen || ! [[PFUser currentUser] isAuthenticated] || ! bPermissionsGranted || ! strCurrentUserId )
+    if ( ! PFFacebookUtils.session.isOpen || ! currentUserIsAuthenticated || ! bPermissionsGranted || ! strCurrentUserId )
 #elif defined TARGET_S2C
-    if ( ! [[PFUser currentUser] isAuthenticated] || ! strCurrentUserId )
+    if ( ! currentUserIsAuthenticated || ! strCurrentUserId )
 #endif
     {
         [self notLoggedIn];

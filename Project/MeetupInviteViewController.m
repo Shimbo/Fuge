@@ -36,13 +36,29 @@
     return self;
 }
 
+static NSMutableArray* invitesLeft = nil;
+
+-(void)sendNextInvite
+{
+    if ( ! invitesLeft ) return;
+    if ( invitesLeft.count == 0 ) return;
+    
+    Person* person = [invitesLeft objectAtIndex:0];
+    [globalData createInvite:meetup stringTo:person.strId target:self selector:@selector(sendNextInvite)];
+    [invitesLeft removeObjectAtIndex:0];
+}
+
 -(void)done{
     
     // Creating invites
     if ( meetup )
+    {
+        invitesLeft = [NSMutableArray arrayWithCapacity:[self selectedPersons].count];
         for ( Person* person in [self selectedPersons])
             if ( ! [meetup hasAttendee:person.strId] )
-                [globalData createInvite:meetup stringTo:person.strId];
+                [invitesLeft addObject:person];
+        [self sendNextInvite];
+    }
     
     // Facebook invites
     NSMutableArray* arrayIds = [NSMutableArray arrayWithCapacity:10];

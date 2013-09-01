@@ -18,6 +18,7 @@
 #define globalVariables [GlobalVariables sharedInstance]
 
 #define pCurrentUser [PFUser currentUser]
+#define currentUserIsAuthenticated  ([PFUser currentUser] && [[PFUser currentUser] isAuthenticated])
 #define strCurrentUserId [[PFUser currentUser] objectForKey:@"fbId"]
 #define strCurrentUserFirstName [[PFUser currentUser] objectForKey:@"fbNameFirst"]
 #define strCurrentUserLastName [[PFUser currentUser] objectForKey:@"fbNameLast"]
