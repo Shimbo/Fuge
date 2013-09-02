@@ -31,6 +31,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         meetup = nil;
+        bSelectAllTurnOn = true;
         selected = [NSMutableDictionary dictionaryWithCapacity:10];
     }
     return self;
@@ -77,7 +78,7 @@ static NSMutableArray* invitesLeft = nil;
             if ( person.idCircle != CIRCLE_FBOTHERS )
                 [arrayNewIds addObject:person.strId];
         if ( arrayNewIds.count > MAX_RECENT_PEOPLE_COUNT )
-            [arrayNewIds removeObjectsInRange:NSMakeRange(MAX_RECENT_PEOPLE_COUNT, arrayNewIds.count-1)];
+            [arrayNewIds removeObjectsInRange:NSMakeRange(MAX_RECENT_PEOPLE_COUNT, arrayNewIds.count-MAX_RECENT_PEOPLE_COUNT)];
         NSInteger m = arrayRecentIds.count - 1;
         for ( NSUInteger n = arrayNewIds.count; n < MAX_RECENT_PEOPLE_COUNT; n++ )
         {
@@ -107,8 +108,6 @@ static NSMutableArray* invitesLeft = nil;
     }];
 }
 
-static Boolean bTurnOn = true;
-
 - (void)addAll
 {
     for (NSInteger j = 0; j < [tableViewInvites numberOfSections]; ++j)
@@ -117,7 +116,7 @@ static Boolean bTurnOn = true;
             NSIndexPath* indexPath = [NSIndexPath indexPathForRow:i inSection:j];
             UITableViewCell *cell = [tableViewInvites cellForRowAtIndexPath:indexPath];
             Person *person = [self getArrayForSectionNumber:indexPath.section][indexPath.row];
-            if ( bTurnOn )
+            if ( bSelectAllTurnOn )
             {
                 selected[person.strId] = person;
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
@@ -129,7 +128,7 @@ static Boolean bTurnOn = true;
             }
         }
     [tableViewInvites reloadData];
-    bTurnOn = ! bTurnOn;
+    bSelectAllTurnOn = ! bSelectAllTurnOn;
 }
 
 - (void)viewDidLoad

@@ -23,6 +23,8 @@
     NSArray *_facebookFriends;
     
     IBOutlet UITableView *tableViewInvites;
+    
+    Boolean bSelectAllTurnOn;
 }
 
 -(NSArray*)selectedPersons;
