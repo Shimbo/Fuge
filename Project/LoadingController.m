@@ -45,6 +45,7 @@ static Boolean bRotating = true;
         nAnimationStage = 0;
         _backgroundImage.alpha = 0.0f;
         bDemoMode = false;
+        bElementsHidden = true;
         
         [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:NO];
     }
@@ -371,6 +372,10 @@ static Boolean bRotating = true;
 
 - (void) hideAll
 {
+    if ( bElementsHidden )
+        return;
+    bElementsHidden = true;
+    
     bAnimation = true;
     nAnimationStage = 0;
     
@@ -385,11 +390,13 @@ static Boolean bRotating = true;
     
     [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
         _loginButton.centerY += 200;
+        _linkedinButton.centerY += 200;
         _retryButton.centerY += 200;
         _updateButton.centerY += 200;
         _descriptionText.centerY -= 200;
         _titleText.centerY -= 200;
         _miscText.centerY += 200;
+        
         _loginButton.alpha = 0.0f;
         _linkedinButton.alpha = 0.0f;
         _retryButton.alpha = 0.0f;
@@ -397,16 +404,20 @@ static Boolean bRotating = true;
         _descriptionText.alpha = 0.0f;
         _titleText.alpha = 0.0f;
         _miscText.alpha = 0.0f;
+        
         _whiteImage.transform = CGAffineTransformScale(CGAffineTransformIdentity, 4.0, 4.0);
     }
     completion: ^(BOOL finished) {
         _loginButton.hidden = TRUE;
         _linkedinButton.hidden = TRUE;
+        _updateButton.hidden = TRUE;
         _retryButton.hidden = TRUE;
         _descriptionText.hidden = TRUE;
         _titleText.hidden = TRUE;
         _miscText.hidden = TRUE;
+        
         _loginButton.centerY -= 200;
+        _linkedinButton.centerY -= 200;
         _retryButton.centerY -= 200;
         _updateButton.centerY -= 200;
         _descriptionText.centerY += 200;
@@ -417,6 +428,10 @@ static Boolean bRotating = true;
 
 - (void) showAll
 {
+    if ( ! bElementsHidden )
+        return;
+    bElementsHidden = false;
+    
     bAnimation = false;
     
     _loginButton.centerY += 200;
@@ -426,13 +441,14 @@ static Boolean bRotating = true;
     _descriptionText.centerY -= 200;
     _titleText.centerY -= 200;
     _miscText.centerY += 200;
-    _loginButton.alpha = 0;
-    _linkedinButton.alpha = 0;
-    _retryButton.alpha = 0;
-    _updateButton.alpha = 0;
-    _descriptionText.alpha = 0;
-    _titleText.alpha = 0;
-    _miscText.alpha = 0;
+    
+    _loginButton.alpha = 0.0f;
+    _linkedinButton.alpha = 0.0f;
+    _retryButton.alpha = 0.0f;
+    _updateButton.alpha = 0.0f;
+    _descriptionText.alpha = 0.0f;
+    _titleText.alpha = 0.0f;
+    _miscText.alpha = 0.0f;
     _whiteImage.transform = CGAffineTransformScale(CGAffineTransformIdentity, 4.0, 4.0);
     
     [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
@@ -443,6 +459,7 @@ static Boolean bRotating = true;
         _descriptionText.centerY += 200;
         _titleText.centerY += 200;
         _miscText.centerY -= 200;
+        
         _loginButton.alpha = 1.0f;
         _linkedinButton.alpha = 1.0f;
         _retryButton.alpha = 1.0f;
@@ -450,6 +467,7 @@ static Boolean bRotating = true;
         _descriptionText.alpha = 1.0f;
         _titleText.alpha = 1.0f;
         _miscText.alpha = 1.0f;
+        
         _whiteImage.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.0, 1.0);
     }
     completion: ^(BOOL finished) {

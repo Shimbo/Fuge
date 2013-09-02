@@ -361,9 +361,11 @@
                 if ( [globalData getCircle:CIRCLE_FBOTHERS].getPersons.count > 0 )
                     return [Circle getCircleName:[globalData getCircle:CIRCLE_FBOTHERS].idCircle];
             }
-        default:    // ENGAGEMENT
+            break;
+        case SORTING_ENGAGEMENT:
             return @"Sorting by engagement";
     }
+    return nil;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath  {

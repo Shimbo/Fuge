@@ -15,6 +15,8 @@
     Boolean     bAnimation;
     Boolean     bDemoMode;
     UIImageView* pyramid;
+    
+    Boolean     bElementsHidden;
 }
 @property (strong, nonatomic) IBOutlet UIButton *loginButton;
 @property (strong, nonatomic) IBOutlet UIButton *linkedinButton;
