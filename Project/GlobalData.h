@@ -153,6 +153,7 @@ typedef  enum EMeetupCommentType
 - (void)reloadFriendsInBackground:(Boolean)loadRandom;
 - (void)reloadMapInfoInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast;
 - (void) loadPersonsBySearchString:(NSString*)searchString target:(id)target selector:(SEL)callback;
+- (void) loadPersonsByIdsList:(NSArray*)idsList target:(id)target selector:(SEL)callback;
 
 // Misc
 - (void) setRecentInvites:(NSArray*)recentInvites;

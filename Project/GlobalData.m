@@ -135,11 +135,15 @@ NSInteger sortByName(id num1, id num2, void *context)
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"strId IN %@",strFbIds];
     for ( Circle* circle in [circles allValues] )
         [result addObjectsFromArray:[circle.getPersons filteredArrayUsingPredicate:predicate]];
+    if ( [strFbIds containsObject:strCurrentUserId] )
+        [result addObject:currentPerson];
     return result;
 }
 
 - (Person*) getPersonById:(NSString*)strFbId
 {
+    if ( [strFbId compare:strCurrentUserId] == NSOrderedSame )
+        return currentPerson;
     for ( Circle* circle in [circles allValues] )
         for (Person* person in [circle getPersons])
             if ( [person.strId compare:strFbId] == NSOrderedSame )
@@ -746,6 +750,40 @@ NSInteger sortByName(id num1, id num2, void *context)
         }
     }];
 }
+
+- (void) loadPersonsByIdsList:(NSArray*)idsList target:(id)target selector:(SEL)callback
+{
+    // Query
+    PFQuery *personQuery = [PFUser query];
+    personQuery.limit = 100;
+    [personQuery whereKey:@"fbId" containedIn:idsList];
+    
+    // Actual load
+    [personQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        
+        if ( error )
+        {
+            NSLog(@"Parse query for random people error: %@", error);
+            [target performSelector:callback];
+        }
+        else
+        {
+            NSArray *personData = objects;
+            
+            // Adding users
+            for (PFUser *person in personData)
+                [self addPerson:person userCircle:CIRCLE_RANDOM];
+            
+            // Sorting random people
+            Circle* circleRandom = [self getCircle:CIRCLE_RANDOM];
+            if ( circleRandom )
+                [circleRandom sort];
+            
+            [target performSelector:callback];
+        }
+    }];
+}
+
 
 
 #pragma mark -

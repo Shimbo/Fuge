@@ -36,8 +36,6 @@
     [self.annotation prepareForAnnotation:annotation];
 }
 
-#define MINI_AVATAR_SIZE    20
-
 -(void)initWithMeetup:(Meetup*)meetup
 {
     self.title.text = meetup.strSubject;
@@ -70,7 +68,7 @@
         if ( ! person || person.idCircle != CIRCLE_FB )
             continue;
         [personList addObject:person];
-        if ( personList.count >= 4 )
+        if ( personList.count >= MINI_AVATAR_COUNT_CELL )
             break;
     }
     

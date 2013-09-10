@@ -140,28 +140,8 @@ NSInteger compareDistance(id id1, id id2, void *context)
             case 3: person = matched2OFriends[indexPath.row]; break;
         }
         
-        [personCell.personImage loadImageFromURL:person.smallAvatarUrl];
-        personCell.personName.text = [person fullName];
-        if ( person.idCircle == CIRCLE_FBOTHERS )
-        {
-            if ( indexPath.section != 3 )
-                personCell.personDistance.text = @"Invite!";
-            else
-                personCell.personDistance.text = @"";
-        }
-        else
-            personCell.personDistance.text = [person distanceString:FALSE];
-        personCell.personInfo.text = @"";
-        if ( person.strStatus && person.strStatus.length > 0 )
-        {
-            personCell.personStatus.text = person.strStatus;
-            personCell.personStatus.textColor = [UIColor blueColor];
-        }
-        else
-        {
-            personCell.personStatus.text = [person jobInfo];
-            personCell.personStatus.textColor = [UIColor blackColor];
-        }
+        [personCell initWithPerson:person engagement:FALSE];
+        
         return personCell;
     }
     else

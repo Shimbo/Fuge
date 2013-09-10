@@ -41,6 +41,7 @@ enum EMeetupButtons
     IBOutlet UILabel *labelLocation;
     IBOutlet UILabel *labelSpotsAvailable;
     IBOutlet UIWebView *descriptionView;
+    IBOutlet UIView *peopleCounters;
     IBOutlet UIScrollView *scrollView;
     IBOutlet UIActivityIndicatorView *activityIndicator;    
     IBOutlet UIButton *alertTicketsOnline;
@@ -52,6 +53,10 @@ enum EMeetupButtons
     PersonAnnotation *currentPersonAnnotation;
     
     NSMutableArray  *viewsList;
+    IBOutlet UIButton *countersJoined;
+    IBOutlet UIButton *countersDeclined;
+    IBOutlet UIButton *countersInvited;
+    NSMutableArray    *avatarList;
 }
 
 -(void) setMeetup:(Meetup*)m;
@@ -59,5 +64,11 @@ enum EMeetupButtons
 
 @property (nonatomic,strong) id delegate;
 - (IBAction)alertTapped:(id)sender;
+
+- (IBAction)countersJoinedTapped:(id)sender;
+- (IBAction)countersDeclinedTapped:(id)sender;
+- (IBAction)countersInvitedTapped:(id)sender;
+
+
 
 @end

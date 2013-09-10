@@ -18,6 +18,7 @@
 #import "FacebookLoader.h"
 #import "AppDelegate.h"
 #import "AsyncImageView.h"
+#import "InAppPurchaseManager.h"
 
 #import "TestFlightSDK/TestFlight.h"
 
@@ -73,9 +74,15 @@
     [self reloadTableAndScroll:TRUE];
 }
 
+- (void) shoutoutClicked
+{
+    [inAppManager requestProductData];
+}
+
 
 #pragma mark -
 #pragma mark View loading
+
 
 - (void) recalcAndSortUsers
 {
@@ -233,14 +240,14 @@
     [self reloadTableAndScroll:TRUE];
     
     // Buttons
+    UIBarButtonItem *shoutoutBtn = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"BUTTONS_SHOUTOUT",nil) style:UIBarButtonItemStyleBordered target:self action:@selector(shoutoutClicked)];
 #ifdef TARGET_FUGE
     matchBtn = [[UIBarButtonItem alloc] initWithTitle:sortingModeTitles[SORTING_RANK] style:UIBarButtonItemStyleBordered target:self action:@selector(matchClicked)];
-    //UIBarButtonItem *reloadBtn = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"BUTTONS_RELOAD",nil) style:UIBarButtonItemStyleBordered target:self action:@selector(reloadClicked)];
     [self.navigationItem setRightBarButtonItems:@[matchBtn]];
 #elif defined TARGET_S2C
     filterButton = [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterSelectorClicked)];
     [self recalcFilterTexts];
-    [self.navigationItem setRightBarButtonItems:@[filterButton]];
+    [self.navigationItem setRightBarButtonItems:@[filterButton, shoutoutBtn]];
 #endif
     
     // Users sorting
@@ -398,74 +405,7 @@
             break;
     }
     
-    [personCell.personImage loadImageFromURL:person.smallAvatarUrl];
-    
-#ifdef TARGET_FUGE
-    personCell.personName.text = [person fullName];
-#elif defined TARGET_S2C
-    NSMutableString* strPersonName = [NSMutableString stringWithString:[person fullName]];
-    if ( person.idCircle == CIRCLE_FB )
-        [strPersonName appendString:@" (1st)"];
-    else if ( person.idCircle == CIRCLE_2O )
-        [strPersonName appendString:@" (2nd)"];
-    personCell.personName.text = strPersonName;
-#endif
-    if ( person.idCircle == CIRCLE_FBOTHERS )
-        personCell.personDistance.text = @"Invite!";
-    else
-    {
-        NSString* distanceString = [person distanceString:FALSE];
-        if ( distanceString.length > 0 )
-            personCell.personDistance.text = distanceString;
-        else
-            personCell.personDistance.text = @"Unknown";
-    }
-    
-    personCell.color = [UIColor whiteColor];
-    personCell.personInfo.text = @"";
-    personCell.shouldDrawMatches = FALSE;
-    
-#ifdef TARGET_S2C
-    personCell.personStatus.text = person.strStatus;
-    personCell.personRole.text = [person jobInfo];
-#elif defined TARGET_FUGE
-    // Matches
-    if ( person.idCircle != CIRCLE_FBOTHERS )
-    {
-        if ( person.matchesTotal )
-            personCell.personInfo.text = @"Match:    ";
-        if ( person.idCircle != CIRCLE_FB )
-        {
-            NSUInteger matchesRank = person.matchesRank;
-            float fColor = 1.0f - ((float)(matchesRank > MATCHING_COLOR_RANK_MAX ? MATCHING_COLOR_RANK_MAX : matchesRank))/MATCHING_COLOR_RANK_MAX / MATCHING_COLOR_BRIGHTNESS;
-            personCell.color = [UIColor
-                        colorWithRed: (MATCHING_COLOR_COMPONENT_R+(255.0f-MATCHING_COLOR_COMPONENT_R)*fColor)/255.0f
-                        green:(MATCHING_COLOR_COMPONENT_G+(255.0f-MATCHING_COLOR_COMPONENT_G)*fColor)/255.0f
-                        blue:(MATCHING_COLOR_COMPONENT_B+(255.0f-MATCHING_COLOR_COMPONENT_B)*fColor)/255.0f alpha:1.0f];
-            if ( matchesRank > 0 )
-                personCell.shouldDrawMatches = TRUE;
-        }
-        else
-            personCell.personInfo.text = @"FB friend";
-    }
-    
-    // Engagement details
-    if ( sortingMode == SORTING_ENGAGEMENT )
-    {
-        NSString* strMatches = [NSString stringWithFormat:@"%d/%d/%d/%d", [person getConversationCountStats:TRUE onlyMessages:FALSE], [person getConversationCountStats:FALSE onlyMessages:FALSE], [person getConversationCountStats:TRUE onlyMessages:TRUE], [person getConversationCountStats:FALSE onlyMessages:TRUE]];
-        personCell.personInfo.text = strMatches;
-    }
-    if ( person.strStatus && person.strStatus.length > 0 )
-    {
-        personCell.personStatus.text = person.strStatus;
-        personCell.personStatus.textColor = [UIColor blueColor];
-    }
-    else
-    {
-        personCell.personStatus.text = [person jobInfo];
-        personCell.personStatus.textColor = [UIColor blackColor];
-    }
-#endif
+    [personCell initWithPerson:person engagement:(sortingMode == SORTING_ENGAGEMENT)];
     
 	return personCell;
 }

@@ -19,7 +19,7 @@
 "LOADING_TITLE_OLDVERSION"      = "Outdated version!";
 "LOADING_TEXT_OLDVERSION"       = "What age did you come from? Why still using this version instead of a new and shiny one?";
 
-"BUTTONS_RELOAD"                = "Reload";
+"BUTTONS_SHOUTOUT"              = "Shout out";
 
 "MAP_BUTTON_NEWMEETUP"          = "Add event";
 

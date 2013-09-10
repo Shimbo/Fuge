@@ -122,7 +122,9 @@
 
 -(void) setProfileMode:(NSUInteger)mode
 {
+#ifdef TARGET_S2C
     profileMode = mode;
+#endif
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
@@ -151,23 +153,30 @@
 {
     [super viewDidLoad];
     
+    Boolean bCurrentUser = ( [personThis.strId compare:strCurrentUserId ] == NSOrderedSame );
+    
     NSMutableArray* buttonArray = [NSMutableArray arrayWithCapacity:2];
 #ifdef TARGET_FUGE
     NSString* strProfileTitle = @"FB Profile";
 #elif defined TARGET_S2C
     NSString* strProfileTitle = @"LI Profile";
-    messageBtn = [[UIBarButtonItem alloc] initWithTitle:@"Message" style:UIBarButtonItemStylePlain target:self action:@selector(messageClicked)];
-    [buttonArray addObject:messageBtn];
+    if ( ! bCurrentUser )
+    {
+        messageBtn = [[UIBarButtonItem alloc] initWithTitle:@"Message" style:UIBarButtonItemStylePlain target:self action:@selector(messageClicked)];
+        [buttonArray addObject:messageBtn];
+    }
     btnThingsInCommon.hidden = TRUE;
 #endif
     [buttonArray addObject:[[UIBarButtonItem alloc] initWithTitle:strProfileTitle style:UIBarButtonItemStylePlain target:self action:@selector(profileClicked)]];
-    [buttonArray addObject:[[UIBarButtonItem alloc] initWithTitle:@"Meet" style:UIBarButtonItemStylePlain target:self action:@selector(meetClicked)]];
+    if ( ! bCurrentUser )
+        [buttonArray addObject:[[UIBarButtonItem alloc] initWithTitle:@"Meet" style:UIBarButtonItemStylePlain target:self action:@selector(meetClicked)]];
     self.navigationItem.rightBarButtonItems = buttonArray;
     
     containerView.userInteractionEnabled = FALSE;
     
     // Comments
-    [globalData loadMessageThread:personThis target:self selector:@selector(messagesLoaded:error:)];
+    if ( ! bCurrentUser )
+        [globalData loadMessageThread:personThis target:self selector:@selector(messagesLoaded:error:)];
     
 #ifdef TARGET_S2C
     // Summary
@@ -183,9 +192,17 @@
     
     // Labels
     labelFriendName.text = [personThis fullName];
-    NSString* distanceString = [personThis distanceString:FALSE];
-    labelDistance.text = distanceString;
-    labelTimePassed.text = [[NSString alloc] initWithFormat:@"%@ ago", [personThis timeString]];
+    if ( bCurrentUser )
+    {
+        labelDistance.text = @"";
+        labelTimePassed.text = @"It's you!";
+    }
+    else
+    {
+        NSString* distanceString = [personThis distanceString:FALSE];
+        labelDistance.text = distanceString;
+        labelTimePassed.text = [[NSString alloc] initWithFormat:@"%@ ago", [personThis timeString]];
+    }
 
 #ifdef TARGET_FUGE
     labelStatus.text = personThis.strStatus;

@@ -12,6 +12,8 @@
 #import "GlobalData.h"
 #import "MeetupInviteViewController.h"
 #import "SCAnnotationView.h"
+#import "PeopleViewController.h"
+#import "AsyncImageView.h"
 
 @implementation MeetupViewController
 
@@ -354,6 +356,7 @@
     [viewsList addObject:alertTicketsOnline];
     [viewsList addObject:labelLocation];
     [viewsList addObject:mapView];
+    [viewsList addObject:peopleCounters];
     [viewsList addObject:labelSpotsAvailable];
     [viewsList addObject:descriptionView];
     [viewsList addObject:comments];
@@ -537,6 +540,34 @@
     [formatter setTimeStyle:NSDateFormatterShortStyle];
     [formatter setDoesRelativeDateFormatting:TRUE];
     [labelDate setText:[formatter stringFromDate:meetup.dateTime]];
+    
+    // People counters
+    [countersJoined setTitle:[NSString stringWithFormat:@"Going: %d", meetup.attendees.count] forState:UIControlStateNormal];
+    [countersDeclined setTitle:[NSString stringWithFormat:@"Can't: %d", meetup.decliners.count] forState:UIControlStateNormal];
+    [countersInvited setTitle:[NSString stringWithFormat:@"Not decided: %d", 0] forState:UIControlStateNormal];
+    
+    // Avatars
+    if ( avatarList )
+    {
+        for ( AsyncImageView* avatar in avatarList )
+            [avatar removeFromSuperview];
+    }
+    avatarList = [NSMutableArray arrayWithCapacity:10];
+    NSUInteger offset = countersJoined.originX + [countersJoined.titleLabel.text sizeWithFont:countersJoined.titleLabel.font].width + 5;
+    NSArray* attendeesPersons = [globalData getPersonsByIds:meetup.attendees];
+    for ( Person* person in attendeesPersons )
+    {
+        if ( person.idCircle != CIRCLE_FB && person.idCircle != CIRCLE_NONE )
+            continue;
+        if ( ! person.smallAvatarUrl )
+            continue;
+        AsyncImageView* image = [[AsyncImageView alloc] initWithFrame:CGRectMake(offset+avatarList.count*(MINI_AVATAR_SIZE+1), countersJoined.originY + 6, MINI_AVATAR_SIZE, MINI_AVATAR_SIZE)];
+        [image loadImageFromURL:person.smallAvatarUrl];
+        [avatarList addObject:image];
+        [peopleCounters addSubview:image];
+        if ( avatarList.count > MINI_AVATAR_COUNT_MEETUP )
+            break;
+    }
     
     // Spots
     Boolean bSoldOut = FALSE;
@@ -779,6 +810,10 @@
     activityIndicator = nil;
     alertTicketsOnline = nil;
     labelSpotsAvailable = nil;
+    peopleCounters = nil;
+    countersJoined = nil;
+    countersDeclined = nil;
+    countersInvited = nil;
     [super viewDidUnload];
 }
 
@@ -787,5 +822,24 @@
 }
 - (IBAction)alertTapped:(id)sender {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:meetup.strOriginalURL]];
+}
+
+- (void) openPeopleList:(NSArray*)idsList
+{
+    PeopleViewController *peopleViewController = [[PeopleViewController alloc] initWithNibName:@"PeopleView" bundle:nil];
+    [peopleViewController setIdsList:idsList];
+    UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:peopleViewController];
+    [self.navigationController presentViewController:navigation animated:YES completion:nil];
+}
+
+- (IBAction)countersJoinedTapped:(id)sender {
+    [self openPeopleList:meetup.attendees];
+}
+
+- (IBAction)countersDeclinedTapped:(id)sender {
+    [self openPeopleList:meetup.decliners];
+}
+
+- (IBAction)countersInvitedTapped:(id)sender {
 }
 @end

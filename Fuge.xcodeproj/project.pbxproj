@@ -148,6 +148,8 @@
 		4C08DDD3163C88580093C851 /* Circle.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD0163C88580093C851 /* Circle.m */; };
 		4C08DDD4163C88580093C851 /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD2163C88580093C851 /* Person.m */; };
 		4C08DDDB163C88640093C851 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD6163C88640093C851 /* RootViewController.m */; };
+		4C0D670317DE5A760076983E /* InAppPurchaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C0D670217DE5A760076983E /* InAppPurchaseManager.m */; };
+		4C0D670417DE5A760076983E /* InAppPurchaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C0D670217DE5A760076983E /* InAppPurchaseManager.m */; };
 		4C14CD9C1775E26000BC2533 /* iconEventbrite.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C14CD9A1775E26000BC2533 /* iconEventbrite.png */; };
 		4C14CD9D1775E26000BC2533 /* iconEventbrite@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C14CD9B1775E26000BC2533 /* iconEventbrite@2x.png */; };
 		4C1619F317CBB76F00B5E1C5 /* iconMtProfessionals.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C1619ED17CBB76F00B5E1C5 /* iconMtProfessionals.png */; };
@@ -486,6 +488,10 @@
 		4CA3F06517170D8A00271E7A /* LoadingController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CA3F06317170D8A00271E7A /* LoadingController.m */; };
 		4CA3F06617170D8A00271E7A /* LoadingController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CA3F06417170D8A00271E7A /* LoadingController.xib */; };
 		4CA463F116F1DF7600F354FC /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CA463F016F1DF7600F354FC /* LocationManager.m */; };
+		4CADB74217DD339500C0E790 /* PeopleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CADB74117DD339500C0E790 /* PeopleView.xib */; };
+		4CADB74317DD339500C0E790 /* PeopleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CADB74117DD339500C0E790 /* PeopleView.xib */; };
+		4CADB74617DD33D600C0E790 /* PeopleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CADB74517DD33D500C0E790 /* PeopleViewController.m */; };
+		4CADB74717DD33D600C0E790 /* PeopleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CADB74517DD33D500C0E790 /* PeopleViewController.m */; };
 		4CAE597716F8A53200A69CA0 /* StatsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CAE597516F8A53200A69CA0 /* StatsViewController.m */; };
 		4CAE597816F8A53200A69CA0 /* StatsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CAE597616F8A53200A69CA0 /* StatsViewController.xib */; };
 		4CAF3487178871BC0014AE80 /* iconMtArts.png in Resources */ = {isa = PBXBuildFile; fileRef = 4CAF3485178871BC0014AE80 /* iconMtArts.png */; };
@@ -714,6 +720,8 @@
 		4C08DDD7163C88640093C851 /* PersonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersonCell.h; sourceTree = "<group>"; };
 		4C08DDD9163C88640093C851 /* PersonView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersonView.h; sourceTree = "<group>"; };
 		4C08DDDA163C88640093C851 /* PersonView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersonView.m; sourceTree = "<group>"; };
+		4C0D670117DE5A760076983E /* InAppPurchaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InAppPurchaseManager.h; path = Project/InAppPurchaseManager.h; sourceTree = "<group>"; };
+		4C0D670217DE5A760076983E /* InAppPurchaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InAppPurchaseManager.m; path = Project/InAppPurchaseManager.m; sourceTree = "<group>"; };
 		4C14CD9A1775E26000BC2533 /* iconEventbrite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconEventbrite.png; sourceTree = "<group>"; };
 		4C14CD9B1775E26000BC2533 /* iconEventbrite@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconEventbrite@2x.png"; sourceTree = "<group>"; };
 		4C1619ED17CBB76F00B5E1C5 /* iconMtProfessionals.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMtProfessionals.png; sourceTree = "<group>"; };
@@ -857,6 +865,9 @@
 		4CA3F06417170D8A00271E7A /* LoadingController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoadingController.xib; sourceTree = "<group>"; };
 		4CA463EF16F1DF7600F354FC /* LocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationManager.h; sourceTree = "<group>"; };
 		4CA463F016F1DF7600F354FC /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
+		4CADB74117DD339500C0E790 /* PeopleView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PeopleView.xib; sourceTree = "<group>"; };
+		4CADB74417DD33D500C0E790 /* PeopleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeopleViewController.h; sourceTree = "<group>"; };
+		4CADB74517DD33D500C0E790 /* PeopleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PeopleViewController.m; sourceTree = "<group>"; };
 		4CAE597416F8A53200A69CA0 /* StatsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatsViewController.h; sourceTree = "<group>"; };
 		4CAE597516F8A53200A69CA0 /* StatsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatsViewController.m; sourceTree = "<group>"; };
 		4CAE597616F8A53200A69CA0 /* StatsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StatsViewController.xib; sourceTree = "<group>"; };
@@ -1260,6 +1271,8 @@
 				4CF697C317956DE70064ACE7 /* XMLDictionary.m */,
 				4C7CE99C1796183F0005A70F /* PCLineChartView.h */,
 				4C7CE99D1796183F0005A70F /* PCLineChartView.m */,
+				4C0D670117DE5A760076983E /* InAppPurchaseManager.h */,
+				4C0D670217DE5A760076983E /* InAppPurchaseManager.m */,
 			);
 			name = libs;
 			sourceTree = "<group>";
@@ -1381,6 +1394,8 @@
 				4C08DDD6163C88640093C851 /* RootViewController.m */,
 				4CDE8D411789D27900844B7E /* MatchesViewController.h */,
 				4CDE8D421789D27900844B7E /* MatchesViewController.m */,
+				4CADB74417DD33D500C0E790 /* PeopleViewController.h */,
+				4CADB74517DD33D500C0E790 /* PeopleViewController.m */,
 				4C1C438016C9B125008BA9CA /* InboxViewController.h */,
 				4C1C438116C9B125008BA9CA /* InboxViewController.m */,
 				4C08DDD9163C88640093C851 /* PersonView.h */,
@@ -1421,6 +1436,7 @@
 				4C188D211698C51A004CF42D /* MapView.xib */,
 				4706D10D16C11BA200CAF9AF /* RootViewController.xib */,
 				4CDE8D431789D27900844B7E /* MatchesViewController.xib */,
+				4CADB74117DD339500C0E790 /* PeopleView.xib */,
 				4C057325166AEF4800EF6FAD /* ProfileView.xib */,
 				4C05733A166B73D900EF6FAD /* UserProfile.xib */,
 				4CFE78C7166BBA7900E1BF72 /* FilterView.xib */,
@@ -1778,6 +1794,7 @@
 				4C1619F917CBB76F00B5E1C5 /* iconMtFinance@2x.png in Resources */,
 				4C1619FB17CBB76F00B5E1C5 /* iconMtStartups.png in Resources */,
 				4C1619FD17CBB76F00B5E1C5 /* iconMtStartups@2x.png in Resources */,
+				4CADB74217DD339500C0E790 /* PeopleView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1948,6 +1965,7 @@
 				4C1619FA17CBB76F00B5E1C5 /* iconMtFinance@2x.png in Resources */,
 				4C1619FC17CBB76F00B5E1C5 /* iconMtStartups.png in Resources */,
 				4C1619FE17CBB76F00B5E1C5 /* iconMtStartups@2x.png in Resources */,
+				4CADB74317DD339500C0E790 /* PeopleView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2060,6 +2078,8 @@
 				4C9A1577179D5C25006736E7 /* CommentData.m in Sources */,
 				4C9D1B5817A7F271007B0FEA /* MeetupLoader.m in Sources */,
 				4C08526017ADD6AE00517D37 /* GeoObject.m in Sources */,
+				4CADB74617DD33D600C0E790 /* PeopleViewController.m in Sources */,
+				4C0D670317DE5A760076983E /* InAppPurchaseManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2154,6 +2174,8 @@
 				4C444F4317A04F4400288139 /* LinkedinLoader.m in Sources */,
 				4C9D1B5917A7F271007B0FEA /* MeetupLoader.m in Sources */,
 				4C08526117ADD6AE00517D37 /* GeoObject.m in Sources */,
+				4CADB74717DD33D600C0E790 /* PeopleViewController.m in Sources */,
+				4C0D670417DE5A760076983E /* InAppPurchaseManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

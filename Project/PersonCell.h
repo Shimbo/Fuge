@@ -1,6 +1,8 @@
 
 
 @class AsyncImageView;
+@class Person;
+
 @interface PersonCell : UITableViewCell 
 
 @property (strong, nonatomic) IBOutlet UILabel *personDistance;
@@ -13,5 +15,7 @@
 #endif
 @property (strong, nonatomic) UIColor *color;
 @property (nonatomic, assign) Boolean shouldDrawMatches;
+
+-(void) initWithPerson:(Person*)person engagement:(Boolean)engagement;
 
 @end

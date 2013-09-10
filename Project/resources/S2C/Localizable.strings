@@ -19,7 +19,7 @@
 "LOADING_TITLE_OLDVERSION"      = "Update needed";
 "LOADING_TEXT_OLDVERSION"       = "We have released a new version to better accommodate customer feedback. Give it a try and let us know if you have any issue or need help.";
 
-"BUTTONS_RELOAD"                = "Reload";
+"BUTTONS_SHOUTOUT"              = "Shout out";
 
 "MAP_BUTTON_NEWMEETUP"          = "New event";
 
