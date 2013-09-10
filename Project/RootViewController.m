@@ -420,7 +420,7 @@
     [self.view endEditing:YES];
     
     Circle *circle;
-    Person* person;
+    Person* person = nil;
     
     switch ( sortingMode )
     {
@@ -429,9 +429,9 @@
             
             switch (indexPath.section )
             {
-                case 0: person = usersHereNow[indexPath.row]; break;
-                case 1: person = usersNearbyToday[indexPath.row]; break;
-                case 2: person = usersRecent[indexPath.row]; break;
+                case 0: if ( indexPath.row < usersHereNow.count) person = usersHereNow[indexPath.row]; break;
+                case 1: if ( indexPath.row < usersNearbyToday.count) person = usersNearbyToday[indexPath.row]; break;
+                case 2: if ( indexPath.row < usersRecent.count) person = usersRecent[indexPath.row]; break;
                 case 3:
                     circle = [globalData getCircle:CIRCLE_FBOTHERS];
                     person = [circle getPersons][indexPath.row];
@@ -443,18 +443,21 @@
             break;
     }
     
-    // Empty profile, should open invite window
-    if ( person.idCircle == CIRCLE_FBOTHERS ) {
-        
-        [fbLoader showInviteDialog:[NSArray arrayWithObject:person.strId] message:NSLocalizedString(@"FB_INVITE_MESSAGE_SIMPLE",nil)];
-    }
-    else {
-        UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
-        [userProfileController setPerson:person];
-#ifdef TARGET_S2C
-        [userProfileController setProfileMode:PROFILE_MODE_SUMMARY];
-#endif
-        [self.navigationController pushViewController:userProfileController animated:YES];
+    if ( person )
+    {
+        // Empty profile, should open invite window
+        if ( person.idCircle == CIRCLE_FBOTHERS ) {
+            
+            [fbLoader showInviteDialog:[NSArray arrayWithObject:person.strId] message:NSLocalizedString(@"FB_INVITE_MESSAGE_SIMPLE",nil)];
+        }
+        else {
+            UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
+            [userProfileController setPerson:person];
+    #ifdef TARGET_S2C
+            [userProfileController setProfileMode:PROFILE_MODE_SUMMARY];
+    #endif
+            [self.navigationController pushViewController:userProfileController animated:YES];
+        }
     }
     
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
