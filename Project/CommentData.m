@@ -93,7 +93,26 @@
 {
     // Query
     PFQuery *messagesQuery = [PFQuery queryWithClassName:@"Comment"];
-    NSArray* subscriptions = [[PFUser currentUser] objectForKey:@"subscriptions"];
+    NSMutableArray* subscriptions = [pCurrentUser objectForKey:@"subscriptions"];
+    if ( ! subscriptions )
+        subscriptions = [[NSMutableArray alloc] initWithCapacity:30];
+    
+    // Temporary hack to load both attending and subscribed events
+    NSMutableArray* attending = [pCurrentUser objectForKey:@"attending"];
+    if ( attending )
+    {
+        for (NSString* eventId in attending)
+            if ( ! [subscriptions containsObject:eventId] )
+                [subscriptions addObject:eventId];
+    }
+    
+    // Skip load if nothing to load
+    if ( subscriptions.count == 0 )
+    {
+        [self incrementInboxLoadingStage];
+        return;
+    }
+    
     [messagesQuery whereKey:@"meetupId" containedIn:subscriptions];
     messagesQuery.limit = 1000;
     [messagesQuery orderByDescending:@"createdAt"];

@@ -1051,6 +1051,16 @@ static NSString* strGroupId;
     NSMutableArray* subscriptions = [pCurrentUser objectForKey:@"subscriptions"];
     if ( ! subscriptions )
         subscriptions = [[NSMutableArray alloc] initWithCapacity:30];
+    
+    // Temporary hack to load both attending and subscribed events
+    NSMutableArray* attending = [pCurrentUser objectForKey:@"attending"];
+    if ( attending )
+    {
+        for (NSString* eventId in attending)
+            if ( ! [subscriptions containsObject:eventId] )
+                [subscriptions addObject:eventId];
+    }
+    
     for ( PFObject* invite in invites )
     {
         NSString* strId = [invite objectForKey:@"meetupId"];
@@ -1198,11 +1208,13 @@ static NSString* strGroupId;
                 else
                 {
                     // Creating comment about joining in db
-                    if ( addComment /*&& meetup.privacy == MEETUP_PRIVATE*/ )
+                    if ( addComment && meetup.privacy == MEETUP_PRIVATE )
+                    {
                         [globalData createCommentForMeetup:meetup commentType:COMMENT_JOINED commentText:nil target:nil selector:nil];
-                    
-                    // Push notification to all attendees
-                    [pushManager sendPushAttendingMeetup:meetup.strId];
+                        
+                        // Push notification to all attendees
+                        [pushManager sendPushAttendingMeetup:meetup.strId];
+                    }
                     
                     // Update invite
                     [globalData updateInvite:meetup.strId attending:INVITE_ACCEPTED];
@@ -1257,10 +1269,12 @@ static NSString* strGroupId;
                 {
                     // Creating comment about leaving in db
                     if ( meetup.privacy == MEETUP_PRIVATE )
+                    {
                         [globalData createCommentForMeetup:meetup commentType:COMMENT_LEFT commentText:nil target:nil selector:nil];
-                    
-                    // Push notification to all attendees
-                    [pushManager sendPushLeftMeetup:meetup.strId];
+                        
+                        // Push notification to all attendees
+                        [pushManager sendPushLeftMeetup:meetup.strId];
+                    }
                     
                     // Selector
                     if ( target )

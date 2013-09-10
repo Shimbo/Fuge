@@ -29,17 +29,11 @@
         strLastName = [user objectForKey:@"fbNameLast"];
         strGender = [user objectForKey:@"fbGender"];
         strCircle = [Circle getPersonType:nCircle];
-        strEmployer = [user objectForKey:@"profileEmployer"];
-        strPosition = [user objectForKey:@"profilePosition"];
-        strStatus = [user objectForKey:@"profileStatus"];
         idCircle = nCircle;
         if ( [user objectForKey:@"discoverable"] )
             discoverable = [[user objectForKey:@"discoverable"] boolValue];
         else
             discoverable = TRUE;
-        
-        // Location
-        location = [user objectForKey:@"location"];
         
         // Friends and likes
         friendsFb = [user objectForKey:@"fbFriends"];
@@ -66,6 +60,9 @@
         
         numUnreadMessages = 0;
         
+        // Dynamic data
+        [self update:user];
+        
         // Current user
         if ( user == pCurrentUser )
             isCurrentUser = YES;
@@ -75,10 +72,10 @@
 
 - (void)update:(PFUser*)newData
 {
-    PFGeoPoint* newLocation = [newData objectForKey:@"location"];
-    if ( newLocation )
-        location = newLocation;
+    location = [newData objectForKey:@"location"];
     
+    strEmployer = [newData objectForKey:@"profileEmployer"];
+    strPosition = [newData objectForKey:@"profilePosition"];
     strStatus = [newData objectForKey:@"profileStatus"];
     
     personData = newData;
