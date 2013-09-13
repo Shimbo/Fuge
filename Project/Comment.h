@@ -9,6 +9,18 @@
 #import <Foundation/Foundation.h>
 #import <Parse/Parse.h>
 
+@class Person;
+
+typedef  enum EMeetupCommentType
+{
+    COMMENT_PLAIN   = 0,
+    COMMENT_CREATED = 1,
+    COMMENT_SAVED   = 2,
+    COMMENT_JOINED  = 3,    // these two types are depricated
+    COMMENT_LEFT    = 4,    // these two types are depricated
+    COMMENT_CANCELED = 5
+}CommentType;
+
 @interface Comment : NSObject
 {
     NSString    *strUserFrom;
@@ -46,5 +58,7 @@
 -(id) init;
 -(void) save:(id)target selector:(SEL)callback;;
 -(void) unpack:(PFObject*)data;
+-(Person*) owner;
+-(Boolean) isOwn;
 
 @end

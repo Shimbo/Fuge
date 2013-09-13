@@ -401,9 +401,8 @@ static CGRect oldMapFrame;
     [super viewDidLoad];
     
     // Misc
-#ifdef IOS7_ENABLE
-    mapView.rotateEnabled = FALSE;
-#endif
+    if ( IOS_NEWER_OR_EQUAL_TO_7 )
+        mapView.rotateEnabled = FALSE;
     mapView.userInteractionEnabled = FALSE;
     
     _locationManager = [[CLLocationManager alloc]init];

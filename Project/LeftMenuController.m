@@ -32,8 +32,6 @@
     return self;
 }
 
-
-
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     [_inboxBadge setNumber:[globalData getInboxUnreadCount]];

@@ -210,11 +210,13 @@
     }
 }
 
-- (void) reloadTableAndScroll:(Boolean)hideScroll;
+- (void) reloadTableAndScroll:(Boolean)hideSearch;
 {
     [tableView reloadData];
-    if ( hideScroll )
-        [tableView scrollRectToVisible:CGRectMake(0, searchView.frame.size.height, tableView.frame.size.width, tableView.frame.size.height) animated:TRUE];
+    if ( hideSearch )
+        if ( [self tableView:tableView numberOfRowsInSection:0] > 0 )
+            [tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:TRUE];
+        //[tableView scrollRectToVisible:CGRectMake(0, searchView.frame.size.height/*tableView.frame.origin.y*/, tableView.frame.size.width, tableView.frame.size.width) animated:TRUE];
     /*CGSize size = CGSizeMake(tableView.frame.size.width, tableView.frame.size.height + searchView.frame.size.height);
     [scrollView setContentSize:size];
     [scrollView scrollRectToVisible:CGRectMake(0, searchView.frame.size.height, 1, searchView.frame.size.height+1) animated:TRUE];*/
@@ -227,6 +229,10 @@
     
     // Navigation bar
     [self.navigationItem setHidesBackButton:true animated:false];
+    //[self.navigationController.navigationBar setBackgroundImage:[UIImage alloc] forBarMetrics:UIBarMetricsDefault];
+    //[self.navigationController.navigationBar setBackgroundImage:[UIImage alloc] forBarMetrics:UIBarMetricsLandscapePhone];
+    //[self.navigationController.navigationBar setBackgroundColor:[UIColor greenColor]];
+    //[self.navigationController.navigationBar setBarTintColor:[UIColor greenColor]];
     
     // Table view
     UINib *nib = [UINib nibWithNibName:@"PersonCell" bundle:nil];

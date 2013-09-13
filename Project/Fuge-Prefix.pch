@@ -15,3 +15,5 @@
     #import "UIDefs.h"
     #import "UIParams.h"
 #endif
+
+#define IOS_NEWER_OR_EQUAL_TO_7 ( [ [ [ UIDevice currentDevice ] systemVersion ] floatValue ] >= 7.0 )

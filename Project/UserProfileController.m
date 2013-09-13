@@ -63,16 +63,10 @@
     // Resizing scroll view frame
     frame = scrollView.frame;
     if ( profileMode == PROFILE_MODE_MESSAGES )
-        frame.size.height = self.view.size.height-40;
+        frame.size.height = self.view.size.height-42;
     else
         frame.size.height = self.view.size.height;
     scrollView.frame = frame;
-    
-    // Resizing comments
-    newHeight = messageHistory.contentSize.height;
-    frame = messageHistory.frame;
-    frame.size.height = newHeight;
-    messageHistory.frame = frame;
     
 #ifdef TARGET_S2C
     // Resizing web view
@@ -84,7 +78,7 @@
     
     // Resizing scroll view contents
     if ( profileMode == PROFILE_MODE_MESSAGES )
-        [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width, messageHistory.frame.origin.y + messageHistory.frame.size.height)];
+        [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width, messagesView.frame.origin.y + messagesView.frame.size.height)];
     else
         [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width, webView.frame.origin.y + webView.frame.size.height)];
     
@@ -99,7 +93,7 @@
 {
     if ( profileMode == PROFILE_MODE_MESSAGES )
     {
-        messageHistory.hidden = FALSE;
+        messagesView.hidden = FALSE;
         textView.hidden = FALSE;
         containerView.hidden = FALSE;
         webView.hidden = TRUE;
@@ -109,7 +103,7 @@
     }
     else
     {
-        messageHistory.hidden = TRUE;
+        messagesView.hidden = TRUE;
         textView.hidden = TRUE;
         containerView.hidden = TRUE;
         webView.hidden = FALSE;
@@ -244,7 +238,7 @@
 {
     if (error || ! messages )
     {
-        [messageHistory setText:@"Messages loading failed, no connection."];
+        [messagesView setText:@"Messages load failed, no connection."];
         return;
     }
     
@@ -318,7 +312,8 @@
             [stringHistory appendString:@"\n"];
     }
     
-    [messageHistory setText:stringHistory];
+    //[messageHistory setText:stringHistory];
+    [messagesView setCommentsList:messages];
     messagesCount = messages.count;
     
     containerView.userInteractionEnabled = TRUE;
@@ -345,7 +340,7 @@
 
 
 - (void)viewDidUnload {
-    messageHistory = nil;
+    messagesView = nil;
     labelDistance = nil;
     [self setActivityIndicator:nil];
     labelFriendName = nil;
@@ -426,12 +421,10 @@ double animatedDistance;
 
 -(void) keyboardWillShow:(NSNotification *)note{
     [super keyboardWillShow:note];
-    messageHistory.userInteractionEnabled = NO;
 }
 
 -(void) keyboardWillHide:(NSNotification *)note{
     [super keyboardWillHide:note];
-    messageHistory.userInteractionEnabled = YES;
 }
 
 - (void) callbackMessageSaved:(Message*)message
@@ -451,12 +444,7 @@ double animatedDistance;
     [globalData updateConversation:message.dateCreated count:[NSNumber numberWithInteger:messagesCount] thread:personThis.strId meetup:FALSE];
     
     // Updating history
-    NSMutableString* stringHistory = [NSMutableString stringWithString:messageHistory.text];
-    if ( stringHistory.length > 0 )
-        [stringHistory appendString:@"\n"];
-    [stringHistory appendString:@"    You: "];
-    [stringHistory appendString:textView.text];
-    [messageHistory setText:stringHistory];
+    [messagesView addComment:message];
     
     // Scrolling, sizing, etc.
     [self resizeScroll];

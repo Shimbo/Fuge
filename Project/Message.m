@@ -103,4 +103,14 @@
     strNameUserTo = [messageData objectForKey:@"nameUserTo"];
 }
 
+-(Person*) owner
+{
+    return [globalData getPersonById:strUserFrom];
+}
+
+-(Boolean) isOwn
+{
+    return [strUserFrom compare:strCurrentUserId] == NSOrderedSame;
+}
+
 @end

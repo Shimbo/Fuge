@@ -74,6 +74,9 @@
                                                     UIRemoteNotificationTypeAlert|
                                                     UIRemoteNotificationTypeSound];
     
+    // Analytics
+    [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
+    
     return YES;
 }
 

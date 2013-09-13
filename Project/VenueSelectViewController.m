@@ -13,12 +13,6 @@
 #import "FSVenue.h"
 #import "GlobalData.h"
 
-
-
-
-
-
-
 @implementation VenueSelectViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -34,9 +28,9 @@
 {
     [super viewDidLoad];
     self.mapView.userTrackingMode = MKUserTrackingModeNone;
-#ifdef IOS7_ENABLE
-    self.mapView.rotateEnabled = FALSE;
-#endif
+    if ( IOS_NEWER_OR_EQUAL_TO_7 )
+        self.mapView.rotateEnabled = FALSE;
+    
     // Do any additional setup after loading the view from its nib.
     UINib *nib = [UINib nibWithNibName:@"VenueCell" bundle:nil];
     [self.tableView registerNib:nib forCellReuseIdentifier:@"VenueCell"];

@@ -418,6 +418,8 @@
 		4C76EB2617A4793B007770D1 /* LinkedinLogin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C444E5017A003DB00288139 /* LinkedinLogin@2x.png */; };
 		4C76EB2717A4793D007770D1 /* FacebookLogin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C444E4D17A0017D00288139 /* FacebookLogin@2x.png */; };
 		4C76EB2817A47940007770D1 /* FacebookLogin.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C057321166AE74D00EF6FAD /* FacebookLogin.png */; };
+		4C7BB5E417E2462F008125ED /* CommentsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7BB5E317E2462F008125ED /* CommentsView.m */; };
+		4C7BB5E517E2462F008125ED /* CommentsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7BB5E317E2462F008125ED /* CommentsView.m */; };
 		4C7CE99E1796183F0005A70F /* PCLineChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7CE99D1796183F0005A70F /* PCLineChartView.m */; };
 		4C7E3FD61699017C0065484F /* NewMeetupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FD41699017C0065484F /* NewMeetupViewController.m */; };
 		4C7E3FD71699017C0065484F /* NewMeetupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E3FD51699017C0065484F /* NewMeetupViewController.xib */; };
@@ -802,6 +804,8 @@
 		4C6C3A011727FE4000F5F1B3 /* iconThread.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconThread.png; sourceTree = "<group>"; };
 		4C6C3A021727FE4000F5F1B3 /* iconThread@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconThread@2x.png"; sourceTree = "<group>"; };
 		4C76EB0917A463F4007770D1 /* S2C-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "S2C-Info.plist"; sourceTree = "<group>"; };
+		4C7BB5E217E2462F008125ED /* CommentsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentsView.h; sourceTree = "<group>"; };
+		4C7BB5E317E2462F008125ED /* CommentsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentsView.m; sourceTree = "<group>"; };
 		4C7CE99C1796183F0005A70F /* PCLineChartView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCLineChartView.h; path = Project/ExternalLibs/PCLineChartView.h; sourceTree = "<group>"; };
 		4C7CE99D1796183F0005A70F /* PCLineChartView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PCLineChartView.m; path = Project/ExternalLibs/PCLineChartView.m; sourceTree = "<group>"; };
 		4C7E3FD31699017C0065484F /* NewMeetupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewMeetupViewController.h; sourceTree = "<group>"; };
@@ -1426,6 +1430,8 @@
 				47B203F91710196200B756FA /* MainStyle.m */,
 				4CA3F06217170D8A00271E7A /* LoadingController.h */,
 				4CA3F06317170D8A00271E7A /* LoadingController.m */,
+				4C7BB5E217E2462F008125ED /* CommentsView.h */,
+				4C7BB5E317E2462F008125ED /* CommentsView.m */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -1624,6 +1630,14 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0500;
+				TargetAttributes = {
+					09ABC06C13A1D52D009C3FCF = {
+						DevelopmentTeam = WDEGJM2L33;
+					};
+					4C444E5317A0045700288139 = {
+						DevelopmentTeam = EQ4KKVWHSC;
+					};
+				};
 			};
 			buildConfigurationList = 09ABC06713A1D52D009C3FCF /* Build configuration list for PBXProject "Fuge" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -2071,6 +2085,7 @@
 				4CDE8D4F1789E20700844B7E /* LikeCell.m in Sources */,
 				4CDE8D501789E20700844B7E /* PersonCell.m in Sources */,
 				4CF697C417956DE70064ACE7 /* EventbriteLoader.m in Sources */,
+				4C7BB5E417E2462F008125ED /* CommentsView.m in Sources */,
 				4CF697C517956DE70064ACE7 /* FacebookLoader.m in Sources */,
 				4CF697C617956DE70064ACE7 /* XMLDictionary.m in Sources */,
 				4C7CE99E1796183F0005A70F /* PCLineChartView.m in Sources */,
@@ -2163,6 +2178,7 @@
 				4C444E9F17A0045700288139 /* LIALinkedInHttpClient.m in Sources */,
 				4C444EA017A0045700288139 /* NSString+LIAEncode.m in Sources */,
 				4C444EA117A0045700288139 /* AFHTTPClient.m in Sources */,
+				4C7BB5E517E2462F008125ED /* CommentsView.m in Sources */,
 				4C444EA217A0045700288139 /* AFHTTPRequestOperation.m in Sources */,
 				4C444EA317A0045700288139 /* AFImageRequestOperation.m in Sources */,
 				4C444EA417A0045700288139 /* AFJSONRequestOperation.m in Sources */,
@@ -2199,12 +2215,13 @@
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				ONLY_ACTIVE_ARCH = YES;
 				PROVISIONING_PROFILE = "0481C223-DAD0-49D1-B4E9-46E811293CE3";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "0481C223-DAD0-49D1-B4E9-46E811293CE3";
@@ -2226,12 +2243,13 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Mikhail Larionov (WDEGJM2L33)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PROVISIONING_PROFILE = "0481C223-DAD0-49D1-B4E9-46E811293CE3";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "0481C223-DAD0-49D1-B4E9-46E811293CE3";
@@ -2244,7 +2262,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Mikhail Larionov (WDEGJM2L33)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Mikhail Larionov (WDEGJM2L33)";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2282,7 +2300,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Mikhail Larionov (WDEGJM2L33)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Mikhail Larionov (WDEGJM2L33)";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2317,8 +2335,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2342,8 +2360,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = S2C;
-				PROVISIONING_PROFILE = "7F4E6F0A-BE6C-46B2-B9BA-B26E8236D670";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "7F4E6F0A-BE6C-46B2-B9BA-B26E8236D670";
+				PROVISIONING_PROFILE = "FBEF53C2-B3DD-4367-9B6D-5180FC2CAA13";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "FBEF53C2-B3DD-4367-9B6D-5180FC2CAA13";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
 				WRAPPER_EXTENSION = app;
@@ -2355,8 +2373,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2376,8 +2394,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = S2C;
-				PROVISIONING_PROFILE = "7F4E6F0A-BE6C-46B2-B9BA-B26E8236D670";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "7F4E6F0A-BE6C-46B2-B9BA-B26E8236D670";
+				PROVISIONING_PROFILE = "FBEF53C2-B3DD-4367-9B6D-5180FC2CAA13";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "FBEF53C2-B3DD-4367-9B6D-5180FC2CAA13";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";

@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "Person.h"
 #import "GrowingTextViewController.h"
+#import "CommentsView.h"
 
 enum EUserProfileMode
 {
@@ -21,7 +22,7 @@ enum EUserProfileMode
 @interface UserProfileController : GrowingTextViewController <UIAlertViewDelegate, UIWebViewDelegate>
 {
     Person* personThis;
-    IBOutlet UITextView *messageHistory;
+    IBOutlet CommentsView *messagesView;
     UIBarButtonItem *buttonProfile;
     IBOutlet UILabel *labelFriendName;
     IBOutlet UILabel *labelDistance;

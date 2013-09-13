@@ -97,4 +97,14 @@
     typeNum = [commentData objectForKey:@"type"];
 }
 
+-(Person*) owner
+{
+    return [globalData getPersonById:strUserFrom];
+}
+
+-(Boolean) isOwn
+{
+    return [strUserFrom compare:strCurrentUserId] == NSOrderedSame;
+}
+
 @end

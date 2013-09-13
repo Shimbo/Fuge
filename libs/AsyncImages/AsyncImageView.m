@@ -39,7 +39,7 @@
     if (!imageView){
         imageView = [[UIImageView alloc] init];
 
-        CGFloat r = 1.0f;
+        CGFloat r = 0.0f;
 //        if([[STStyle sharedInstance] isIpad]){
 //            r = 2.0f;
 //        }
@@ -58,13 +58,13 @@
         }
     }
     
-    if (self.frame.size.width > 40 && !logo) {
+    /*if (self.frame.size.width > 40 && !logo) {
         logo = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"logo_etched.png"]];
         logo.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleTopMargin;
         [imageView addSubview:logo];
         logo.center = CGPointMake(imageView.frame.size.width/2, imageView.frame.size.height/2);
         logo.frame = CGRectIntegral(logo.frame);
-    }
+    }*/
     
 
 }

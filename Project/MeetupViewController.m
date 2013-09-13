@@ -26,6 +26,9 @@
         meetup = nil;
         invite = false;
         self.navigationItem.leftItemsSupplementBackButton = true;
+        self.navigationController.navigationBar.translucent = NO;
+        if ( IOS_NEWER_OR_EQUAL_TO_7 )
+            self.edgesForExtendedLayout = UIRectEdgeNone;
         buttons = [[NSMutableArray alloc] init];
         [self flushButtons];
         
@@ -138,7 +141,7 @@
     [globalData attendMeetup:meetup addComment:TRUE target:self selector:@selector(reloadAnnotation)];
     
     // Add comment to the text field
-    [self addComment:@"    You joined the event!\n" scrollDown:FALSE];
+    //[self addComment:@"    You joined the event!\n" scrollDown:FALSE];
     
     // If it was opened from invite
     if ( invite )
@@ -215,7 +218,7 @@
         [globalData unattendMeetup:meetup target:self selector:@selector(reloadAnnotation)];
         
         // Add comment to the text field
-        [self addComment:@"    You just left the event!\n" scrollDown:FALSE];
+        //[self addComment:@"    You just left the event!\n" scrollDown:FALSE];
         
         // Buttons
         [self flushButtons];
@@ -230,7 +233,7 @@
         [globalData cancelMeetup:meetup];
         
         // Add comment to the text field
-        [self addComment:@"    You just canceled the event!\n" scrollDown:FALSE];
+        //[self addComment:@"    You just canceled the event!\n" scrollDown:FALSE];
         
         // Buttons
         [self flushButtons];
@@ -293,15 +296,6 @@
 #pragma mark Commenting
 
 
--(void)addComment:(NSString*)strComment scrollDown:(Boolean)scrollDown
-{
-    NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
-    [stringComments appendString:comments.text];
-    [stringComments appendString:strComment];
-    [comments setText:stringComments];
-    [self resizeComments:scrollDown];
-}
-
 - (void) callbackCommentSaved:(Comment*)comment
 {
     [activityIndicator stopAnimating];
@@ -319,7 +313,8 @@
     [globalData updateConversation:comment.dateCreated count:[NSNumber numberWithInteger:meetup.numComments] thread:comment.strMeetupId meetup:TRUE];
     
     // Adding comment to the list
-    [self addComment:[NSString stringWithFormat:@"    %@: %@\n", [globalVariables fullUserName], textView.text] scrollDown:TRUE];
+    [commentsView addComment:comment];
+    [self resizeComments:TRUE];
     
     // Reseting text field
     [textView setText:@""];
@@ -359,7 +354,7 @@
     [viewsList addObject:peopleCounters];
     [viewsList addObject:labelSpotsAvailable];
     [viewsList addObject:descriptionView];
-    [viewsList addObject:comments];
+    [viewsList addObject:commentsView];
     
     // Resize and rearrange
     [self resizeComments:FALSE];
@@ -374,9 +369,8 @@
     containerView.userInteractionEnabled = FALSE;
     
     // Map
-#ifdef IOS7_ENABLE
-    mapView.rotateEnabled = FALSE;
-#endif
+    if ( IOS_NEWER_OR_EQUAL_TO_7 )
+        mapView.rotateEnabled = FALSE;
     
     // Loading comments
     [globalData loadCommentThread:meetup target:self selector:@selector(callbackCommentsLoaded:error:)];
@@ -474,42 +468,13 @@
 {
     if (error || ! loadedComments )
     {
-        [comments setText:@"Comments loading failed, no connection."];
+        [commentsView setText:@"Comments load failed, no connection."];
         return;
     }
     
     // Comments
-    NSMutableString* stringComments = [[NSMutableString alloc] initWithFormat:@""];
-    //if ( meetup.strOriginalURL && meetup.strOriginalURL.length > 0 )
-    //    [stringComments appendString:[NSString stringWithFormat:@"    Original post: %@\n", meetup.strOriginalURL]];
-    
-    for (Comment *comment in loadedComments)
-    {
-        NSNumber* nSystem = comment.systemType;
-        if ( [nSystem integerValue] == COMMENT_CANCELED )
-        {
-            [meetup setCanceled];   // Set meetup as canceled (as we could have old data)
-            [self reloadAnnotation];
-        }
-        
-        NSString* strUserName = comment.strNameUserFrom;
-        if ( ! nSystem || [nSystem intValue] == 0 )   // Not a system comment
-        {
-            [stringComments appendString:@"    "];
-            [stringComments appendString:strUserName];
-            [stringComments appendString:@": "];
-        }
-        else
-        {
-            [stringComments appendString:@"    "];
-        }
-        [stringComments appendString:comment.strComment];
-        [stringComments appendString:@"\n"];
-    }
-    Boolean bWasNotEmpty = ( commentsList.count > 0 );
-    [comments setText:stringComments];
-    commentsList = [NSMutableArray arrayWithArray:loadedComments];
-    [self resizeComments:bWasNotEmpty];
+    [commentsView setCommentsList:loadedComments];
+    [self resizeComments:FALSE];
     
     // Update badge number for unread messages
     [globalData postInboxUnreadCountDidUpdate];
@@ -703,12 +668,6 @@
 
 - (void)resizeComments:(Boolean)scrollDown
 {
-    // Resizing comments
-    NSUInteger newHeight = comments.contentSize.height;
-    CGRect frame = comments.frame;
-    frame.size.height = newHeight;
-    comments.frame = frame;
-    
     // Arranging subviews
     NSInteger nYOffset = 0;
     for ( UIView* view in viewsList )
@@ -726,7 +685,7 @@
     labelDate.frame = dateFrame;
     
     // Resizing scroll view
-    [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width, comments.frame.origin.y + comments.frame.size.height)];
+    [scrollView setContentSize:CGSizeMake(scrollView.width, commentsView.originY + commentsView.height)];
     
     // Scrolling down
     if ( scrollDown )
@@ -748,12 +707,14 @@
     webView.scrollView.scrollEnabled = FALSE;
     
     // Moving comments down
-    CGRect textFrame = comments.frame;
-    textFrame.origin.y = webView.frame.origin.y + webView.frame.size.height;
-    comments.frame = textFrame;
+    //CGRect textFrame = comments.frame;
+    //textFrame.origin.y = webView.frame.origin.y + webView.frame.size.height;
+    //comments.frame = textFrame;
+    //comments.originY = webView.frame.origin.y + webView.frame.size.height;
     
     // Resizing scroll view
-    [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width, comments.frame.origin.y + comments.frame.size.height)];
+    //[scrollView setContentSize:CGSizeMake(scrollView.width, commentsView.originY + commentsView.height)];
+    [self resizeComments:FALSE];
 }
 
 -(BOOL) webView:(UIWebView *)inWeb shouldStartLoadWithRequest:(NSURLRequest *)inRequest navigationType:(UIWebViewNavigationType)inType {
@@ -792,16 +753,14 @@
 
 -(void) keyboardWillShow:(NSNotification *)note{
     [super keyboardWillShow:note];
-    comments.userInteractionEnabled = NO;
 }
 
 -(void) keyboardWillHide:(NSNotification *)note{
     [super keyboardWillHide:note];
-    comments.userInteractionEnabled = YES;
 }
 
 - (void)viewDidUnload {
-    comments = nil;
+    commentsView = nil;
     mapView = nil;
     labelDate = nil;
     labelLocation = nil;

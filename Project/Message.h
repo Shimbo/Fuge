@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <Parse/Parse.h>
 
+@class Person;
+
 @interface Message : NSObject
 {
     NSString    *strUserFrom;
@@ -37,5 +39,7 @@
 -(id) initWithWelcomeMessage;
 -(void) save:(id)target selector:(SEL)selector;
 -(void) unpack:(PFObject*)data;
+-(Person*) owner;
+-(Boolean) isOwn;
 
 @end

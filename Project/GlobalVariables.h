@@ -10,8 +10,6 @@
 #import <Parse/Parse.h>
 #import "TestFlight.h"
 
-//#define IOS7_ENABLE
-
 #undef NSLog
 #define NSLog(__FORMAT__, ...) TFLog((@"%s [Line %d] " __FORMAT__), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
 

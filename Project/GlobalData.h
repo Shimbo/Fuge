@@ -83,16 +83,6 @@ typedef enum EInviteStatus
     INVITE_EXPIRED  = 4
 }InviteStatus;
 
-typedef  enum EMeetupCommentType
-{
-    COMMENT_PLAIN   = 0,
-    COMMENT_CREATED = 1,
-    COMMENT_SAVED   = 2,
-    COMMENT_JOINED  = 3,    // these two types are depricated
-    COMMENT_LEFT    = 4,    // these two types are depricated
-    COMMENT_CANCELED = 5
-}CommentType;
-
 #define INBOX_LOADED    3   // Number of stages in loading
 #define MAP_LOADED      2
 #define CIRCLES_LOADED  2

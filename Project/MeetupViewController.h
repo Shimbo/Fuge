@@ -13,6 +13,7 @@
 #import <MapKit/MapKit.h>
 #import "MeetupAnnotation.h"
 #import "PersonAnnotation.h"
+#import "CommentsView.h"
 
 enum EMeetupButtons
 {
@@ -34,8 +35,7 @@ enum EMeetupButtons
 <UITextViewDelegate, MKMapViewDelegate, UIWebViewDelegate, UITextFieldDelegate>
 {
     Meetup* meetup;
-    NSMutableArray* commentsList;
-    IBOutlet UITextView *comments;
+    IBOutlet CommentsView *commentsView;
     IBOutlet MKMapView *mapView;
     IBOutlet UILabel *labelDate;
     IBOutlet UILabel *labelLocation;
