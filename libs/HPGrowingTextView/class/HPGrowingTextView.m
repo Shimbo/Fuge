@@ -375,9 +375,9 @@
 
 -(void)resizeTextView:(NSInteger)newSizeH
 {
-    if ([delegate respondsToSelector:@selector(growingTextView:willChangeHeight:)]) {
-        [delegate growingTextView:self willChangeHeight:newSizeH];
-    }
+    if ( delegate )
+        if ([delegate respondsToSelector:@selector(growingTextView:willChangeHeight:)])
+            [delegate growingTextView:self willChangeHeight:newSizeH];
     
     CGRect internalTextViewFrame = self.frame;
     internalTextViewFrame.size.height = newSizeH; // + padding
@@ -392,9 +392,9 @@
 
 - (void)growDidStop
 {
-	if ([delegate respondsToSelector:@selector(growingTextView:didChangeHeight:)]) {
-		[delegate growingTextView:self didChangeHeight:self.frame.size.height];
-	}
+    if ( delegate )
+        if ([delegate respondsToSelector:@selector(growingTextView:didChangeHeight:)])
+            [delegate growingTextView:self didChangeHeight:self.frame.size.height];
 }
 
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event

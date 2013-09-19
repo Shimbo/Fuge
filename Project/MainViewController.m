@@ -41,7 +41,11 @@
     [super viewDidLoad];
     
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    [button setBackgroundImage:[UIImage imageNamed:@"reveal_menu_button_portrait.png"]
+    if ( IOS_NEWER_OR_EQUAL_TO_7 )
+        [button setBackgroundImage:[UIImage imageNamed:@"reveal_menu_button7.png"]
+                          forState:UIControlStateNormal];
+    else
+        [button setBackgroundImage:[UIImage imageNamed:@"reveal_menu_button6.png"]
                       forState:UIControlStateNormal];
     [button addTarget:self action:@selector(showLeftView:) forControlEvents:UIControlEventTouchUpInside];
     [button sizeToFit];

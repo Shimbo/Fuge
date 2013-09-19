@@ -31,9 +31,10 @@ typedef void (^ImageHandler)(UIImage *image);
 @property (nonatomic) NSUInteger maxImageSize;
 @property (nonatomic) CGSize maxSize;
 @property(nonatomic,assign)BOOL shoulCacheCircledImage;
-- (id)initForCircleImages;
 
--(UIImage*)getImage:(NSString*)url;
+- (id)init;
+
+-(UIImage*)getImage:(NSString*)url rounded:(Boolean)rounded;
 -(void)setImage:(UIImage*)image url:(NSString*)url;
 -(void)loadImageWithUrl:(NSString*)url
                 handler:(ImageHandler)handler;

@@ -21,7 +21,7 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <button opaque="NO" autoresizesSubviews="NO" contentMode="TopLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="5">
+                <button autoresizesSubviews="NO" opaque="NO" contentMode="TopLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="5">
                     <rect key="frame" x="94" y="417" width="132" height="44"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <fontDescription key="fontDescription" type="boldSystem" size="button"/>
@@ -64,7 +64,7 @@
                         <action selector="showSearchWhereOptions" destination="-1" eventType="touchDown" id="167"/>
                     </connections>
                 </button>
-                <label hidden="YES" opaque="NO" autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" text="Selection" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="152">
+                <label hidden="YES" autoresizesSubviews="NO" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" text="Selection" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="152">
                     <rect key="frame" x="102" y="154" width="192" height="21"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -88,19 +88,19 @@
                         <outlet property="delegate" destination="-1" id="338"/>
                     </connections>
                 </textField>
-                <switch opaque="NO" autoresizesSubviews="NO" contentMode="TopLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="185">
-                    <rect key="frame" x="199" y="89" width="51" height="31"/>
+                <switch autoresizesSubviews="NO" opaque="NO" contentMode="TopLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="185">
+                    <rect key="frame" x="195" y="89" width="51" height="31"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 </switch>
-                <label opaque="NO" autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="TopLeft" text="Discoverable" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="188">
-                    <rect key="frame" x="58" y="92" width="109" height="21"/>
+                <label autoresizesSubviews="NO" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="TopLeft" text="Discoverable" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="188">
+                    <rect key="frame" x="73" y="92" width="109" height="21"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="483">
-                    <rect key="frame" x="38" y="149" width="244" height="44"/>
+                    <rect key="frame" x="38" y="135" width="244" height="44"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <state key="normal" title="Logout from FB account">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>

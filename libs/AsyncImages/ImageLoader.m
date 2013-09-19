@@ -26,11 +26,10 @@ static inline NSMutableDictionary *updatedImages() {
     NSMutableData *data;
     NSString *__weak _urlString;
     ImageHandler _handler;
-    BOOL roundedImages;
     BOOL needToPassImageToBlock;
 }
 
-- (id)initForCircleImages
+/*- (id)initForCircleImages
 {
     self = [super init];
     if (self) {
@@ -43,7 +42,7 @@ static inline NSMutableDictionary *updatedImages() {
         self.maxSize = CGSizeMake(200, 200);
     }
     return self;
-}
+}*/
 
 - (id)init
 {
@@ -59,7 +58,7 @@ static inline NSMutableDictionary *updatedImages() {
     return self;
 }
 
--(UIImage*)getImage:(NSString*)url{
+-(UIImage*)getImage:(NSString*)url rounded:(Boolean)rounded{
     UIImage *image = [_imageCache objectForKey:url];
     if (!image) {
         image = [_imageCache imageFromDiskForKey:url];
@@ -78,6 +77,16 @@ static inline NSMutableDictionary *updatedImages() {
             
         }
     }
+    
+    // Rounded
+    UIImage *roundedImg = nil;
+    if ( rounded )
+    {
+        roundedImg = [UIImage appleMask:[UIImage imageNamed:@"mask35.png"]
+                            forImage:image];
+        return roundedImg;
+    }
+    
     return image;
 }
 
@@ -164,51 +173,39 @@ static inline NSMutableDictionary *updatedImages() {
     data = nil;
 }
 
--(void)saveInCache:(UIImage*)image withUrl:(NSString*)url circled:(BOOL)circled{
-    FugeAppDelegate *dlgt = (FugeAppDelegate*)[[UIApplication sharedApplication]delegate];
-    JMImageCache *cache = nil;
-    if (circled) {
-        cache = dlgt.circledImageCache;
-    }else{
-        cache = dlgt.imageCache;
-    }
-    [cache setObject:image
+-(void)saveInCache:(UIImage*)image withUrl:(NSString*)url{
+    [_imageCache setObject:image
                     forKey:url
                       cost:image.scale*image.size.width*image.size.height];
     if (self.cachPolicy == CFAsyncCachePolicyDiskAndMemory) {
-        [cache saveToDisk:image withKey:url];
+        [_imageCache saveToDisk:image withKey:url];
     }
 }
 
 
 -(void)processData:(NSData*)d withUrl:(NSString*)url{
+    
     UIImage *cachedImage = [_imageCache objectForKey:url];
     if (cachedImage && self.loadPolicy == CFAsyncReturnCacheDataElseLoad) {
         [self sendImageToBlockOnMainQueue:cachedImage];
         return;
     }
-    UIImage *image = [UIImage imageWithData:d];
-    if (image)
-        [self saveInCache:image withUrl:url circled:NO];
-    UIImage *rounded = nil;
-    if (roundedImages || self.shoulCacheCircledImage) {
-        rounded = [UIImage appleMask:[UIImage imageNamed:@"mask35.png"]
-                                     forImage:image];
-        if (rounded)
-            [self saveInCache:rounded withUrl:url circled:YES];
-    }
-
     
-
-    if (needToPassImageToBlock && _urlString.hash == url.hash){
-        if (roundedImages) {
-            [self sendImageToBlockOnMainQueue:rounded];
-        }else{
-            [self sendImageToBlockOnMainQueue:image];
-        }
-    }
-
-        
+    // Image
+    UIImage *image = [UIImage imageWithData:d];
+    /*UIImage *rounded = nil;
+    if ( roundedImages )
+        rounded = [UIImage appleMask:[UIImage imageNamed:@"mask35.png"]
+                  forImage:image];
+    if ( rounded )
+        image = rounded;*/
+    
+    // Saving
+    [self saveInCache:image withUrl:url];
+    
+    // Sending back
+    if (needToPassImageToBlock && _urlString.hash == url.hash)
+        [self sendImageToBlockOnMainQueue:image];
 }
 
 

@@ -191,7 +191,7 @@
         loader.shoulCacheCircledImage = self.shoulCacheCircledImage;
     }
 
-    UIImage *im = [loader getImage:url];
+    UIImage *im = [loader getImage:url rounded:FALSE];
     if (im) {
         [self addImageToImageView:im animated:NO];
         [_target performSelector:selector withObject:im];

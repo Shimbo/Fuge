@@ -23,7 +23,8 @@ static NSString *const kInboxUnreadCountDidUpdate = @"kInboxUnreadCountDidChange
 
 static NSString *const kLoadingMainComplete = @"kLoadingMainComplete";
 static NSString *const kLoadingMapComplete = @"kLoadingMapComplete";
-static NSString *const kLoadingCirclesComplete = @"kLoadingCirclesComplete";
+static NSString *const kLoadingEncountersComplete = @"kLoadingEncountersComplete";
+static NSString *const kLoadingFriendsComplete = @"kLoadingFriendsComplete";
 static NSString *const kLoadingInboxComplete = @"kLoadingInboxComplete";
 
 static NSString *const kLoadingMainFailed = @"kLoadingMainFailed";
@@ -85,7 +86,7 @@ typedef enum EInviteStatus
 
 #define INBOX_LOADED    3   // Number of stages in loading
 #define MAP_LOADED      2
-#define CIRCLES_LOADED  2
+#define CIRCLES_LOADED  1
 
 @interface GlobalData : NSObject
 {
@@ -115,6 +116,8 @@ typedef enum EInviteStatus
     EventbriteLoader*   EBloader;
     FacebookLoader*     FBloader;
     MeetupLoader*       MTloader;
+    
+    Boolean             firstDataLoad;
 }
 
 + (id)sharedInstance;
@@ -140,7 +143,7 @@ typedef enum EInviteStatus
 - (NSUInteger)getLoadingStatus:(NSUInteger)nStage;
 
 // Global data callers to load in background
-- (void)reloadFriendsInBackground:(Boolean)loadRandom;
+- (void)reloadFriendsInBackground;//:(Boolean)loadRandom;
 - (void)reloadMapInfoInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast;
 - (void) loadPersonsBySearchString:(NSString*)searchString target:(id)target selector:(SEL)callback;
 - (void) loadPersonsByIdsList:(NSArray*)idsList target:(id)target selector:(SEL)callback;

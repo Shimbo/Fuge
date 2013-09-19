@@ -46,7 +46,11 @@
                                                 object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self
                                                 selector:@selector(reloadStatusChanged)
-                                                name:kLoadingCirclesComplete
+                                                name:kLoadingEncountersComplete
+                                                object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(reloadStatusChanged)
+                                                name:kLoadingFriendsComplete
                                                 object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self
                                                 selector:@selector(reloadStatusChanged)
@@ -122,7 +126,7 @@
     tableView.userInteractionEnabled = FALSE;
     [self.activityIndicator startAnimating];
     [globalData reloadMapInfoInBackground:nil toNorthEast:nil];
-    [globalData reloadFriendsInBackground:TRUE];
+    [globalData reloadFriendsInBackground];
 }
 
 -(void)refreshView:(UIRefreshControl *)refreshControl {
@@ -606,6 +610,9 @@ static CGRect oldMapFrame;
         
         // Date check; we should add active section for the people list as well
         if ( person.isOutdated )
+            continue;
+        
+        if ( ! person.smallAvatarUrl )
             continue;
         
         PersonAnnotation *ann = [[PersonAnnotation alloc] initWithPerson:person];

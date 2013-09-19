@@ -87,6 +87,7 @@
 	return self;
 }
 
+#ifdef TARGET_FUGE
 -(void) drawRect: (CGRect) rect
 {
     CGContextRef context = UIGraphicsGetCurrentContext();
@@ -107,5 +108,6 @@
         CGContextStrokeEllipseInRect(context, matchingCircle);
     }
 }
+#endif
 
 @end

@@ -25,7 +25,7 @@
 @implementation RootViewController
 
 #define ROW_HEIGHT  60
-#define MAX_INDUSTRIES_TO_FILTER    10
+#define MAX_INDUSTRIES_TO_FILTER    20
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -33,7 +33,7 @@
     if (self) {
         [[NSNotificationCenter defaultCenter]addObserver:self
                                                 selector:@selector(reloadFinished)
-                                                name:kLoadingCirclesComplete
+                                                name:kLoadingEncountersComplete
                                                 object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self
                                                 selector:@selector(loadingFailed)
@@ -246,14 +246,14 @@
     [self reloadTableAndScroll:TRUE];
     
     // Buttons
-    UIBarButtonItem *shoutoutBtn = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"BUTTONS_SHOUTOUT",nil) style:UIBarButtonItemStyleBordered target:self action:@selector(shoutoutClicked)];
+    //UIBarButtonItem *shoutoutBtn = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"BUTTONS_SHOUTOUT",nil) style:UIBarButtonItemStyleBordered target:self action:@selector(shoutoutClicked)];
 #ifdef TARGET_FUGE
     matchBtn = [[UIBarButtonItem alloc] initWithTitle:sortingModeTitles[SORTING_RANK] style:UIBarButtonItemStyleBordered target:self action:@selector(matchClicked)];
     [self.navigationItem setRightBarButtonItems:@[matchBtn]];
 #elif defined TARGET_S2C
     filterButton = [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(filterSelectorClicked)];
     [self recalcFilterTexts];
-    [self.navigationItem setRightBarButtonItems:@[filterButton, shoutoutBtn]];
+    [self.navigationItem setRightBarButtonItems:@[filterButton/*, shoutoutBtn*/]];
 #endif
     
     // Users sorting
@@ -310,7 +310,7 @@
 -(void)refreshView:(UIRefreshControl *)refreshControl {
 
     tableView.userInteractionEnabled = FALSE;
-    [globalData reloadFriendsInBackground:TRUE];
+    [globalData reloadFriendsInBackground];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)aTableView {

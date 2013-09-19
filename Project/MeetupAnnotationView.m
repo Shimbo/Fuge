@@ -181,12 +181,12 @@
         return;
     }
     if (!_imageLoader) {
-        _imageLoader = [[ImageLoader alloc]initForCircleImages];
+        _imageLoader = [[ImageLoader alloc]init];
         _imageLoader.cachPolicy = CFAsyncCachePolicyDiskAndMemory;
         _imageLoader.loadPolicy = CFAsyncReturnCacheDataAndUpdateCachedImageOnce;
     }
     [_imageLoader cancel];
-    UIImage *im = [_imageLoader getImage:url];
+    UIImage *im = [_imageLoader getImage:url rounded:TRUE];
     if (im) {
         _personImage.image = im;
         return;

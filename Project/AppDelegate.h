@@ -15,7 +15,6 @@
 @property (nonatomic, retain) PKRevealController *revealController;
 
 @property (nonatomic, retain) JMImageCache *imageCache;
-@property (nonatomic, retain) JMImageCache *circledImageCache;
 
 @property (nonatomic, retain, readonly) RootViewController *rootViewController;
 

@@ -153,7 +153,7 @@ static Boolean bRotating = true;
     // Login or load
     if ( ! PFFacebookUtils.session.isOpen || ! currentUserIsAuthenticated || ! bPermissionsGranted || ! strCurrentUserId )
 #elif defined TARGET_S2C
-    if ( ! currentUserIsAuthenticated || ! strCurrentUserId )
+    if ( ! pCurrentUser || ! strCurrentUserId )
 #endif
     {
         [self notLoggedIn];

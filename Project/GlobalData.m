@@ -53,6 +53,7 @@ static GlobalData *sharedInstance = nil;
         nLoadStatusMap = LOAD_STARTED;
         nLoadStatusCircles = LOAD_STARTED;
         nLoadStatusInbox = LOAD_STARTED;
+        firstDataLoad = true;
     }
     
     return self;
@@ -272,12 +273,15 @@ NSInteger sortByName(id num1, id num2, void *context)
                     
                     // Push channels initialization
                     [pushManager initChannels];
-                    
+
+#ifdef TARGET_S2C
                     // FB friends, 2O friends, fb friends not installed the app
-                    [self reloadFriendsInBackground:TRUE];
-                    
+                    [self reloadFriendsInBackground];
+#elif defined TARGET_FUGE
                     // Map data: random people, meetups, threads, etc - location based
                     [self reloadMapInfoInBackground:nil toNorthEast:nil];
+#endif
+                    
                     
 #ifdef TARGET_FUGE
                     // FB Meetups
@@ -286,9 +290,6 @@ NSInteger sortByName(id num1, id num2, void *context)
                     // EB Meetups
                     //[self loadEBMeetups];
 #endif
-                    
-                    // Inbox
-                    [self reloadInboxInBackground:INBOX_ALL];
                     
                     // Admin reload of groups and events recreation
                     //if ( bIsAdmin )
@@ -307,22 +308,16 @@ NSInteger sortByName(id num1, id num2, void *context)
 }
 
 // Will not use any load status, on fail just nothing
-- (void)reloadFriendsInBackground:(Boolean)loadRandom
+- (void)reloadFriendsInBackground//:(Boolean)loadRandom
 {
     nCirclesLoadingStage = 0;
     nLoadStatusCircles = LOAD_STARTED;
     
-#ifdef TARGET_FUGE
-    [fbLoader loadFriends:self selectorSuccess:@selector(loadFbFriendsInBackground:) selectorFailure:@selector(loadFriendsInBackgroundFailed)];
-#elif defined TARGET_S2C
-    [self loadFbFriendsInBackground:nil];
-#endif
-    
-    // Random friends
-    if ( loadRandom )
+    // Random people
+    //if ( loadRandom )
         [self loadRandomPeopleInBackground];
-    else
-        [self incrementCirclesLoadingStage];
+    //else
+    //    [self incrementCirclesLoadingStage];
 }
 
 // Will use secondary load status to show problems with connection
@@ -475,7 +470,14 @@ NSInteger sortByName(id num1, id num2, void *context)
             }
             
             // 2O friends
-            [self load2OFriendsInBackground:friends];
+            [pCurrentUser saveInBackground]; // CHECK: here was Eventually - ?
+            
+            // FB friends out of the app
+            [self loadFbOthers:friends];
+            
+            // Notification
+            [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingFriendsComplete
+                                                               object:nil];
             
             // Admin role creation, DEV CODE, don't uncomment!
 
@@ -527,18 +529,6 @@ NSInteger sortByName(id num1, id num2, void *context)
 #endif
         }
     }];
-}
-
-- (void) load2OFriendsInBackground:(NSArray*)friends
-{
-    [pCurrentUser saveInBackground]; // CHECK: here was Eventually - ?
-    
-    // FB friends out of the app
-    [self loadFbOthers:friends];
-    
-    [self incrementCirclesLoadingStage];
-
-    return;
 }
 
 /*    // Second circle friends query
@@ -595,11 +585,11 @@ NSInteger sortByName(id num1, id num2, void *context)
 {
     // Query
     PFQuery *friendAnyQuery = [PFUser query];
-    if ( [globalVariables isUserAdmin] )
-        friendAnyQuery.limit = 1000;
-    else
-        friendAnyQuery.limit = RANDOM_PERSON_MAX_COUNT;
-    [friendAnyQuery orderByDescending:@"updatedAt"];
+    //if ( [globalVariables isUserAdmin] )
+    //    friendAnyQuery.limit = 1000;
+    //else
+    friendAnyQuery.limit = RANDOM_PERSON_MAX_COUNT;
+    
     
     // We could load based on player location or map rect if he moved the map later
 //    if ( ! southWest )
@@ -615,6 +605,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         [friendAnyQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
     NSDate* dateToHide = [NSDate dateWithTimeIntervalSinceNow:-(NSTimeInterval)MAX_SECONDS_FROM_PERSON_LOGIN];
     [friendAnyQuery whereKey:@"updatedAt" greaterThan:dateToHide];
+    [friendAnyQuery orderByDescending:@"updatedAt"];
     
     //NSMutableArray *loadedIds = [pCurrentUser objectForKey:@"fbFriends2O"];
     //if ( loadedIds && [pCurrentUser objectForKey:@"fbFriends2O"] )
@@ -646,10 +637,16 @@ NSInteger sortByName(id num1, id num2, void *context)
         
         // Increment loading stages
         [self incrementCirclesLoadingStage];
+        
+        #ifdef TARGET_FUGE
+                [fbLoader loadFriends:self selectorSuccess:@selector(loadFbFriendsInBackground:) selectorFailure:@selector(loadFriendsInBackgroundFailed)];
+        #elif defined TARGET_S2C
+                [self loadFbFriendsInBackground:nil];
+        #endif
     }];
     
     // Additional admin-only query for people without location
-    if ( [globalVariables isUserAdmin] )
+    /*if ( [globalVariables isUserAdmin] )
     {
         friendAnyQuery = [PFUser query];
         friendAnyQuery.limit = 100;
@@ -673,8 +670,7 @@ NSInteger sortByName(id num1, id num2, void *context)
                     [circleRandom sort];
             }
         }];
-
-    }
+    }*/
 }
 
 - (void) loadFbOthers:(NSArray*)friends
@@ -1477,6 +1473,19 @@ static NSString* strGroupId;
         nLoadStatusMap = LOAD_OK;
         [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingMapComplete
                                                            object:nil];
+        
+#ifdef TARGET_FUGE
+        if ( firstDataLoad )
+        {
+            // FB friends, 2O friends, fb friends not installed the app
+            [self reloadFriendsInBackground:TRUE];
+            
+            // Inbox
+            [self reloadInboxInBackground:INBOX_ALL];
+            
+            firstDataLoad = false;
+        }
+#endif
     }
 }
 
@@ -1487,8 +1496,20 @@ static NSString* strGroupId;
     if ( nCirclesLoadingStage == CIRCLES_LOADED )
     {
         nLoadStatusCircles = LOAD_OK;
-        [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingCirclesComplete
+        [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingEncountersComplete
                                                            object:nil];
+#ifdef TARGET_S2C
+        if ( firstDataLoad )
+        {
+            // Map data: random people, meetups, threads, etc - location based
+            [self reloadMapInfoInBackground:nil toNorthEast:nil];
+            
+            // Inbox
+            [self reloadInboxInBackground:INBOX_ALL];
+
+            firstDataLoad = false;
+        }
+#endif
     }
 }
 

@@ -22,13 +22,8 @@
         NSLog(@"Launch options: %@", launchOptions);
     
     self.imageCache = [[JMImageCache alloc]init];
-    [self.imageCache setCountLimit:90];
+    [self.imageCache setCountLimit:150];
     [self.imageCache cleanCache];
-    
-    self.circledImageCache = [[JMImageCache alloc]init];
-    self.circledImageCache.prefix = @"circled";
-    [self.circledImageCache setCountLimit:90];
-    [self.circledImageCache cleanCache];
     
     bFirstActivation = true;
     
@@ -95,7 +90,6 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.imageCache applicationDidReceiveMemoryWarning];
-            [self.circledImageCache applicationDidReceiveMemoryWarning];
             NSLog(@"cleaned");
         });
     });
@@ -157,7 +151,8 @@
         
         if ( [messageType compare:@"newFriend"] == NSOrderedSame )
         {
-            [globalData reloadFriendsInBackground:FALSE];
+            // TODO: load only FB friends
+            [globalData reloadFriendsInBackground];
             
             NSString *userId = [[userInfo objectForKey:@"userId"] copy];
             if ( userId && [userId isKindOfClass:[NSString class]])

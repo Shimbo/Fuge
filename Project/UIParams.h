@@ -25,7 +25,11 @@
 //#define MATCHING_COLOR_FB_FRIEND    @"ddd7eb"
 
 // Unread messages color
+#ifdef TARGET_FUGE
 #define INBOX_UNREAD_CELL_BG_COLOR  @"d7dfeb"
+#elif defined TARGET_S2C
+#define INBOX_UNREAD_CELL_BG_COLOR  @"ffefd0"
+#endif
 
 typedef enum kPinColor{
     PinGray = 1,

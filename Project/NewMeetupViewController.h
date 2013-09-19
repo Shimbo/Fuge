@@ -24,6 +24,8 @@
     UINavigationController *venueNavViewController;
     UIDatePicker *datePicker;
     UIPickerView *durationPicker;
+    UIPopoverController*    popover;
+    UIActionSheet*          actionSheet;
     NSDate* meetupDate;
     NSUInteger meetupDurationDays;
     NSUInteger meetupDurationHours;

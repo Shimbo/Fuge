@@ -18,6 +18,7 @@
     CustomBadge *_badge;
     UIImageView *_back;
     UIImageView *_personImage;
+    NSString    *currentImageUrl;
 }
 
 -(void)loadImageWithURL:(NSString*)url;
