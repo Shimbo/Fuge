@@ -26,9 +26,25 @@
 
 // Unread messages color
 #ifdef TARGET_FUGE
+
 #define INBOX_UNREAD_CELL_BG_COLOR  @"d7dfeb"
+#define ACTIVITY_INDICATOR_COLOR    @"ff9416"
+#define NAVBAR_BACKGROUND_COLOR     @"ffc100"
+#define TABLE_FOOTER_COLOR          @"fcf3d8"
+#define TABLE_SEPARATOR_COLOR       @"ff9416"
+#define TABLE_SEARCH_COLOR          @"ff9416"
+#define TABLE_SELECTION_COLOR       @"ff9416"
+
 #elif defined TARGET_S2C
+
 #define INBOX_UNREAD_CELL_BG_COLOR  @"ffefd0"
+#define ACTIVITY_INDICATOR_COLOR    @"ff9416"
+#define NAVBAR_BACKGROUND_COLOR     @"ffc100"
+#define TABLE_FOOTER_COLOR          @"fcf3d8"
+#define TABLE_SEPARATOR_COLOR       @"ff9416"
+#define TABLE_SEARCH_COLOR          @"ff9416"
+#define TABLE_SELECTION_COLOR       @"ff9416"
+
 #endif
 
 typedef enum kPinColor{

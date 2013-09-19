@@ -151,7 +151,7 @@ static Boolean bRotating = true;
         }
     
     // Login or load
-    if ( ! PFFacebookUtils.session.isOpen || ! currentUserIsAuthenticated || ! bPermissionsGranted || ! strCurrentUserId )
+    if ( ! PFFacebookUtils.session.isOpen || ! pCurrentUser || ! bPermissionsGranted || ! strCurrentUserId )
 #elif defined TARGET_S2C
     if ( ! pCurrentUser || ! strCurrentUserId )
 #endif

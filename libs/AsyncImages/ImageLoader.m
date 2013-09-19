@@ -129,6 +129,8 @@ static inline NSMutableDictionary *updatedImages() {
 
 -(void)makeRequestWithURL:(NSString*)url{
     
+    data = nil;
+    
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]
                                              cachePolicy:NSURLRequestReturnCacheDataElseLoad
                                          timeoutInterval:10];
@@ -170,7 +172,7 @@ static inline NSMutableDictionary *updatedImages() {
         [self processData:d withUrl:originUrl];
     });
     connection = nil;
-    data = nil;
+    //data = nil;
 }
 
 -(void)saveInCache:(UIImage*)image withUrl:(NSString*)url{
@@ -201,7 +203,8 @@ static inline NSMutableDictionary *updatedImages() {
         image = rounded;*/
     
     // Saving
-    [self saveInCache:image withUrl:url];
+    if ( image )
+        [self saveInCache:image withUrl:url];
     
     // Sending back
     if (needToPassImageToBlock && _urlString.hash == url.hash)

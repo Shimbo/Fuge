@@ -39,17 +39,17 @@
 - (void) recalcStuff
 {
     // Layout
-    if ( bOwn )
+    /*if ( bOwn )
     {
         avatar = [[AsyncImageView alloc] initWithFrame:CGRectMake( self.frame.size.width - CV_DEFAULT_AVATAR_SIZE - 10, 8, CV_DEFAULT_AVATAR_SIZE, CV_DEFAULT_AVATAR_SIZE )];
         text = [[UITextView alloc] initWithFrame:CGRectMake( 10, 0, self.frame.size.width - CV_DEFAULT_AVATAR_SIZE - 20, CV_DEFAULT_COMMENT_HEIGHT )];
         text.textAlignment = UITextAlignmentRight;
     }
     else
-    {
+    {*/
         avatar = [[AsyncImageView alloc] initWithFrame:CGRectMake( 10, 8, CV_DEFAULT_AVATAR_SIZE, CV_DEFAULT_AVATAR_SIZE )];
         text = [[UITextView alloc] initWithFrame:CGRectMake( CV_DEFAULT_AVATAR_SIZE+15, 0, self.frame.size.width - CV_DEFAULT_AVATAR_SIZE-15, CV_DEFAULT_COMMENT_HEIGHT )];
-    }
+    //}
     text.userInteractionEnabled = FALSE;
     avatar.userInteractionEnabled = FALSE;
     [self addSubview:avatar];
@@ -58,7 +58,7 @@
     // Font
     UIFont* font = [UIFont systemFontOfSize:14];
     NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
-    paragraph.alignment = bOwn ? NSTextAlignmentRight : NSTextAlignmentLeft;
+    paragraph.alignment = /*bOwn ? NSTextAlignmentRight :*/ NSTextAlignmentLeft;
     NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
                                           font, NSFontAttributeName,
                                           paragraph, NSParagraphStyleAttributeName,
@@ -70,7 +70,7 @@
     CGSize newSize;
     if ( IOS_NEWER_OR_EQUAL_TO_7 )
     {
-        CGRect paragraphRect = [text.attributedText.string boundingRectWithSize:CGSizeMake(text.width, 9999) options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading) attributes:attributesDictionary context:nil];
+        CGRect paragraphRect = [text.attributedText.string boundingRectWithSize:CGSizeMake(text.width-2, 9999) options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading) attributes:attributesDictionary context:nil];
         newSize = paragraphRect.size;
     }
     else

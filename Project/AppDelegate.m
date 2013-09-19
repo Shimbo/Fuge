@@ -72,6 +72,26 @@
     // Analytics
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
+    // UI setup
+    if ( IOS_NEWER_OR_EQUAL_TO_7 )
+    {
+        // Navigation bar label color
+        //[[UINavigationBar appearance] setTintColor:[UIColor colorWithHexString:TABLE_SEARCH_COLOR]];
+        [[UINavigationBar appearance] setBackgroundColor:[UIColor colorWithHexString:NAVBAR_BACKGROUND_COLOR]];
+        //[[UINavigationBar appearance] setBarTintColor:[UIColor colorWithHexString:NAVBAR_BACKGROUND_COLOR]];
+        
+        [[UIActivityIndicatorView appearance] setColor:[UIColor colorWithHexString:ACTIVITY_INDICATOR_COLOR]];
+
+        // Table
+        [[UITableViewHeaderFooterView appearance] setTintColor:[UIColor colorWithHexString:TABLE_FOOTER_COLOR]];
+        [[UITableView appearance] setSeparatorColor:[UIColor colorWithHexString:TABLE_SEPARATOR_COLOR]];
+        [[UISearchBar appearance] setBarTintColor:[UIColor colorWithHexString:TABLE_SEARCH_COLOR]];
+        
+        UIView *selectionColor = [[UIView alloc] init];
+        selectionColor.backgroundColor = [UIColor colorWithHexString:TABLE_SELECTION_COLOR];
+        [[UITableViewCell appearance] setSelectedBackgroundView:selectionColor];
+    }
+    
     return YES;
 }
 

@@ -1478,7 +1478,7 @@ static NSString* strGroupId;
         if ( firstDataLoad )
         {
             // FB friends, 2O friends, fb friends not installed the app
-            [self reloadFriendsInBackground:TRUE];
+            [self reloadFriendsInBackground];
             
             // Inbox
             [self reloadInboxInBackground:INBOX_ALL];

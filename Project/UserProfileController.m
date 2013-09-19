@@ -58,7 +58,6 @@
 - (void)resizeScroll
 {
     CGRect frame;
-    NSUInteger newHeight;
     
     // Resizing scroll view frame
     frame = scrollView.frame;
@@ -70,7 +69,7 @@
     
 #ifdef TARGET_S2C
     // Resizing web view
-    newHeight = [[webView stringByEvaluatingJavaScriptFromString:@"document.body.scrollHeight"] floatValue];
+    NSUInteger newHeight = [[webView stringByEvaluatingJavaScriptFromString:@"document.body.scrollHeight"] floatValue];
     frame = webView.frame;
     frame.size.height = newHeight;
     webView.frame = frame;
