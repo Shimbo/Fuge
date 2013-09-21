@@ -49,22 +49,9 @@
     {
         UserProfileController *userProfileController = [[UserProfileController alloc] initWithNibName:@"UserProfile" bundle:nil];
         [userProfileController setPerson:owner];
-        [userProfileController setProfileMode:PROFILE_MODE_SUMMARY];
-
-        controller.getNavigationController.navigationItem.title = @"Back";
+        [userProfileController setProfileMode:PROFILE_MODE_SUMMARY];        
         [controller.getNavigationController pushViewController:userProfileController animated:YES];
-        /*UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:userProfileController];
-         navigation.navigationItem.hidesBackButton = NO;
-         controller.getNavigationController.navigationItem.hidesBackButton = NO;
-         [controller.getNavigationController presentViewController:navigation animated:YES completion:nil];*/
     }
-    
-/*    CommentsView* controller = (CommentsView*)[self superview];
-    if ( controller )
-    {
-        UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:userProfileController];
-        [controller.getNavigationController presentViewController:navigation animated:YES completion:nil];
-    }*/
 }
 
 - (void) recalcStuff

@@ -34,6 +34,10 @@
     if (self) {
         [[NSNotificationCenter defaultCenter]addObserver:self
                                                 selector:@selector(reloadFinished)
+                                                name:kLoadingFriendsComplete
+                                                object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(reloadFinished)
                                                 name:kLoadingEncountersComplete
                                                 object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self
@@ -229,7 +233,7 @@
     sortingMode = SORTING_DISTANCE;
     
     // Navigation bar
-    [self.navigationItem setHidesBackButton:true animated:false];
+    //[self.navigationItem setHidesBackButton:true animated:false];
     //[self.navigationController.navigationBar setBackgroundImage:[UIImage alloc] forBarMetrics:UIBarMetricsDefault];
     //[self.navigationController.navigationBar setBackgroundImage:[UIImage alloc] forBarMetrics:UIBarMetricsLandscapePhone];
     //[self.navigationController.navigationBar setBackgroundColor:[UIColor greenColor]];

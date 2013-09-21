@@ -396,7 +396,7 @@ NSInteger sortByName(id num1, id num2, void *context)
     
     // FB friends query
     PFQuery *friendQuery = [PFUser query];
-    friendQuery.limit = 1000;
+    friendQuery.limit = 30;
     [friendQuery orderByDescending:@"updatedAt"];
     [friendQuery whereKey:@"fbId" containedIn:friendIds];
     [friendQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
@@ -681,8 +681,16 @@ static NSUInteger resultsTotal = 0;
                         resultsTotal += objects.count;
                         
                         // Refresh list
-                        [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingEncountersComplete
+                        if ( resultsTotal > 10 )
+                            [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingEncountersComplete
                                                                            object:nil];
+                        
+                        // Load direct connections
+#ifdef TARGET_FUGE
+                        [fbLoader loadFriends:self selectorSuccess:@selector(loadFbFriendsInBackground:) selectorFailure:@selector(loadFriendsInBackgroundFailed)];
+#elif defined TARGET_S2C
+                        [self loadFbFriendsInBackground:nil];
+#endif
                         
                         // Third load
                         if ( resultsTotal < RANDOM_PERSON_MAX_COUNT )
@@ -715,13 +723,6 @@ static NSUInteger resultsTotal = 0;
                                     
                                     // Show data
                                     [self incrementCirclesLoadingStage];
-                                    
-                                    // And load direct connections just in case
-#ifdef TARGET_FUGE
-                                     [fbLoader loadFriends:self selectorSuccess:@selector(loadFbFriendsInBackground:) selectorFailure:@selector(loadFriendsInBackgroundFailed)];
-#elif defined TARGET_S2C
-                                     [self loadFbFriendsInBackground:nil];
-#endif
                                 }
                                 else
                                     [self loadingFailed:LOADING_MAP status:LOAD_NOCONNECTION];

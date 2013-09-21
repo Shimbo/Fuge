@@ -375,8 +375,6 @@
 {
     [super viewDidAppear:animated];
     
-    self.title = @"";
-    
     containerView.userInteractionEnabled = FALSE;
     
     // Map
@@ -555,7 +553,7 @@
         [image loadImageFromURL:person.smallAvatarUrl];
         [avatarList addObject:image];
         [peopleCounters addSubview:image];
-        if ( avatarList.count > MINI_AVATAR_COUNT_MEETUP )
+        if ( avatarList.count >= MINI_AVATAR_COUNT_MEETUP )
             break;
     }
     
