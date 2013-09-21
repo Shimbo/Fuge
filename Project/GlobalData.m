@@ -1085,10 +1085,7 @@ static NSString* strGroupId;
 - (void)loadMeetupsInBackground:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast
 {
     PFQuery *meetupAnyQuery = [PFQuery queryWithClassName:@"Meetup"];
-    if ( [globalVariables isUserAdmin] )
-        meetupAnyQuery.limit = 1000;
-    else
-        meetupAnyQuery.limit = 100;
+    meetupAnyQuery.limit = 100;
     
     // Location filter
     if ( ! southWest )
@@ -1132,10 +1129,10 @@ static NSString* strGroupId;
             NSArray *meetupsData = objects;
             for (PFObject *meetupData in meetupsData)
                 [self addMeetupWithData:meetupData];
+            
+            // In any case, increment loading stage
+            [self incrementMapLoadingStage];
         }
-        
-        // In any case, increment loading stage
-        [self incrementMapLoadingStage];
     }];
     
     // Query for events that user was subscribed to (to show also private and remote events/threads) - this query calls only for first request, not for the map reloads. Plus all invites!
@@ -1190,10 +1187,10 @@ static NSString* strGroupId;
                         [newSubscriptions addObject:strMeetupId];*/
                 }
 //                [[PFUser currentUser] setObject:newSubscriptions forKey:@"subscriptions"];
+                
+                // In any case, increment loading stage
+                [self incrementMapLoadingStage];
             }
-            
-            // In any case, increment loading stage
-            [self incrementMapLoadingStage];
         }];
     }
     else

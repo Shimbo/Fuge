@@ -30,7 +30,6 @@ typedef void (^ImageHandler)(UIImage *image);
 @property (nonatomic,strong) JMImageCache *imageCache;
 @property (nonatomic) NSUInteger maxImageSize;
 @property (nonatomic) CGSize maxSize;
-@property(nonatomic,assign)BOOL shoulCacheCircledImage;
 
 - (id)init;
 

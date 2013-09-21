@@ -157,7 +157,6 @@
     inboxCell.subject.text = item.subject;
     inboxCell.message.text = item.message;
     inboxCell.misc.text = item.misc;
-    inboxCell.mainImage.shoulCacheCircledImage = YES;
     if ( item.meetup )
     {
         inboxCell.pinImage.hidden = FALSE;

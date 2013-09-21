@@ -33,7 +33,6 @@
 @property (nonatomic) CFAsyncCachePolicy cachPolicy;
 @property (nonatomic) CFAsyncLoadPolicy loadPolicy;
 
-@property(nonatomic,assign)BOOL shoulCacheCircledImage;
 @property (nonatomic,weak)id target;
 @property (weak, nonatomic,readonly)NSString* urlString;
 @property (nonatomic,assign)BOOL shadowed;

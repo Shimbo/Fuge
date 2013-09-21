@@ -429,6 +429,16 @@
 		4C7E3FED169A456B0065484F /* VenueSelectView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E3FEB169A456B0065484F /* VenueSelectView.xib */; };
 		4C89DFD617EDE01200428B7E /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C89DFD517EDE01200428B7E /* CoreText.framework */; };
 		4C89DFD717EDE01B00428B7E /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C89DFD517EDE01200428B7E /* CoreText.framework */; };
+		4C89DFDD17EE5CB900428B7E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C89DFDC17EE5CB900428B7E /* Images.xcassets */; };
+		4C89DFE217EE5DD800428B7E /* Icon-29.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C89DFDE17EE5DD800428B7E /* Icon-29.png */; };
+		4C89DFE317EE5DD800428B7E /* Icon-29@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C89DFDF17EE5DD800428B7E /* Icon-29@2x.png */; };
+		4C89DFE417EE5DD800428B7E /* Icon-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C89DFE017EE5DD800428B7E /* Icon-40@2x.png */; };
+		4C89DFE517EE5DD800428B7E /* Icon-60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C89DFE117EE5DD800428B7E /* Icon-60@2x.png */; };
+		4C89DFEB17EE5E7100428B7E /* Icon-40.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C89DFE617EE5E7100428B7E /* Icon-40.png */; };
+		4C89DFEC17EE5E7100428B7E /* Icon-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C89DFE717EE5E7100428B7E /* Icon-50.png */; };
+		4C89DFEE17EE5E7100428B7E /* Icon-76.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C89DFE917EE5E7100428B7E /* Icon-76.png */; };
+		4C89DFEF17EE5E7100428B7E /* Icon-76@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C89DFEA17EE5E7100428B7E /* Icon-76@2x.png */; };
+		4C89DFF117EE5E8A00428B7E /* Icon-50@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C89DFF017EE5E8A00428B7E /* Icon-50@2x.png */; };
 		4C8F7BCA177B58920015B2A8 /* white@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C8F7BC8177B58920015B2A8 /* white@2x~ipad.png */; };
 		4C8F7BCB177B58920015B2A8 /* white~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C8F7BC9177B58920015B2A8 /* white~ipad.png */; };
 		4C8F7BCE177B697C0015B2A8 /* iconMtOutdoor.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C8F7BCC177B697C0015B2A8 /* iconMtOutdoor.png */; };
@@ -821,6 +831,16 @@
 		4C7E3FEA169A456B0065484F /* VenueSelectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VenueSelectViewController.m; sourceTree = "<group>"; };
 		4C7E3FEB169A456B0065484F /* VenueSelectView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VenueSelectView.xib; sourceTree = "<group>"; };
 		4C89DFD517EDE01200428B7E /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		4C89DFDC17EE5CB900428B7E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = S2C/Images.xcassets; sourceTree = "<group>"; };
+		4C89DFDE17EE5DD800428B7E /* Icon-29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-29.png"; path = "resources/S2C/Icon-29.png"; sourceTree = "<group>"; };
+		4C89DFDF17EE5DD800428B7E /* Icon-29@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-29@2x.png"; path = "resources/S2C/Icon-29@2x.png"; sourceTree = "<group>"; };
+		4C89DFE017EE5DD800428B7E /* Icon-40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-40@2x.png"; path = "resources/S2C/Icon-40@2x.png"; sourceTree = "<group>"; };
+		4C89DFE117EE5DD800428B7E /* Icon-60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-60@2x.png"; path = "resources/S2C/Icon-60@2x.png"; sourceTree = "<group>"; };
+		4C89DFE617EE5E7100428B7E /* Icon-40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-40.png"; path = "resources/S2C/Icon-40.png"; sourceTree = "<group>"; };
+		4C89DFE717EE5E7100428B7E /* Icon-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-50.png"; path = "resources/S2C/Icon-50.png"; sourceTree = "<group>"; };
+		4C89DFE917EE5E7100428B7E /* Icon-76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-76.png"; path = "resources/S2C/Icon-76.png"; sourceTree = "<group>"; };
+		4C89DFEA17EE5E7100428B7E /* Icon-76@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-76@2x.png"; path = "resources/S2C/Icon-76@2x.png"; sourceTree = "<group>"; };
+		4C89DFF017EE5E8A00428B7E /* Icon-50@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-50@2x.png"; path = "resources/S2C/Icon-50@2x.png"; sourceTree = "<group>"; };
 		4C8F7BC8177B58920015B2A8 /* white@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "white@2x~ipad.png"; path = "resources/white@2x~ipad.png"; sourceTree = "<group>"; };
 		4C8F7BC9177B58920015B2A8 /* white~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "white~ipad.png"; path = "resources/white~ipad.png"; sourceTree = "<group>"; };
 		4C8F7BCC177B697C0015B2A8 /* iconMtOutdoor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMtOutdoor.png; sourceTree = "<group>"; };
@@ -995,6 +1015,7 @@
 		09ABC06213A1D52D009C3FCF = {
 			isa = PBXGroup;
 			children = (
+				4C89DFDC17EE5CB900428B7E /* Images.xcassets */,
 				47534DC916A7143F008CC823 /* libs */,
 				09ABC07713A1D52D009C3FCF /* Project */,
 				09ABC07013A1D52D009C3FCF /* Frameworks */,
@@ -1520,6 +1541,15 @@
 				4C02D31817B12426008E19EB /* Pyramid */,
 				4C59497117CA56B00082E413 /* Icon-72.png */,
 				4C59497217CA56B00082E413 /* Icon-72@2x.png */,
+				4C89DFDE17EE5DD800428B7E /* Icon-29.png */,
+				4C89DFDF17EE5DD800428B7E /* Icon-29@2x.png */,
+				4C89DFE617EE5E7100428B7E /* Icon-40.png */,
+				4C89DFE017EE5DD800428B7E /* Icon-40@2x.png */,
+				4C89DFE117EE5DD800428B7E /* Icon-60@2x.png */,
+				4C89DFE717EE5E7100428B7E /* Icon-50.png */,
+				4C89DFF017EE5E8A00428B7E /* Icon-50@2x.png */,
+				4C89DFE917EE5E7100428B7E /* Icon-76.png */,
+				4C89DFEA17EE5E7100428B7E /* Icon-76@2x.png */,
 				4C59497317CA56B00082E413 /* Icon.png */,
 				4C59497417CA56B00082E413 /* Icon@2x.png */,
 				4C9E246C17BD2CC300D35837 /* featured.png */,
@@ -1833,7 +1863,10 @@
 				4C444ED217A0045700288139 /* poweredByFoursquare_gray@2x.png in Resources */,
 				4C444ED317A0045700288139 /* LeftMenuController.xib in Resources */,
 				4C444ED517A0045700288139 /* RootViewController.xib in Resources */,
+				4C89DFEF17EE5E7100428B7E /* Icon-76@2x.png in Resources */,
 				4C444ED617A0045700288139 /* reveal_menu_button7.png in Resources */,
+				4C89DFEC17EE5E7100428B7E /* Icon-50.png in Resources */,
+				4C89DFDD17EE5CB900428B7E /* Images.xcassets in Resources */,
 				4C444ED717A0045700288139 /* reveal_menu_button7@2x.png in Resources */,
 				4C444ED917A0045700288139 /* InboxViewController.xib in Resources */,
 				4C444EDA17A0045700288139 /* InboxCell.xib in Resources */,
@@ -1845,6 +1878,7 @@
 				4C444EE017A0045700288139 /* Calendar-Day@2x.png in Resources */,
 				4C444EE117A0045700288139 /* PersonInviteCell.xib in Resources */,
 				4C444EE217A0045700288139 /* pinPerson@2x.png in Resources */,
+				4C89DFE217EE5DD800428B7E /* Icon-29.png in Resources */,
 				4C444EE317A0045700288139 /* pinPerson.png in Resources */,
 				4C444EE417A0045700288139 /* mask35.png in Resources */,
 				4C444EE517A0045700288139 /* mask35@2x.png in Resources */,
@@ -1873,8 +1907,11 @@
 				4C444EFD17A0045700288139 /* iconThread.png in Resources */,
 				4C444EFE17A0045700288139 /* iconThread@2x.png in Resources */,
 				4C444EFF17A0045700288139 /* blue-comb.png in Resources */,
+				4C89DFE417EE5DD800428B7E /* Icon-40@2x.png in Resources */,
 				4C444F0017A0045700288139 /* blue-comb@2x.png in Resources */,
+				4C89DFF117EE5E8A00428B7E /* Icon-50@2x.png in Resources */,
 				4C444F0117A0045700288139 /* orange-comb.png in Resources */,
+				4C89DFE317EE5DD800428B7E /* Icon-29@2x.png in Resources */,
 				4C444F0217A0045700288139 /* orange-comb@2x.png in Resources */,
 				4C444F0317A0045700288139 /* grey-comb.png in Resources */,
 				4C444F0417A0045700288139 /* grey-comb@2x.png in Resources */,
@@ -1899,6 +1936,7 @@
 				4C444F2517A0045700288139 /* iconMtMusic@2x.png in Resources */,
 				4C444F2617A0045700288139 /* iconMtSports.png in Resources */,
 				4C444F2717A0045700288139 /* iconMtSports@2x.png in Resources */,
+				4C89DFEB17EE5E7100428B7E /* Icon-40.png in Resources */,
 				4C444F2817A0045700288139 /* iconMtStudy.png in Resources */,
 				4C444F2917A0045700288139 /* iconMtStudy@2x.png in Resources */,
 				4C444F2A17A0045700288139 /* iconEventbrite.png in Resources */,
@@ -1943,6 +1981,7 @@
 				4C02D38517B12DD0008E19EB /* pyramid_0088@2x.png in Resources */,
 				4C02D38617B12DD0008E19EB /* pyramid_0099.png in Resources */,
 				4C02D38717B12DD0008E19EB /* pyramid_0099@2x.png in Resources */,
+				4C89DFEE17EE5E7100428B7E /* Icon-76.png in Resources */,
 				4C02D38817B12DD0008E19EB /* pyramid_0110.png in Resources */,
 				4C02D38917B12DD0008E19EB /* pyramid_0110@2x.png in Resources */,
 				4C02D38C17B12ED1008E19EB /* pyramid_0022.png in Resources */,
@@ -1956,6 +1995,7 @@
 				4C9E248817C3090300D35837 /* iconMtWalking.png in Resources */,
 				4C9E248A17C3090300D35837 /* iconMtWalking@2x.png in Resources */,
 				4C9E248C17C3090300D35837 /* iconMtCycling.png in Resources */,
+				4C89DFE517EE5DD800428B7E /* Icon-60@2x.png in Resources */,
 				4C9E248E17C3090300D35837 /* iconMtCycling@2x.png in Resources */,
 				4C9E249017C3090300D35837 /* iconMtClubs.png in Resources */,
 				4C9E249217C3090300D35837 /* iconMtClubs@2x.png in Resources */,
@@ -2334,6 +2374,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (S5R732XU6F)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (S5R732XU6F)";
@@ -2360,8 +2402,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = S2C;
-				PROVISIONING_PROFILE = "D05B5262-242F-4BAC-B834-8AC41815B43E";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "D05B5262-242F-4BAC-B834-8AC41815B43E";
+				PROVISIONING_PROFILE = "895328DE-580A-48E9-86C4-B2A9124257DF";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "895328DE-580A-48E9-86C4-B2A9124257DF";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
 				WRAPPER_EXTENSION = app;
@@ -2372,6 +2414,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (S5R732XU6F)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (S5R732XU6F)";
@@ -2394,8 +2438,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = S2C;
-				PROVISIONING_PROFILE = "D05B5262-242F-4BAC-B834-8AC41815B43E";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "D05B5262-242F-4BAC-B834-8AC41815B43E";
+				PROVISIONING_PROFILE = "895328DE-580A-48E9-86C4-B2A9124257DF";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "895328DE-580A-48E9-86C4-B2A9124257DF";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";

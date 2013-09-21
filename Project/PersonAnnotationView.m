@@ -65,7 +65,8 @@
     }
     if ( currentImageUrl )
         if ( [currentImageUrl compare:url] == NSOrderedSame )
-            return;
+            if ( _personImage.image )
+                return;
     currentImageUrl = [NSString stringWithString:url];
     if (!_imageLoader) {
         _imageLoader = [[ImageLoader alloc]init];

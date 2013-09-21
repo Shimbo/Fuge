@@ -188,7 +188,6 @@
         loader = [[ImageLoader alloc]init];
         loader.cachPolicy = self.cachPolicy;
         loader.loadPolicy = self.loadPolicy;
-        loader.shoulCacheCircledImage = self.shoulCacheCircledImage;
     }
 
     UIImage *im = [loader getImage:url rounded:FALSE];
