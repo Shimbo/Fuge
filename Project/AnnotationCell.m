@@ -31,17 +31,18 @@
 
 -(void)prepareForAnnotation:(MeetupAnnotation*)annotation{
     
-    [self initWithMeetup:annotation.meetup];
+    [self initWithMeetup:annotation.meetup continuous:false];
     
     [self.annotation prepareForAnnotation:annotation];
 }
 
--(void)initWithMeetup:(Meetup*)meetup
+-(void)initWithMeetup:(Meetup*)meetup continuous:(Boolean)continuous
 {
     self.title.text = meetup.strSubject;
     self.subtitle.text = [NSString stringWithFormat:@"By: %@", meetup.strOwnerName];
-    self.featured.text = meetup.strFeatured;
-    self.featuredImage.hidden = meetup.strFeatured ? FALSE : TRUE;
+    
+    self.featured.text = continuous ? @"" : meetup.strFeatured;
+    self.featuredImage.hidden = ( meetup.strFeatured && ! continuous ) ? FALSE : TRUE;
     
     NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
     [formatter setDateStyle:NSDateFormatterMediumStyle];
@@ -93,7 +94,21 @@
         AsyncImageView* image = [[AsyncImageView alloc] initWithFrame:CGRectMake(offset-avatarList.count*(MINI_AVATAR_SIZE+1), 46, MINI_AVATAR_SIZE, MINI_AVATAR_SIZE)];
         [image loadImageFromURL:person.smallAvatarUrl];
         [avatarList addObject:image];
+        if ( continuous )
+            image.alpha = 0.5f;
         [self addSubview:image];
+    }
+    
+    // Continuous
+    if ( continuous )
+    {
+        self.annotation.alpha = 0.5f;
+        self.title.alpha = 0.5f;
+        self.subtitle.alpha = 0.5f;
+        self.date.alpha = 0.5f;
+        self.distance.alpha = 0.5f;
+        self.attending.alpha = 0.5f;
+        self.date.text = @"Event continues";
     }
 }
 

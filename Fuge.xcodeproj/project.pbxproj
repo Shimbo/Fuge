@@ -427,6 +427,8 @@
 		4C7E3FE3169A1BB40065484F /* MeetupView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E3FE1169A1BB30065484F /* MeetupView.xib */; };
 		4C7E3FEC169A456B0065484F /* VenueSelectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FEA169A456B0065484F /* VenueSelectViewController.m */; };
 		4C7E3FED169A456B0065484F /* VenueSelectView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E3FEB169A456B0065484F /* VenueSelectView.xib */; };
+		4C89DFD617EDE01200428B7E /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C89DFD517EDE01200428B7E /* CoreText.framework */; };
+		4C89DFD717EDE01B00428B7E /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C89DFD517EDE01200428B7E /* CoreText.framework */; };
 		4C8F7BCA177B58920015B2A8 /* white@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C8F7BC8177B58920015B2A8 /* white@2x~ipad.png */; };
 		4C8F7BCB177B58920015B2A8 /* white~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C8F7BC9177B58920015B2A8 /* white~ipad.png */; };
 		4C8F7BCE177B697C0015B2A8 /* iconMtOutdoor.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C8F7BCC177B697C0015B2A8 /* iconMtOutdoor.png */; };
@@ -818,6 +820,7 @@
 		4C7E3FE9169A456B0065484F /* VenueSelectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VenueSelectViewController.h; sourceTree = "<group>"; };
 		4C7E3FEA169A456B0065484F /* VenueSelectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VenueSelectViewController.m; sourceTree = "<group>"; };
 		4C7E3FEB169A456B0065484F /* VenueSelectView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VenueSelectView.xib; sourceTree = "<group>"; };
+		4C89DFD517EDE01200428B7E /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		4C8F7BC8177B58920015B2A8 /* white@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "white@2x~ipad.png"; path = "resources/white@2x~ipad.png"; sourceTree = "<group>"; };
 		4C8F7BC9177B58920015B2A8 /* white~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "white~ipad.png"; path = "resources/white~ipad.png"; sourceTree = "<group>"; };
 		4C8F7BCC177B697C0015B2A8 /* iconMtOutdoor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMtOutdoor.png; sourceTree = "<group>"; };
@@ -927,6 +930,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C89DFD617EDE01200428B7E /* CoreText.framework in Frameworks */,
 				2FCDD6B014A573F500295AAC /* QuartzCore.framework in Frameworks */,
 				4C4228E716C46B62008EBA67 /* EventKit.framework in Frameworks */,
 				4C4228E816C46B62008EBA67 /* EventKitUI.framework in Frameworks */,
@@ -957,6 +961,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C89DFD717EDE01B00428B7E /* CoreText.framework in Frameworks */,
 				4C02D35D17B12906008E19EB /* AVFoundation.framework in Frameworks */,
 				4C444EAB17A0045700288139 /* QuartzCore.framework in Frameworks */,
 				4C444EAC17A0045700288139 /* EventKit.framework in Frameworks */,
@@ -1009,6 +1014,7 @@
 		09ABC07013A1D52D009C3FCF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4C89DFD517EDE01200428B7E /* CoreText.framework */,
 				4C02D35C17B12906008E19EB /* AVFoundation.framework */,
 				4CF2DE3617960DF40052E92B /* Crashlytics.framework */,
 				4C68CA781701F26100C2AD24 /* FacebookSDK.framework */,

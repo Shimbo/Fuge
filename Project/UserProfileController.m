@@ -173,7 +173,7 @@
     
 #ifdef TARGET_S2C
     // Summary
-    NSString* strResult = [lnLoader getProfileInHtml:personThis.strStatus summary:[personThis.personData objectForKey:@"profileSummary"] jobs:[personThis.personData objectForKey:@"profilePositions"]];
+    NSString* strResult = [lnLoader getProfileInHtml:personThis.strStatus summary:personThis.profileSummary jobs:personThis.profilePositions];
     [webView loadHTMLString:strResult baseURL:nil];
 #endif
     
@@ -312,7 +312,7 @@
     }
     
     //[messageHistory setText:stringHistory];
-    [messagesView setCommentsList:messages];
+    [messagesView setCommentsList:messages navigation:nil];
     messagesCount = messages.count;
     
     containerView.userInteractionEnabled = TRUE;

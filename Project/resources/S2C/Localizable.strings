@@ -23,10 +23,10 @@
 
 "MAP_BUTTON_NEWMEETUP"          = "New event";
 
-"STATUS_WINDOW_TITLE"           = "Your status";
-"STATUS_WINDOW_TEXT"            = "What are you looking for? Who would you like to talk to?";
-"STATUS_WINDOW_BTN_SKIP"        = "Cancel";
-"STATUS_WINDOW_BTN_ENTER"       = "Confirm";
+"STATUS_WINDOW_TITLE"           = "Tell us";
+"STATUS_WINDOW_TEXT"            = "What are you struggling with?";
+"STATUS_WINDOW_BTN_SKIP"        = "Later";
+"STATUS_WINDOW_BTN_ENTER"       = "Enter";
 "STATUS_WINDOW_PLACEHOLDER"     = "e.g. looking for a tax advice";
 
 "MENU_ITEM_INBOX"               = "Activity";

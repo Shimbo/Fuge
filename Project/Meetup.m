@@ -325,8 +325,16 @@
 - (Boolean) feature:(NSString*)feature
 {
     strFeatured = feature;
-    [meetupData setObject:strFeatured forKey:@"featured"];
-    [meetupData setObject:pCurrentUser forKey:@"featuredBy"];
+    if ( feature && feature.length > 0 )
+    {
+        [meetupData setObject:strFeatured forKey:@"featured"];
+        [meetupData setObject:pCurrentUser forKey:@"featuredBy"];
+    }
+    else
+    {
+        [meetupData removeObjectForKey:@"featured"];
+        [meetupData removeObjectForKey:@"featuredBy"];
+    }
     NSError* error = [[NSError alloc] init];
     [meetupData save:&error];
     if ( error.code != 0 )

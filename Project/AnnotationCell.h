@@ -44,7 +44,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *featured;
 @property (strong, nonatomic) IBOutlet UIImageView *featuredImage;
 
--(void)initWithMeetup:(Meetup*)meetup;
+-(void)initWithMeetup:(Meetup*)meetup continuous:(Boolean)continuous;
 
 @end
 

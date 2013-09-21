@@ -30,6 +30,7 @@
 -(void)showCircles;
 -(void)showUser;
 -(void)prepareMap;
+-(void)askStatus;
 -(void)clean;
 
 @end

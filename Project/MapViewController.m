@@ -576,12 +576,23 @@ static CGRect oldMapFrame;
     NSUInteger n = 0;
     if ( ! sortedMeetups )
         [self getMeetupsByDate];
-    for ( NSMutableArray* meetupsByDay in sortedMeetups )
-        for (Meetup *meetup in meetupsByDay)
+    
+    for ( NSUInteger dayCounter = 0; dayCounter < sortedMeetups.count; dayCounter++ )
+    {
+        NSMutableArray* meetupsByDay = sortedMeetups[dayCounter];
+        for ( NSUInteger meetupCounter = 0; meetupCounter < meetupsByDay.count; meetupCounter++ )
         {
+            Meetup *meetup = meetupsByDay[meetupCounter];
             if (meetup.meetupType == TYPE_MEETUP) {
-                MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
-                [_meetupAnnotations addObject:ann];
+                
+                Boolean continuous = [self isMeetupContinuous:dayCounter number:meetupCounter];
+                
+                if ( ! continuous )
+                {
+                    MeetupAnnotation *ann = [[MeetupAnnotation alloc] initWithMeetup:meetup];
+                    [_meetupAnnotations addObject:ann];
+                }
+                
             }else{ // Warning! Now getMeetupsByDate will never return any thread at all!
                 ThreadAnnotation *ann = [[ThreadAnnotation alloc] initWithMeetup:meetup];
                 [_threadAnnotations addObject:ann];
@@ -591,6 +602,7 @@ static CGRect oldMapFrame;
             if ( n >= l )
                 break;
         }
+    }
     
     return n;
 }
@@ -841,7 +853,8 @@ static CGRect oldMapFrame;
 {
     NSMutableArray* meetupsByDay = sortedMeetups[indexPath.section];
     Meetup* meetup = meetupsByDay[indexPath.row];
-    if ( meetup.strFeatured )
+    Boolean continuous = [self isMeetupContinuous:indexPath.section number:indexPath.row];
+    if ( meetup.strFeatured && ! continuous )
         return 92;
     else
         return 70;//(50+10*indexPath.item); // I put some padding on it.
@@ -904,12 +917,29 @@ static CGRect oldMapFrame;
     return [NSString stringWithFormat:@"%@, %@", weekDay, [theDateFormatter2 stringFromDate:day]];
 }
 
+- (Boolean) isMeetupContinuous:(NSUInteger)day number:(NSUInteger)number
+{
+    if ( day == 0 )
+        return false;
+    
+    Meetup* currentMeetup = sortedMeetups[day][number];
+
+    NSMutableArray* meetupsPrevDay = sortedMeetups[day-1];
+    for ( Meetup* meetup in meetupsPrevDay )
+        if ( meetup == currentMeetup )
+            return true;
+    
+    return false;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath  {
     
 	MeetupAnnotationCell *meetupCell = (MeetupAnnotationCell *)[table dequeueReusableCellWithIdentifier:@"MeetupCell"];
 	
     NSMutableArray* meetupsByDay = sortedMeetups[indexPath.section];
-    [meetupCell initWithMeetup:meetupsByDay[indexPath.row]];
+    Meetup* currentMeetup = meetupsByDay[indexPath.row];
+    Boolean continuous = [self isMeetupContinuous:indexPath.section number:indexPath.row];
+    [meetupCell initWithMeetup:currentMeetup continuous:continuous];
     
 	return meetupCell;
 }

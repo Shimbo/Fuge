@@ -390,7 +390,7 @@ NSInteger sortByName(id num1, id num2, void *context)
         friendIds = [pCurrentUser objectForKey:@"fbFriends"];
     if ( ! friendIds || friendIds.count == 0 )
     {
-        [self incrementCirclesLoadingStage];
+        //[self incrementCirclesLoadingStage];
         return;
     }
     
@@ -581,6 +581,18 @@ NSInteger sortByName(id num1, id num2, void *context)
     }];
 }*/
 
+static NSUInteger resultsTotal = 0;
+
+- (NSArray*) getAllPersonIds
+{
+    NSMutableArray* result = [NSMutableArray arrayWithCapacity:100];
+    for ( Circle* circle in [circles allValues] )
+        for (Person* person in [circle getPersons])
+            [result addObject:person.strId];
+    [result addObject:strCurrentUserId];
+    return result;
+}
+
 - (void) loadRandomPeopleInBackground
 {
     // Query
@@ -594,8 +606,9 @@ NSInteger sortByName(id num1, id num2, void *context)
     // We could load based on player location or map rect if he moved the map later
 //    if ( ! southWest )
 //    {
-        NSUInteger nDistance = RANDOM_PERSON_KILOMETERS;
-        [friendAnyQuery whereKey:@"location" nearGeoPoint:[globalVariables currentLocation] withinKilometers:nDistance];
+        //NSUInteger nDistance = RANDOM_PERSON_KILOMETERS;
+        [friendAnyQuery whereKey:@"location" nearGeoPoint:[globalVariables currentLocation] withinKilometers:PERSON_HERE_DISTANCE/1000];
+        //[friendAnyQuery whereKey:@"location" nearGeoPoint:[globalVariables currentLocation]];
 //    }
 //    else
 //    {
@@ -603,7 +616,9 @@ NSInteger sortByName(id num1, id num2, void *context)
 //    }
     if ( ! [globalVariables isUserAdmin] )
         [friendAnyQuery whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
-    NSDate* dateToHide = [NSDate dateWithTimeIntervalSinceNow:-(NSTimeInterval)MAX_SECONDS_FROM_PERSON_LOGIN];
+    //NSDate* dateToHide = [NSDate dateWithTimeIntervalSinceNow:-(NSTimeInterval)MAX_SECONDS_FROM_PERSON_LOGIN];
+    //[friendAnyQuery whereKey:@"updatedAt" greaterThan:dateToHide];
+    NSDate* dateToHide = [NSDate dateWithTimeIntervalSinceNow:-(NSTimeInterval)21600];
     [friendAnyQuery whereKey:@"updatedAt" greaterThan:dateToHide];
     [friendAnyQuery orderByDescending:@"updatedAt"];
     
@@ -633,16 +648,95 @@ NSInteger sortByName(id num1, id num2, void *context)
             Circle* circleRandom = [self getCircle:CIRCLE_RANDOM];
             if ( circleRandom )
                 [circleRandom sort];
+            
+            resultsTotal = objects.count;
+            if ( resultsTotal < RANDOM_PERSON_MAX_COUNT )
+            {
+                PFQuery *friendAnyQuery2 = [PFUser query];
+                friendAnyQuery2.limit = RANDOM_PERSON_MAX_COUNT - resultsTotal;
+                if ( ! [globalVariables isUserAdmin] )
+                    [friendAnyQuery2 whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
+                NSDate* dateToHide = [NSDate dateWithTimeIntervalSinceNow:-(NSTimeInterval)86400];
+                [friendAnyQuery2 whereKey:@"updatedAt" greaterThan:dateToHide];
+                [friendAnyQuery2 whereKey:@"location" nearGeoPoint:[globalVariables currentLocation] withinKilometers:PERSON_NEARBY_DISTANCE/1000];
+                NSArray* personIds = [self getAllPersonIds];
+                if ( personIds.count > 0 )
+                    [friendAnyQuery2 whereKey:@"fbId" notContainedIn:personIds];
+                [friendAnyQuery2 orderByDescending:@"updatedAt"];
+                [friendAnyQuery2 findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+                    
+                    if ( ! error )
+                    {
+                        NSArray *friendAnyUsers = objects;
+                        
+                        // Adding users
+                        for (PFUser *friendAnyUser in friendAnyUsers)
+                            [self addPerson:friendAnyUser userCircle:CIRCLE_RANDOM];
+                        
+                        // Sorting random people
+                        Circle* circleRandom = [self getCircle:CIRCLE_RANDOM];
+                        if ( circleRandom )
+                            [circleRandom sort];
+                        
+                        resultsTotal += objects.count;
+                        
+                        // Refresh list
+                        [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingEncountersComplete
+                                                                           object:nil];
+                        
+                        // Third load
+                        if ( resultsTotal < RANDOM_PERSON_MAX_COUNT )
+                        {
+                            PFQuery *friendAnyQuery3 = [PFUser query];
+                            friendAnyQuery3.limit = RANDOM_PERSON_MAX_COUNT - resultsTotal;
+                            if ( ! [globalVariables isUserAdmin] )
+                                [friendAnyQuery3 whereKey:@"profileDiscoverable" notEqualTo:[[NSNumber alloc] initWithBool:FALSE]];
+                            NSDate* dateToHide = [NSDate dateWithTimeIntervalSinceNow:-(NSTimeInterval)MAX_SECONDS_FROM_PERSON_LOGIN];
+                            [friendAnyQuery3 whereKey:@"updatedAt" greaterThan:dateToHide];
+                            [friendAnyQuery3 whereKey:@"location" nearGeoPoint:[globalVariables currentLocation] withinKilometers:PERSON_RECENT_DISTANCE];
+                            NSArray* personIds = [self getAllPersonIds];
+                            if ( personIds.count > 0 )
+                                [friendAnyQuery3 whereKey:@"fbId" notContainedIn:personIds];
+                            [friendAnyQuery3 orderByDescending:@"updatedAt"];
+                            [friendAnyQuery3 findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+                                
+                                if ( ! error )
+                                {
+                                    NSArray *friendAnyUsers = objects;
+                                    
+                                    // Adding users
+                                    for (PFUser *friendAnyUser in friendAnyUsers)
+                                        [self addPerson:friendAnyUser userCircle:CIRCLE_RANDOM];
+                                    
+                                    // Sorting random people
+                                    Circle* circleRandom = [self getCircle:CIRCLE_RANDOM];
+                                    if ( circleRandom )
+                                        [circleRandom sort];
+                                    
+                                    // Show data
+                                    [self incrementCirclesLoadingStage];
+                                    
+                                    // And load direct connections just in case
+#ifdef TARGET_FUGE
+                                     [fbLoader loadFriends:self selectorSuccess:@selector(loadFbFriendsInBackground:) selectorFailure:@selector(loadFriendsInBackgroundFailed)];
+#elif defined TARGET_S2C
+                                     [self loadFbFriendsInBackground:nil];
+#endif
+                                }
+                                else
+                                    [self loadingFailed:LOADING_MAP status:LOAD_NOCONNECTION];
+                            }];
+                        }
+                        else
+                            [self incrementCirclesLoadingStage];
+                    }
+                    else
+                        [self loadingFailed:LOADING_MAP status:LOAD_NOCONNECTION];
+                }];
+            }
+            else
+                [self incrementCirclesLoadingStage];
         }
-        
-        // Increment loading stages
-        [self incrementCirclesLoadingStage];
-        
-        #ifdef TARGET_FUGE
-                [fbLoader loadFriends:self selectorSuccess:@selector(loadFbFriendsInBackground:) selectorFailure:@selector(loadFriendsInBackgroundFailed)];
-        #elif defined TARGET_S2C
-                [self loadFbFriendsInBackground:nil];
-        #endif
     }];
     
     // Additional admin-only query for people without location

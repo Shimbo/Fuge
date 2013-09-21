@@ -17,13 +17,16 @@
 {
     Boolean             bOwn;
     NSString            *strText;
+    NSString            *strOwnerId;
     Person              *owner;
     AsyncImageView      *avatar;
     UITextView          *text;
+    UIButton            *tapButton;
 }
 
 - (void) setComment:(Comment*)comment;
 - (void) setMessage:(Message*)message;
+- (void) updateAvatar;
 
 @end
 
@@ -33,10 +36,15 @@
     NSMutableArray*     commentViews;
     NSUInteger          viewHeight;
     UILabel*            textLabel;
+    UINavigationController  *navigationController;
 }
 
--(void) setCommentsList:(NSArray*)list;
+-(void) setCommentsList:(NSArray*)list navigation:(UINavigationController*)navigation;
 -(void) addComment:(id)comment;
 -(void) setText:(NSString*)strText;
+
+-(UINavigationController*) getNavigationController;
+
+-(void) updateAvatars;
 
 @end

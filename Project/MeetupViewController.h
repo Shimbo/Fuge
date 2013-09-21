@@ -15,6 +15,9 @@
 #import "PersonAnnotation.h"
 #import "CommentsView.h"
 
+@interface CustomScroll : UIScrollView
+@end
+
 enum EMeetupButtons
 {
     MB_JOIN         = 0,

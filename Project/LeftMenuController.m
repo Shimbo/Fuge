@@ -203,6 +203,7 @@
             if ( strResult )
             {
                 [pCurrentUser setObject:strResult forKey:@"profileStatus"];
+                [pCurrentUser setObject:[NSDate date] forKey:@"profileStatusDate"];
                 [pCurrentUser saveInBackground];
             }
         }

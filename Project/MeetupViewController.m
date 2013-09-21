@@ -15,6 +15,17 @@
 #import "PeopleViewController.h"
 #import "AsyncImageView.h"
 
+@implementation CustomScroll
+
+- (BOOL)touchesShouldCancelInContentView:(UIView *)view
+{
+    if ( [view isKindOfClass:[UIButton class]] )
+        return YES;
+    return [super touchesShouldCancelInContentView:view];
+}
+
+@end
+
 @implementation MeetupViewController
 
 @synthesize delegate;
@@ -473,8 +484,22 @@
     }
     
     // Comments
-    [commentsView setCommentsList:loadedComments];
+    [commentsView setCommentsList:loadedComments navigation:self.navigationController];
     [self resizeComments:FALSE];
+    
+    // Get missing persons
+    NSMutableDictionary* missingPersonIdsList = [NSMutableDictionary dictionary];
+    for ( Comment* comment in loadedComments )
+    {
+        NSString* strId = comment.strUserFrom;
+        Person* person = [globalData getPersonById:strId];
+        if ( ! person )
+            [missingPersonIdsList setObject:@"found" forKey:strId];
+    }
+    
+    // Loading missing persons in background
+    if ( missingPersonIdsList.count > 0 )
+        [globalData loadPersonsByIdsList:missingPersonIdsList.allKeys target:commentsView selector:@selector(updateAvatars)];
     
     // Update badge number for unread messages
     [globalData postInboxUnreadCountDidUpdate];

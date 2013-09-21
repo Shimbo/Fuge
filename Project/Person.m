@@ -440,4 +440,34 @@
     return [num intValue];
 }
 
+- (NSUInteger) searchRating:(NSString*)searchString
+{
+    if ( self.fullName )
+        if ( [[self.fullName lowercaseString] rangeOfString:searchString].location != NSNotFound )
+            return 4;
+    if ( self.strStatus )
+        if ( [[self.strStatus lowercaseString] rangeOfString:searchString].location != NSNotFound )
+            return 3;
+    if ( self.profileSummary )
+        if ( [[self.profileSummary lowercaseString] rangeOfString:searchString].location != NSNotFound )
+            return 2;
+    if ( self.profilePositions )
+    {
+        for ( NSDictionary* position in self.profilePositions )
+            if ( [[position.description lowercaseString] rangeOfString:searchString].location != NSNotFound )
+                return 1;
+    }
+    return 0;
+}
+
+-(NSString*)profileSummary
+{
+    return [personData objectForKey:@"profileSummary"];
+}
+
+-(NSArray*)profilePositions
+{
+     return [personData objectForKey:@"profilePositions"];
+}
+
 @end

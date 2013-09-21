@@ -13,7 +13,7 @@
 #define TEXT_MAX_MEETUP_SUBJECT_LENGTH  40
 
 // Max status length
-#define TEXT_MAX_STATUS_LENGTH          35
+#define TEXT_MAX_STATUS_LENGTH          40
 
 // Person cell bg color for matching
 #define MATCHING_COLOR_RANK_MAX     30.0f

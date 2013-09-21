@@ -39,6 +39,7 @@
 #define PERSON_OUTDATED_TIME        [globalVariables globalParam:@"PersonOutdatedTime" default:86400]
 #define PERSON_HERE_DISTANCE        [globalVariables globalParam:@"PersonHereDistance" default:1000]
 #define PERSON_NEARBY_DISTANCE      [globalVariables globalParam:@"PersonNearbyDistance" default:20000]
+#define PERSON_RECENT_DISTANCE      500000
 
 // Pushes
 #define PUSH_DISCOVERY_KILOMETERS   [globalVariables globalParam:@"PushDiscoveryKilometers" default:100]

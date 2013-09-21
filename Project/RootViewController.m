@@ -19,6 +19,7 @@
 #import "AppDelegate.h"
 #import "AsyncImageView.h"
 #import "InAppPurchaseManager.h"
+#import "LeftMenuController.h"
 
 #import "TestFlightSDK/TestFlight.h"
 
@@ -108,7 +109,7 @@
         for ( Person* person in sortedUsers )
         {
             if ( searchString )
-                if ( [[person.fullName lowercaseString] rangeOfString:searchString].location == NSNotFound )
+                if ( [person searchRating:searchString] == 0 )
                     continue;
             if ( person.matchesRank > 0 )
             {
@@ -148,7 +149,7 @@
         for ( Person* person in sortedUsers )
         {
             if ( searchString )
-                if ( [[person.fullName lowercaseString] rangeOfString:searchString].location == NSNotFound )
+                if ( [person searchRating:searchString] == 0 )
                     continue;
 #ifdef TARGET_S2C
             if ( ! searchString )
@@ -278,6 +279,24 @@
         tableView.userInteractionEnabled = TRUE;
     
     [self reloadTableAndScroll:FALSE];
+    
+    // Status
+#ifdef TARGET_S2C
+    NSDate* latestStatus = [pCurrentUser objectForKey:@"profileStatusDate"];
+    NSString* strStatus = [pCurrentUser objectForKey:@"profileStatus"];
+    if ( ! strStatus )
+        strStatus = @"";
+    Boolean showStatus = false;
+    if ( ! latestStatus )
+        showStatus = true;
+    else if ( [latestStatus compare:[NSDate dateWithTimeIntervalSinceNow:(NSTimeInterval)-86400*7] ] == NSOrderedAscending && strStatus.length < 10 )
+        showStatus = true;
+    else if ( [latestStatus compare:[NSDate dateWithTimeIntervalSinceNow:(NSTimeInterval)-86400*30] ] == NSOrderedAscending )
+        showStatus = true;
+    
+    if ( showStatus )
+        [(LeftMenuController*)AppDelegate.revealController.leftViewController askStatus];
+#endif
 }
 
 - (void) reloadFinished
@@ -656,7 +675,7 @@ static NSUInteger oldActivityIndicatorPos;
 - (void)searchForString
 {
     oldActivityIndicatorPos = activityIndicator.originY;
-    activityIndicator.originY = searchView.frame.origin.y + searchView.frame.size.height + 20;
+    activityIndicator.originY = searchView.frame.origin.y + searchView.frame.size.height + 70;
     [activityIndicator startAnimating];
     [globalData loadPersonsBySearchString:searchString target:self selector:@selector(searchFinished)];
 }

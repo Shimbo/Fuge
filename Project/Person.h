@@ -77,6 +77,9 @@
 -(NSString*)jobInfo;
 -(NSString*)industryInfo;   // S2C only
 
+-(NSString*)profileSummary;
+-(NSArray*)profilePositions;
+
 -(void)openProfileInBrowser;
 
 // Matching
@@ -96,5 +99,8 @@
 - (Boolean) getConversationPresence:(NSString*)strThread meetup:(Boolean)bMeetup;
 - (NSDate*) getConversationDate:(NSString*)strThread meetup:(Boolean)bMeetup;
 - (NSUInteger) getConversationCount:(NSString*)strThread meetup:(Boolean)bMeetup;
+
+// Search
+- (NSUInteger) searchRating:(NSString*)searchString;
 
 @end
