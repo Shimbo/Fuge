@@ -615,6 +615,8 @@
     for ( Person* person in allUsers )
     {
         NSString* strIndustry = person.industryInfo;
+        if ( ! strIndustry )
+            continue;
         NSNumber* count = [industryPairs objectForKey:strIndustry];
         if ( ! count )
             count = [NSNumber numberWithInteger:1];

@@ -509,6 +509,8 @@
 		4CAF3487178871BC0014AE80 /* iconMtArts.png in Resources */ = {isa = PBXBuildFile; fileRef = 4CAF3485178871BC0014AE80 /* iconMtArts.png */; };
 		4CAF3488178871BC0014AE80 /* iconMtArts@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4CAF3486178871BC0014AE80 /* iconMtArts@2x.png */; };
 		4CBAA0DD17099F44003C091F /* PersonInviteCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CBAA0DC17099F44003C091F /* PersonInviteCell.xib */; };
+		4CDDA4AD17F31114000D2418 /* ULEventManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CDDA4AC17F31114000D2418 /* ULEventManager.m */; };
+		4CDDA4AE17F31114000D2418 /* ULEventManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CDDA4AC17F31114000D2418 /* ULEventManager.m */; };
 		4CDE8D441789D27A00844B7E /* MatchesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE8D421789D27900844B7E /* MatchesViewController.m */; };
 		4CDE8D451789D27A00844B7E /* MatchesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CDE8D431789D27900844B7E /* MatchesViewController.xib */; };
 		4CDE8D471789E03200844B7E /* LikeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CDE8D461789E03200844B7E /* LikeCell.xib */; };
@@ -899,6 +901,8 @@
 		4CAF3486178871BC0014AE80 /* iconMtArts@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconMtArts@2x.png"; sourceTree = "<group>"; };
 		4CBAA0DC17099F44003C091F /* PersonInviteCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PersonInviteCell.xib; sourceTree = "<group>"; };
 		4CD2683F1798685F003B0FB8 /* UIParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIParams.h; sourceTree = "<group>"; };
+		4CDDA4AB17F31114000D2418 /* ULEventManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ULEventManager.h; path = ../../UnitedLibs/ULEventManager.h; sourceTree = "<group>"; };
+		4CDDA4AC17F31114000D2418 /* ULEventManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ULEventManager.m; path = ../../UnitedLibs/ULEventManager.m; sourceTree = "<group>"; };
 		4CDE8D411789D27900844B7E /* MatchesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MatchesViewController.h; sourceTree = "<group>"; };
 		4CDE8D421789D27900844B7E /* MatchesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MatchesViewController.m; sourceTree = "<group>"; };
 		4CDE8D431789D27900844B7E /* MatchesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MatchesViewController.xib; sourceTree = "<group>"; };
@@ -1584,6 +1588,8 @@
 				4CE307FC16BF424600F427DE /* PushManager.m */,
 				4CA463EF16F1DF7600F354FC /* LocationManager.h */,
 				4CA463F016F1DF7600F354FC /* LocationManager.m */,
+				4CDDA4AB17F31114000D2418 /* ULEventManager.h */,
+				4CDDA4AC17F31114000D2418 /* ULEventManager.m */,
 			);
 			name = Data;
 			sourceTree = "<group>";
@@ -2082,6 +2088,7 @@
 				476D1E2316A8273600077458 /* FSVenue.m in Sources */,
 				4CE307FD16BF424600F427DE /* PushManager.m in Sources */,
 				471EAC5C16C0D419009F88F9 /* Foursquare2.m in Sources */,
+				4CDDA4AD17F31114000D2418 /* ULEventManager.m in Sources */,
 				471EAC5D16C0D42C009F88F9 /* FSRequester.m in Sources */,
 				471EAC5E16C0D42F009F88F9 /* FSTargetCallback.m in Sources */,
 				471EAC5F16C0D432009F88F9 /* FSWebLogin.m in Sources */,
@@ -2179,6 +2186,7 @@
 				4C444E7817A0045700288139 /* MeetupInviteSearch.m in Sources */,
 				4C444E7917A0045700288139 /* LocationManager.m in Sources */,
 				4C444E7A17A0045700288139 /* StatsViewController.m in Sources */,
+				4CDDA4AE17F31114000D2418 /* ULEventManager.m in Sources */,
 				4C444E7B17A0045700288139 /* CustomBadge.m in Sources */,
 				4C444E7C17A0045700288139 /* PersonAnnotationView.m in Sources */,
 				4C444E7D17A0045700288139 /* InboxData.m in Sources */,
@@ -2302,8 +2310,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Mikhail Larionov (WDEGJM2L33)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2327,8 +2335,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Fuge;
-				PROVISIONING_PROFILE = "C628FC9E-6620-44E3-9F16-98DC6FEBCF5D";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C628FC9E-6620-44E3-9F16-98DC6FEBCF5D";
+				PROVISIONING_PROFILE = "83E4F8FB-7B5C-4D65-AC0B-D1A4F85933AD";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "83E4F8FB-7B5C-4D65-AC0B-D1A4F85933AD";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
 				WRAPPER_EXTENSION = app;
@@ -2340,8 +2348,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Mikhail Larionov (WDEGJM2L33)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mikhail Larionov (MP6BRCGVEV)";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2361,8 +2369,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Fuge;
-				PROVISIONING_PROFILE = "C628FC9E-6620-44E3-9F16-98DC6FEBCF5D";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C628FC9E-6620-44E3-9F16-98DC6FEBCF5D";
+				PROVISIONING_PROFILE = "83E4F8FB-7B5C-4D65-AC0B-D1A4F85933AD";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "83E4F8FB-7B5C-4D65-AC0B-D1A4F85933AD";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
@@ -2402,8 +2410,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = S2C;
-				PROVISIONING_PROFILE = "895328DE-580A-48E9-86C4-B2A9124257DF";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "895328DE-580A-48E9-86C4-B2A9124257DF";
+				PROVISIONING_PROFILE = "D05B5262-242F-4BAC-B834-8AC41815B43E";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "D05B5262-242F-4BAC-B834-8AC41815B43E";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
 				WRAPPER_EXTENSION = app;
@@ -2438,8 +2446,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = S2C;
-				PROVISIONING_PROFILE = "895328DE-580A-48E9-86C4-B2A9124257DF";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "895328DE-580A-48E9-86C4-B2A9124257DF";
+				PROVISIONING_PROFILE = "D05B5262-242F-4BAC-B834-8AC41815B43E";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "D05B5262-242F-4BAC-B834-8AC41815B43E";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";

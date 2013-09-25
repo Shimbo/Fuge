@@ -144,11 +144,11 @@
     
     NSInteger screenWidth = self.view.frame.size.width;
     NSInteger screenHeight = self.view.frame.size.height;
-    PCLineChartView* chart1 = [[PCLineChartView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight/3)];
+    PCLineChartView* chart1 = [[PCLineChartView alloc] initWithFrame:CGRectMake(0, 80, screenWidth, screenHeight/3)];
     chart1.xLabels = [NSMutableArray arrayWithCapacity:30];
     chart1.maxValue = 0;
     chart1.minValue = 0;
-    PCLineChartView* chart2 = [[PCLineChartView alloc] initWithFrame:CGRectMake(0, screenHeight/3, screenWidth, screenHeight/3)];
+    PCLineChartView* chart2 = [[PCLineChartView alloc] initWithFrame:CGRectMake(0, screenHeight/3+80, screenWidth, screenHeight/3)];
     chart2.xLabels = [NSMutableArray arrayWithCapacity:30];
     chart2.maxValue = 100;
     chart2.minValue = 0;
@@ -181,7 +181,7 @@
         NSDate* date = currentDate;
         components = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:date];
         NSString* strLabel = [NSString stringWithFormat:@"%02d/%02d", [components month], [components day]];
-        if ( nDayShift % 7 == 0 )
+        if ( nDayShift % 14 == 0 )
         {
             [chart1.xLabels addObject:strLabel];
             [chart2.xLabels addObject:strLabel];

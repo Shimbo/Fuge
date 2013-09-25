@@ -52,14 +52,15 @@ static FacebookLoader *sharedInstance = nil;
 - (void)loadUserData:(NSDictionary<FBGraphUser>*)user
 {
     // Store the current user's Facebook ID on the user
-    [pCurrentUser setObject:user.id forKey:@"fbId"];
+    if ( [user objectForKey:@"id"] )
+        [pCurrentUser setObject:[user objectForKey:@"id"] forKey:@"fbId"];
     if ( user.first_name )
         [pCurrentUser setObject:user.first_name forKey:@"fbNameFirst"];
     if ( user.last_name )
         [pCurrentUser setObject:user.last_name forKey:@"fbNameLast"];
     [pCurrentUser setObject:[[globalVariables fullUserName] lowercaseString] forKey:@"searchName"];
-    if ( user.birthday )
-        [pCurrentUser setObject:user.birthday forKey:@"fbBirthday"];
+    if ( [user objectForKey:@"birthday"] )
+        [pCurrentUser setObject:[user objectForKey:@"birthday"] forKey:@"fbBirthday"];
     if ( [user objectForKey:@"gender"] )
         [pCurrentUser setObject:[user objectForKey:@"gender"]
                          forKey:@"fbGender"];
