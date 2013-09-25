@@ -14,6 +14,7 @@
 #import "SCAnnotationView.h"
 #import "PeopleViewController.h"
 #import "AsyncImageView.h"
+#import "ULEventManager.h"
 
 @implementation CustomScroll
 
@@ -55,7 +56,7 @@
     return self;
 }
 
--(void) setMeetup:(Meetup*)m
+-(void) setMeetup:(FUGEvent*)m
 {
     meetup = m;
 }
@@ -195,7 +196,7 @@
     message.tag = 777; // Jackpot!
     [message setAlertViewStyle:UIAlertViewStylePlainTextInput];
     [[message textFieldAtIndex:0] setDelegate:self];
-    NSString* strCurrentFeature = meetup.strFeatured;
+    NSString* strCurrentFeature = meetup.featureString;
     if ( strCurrentFeature && strCurrentFeature.length > 0 )
         [[message textFieldAtIndex:0] setPlaceholder:strCurrentFeature];
     [[message textFieldAtIndex:0] setFont:[UIFont systemFontOfSize:14]];
@@ -241,7 +242,7 @@
     if ( alertView.tag == 7 ) // Cancel
     {
         // Canceling
-        [globalData cancelMeetup:meetup];
+        [meetup cancel:globalData selector:@selector(eventCanceled:)];
         
         // Add comment to the text field
         //[self addComment:@"    You just canceled the event!\n" scrollDown:FALSE];
@@ -320,8 +321,8 @@
     }
     
     // Updating conversation
-    meetup.numComments++;
-    [globalData updateConversation:comment.dateCreated count:[NSNumber numberWithInteger:meetup.numComments] thread:comment.strMeetupId meetup:TRUE];
+    [meetup incrementCommentsCount];
+    [globalData updateConversation:comment.dateCreated count:[NSNumber numberWithInteger:meetup.commentsCount] thread:comment.strMeetupId meetup:TRUE];
     
     // Adding comment to the list
     [commentsView addComment:comment];
@@ -404,7 +405,7 @@
         buttons[MB_FEATURE] = buttonOn;
     
     // Facebook/EB/etc or not
-    if ( meetup.bImportedEvent )
+    if ( meetup.importedEvent )
     {
         if ( ! bPassed )
             buttons[MB_CALENDAR] = buttonOn;
@@ -503,7 +504,7 @@
     [globalData postInboxUnreadCountDidUpdate];
     
     // Make new comment editable now
-    if ( ! meetup.bImportedEvent )
+    if ( ! meetup.importedEvent )
         containerView.userInteractionEnabled = TRUE;
     
     // Buttons setup
@@ -520,7 +521,7 @@
 - (void)reloadMeetupData
 {
     // Location
-    [labelLocation setText:meetup.strVenue];
+    [labelLocation setText:meetup.venueString];
     
     // Date
     NSDateFormatter* formatter = [[NSDateFormatter alloc] init];

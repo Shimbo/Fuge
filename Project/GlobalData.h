@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "GlobalVariables.h"
 #import "Circle.h"
-#import "Meetup.h"
+#import "FUGEvent.h"
 #import "Message.h"
 #import "Comment.h"
 #import "EventbriteLoader.h"
@@ -92,7 +92,6 @@ typedef enum EInviteStatus
 {
     // Main data pack
     NSMutableDictionary *circles;
-    NSMutableArray      *meetups;
     
     // Inbox and notifications
     NSArray             *newUsers;
@@ -128,13 +127,9 @@ typedef enum EInviteStatus
 - (Person*) getPersonById:(NSString*)strFbId;
 - (NSArray*) getPersonsByIds:(NSArray*)strFbIds;
 - (NSArray*) getCircles;
-- (NSArray*) getMeetups;
-- (Meetup*) getMeetupById:(NSString*)strId;
 
 -(NSArray*)searchForUserName:(NSString*)searchStr;
 
-// New meetup created during the session
-- (void)addMeetup:(Meetup*)meetup;
 // Person added somehow (opened from unread pm for example)
 - (Person*)addPerson:(PFUser*)user userCircle:(NSUInteger)circleUser;
 
@@ -157,18 +152,20 @@ typedef enum EInviteStatus
 //- (Boolean) isPersonSeen:(NSString*)strId;
 - (Boolean) setUserPosition:(PFGeoPoint*)geoPoint;
 - (void) removeUserFromNew:(NSString*)strUser;
-- (void) attendMeetup:(Meetup*)meetup addComment:(Boolean)addComment target:(id)target selector:(SEL)callback;
-- (void) unattendMeetup:(Meetup*)meetup target:(id)target selector:(SEL)callback;
-- (void) cancelMeetup:(Meetup*)meetup;
+
+- (void) attendMeetup:(FUGEvent*)meetup addComment:(Boolean)addComment target:(id)target selector:(SEL)callback;
+- (void) unattendMeetup:(FUGEvent*)meetup target:(id)target selector:(SEL)callback;
 - (Boolean) isAttendingMeetup:(NSString*)strThread;
 - (Boolean) hasLeftMeetup:(NSString*)strMeetup;
+- (void) eventCanceled:(FUGEvent*)meetup;
+
 - (void) subscribeToThread:(NSString*)strThread;
 - (void) unsubscribeToThread:(NSString*)strThread;
 - (Boolean) isSubscribedToThread:(NSString*)strThread;
 
 // Invites
 // One of two last parameters should be nil
-- (void)createInvite:(Meetup*)meetup stringTo:(NSString*)strRecipient target:(id)target selector:(SEL)callback;
+- (void)createInvite:(FUGEvent*)meetup stringTo:(NSString*)strRecipient target:(id)target selector:(SEL)callback;
 
 // For internal use
 - (void)loadingFailed:(NSUInteger)nStage status:(NSUInteger)nStatus;
@@ -185,6 +182,7 @@ typedef enum EInviteStatus
 - (void)postInboxUnreadCountDidUpdate;
 - (NSUInteger)getInboxUnreadCount;
 - (void) updateConversation:(NSDate*)date count:(NSNumber*)msgCount thread:(NSString*)strThread meetup:(Boolean)bMeetup;
+- (NSUInteger) unreadConversationCount:(FUGEvent*)event;
 - (PFObject*)getInviteForMeetup:(NSString*)strId;
 - (void) updateInvite:(NSString*)strId attending:(NSUInteger)status;
 @end
@@ -201,6 +199,6 @@ typedef enum EInviteStatus
 - (void)addComment:(Comment*)message;
 - (void)loadComments;
 - (NSArray*)getUniqueThreads;
-- (void)loadCommentThread:(Meetup*)meetup target:(id)target selector:(SEL)callback;
--(void)createCommentForMeetup:(Meetup*)meetup commentType:(CommentType)type commentText:(NSString*)text target:(id)target selector:(SEL)callback;
+- (void)loadCommentThread:(FUGEvent*)meetup target:(id)target selector:(SEL)callback;
+-(void)createCommentForMeetup:(FUGEvent*)meetup commentType:(CommentType)type commentText:(NSString*)text target:(id)target selector:(SEL)callback;
 @end

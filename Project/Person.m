@@ -10,7 +10,7 @@
 
 @implementation Person
 
-@synthesize strId, strFirstName, strLastName, strAge, strGender, /*role, strArea,*/ strEmployer, strPosition, strCircle, strStatus, idCircle, personData, numUnreadMessages, friendsFb, friends2O, likes, isCurrentUser, discoverable;
+@synthesize strFirstName, strLastName, strAge, strGender, /*role, strArea,*/ strEmployer, strPosition, strCircle, strStatus, idCircle, personData, numUnreadMessages, friendsFb, friends2O, likes, isCurrentUser, discoverable;
 
 + (void)initialize {
 	if (self == [Person class]) {
@@ -24,7 +24,7 @@
         personData = user;
         
         // Data parsing
-        strId = [user objectForKey:@"fbId"];
+        _strId = [user objectForKey:@"fbId"];
         strFirstName = [user objectForKey:@"fbNameFirst"];
         strLastName = [user objectForKey:@"fbNameLast"];
         strGender = [user objectForKey:@"fbGender"];
@@ -72,7 +72,7 @@
 
 - (void)update:(PFUser*)newData
 {
-    location = [newData objectForKey:@"location"];
+    self.location = [newData objectForKey:@"location"];
     
     strEmployer = [newData objectForKey:@"profileEmployer"];
     strPosition = [newData objectForKey:@"profilePosition"];
@@ -144,7 +144,7 @@
 
 -(NSString*)smallAvatarUrl{
 #ifdef TARGET_FUGE
-    return [fbLoader getSmallAvatarUrl:strId];
+    return [fbLoader getSmallAvatarUrl:self.strId];
 #elif defined TARGET_S2C
     if ( personData )
         return [personData objectForKey:@"urlAvatar"];
@@ -155,7 +155,7 @@
 
 -(NSString*)largeAvatarUrl{
 #ifdef TARGET_FUGE
-    return [fbLoader getLargeAvatarUrl:strId];
+    return [fbLoader getLargeAvatarUrl:self.strId];
 #elif defined TARGET_S2C
     if ( ! personData )
         return nil;
@@ -197,7 +197,7 @@
 -(void)openProfileInBrowser
 {
 #ifdef TARGET_FUGE
-    NSString *url = [fbLoader getProfileUrl:strId];
+    NSString *url = [fbLoader getProfileUrl:self.strId];
 #elif defined TARGET_S2C
     NSString *url = [personData objectForKey:@"urlProfile"];
     if ( ! url )

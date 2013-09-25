@@ -44,7 +44,7 @@
         //self.subtitle = [[NSString alloc] initWithFormat:@"Cass Business School, July 15, 10:30 PM", strName, nAttendeesCount ];
     }
     else
-        self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Comments: %d", [globalVariables trimName:meetup.strOwnerName], meetup.numComments ];
+        self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Comments: %d", [globalVariables trimName:meetup.strOwnerName], meetup.commentsCount ];
     self.strId = meetup.strId;
     
     CLLocationCoordinate2D coord;
@@ -64,7 +64,7 @@
             orange = [globalData isSubscribedToThread:self.meetup.strId];
         
         // Exported
-        if ( self.meetup.bImportedEvent )
+        if ( self.meetup.importedEvent )
             orange = TRUE;
         
         // all read threads are passed as well
@@ -87,7 +87,7 @@
     }
 }
 
-- (id)initWithMeetup:(Meetup*)m
+- (id)initWithMeetup:(FUGEvent*)m
 {
     self = [super init];
     if (self) {
@@ -98,9 +98,9 @@
     return self;
 }
 
--(NSUInteger)numUnreadCount{
+/*-(NSUInteger)numUnreadCount{
     return self.meetup.getUnreadMessagesCount;
-}
+}*/
 
 -(void)addPerson:(Person*)person{
     if (!self.attendedPersons) {

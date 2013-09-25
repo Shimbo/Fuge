@@ -16,6 +16,9 @@
 #import "FacebookLoader.h"
 #import "EventbriteLoader.h"
 
+#import "ULEventManager.h"
+#import "FUGEvent.h"
+
 @implementation GlobalData
 
 static GlobalData *sharedInstance = nil;
@@ -39,7 +42,6 @@ static GlobalData *sharedInstance = nil;
     
     if (self) {
         circles = [[NSMutableDictionary alloc] init];
-        meetups = [[NSMutableArray alloc] init];
         _circleByNumber = [NSMutableDictionary dictionaryWithCapacity:5];
         messages = nil;
         comments = nil;
@@ -162,20 +164,6 @@ NSInteger sortByName(id num1, id num2, void *context)
 }
 
 
-- (NSArray*) getMeetups
-{
-    return meetups;
-}
-
-- (Meetup*) getMeetupById:(NSString*)strId
-{
-    for (Meetup* meetup in meetups)
-        if ( [meetup.strId compare:strId] == NSOrderedSame )
-            return meetup;
-    return nil;
-}
-
-
 #pragma mark -
 #pragma mark Global
 
@@ -229,7 +217,6 @@ NSInteger sortByName(id num1, id num2, void *context)
     
     // Clean old data
     [circles removeAllObjects];
-    [meetups removeAllObjects];
     
 #ifdef TARGET_FUGE
     // Current user data
@@ -880,7 +867,7 @@ static NSUInteger resultsTotal = 0;
 #pragma mark -
 #pragma mark Admin load of meetups
 
-static NSArray* groupsData;
+/*static NSArray* groupsData;
 static NSInteger groupCounter;
 static NSInteger meetupsAdded;
 
@@ -906,12 +893,12 @@ static NSString* strGroupId;
     groupCounter++;
     
     // Skip recently updated groups
-    /*if ( [groupData.updatedAt compare:[NSDate dateWithTimeIntervalSinceNow:-86400]] == NSOrderedDescending )
-    {
-        [self processNextGroup];
-        return;
-    }
-    else*/
+    //if ( [groupData.updatedAt compare:[NSDate dateWithTimeIntervalSinceNow:-86400]] == NSOrderedDescending )
+    //{
+    //    [self processNextGroup];
+    //    return;
+    //}
+    //else
     {
         [groupData incrementKey:@"fetchCounter"];
         [groupData saveInBackground];
@@ -1022,34 +1009,21 @@ static NSString* strGroupId;
 {
     //[fbLoader loadMeetups:self selector:@selector(fbMeetupsCallback:)];
     [self processNextGroup];
-}
+}*/
 
 
 #pragma mark -
 #pragma mark Meetups
 
 
-// This one is used by new meetup window
-- (void)addMeetup:(Meetup*)meetup
-{
-    if ( ! meetup )
-        return;
-    
-    // Test if such meetup was already added
-    if ( [self getMeetupById:meetup.strId ] )
-        return;
-    
-    [meetups addObject:meetup];
-}
-
 // This one is used by loader
-- (Meetup*)addMeetupWithData:(PFObject*)meetupData
+- (FUGEvent*)addMeetupWithData:(PFObject*)meetupData
 {
     // Test if such meetup was already added
-    Meetup* meetup = [self getMeetupById:[meetupData objectForKey:@"meetupId" ] ];
+    FUGEvent* meetup = (FUGEvent*)[eventManager eventById:[meetupData objectForKey:@"meetupId" ] ];
     if ( meetup )
     {
-        [meetup unpack:meetupData];
+        [meetup initWithParseEvent:meetupData];
         return meetup;
     }
     
@@ -1058,8 +1032,7 @@ static NSString* strGroupId;
     if ( [dateTimeExp compare:[NSDate date]] == NSOrderedAscending )
         return nil;*/
     
-    meetup = [[Meetup alloc] init];
-    [meetup unpack:meetupData];
+    meetup = [[FUGEvent alloc] initWithParseEvent:meetupData];
     
     // private meetups additional check
     if ( meetup.privacy == MEETUP_PRIVATE )
@@ -1077,7 +1050,7 @@ static NSString* strGroupId;
             return nil;
     }
     
-    [meetups addObject:meetup];
+    [eventManager addEvent:meetup];
     
     return meetup;
 }
@@ -1202,7 +1175,7 @@ static NSString* strGroupId;
 #pragma mark -
 #pragma mark Invites
 
-- (void)createInvite:(Meetup*)meetup stringTo:(NSString*)strRecipient target:(id)target selector:(SEL)callback
+- (void)createInvite:(FUGEvent*)meetup stringTo:(NSString*)strRecipient target:(id)target selector:(SEL)callback
 {
     Person* recipient = [self getPersonById:strRecipient];
     
@@ -1256,7 +1229,7 @@ static NSString* strGroupId;
 #pragma mark Misc
 
 
-- (void) attendMeetup:(Meetup*)meetup addComment:(Boolean)addComment target:(id)target selector:(SEL)callback
+- (void) attendMeetup:(FUGEvent*)meetup addComment:(Boolean)addComment target:(id)target selector:(SEL)callback
 {
     // Check if already attending
     NSMutableArray* attending = [pCurrentUser objectForKey:@"attending"];
@@ -1323,7 +1296,7 @@ static NSString* strGroupId;
     [meetup addAttendee:strCurrentUserId];
 }
 
-- (void) unattendMeetup:(Meetup*)meetup target:(id)target selector:(SEL)callback
+- (void) unattendMeetup:(FUGEvent*)meetup target:(id)target selector:(SEL)callback
 {
     // Attendee in db (to store the data and update counters)
     PFObject* attendee = [PFObject objectWithClassName:@"Attendee"];
@@ -1380,7 +1353,7 @@ static NSString* strGroupId;
     [meetup removeAttendee:strCurrentUserId];
 }
 
-- (void) callbackMeetupCanceled:(Meetup*)meetup
+- (void) eventCanceled:(FUGEvent*)meetup
 {
     if ( ! meetup )
         return;
@@ -1390,13 +1363,6 @@ static NSString* strGroupId;
     
     // Push notification to all attendees
     [pushManager sendPushCanceledMeetup:meetup.strId];    
-}
-
-- (void) cancelMeetup:(Meetup*)meetup
-{
-    // Saving meetup
-    [meetup setCanceled];
-    [meetup save:self selector:@selector(callbackMeetupCanceled:)];
 }
 
 - (Boolean) isAttendingMeetup:(NSString*)strMeetup

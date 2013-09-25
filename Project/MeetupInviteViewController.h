@@ -7,15 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Meetup.h"
+#import "FUGEvent.h"
 #import "Person.h"
 
 @class MeetupInviteSearch;
 @interface MeetupInviteViewController : UIViewController{
     MeetupInviteSearch *searcher;
     NSMutableDictionary *selected;
-    Meetup *meetup;
-    Boolean bNewMeetup;
+    FUGEvent *meetup;
+    Boolean  bNewMeetup;
     
     NSArray *_recentPersons;
     NSArray *_firstCircle;
@@ -29,7 +29,7 @@
 
 -(NSArray*)selectedPersons;
 
--(void)setMeetup:(Meetup*)m newMeetup:(Boolean)new;
+-(void)setMeetup:(FUGEvent*)m newMeetup:(Boolean)new;
 -(void)addInvitee:(Person*)i;
 
 

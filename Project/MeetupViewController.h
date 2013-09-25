@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Meetup.h"
+#import "FUGEvent.h"
 #import <EventKit/EventKit.h>
 #import <EventKitUI/EventKitUI.h>
 #import <MapKit/MapKit.h>
@@ -37,7 +37,7 @@ enum EMeetupButtons
 @interface MeetupViewController : GrowingTextViewController
 <UITextViewDelegate, MKMapViewDelegate, UIWebViewDelegate, UITextFieldDelegate>
 {
-    Meetup* meetup;
+    FUGEvent* meetup;
     IBOutlet CommentsView *commentsView;
     IBOutlet MKMapView *mapView;
     IBOutlet UILabel *labelDate;
@@ -62,7 +62,7 @@ enum EMeetupButtons
     NSMutableArray    *avatarList;
 }
 
--(void) setMeetup:(Meetup*)m;
+-(void) setMeetup:(FUGEvent*)m;
 -(void) setInvite;
 
 @property (nonatomic,strong) id delegate;

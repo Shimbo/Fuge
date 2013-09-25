@@ -14,6 +14,7 @@
 #import "MeetupInviteViewController.h"
 #import "LocationManager.h"
 #import "PushManager.h"
+#import "ULEventManager.h"
 
 @implementation NewMeetupViewController
 
@@ -41,7 +42,7 @@
 #pragma mark -
 #pragma mark Setters
 
--(void) setMeetup:(Meetup*)m
+-(void) setMeetup:(FUGEvent*)m
 {
     meetup = m;
     meetupType = m.meetupType;
@@ -95,7 +96,7 @@
     {
         [subject setText:meetup.strSubject];
         [privacySwitch setOn:(! meetup.privacy)];
-        [location setTitle:meetup.strVenue forState:UIControlStateNormal];
+        [location setTitle:meetup.venueString forState:UIControlStateNormal];
         meetupDate = meetup.dateTime;
         meetupDurationDays = meetup.durationSeconds / (24*3600);
         meetupDurationHours = (meetup.durationSeconds % (24*3600))/3600;
@@ -406,7 +407,7 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void) callbackMeetupSaved:(Meetup*)m
+- (void) callbackMeetupSaved:(FUGEvent*)m
 {
     if ( ! m )
         return;
@@ -453,7 +454,7 @@
 - (void)nextInternal
 {
     // Saving meetup on server
-    meetup = [[Meetup alloc] init];
+    meetup = [[FUGEvent alloc] init];
     [self populateMeetupWithData];
     Boolean bResult = [meetup save:nil selector:nil];
     
@@ -464,7 +465,7 @@
         return;
     
     // Adding to the list on client and creating comment
-    [globalData addMeetup:meetup];
+    [eventManager addEvent:meetup];
     [globalData createCommentForMeetup:meetup commentType:COMMENT_CREATED commentText:nil target:nil selector:nil];
     
     // Add to attending list and update meetup attending list (only on client)
@@ -523,7 +524,7 @@
         [globalData addRecentVenue:self.selectedVenue];
     }
     else if ( ! meetup.location ) // to preserve previously selected coords/venue
-        [meetup populateWithCoords];
+        [meetup populateWithCoords:[locManager getPosition]];
 }
 
 - (void)dateChanged:(UIDatePicker *)picker

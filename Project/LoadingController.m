@@ -365,7 +365,7 @@ static Boolean bRotating = true;
 {
     NSUInteger nStatus = [globalData getLoadingStatus:LOADING_MAIN];
     if ( nStatus == LOAD_NOFACEBOOK )
-        [self loginFailed];
+        [self loginFailed:nil];
     else
         [self noInternet:FALSE];
 }
@@ -374,6 +374,7 @@ static Boolean bRotating = true;
 {
     if ( bElementsHidden )
         return;
+    
     bElementsHidden = true;
     
     bAnimation = true;
@@ -408,13 +409,6 @@ static Boolean bRotating = true;
         _whiteImage.transform = CGAffineTransformScale(CGAffineTransformIdentity, 4.0, 4.0);
     }
     completion: ^(BOOL finished) {
-        _loginButton.hidden = TRUE;
-        _linkedinButton.hidden = TRUE;
-        _updateButton.hidden = TRUE;
-        _retryButton.hidden = TRUE;
-        _descriptionText.hidden = TRUE;
-        _titleText.hidden = TRUE;
-        _miscText.hidden = TRUE;
         
         _loginButton.centerY -= 200;
         _linkedinButton.centerY -= 200;
@@ -430,6 +424,7 @@ static Boolean bRotating = true;
 {
     if ( ! bElementsHidden )
         return;
+    
     bElementsHidden = false;
     
     bAnimation = false;
@@ -470,8 +465,7 @@ static Boolean bRotating = true;
         
         _whiteImage.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.0, 1.0);
     }
-    completion: ^(BOOL finished) {
-    }];
+    completion: ^(BOOL finished) {}];
 }
 
 - (void) notLoggedIn
@@ -520,7 +514,7 @@ static Boolean bRotating = true;
     [self showAll];
 }
 
-- (void) loginFailed
+- (void) loginFailed:(NSError*)error
 {
 #ifdef TARGET_FUGE
     _loginButton.hidden = FALSE;
@@ -536,6 +530,15 @@ static Boolean bRotating = true;
     
     _titleText.text = NSLocalizedString(@"LOADING_TITLE_LOGINFAILED",nil);
     _descriptionText.text = NSLocalizedString(@"LOADING_TEXT_LOGINFAILED",nil);
+    
+    // FB settings switch off
+    if ( error )
+        if ( [error userInfo] )
+            if ( [[error userInfo] objectForKey:@"com.facebook.sdk:ErrorLoginFailedReason"] )
+                if ( [[[error userInfo] objectForKey:@"com.facebook.sdk:ErrorLoginFailedReason"] isEqualToString:@"com.facebook.sdk:SystemLoginDisallowedWithoutError"] )
+                {
+                    _descriptionText.text = NSLocalizedString(@"LOADING_TEXT_LOGINFAILED_FBOFF",nil);
+                }
     
     [self showAll];
 }
@@ -601,7 +604,7 @@ static Boolean bRotating = true;
              } else {
                  NSLog(@"Uh oh. An error occurred: %@", error);
              }
-             [ctrl loginFailed];
+             [ctrl loginFailed:error];
              return;
          }
          else

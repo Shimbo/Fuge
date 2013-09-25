@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Meetup.h"
+#import "FUGEvent.h"
 #import "Person.h"
 
 @class FSVenue;
@@ -30,7 +30,7 @@
     NSUInteger meetupDurationDays;
     NSUInteger meetupDurationHours;
     NSUInteger meetupIcon;
-    Meetup* meetup;
+    FUGEvent* meetup;
     Person* invitee;
     NSUInteger meetupType;
     
@@ -56,7 +56,7 @@
 - (IBAction)privacyChanged:(id)sender;
 - (IBAction)iconChanged:(id)sender;
 
--(void) setMeetup:(Meetup*)m;
+-(void) setMeetup:(FUGEvent*)m;
 -(void) setInvitee:(Person*)i;
 -(void) setType:(NSUInteger)t;
 

@@ -16,6 +16,7 @@
 "LOADING_TEXT_NOPARSE"          = "It seems like Parse, our magical backend, is out of service now. Let's wait and hope that they will fix it as soon as possible!";
 "LOADING_TITLE_LOGINFAILED"     = "Ooups!";
 "LOADING_TEXT_LOGINFAILED"      = "Looks like you haven’t finished login process or wasn’t able to do so. Please try again!";
+"LOADING_TEXT_LOGINFAILED_FBOFF" = "Facebook login for this application was disabled. Please, go to your device Settings -> Facebook -> Fuge and turn it on. If it's already on, turn it off an on again.";
 "LOADING_TITLE_OLDVERSION"      = "Outdated version!";
 "LOADING_TEXT_OLDVERSION"       = "What age did you come from? Why still using this version instead of a new and shiny one?";
 

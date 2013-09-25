@@ -17,7 +17,7 @@ enum EInboxItemType
 };
 
 @class AsyncImageView;
-@class Meetup;
+@class FUGEvent;
 @interface InboxViewItem : NSObject
 @property (nonatomic) NSUInteger type;
 @property (strong, nonatomic) id data;
@@ -27,7 +27,7 @@ enum EInboxItemType
 @property (strong, nonatomic) NSString *message;
 @property (strong, nonatomic) NSString *misc;
 @property (strong, nonatomic) NSDate *dateTime;
-@property (strong, nonatomic) Meetup *meetup;
+@property (strong, nonatomic) FUGEvent *meetup;
 @end
 
 @interface InboxViewController : MainViewController {

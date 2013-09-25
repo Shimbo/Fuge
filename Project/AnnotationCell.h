@@ -30,7 +30,7 @@
 @end
 
 
-@class Meetup;
+@class FUGEvent;
 @interface MeetupAnnotationCell : UITableViewCell<AnnotationCell>
 {
     NSMutableArray* avatarList;
@@ -44,7 +44,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *featured;
 @property (strong, nonatomic) IBOutlet UIImageView *featuredImage;
 
--(void)initWithMeetup:(Meetup*)meetup continuous:(Boolean)continuous;
+-(void)initWithMeetup:(FUGEvent*)meetup continuous:(Boolean)continuous;
 
 @end
 

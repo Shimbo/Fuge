@@ -29,6 +29,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "TableAnnotationsViewController.h"
 #import "AnnotationCell.h"
+#import "ULEventManager.h"
 
 @implementation MapViewController
 
@@ -270,7 +271,7 @@ static CGRect oldMapFrame;
     if ( ! sortedMeetups )
         [self getMeetupsByDate];
     for ( NSMutableArray* meetupsByDay in sortedMeetups )
-        for (Meetup *meetup in meetupsByDay)
+        for (FUGEvent *meetup in meetupsByDay)
         {
             if (meetup.meetupType == TYPE_MEETUP) {
 
@@ -504,7 +505,7 @@ static CGRect oldMapFrame;
         windowEnd = [[NSCalendar currentCalendar] dateFromComponents:comps];
         
         // Loading annotations
-        for (Meetup *meetup in [globalData getMeetups])
+        for (FUGEvent *meetup in eventManager.events)
         {
             if (meetup.meetupType == TYPE_MEETUP)
                 if ( ! meetup.hasPassed && /*! meetup.isCanceled &&*/ [meetup isWithinTimeFrame:windowStart till:windowEnd] && ( [meetup.distance floatValue] < RANDOM_EVENT_KILOMETERS*1000 || [globalData isAttendingMeetup:meetup.strId] ) )
@@ -513,7 +514,7 @@ static CGRect oldMapFrame;
         
         // Sorting meetups by date
         [arrayOfMeetups sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-            return [((Meetup*)obj1).dateTime compare:((Meetup*)obj2).dateTime ];
+            return [((FUGEvent*)obj1).dateTime compare:((FUGEvent*)obj2).dateTime ];
         }];
         
         sortedMeetupsCount += arrayOfMeetups.count;
@@ -582,7 +583,7 @@ static CGRect oldMapFrame;
         NSMutableArray* meetupsByDay = sortedMeetups[dayCounter];
         for ( NSUInteger meetupCounter = 0; meetupCounter < meetupsByDay.count; meetupCounter++ )
         {
-            Meetup *meetup = meetupsByDay[meetupCounter];
+            FUGEvent *meetup = meetupsByDay[meetupCounter];
             if (meetup.meetupType == TYPE_MEETUP) {
                 
                 Boolean continuous = [self isMeetupContinuous:dayCounter number:meetupCounter];
@@ -852,9 +853,9 @@ static CGRect oldMapFrame;
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSMutableArray* meetupsByDay = sortedMeetups[indexPath.section];
-    Meetup* meetup = meetupsByDay[indexPath.row];
+    FUGEvent* meetup = meetupsByDay[indexPath.row];
     Boolean continuous = [self isMeetupContinuous:indexPath.section number:indexPath.row];
-    if ( meetup.strFeatured && ! continuous )
+    if ( meetup.featureString && ! continuous )
         return 92;
     else
         return 70;//(50+10*indexPath.item); // I put some padding on it.
@@ -922,10 +923,10 @@ static CGRect oldMapFrame;
     if ( day == 0 )
         return false;
     
-    Meetup* currentMeetup = sortedMeetups[day][number];
+    FUGEvent* currentMeetup = sortedMeetups[day][number];
 
     NSMutableArray* meetupsPrevDay = sortedMeetups[day-1];
-    for ( Meetup* meetup in meetupsPrevDay )
+    for ( FUGEvent* meetup in meetupsPrevDay )
         if ( meetup == currentMeetup )
             return true;
     
@@ -937,7 +938,7 @@ static CGRect oldMapFrame;
 	MeetupAnnotationCell *meetupCell = (MeetupAnnotationCell *)[table dequeueReusableCellWithIdentifier:@"MeetupCell"];
 	
     NSMutableArray* meetupsByDay = sortedMeetups[indexPath.section];
-    Meetup* currentMeetup = meetupsByDay[indexPath.row];
+    FUGEvent* currentMeetup = meetupsByDay[indexPath.row];
     Boolean continuous = [self isMeetupContinuous:indexPath.section number:indexPath.row];
     [meetupCell initWithMeetup:currentMeetup continuous:continuous];
     

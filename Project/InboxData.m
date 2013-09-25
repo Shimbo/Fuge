@@ -9,6 +9,7 @@
 #import "GlobalData.h"
 #import "GlobalVariables.h"
 #import "InboxViewController.h"
+#import "ULEventManager.h"
 
 @implementation GlobalData (Inbox)
 
@@ -90,7 +91,7 @@ NSInteger sort2(id item1, id item2, void *context)
                 item.subject = [pObject objectForKey:@"meetupSubject"];
                 item.data = pObject;
                 item.dateTime = pObject.createdAt;
-                item.meetup = [globalData getMeetupById:[pObject objectForKey:@"meetupId"]];
+                item.meetup = [eventManager eventById:[pObject objectForKey:@"meetupId"]];
                 
                 NSUInteger meetupType = [[pObject objectForKey:@"type"] integerValue];
                 if ( meetupType == TYPE_MEETUP )
@@ -126,7 +127,7 @@ NSInteger sort2(id item1, id item2, void *context)
             item.misc = nil;
             item.data = pObject;
             item.dateTime = pObject.dateCreated;
-            item.meetup = [globalData getMeetupById:pObject.strMeetupId];
+            item.meetup = [eventManager eventById:pObject.strMeetupId];
             [tempArray addObject:item];
             
         } else if ( [object isKindOfClass:[Message class]] ) {
@@ -361,6 +362,16 @@ NSInteger sort2(id item1, id item2, void *context)
     
     // Save
     [pCurrentUser saveInBackground]; // CHECK: here was Eventually
+}
+
+- (NSUInteger) unreadConversationCount:(FUGEvent*)event
+{
+    if ( event.importedEvent )
+        return 0;
+    NSUInteger nOldCount = [currentPerson getConversationCount:event.strId meetup:true];
+    if ( event.commentsCount < nOldCount )
+        return 0;
+    return event.commentsCount - nOldCount;
 }
 
 -(PFObject*)getInviteForMeetup:(NSString*)strId

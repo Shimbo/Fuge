@@ -25,11 +25,11 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <imageView hidden="YES" autoresizesSubviews="NO" userInteractionEnabled="NO" contentMode="center" image="bg.png" id="17">
-                    <rect key="frame" x="0.0" y="0.0" width="655" height="655"/>
+                    <rect key="frame" x="-167" y="-44" width="655" height="655"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                 </imageView>
                 <imageView hidden="YES" autoresizesSubviews="NO" userInteractionEnabled="NO" contentMode="center" image="white.png" id="35">
-                    <rect key="frame" x="0.0" y="0.0" width="768" height="1136"/>
+                    <rect key="frame" x="-224" y="-284" width="768" height="1136"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                 </imageView>
                 <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="---" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="4">

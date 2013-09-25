@@ -36,13 +36,13 @@
     [self.annotation prepareForAnnotation:annotation];
 }
 
--(void)initWithMeetup:(Meetup*)meetup continuous:(Boolean)continuous
+-(void)initWithMeetup:(FUGEvent*)meetup continuous:(Boolean)continuous
 {
     self.title.text = meetup.strSubject;
     self.subtitle.text = [NSString stringWithFormat:@"By: %@", meetup.strOwnerName];
     
-    self.featured.text = continuous ? @"" : meetup.strFeatured;
-    self.featuredImage.hidden = ( meetup.strFeatured && ! continuous ) ? FALSE : TRUE;
+    self.featured.text = continuous ? @"" : meetup.featureString;
+    self.featuredImage.hidden = ( meetup.featureString && ! continuous ) ? FALSE : TRUE;
     
     NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
     [formatter setDateStyle:NSDateFormatterMediumStyle];

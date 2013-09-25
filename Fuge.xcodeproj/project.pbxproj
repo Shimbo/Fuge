@@ -142,8 +142,6 @@
 		4C08525217A818D500517D37 /* iconMeetup@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C08524F17A818D500517D37 /* iconMeetup@2x.png */; };
 		4C08525317A818D500517D37 /* iconMeetup@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C08524F17A818D500517D37 /* iconMeetup@2x.png */; };
 		4C08525517AA895000517D37 /* PersonCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C08525417AA895000517D37 /* PersonCell.xib */; };
-		4C08526017ADD6AE00517D37 /* GeoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08525F17ADD6AC00517D37 /* GeoObject.m */; };
-		4C08526117ADD6AE00517D37 /* GeoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08525F17ADD6AC00517D37 /* GeoObject.m */; };
 		4C08DDD3163C88580093C851 /* Circle.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD0163C88580093C851 /* Circle.m */; };
 		4C08DDD4163C88580093C851 /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD2163C88580093C851 /* Person.m */; };
 		4C08DDDB163C88640093C851 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C08DDD6163C88640093C851 /* RootViewController.m */; };
@@ -195,7 +193,6 @@
 		4C444E6017A0045700288139 /* GlobalData.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C188D2A1698CDE9004CF42D /* GlobalData.m */; };
 		4C444E6117A0045700288139 /* NewMeetupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FD41699017C0065484F /* NewMeetupViewController.m */; };
 		4C444E6217A0045700288139 /* MeetupAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FDA169A09880065484F /* MeetupAnnotation.m */; };
-		4C444E6317A0045700288139 /* Meetup.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FDD169A09D20065484F /* Meetup.m */; };
 		4C444E6417A0045700288139 /* MeetupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FE0169A1BB30065484F /* MeetupViewController.m */; };
 		4C444E6517A0045700288139 /* VenueSelectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FEA169A456B0065484F /* VenueSelectViewController.m */; };
 		4C444E6617A0045700288139 /* AsyncImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 47A1AC6416A7DBD2004B4CFA /* AsyncImageView.m */; };
@@ -422,7 +419,6 @@
 		4C7E3FD61699017C0065484F /* NewMeetupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FD41699017C0065484F /* NewMeetupViewController.m */; };
 		4C7E3FD71699017C0065484F /* NewMeetupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E3FD51699017C0065484F /* NewMeetupViewController.xib */; };
 		4C7E3FDB169A09880065484F /* MeetupAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FDA169A09880065484F /* MeetupAnnotation.m */; };
-		4C7E3FDE169A09D20065484F /* Meetup.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FDD169A09D20065484F /* Meetup.m */; };
 		4C7E3FE2169A1BB40065484F /* MeetupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FE0169A1BB30065484F /* MeetupViewController.m */; };
 		4C7E3FE3169A1BB40065484F /* MeetupView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E3FE1169A1BB30065484F /* MeetupView.xib */; };
 		4C7E3FEC169A456B0065484F /* VenueSelectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E3FEA169A456B0065484F /* VenueSelectViewController.m */; };
@@ -511,6 +507,14 @@
 		4CBAA0DD17099F44003C091F /* PersonInviteCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CBAA0DC17099F44003C091F /* PersonInviteCell.xib */; };
 		4CDDA4AD17F31114000D2418 /* ULEventManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CDDA4AC17F31114000D2418 /* ULEventManager.m */; };
 		4CDDA4AE17F31114000D2418 /* ULEventManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CDDA4AC17F31114000D2418 /* ULEventManager.m */; };
+		4CDDA4B117F3122E000D2418 /* ULEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CDDA4B017F3122E000D2418 /* ULEvent.m */; };
+		4CDDA4B217F3122E000D2418 /* ULEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CDDA4B017F3122E000D2418 /* ULEvent.m */; };
+		4CDDA4B517F318F4000D2418 /* ULGeoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CDDA4B417F318F4000D2418 /* ULGeoObject.m */; };
+		4CDDA4B617F318F4000D2418 /* ULGeoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CDDA4B417F318F4000D2418 /* ULGeoObject.m */; };
+		4CDDA4BE17F321B8000D2418 /* ULEvent+ThirdPartyLoaders.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CDDA4BD17F321B8000D2418 /* ULEvent+ThirdPartyLoaders.m */; };
+		4CDDA4BF17F321B8000D2418 /* ULEvent+ThirdPartyLoaders.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CDDA4BD17F321B8000D2418 /* ULEvent+ThirdPartyLoaders.m */; };
+		4CDDA4C217F3235C000D2418 /* FUGEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CDDA4C117F3235C000D2418 /* FUGEvent.m */; };
+		4CDDA4C317F3235C000D2418 /* FUGEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CDDA4C117F3235C000D2418 /* FUGEvent.m */; };
 		4CDE8D441789D27A00844B7E /* MatchesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE8D421789D27900844B7E /* MatchesViewController.m */; };
 		4CDE8D451789D27A00844B7E /* MatchesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CDE8D431789D27900844B7E /* MatchesViewController.xib */; };
 		4CDE8D471789E03200844B7E /* LikeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4CDE8D461789E03200844B7E /* LikeCell.xib */; };
@@ -722,8 +726,6 @@
 		4C08524E17A818D500517D37 /* iconMeetup.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMeetup.png; sourceTree = "<group>"; };
 		4C08524F17A818D500517D37 /* iconMeetup@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconMeetup@2x.png"; sourceTree = "<group>"; };
 		4C08525417AA895000517D37 /* PersonCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PersonCell.xib; path = resources/S2C/PersonCell.xib; sourceTree = "<group>"; };
-		4C08525E17ADD6AB00517D37 /* GeoObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoObject.h; sourceTree = "<group>"; };
-		4C08525F17ADD6AC00517D37 /* GeoObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoObject.m; sourceTree = "<group>"; };
 		4C08DDCF163C88580093C851 /* Circle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Circle.h; sourceTree = "<group>"; };
 		4C08DDD0163C88580093C851 /* Circle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Circle.m; sourceTree = "<group>"; };
 		4C08DDD1163C88580093C851 /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
@@ -824,8 +826,6 @@
 		4C7E3FD51699017C0065484F /* NewMeetupViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NewMeetupViewController.xib; sourceTree = "<group>"; };
 		4C7E3FD9169A09880065484F /* MeetupAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetupAnnotation.h; sourceTree = "<group>"; };
 		4C7E3FDA169A09880065484F /* MeetupAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetupAnnotation.m; sourceTree = "<group>"; };
-		4C7E3FDC169A09D10065484F /* Meetup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Meetup.h; sourceTree = "<group>"; };
-		4C7E3FDD169A09D20065484F /* Meetup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Meetup.m; sourceTree = "<group>"; };
 		4C7E3FDF169A1BB20065484F /* MeetupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetupViewController.h; sourceTree = "<group>"; };
 		4C7E3FE0169A1BB30065484F /* MeetupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetupViewController.m; sourceTree = "<group>"; };
 		4C7E3FE1169A1BB30065484F /* MeetupView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MeetupView.xib; sourceTree = "<group>"; };
@@ -901,8 +901,16 @@
 		4CAF3486178871BC0014AE80 /* iconMtArts@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iconMtArts@2x.png"; sourceTree = "<group>"; };
 		4CBAA0DC17099F44003C091F /* PersonInviteCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PersonInviteCell.xib; sourceTree = "<group>"; };
 		4CD2683F1798685F003B0FB8 /* UIParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIParams.h; sourceTree = "<group>"; };
-		4CDDA4AB17F31114000D2418 /* ULEventManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ULEventManager.h; path = ../../UnitedLibs/ULEventManager.h; sourceTree = "<group>"; };
-		4CDDA4AC17F31114000D2418 /* ULEventManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ULEventManager.m; path = ../../UnitedLibs/ULEventManager.m; sourceTree = "<group>"; };
+		4CDDA4AB17F31114000D2418 /* ULEventManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ULEventManager.h; path = ../UnitedLibs/ULEventManager.h; sourceTree = "<group>"; };
+		4CDDA4AC17F31114000D2418 /* ULEventManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ULEventManager.m; path = ../UnitedLibs/ULEventManager.m; sourceTree = "<group>"; };
+		4CDDA4AF17F3122E000D2418 /* ULEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ULEvent.h; path = ../UnitedLibs/ULEvent.h; sourceTree = "<group>"; };
+		4CDDA4B017F3122E000D2418 /* ULEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ULEvent.m; path = ../UnitedLibs/ULEvent.m; sourceTree = "<group>"; };
+		4CDDA4B317F318F4000D2418 /* ULGeoObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ULGeoObject.h; path = ../UnitedLibs/ULGeoObject.h; sourceTree = "<group>"; };
+		4CDDA4B417F318F4000D2418 /* ULGeoObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ULGeoObject.m; path = ../UnitedLibs/ULGeoObject.m; sourceTree = "<group>"; };
+		4CDDA4BC17F321B8000D2418 /* ULEvent+ThirdPartyLoaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ULEvent+ThirdPartyLoaders.h"; path = "../UnitedLibs/ULEvent+ThirdPartyLoaders.h"; sourceTree = "<group>"; };
+		4CDDA4BD17F321B8000D2418 /* ULEvent+ThirdPartyLoaders.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ULEvent+ThirdPartyLoaders.m"; path = "../UnitedLibs/ULEvent+ThirdPartyLoaders.m"; sourceTree = "<group>"; };
+		4CDDA4C017F3235C000D2418 /* FUGEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FUGEvent.h; sourceTree = "<group>"; };
+		4CDDA4C117F3235C000D2418 /* FUGEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FUGEvent.m; sourceTree = "<group>"; };
 		4CDE8D411789D27900844B7E /* MatchesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MatchesViewController.h; sourceTree = "<group>"; };
 		4CDE8D421789D27900844B7E /* MatchesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MatchesViewController.m; sourceTree = "<group>"; };
 		4CDE8D431789D27900844B7E /* MatchesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MatchesViewController.xib; sourceTree = "<group>"; };
@@ -1021,6 +1029,7 @@
 			children = (
 				4C89DFDC17EE5CB900428B7E /* Images.xcassets */,
 				47534DC916A7143F008CC823 /* libs */,
+				4CDDA4B717F31EAD000D2418 /* UnitedLibs */,
 				09ABC07713A1D52D009C3FCF /* Project */,
 				09ABC07013A1D52D009C3FCF /* Frameworks */,
 				09ABC06E13A1D52D009C3FCF /* Products */,
@@ -1574,12 +1583,8 @@
 				4C9A1576179D5C24006736E7 /* CommentData.m */,
 				4C08DDCF163C88580093C851 /* Circle.h */,
 				4C08DDD0163C88580093C851 /* Circle.m */,
-				4C08525E17ADD6AB00517D37 /* GeoObject.h */,
-				4C08525F17ADD6AC00517D37 /* GeoObject.m */,
 				4C08DDD1163C88580093C851 /* Person.h */,
 				4C08DDD2163C88580093C851 /* Person.m */,
-				4C7E3FDC169A09D10065484F /* Meetup.h */,
-				4C7E3FDD169A09D20065484F /* Meetup.m */,
 				4C334473170873A300422689 /* Message.h */,
 				4C334474170873A400422689 /* Message.m */,
 				4C9A1573179D583C006736E7 /* Comment.h */,
@@ -1588,8 +1593,8 @@
 				4CE307FC16BF424600F427DE /* PushManager.m */,
 				4CA463EF16F1DF7600F354FC /* LocationManager.h */,
 				4CA463F016F1DF7600F354FC /* LocationManager.m */,
-				4CDDA4AB17F31114000D2418 /* ULEventManager.h */,
-				4CDDA4AC17F31114000D2418 /* ULEventManager.m */,
+				4CDDA4C017F3235C000D2418 /* FUGEvent.h */,
+				4CDDA4C117F3235C000D2418 /* FUGEvent.m */,
 			);
 			name = Data;
 			sourceTree = "<group>";
@@ -1620,6 +1625,21 @@
 				47C7403F172C04F200087C2A /* AnnotationCellThread.xib */,
 			);
 			name = Cells;
+			sourceTree = "<group>";
+		};
+		4CDDA4B717F31EAD000D2418 /* UnitedLibs */ = {
+			isa = PBXGroup;
+			children = (
+				4CDDA4B317F318F4000D2418 /* ULGeoObject.h */,
+				4CDDA4B417F318F4000D2418 /* ULGeoObject.m */,
+				4CDDA4AF17F3122E000D2418 /* ULEvent.h */,
+				4CDDA4B017F3122E000D2418 /* ULEvent.m */,
+				4CDDA4BC17F321B8000D2418 /* ULEvent+ThirdPartyLoaders.h */,
+				4CDDA4BD17F321B8000D2418 /* ULEvent+ThirdPartyLoaders.m */,
+				4CDDA4AB17F31114000D2418 /* ULEventManager.h */,
+				4CDDA4AC17F31114000D2418 /* ULEventManager.m */,
+			);
+			name = UnitedLibs;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2079,13 +2099,13 @@
 				4C188D2B1698CDE9004CF42D /* GlobalData.m in Sources */,
 				4C7E3FD61699017C0065484F /* NewMeetupViewController.m in Sources */,
 				4C7E3FDB169A09880065484F /* MeetupAnnotation.m in Sources */,
-				4C7E3FDE169A09D20065484F /* Meetup.m in Sources */,
 				4C7E3FE2169A1BB40065484F /* MeetupViewController.m in Sources */,
 				4C7E3FEC169A456B0065484F /* VenueSelectViewController.m in Sources */,
 				47A1AC6716A7DBD2004B4CFA /* AsyncImageView.m in Sources */,
 				47A1AC6816A7DBD2004B4CFA /* ImageLoader.m in Sources */,
 				47A1AC6C16A7DDB9004B4CFA /* VenueCell.m in Sources */,
 				476D1E2316A8273600077458 /* FSVenue.m in Sources */,
+				4CDDA4B117F3122E000D2418 /* ULEvent.m in Sources */,
 				4CE307FD16BF424600F427DE /* PushManager.m in Sources */,
 				471EAC5C16C0D419009F88F9 /* Foursquare2.m in Sources */,
 				4CDDA4AD17F31114000D2418 /* ULEventManager.m in Sources */,
@@ -2097,6 +2117,7 @@
 				4706D0FF16C10D0600CAF9AF /* UIViewController+PKRevealController.m in Sources */,
 				4706D10316C10DBF00CAF9AF /* LeftMenuController.m in Sources */,
 				4706D10C16C11A2400CAF9AF /* MainViewController.m in Sources */,
+				4CDDA4C217F3235C000D2418 /* FUGEvent.m in Sources */,
 				4C1C438316C9B126008BA9CA /* InboxViewController.m in Sources */,
 				47BDBC9216EA268F008B12CF /* MeetupInviteViewController.m in Sources */,
 				47BDBC9816EA3948008B12CF /* PersonInviteCell.m in Sources */,
@@ -2122,6 +2143,7 @@
 				47AEC1F8172AEA170095DA31 /* JMImageCache.m in Sources */,
 				47C74035172BFA6C00087C2A /* TableAnnotationsViewController.m in Sources */,
 				47C7403B172BFAF900087C2A /* AnnotationCell.m in Sources */,
+				4CDDA4B517F318F4000D2418 /* ULGeoObject.m in Sources */,
 				471984A2172EB9A800A5FE8E /* HPGrowingTextView.m in Sources */,
 				471984A3172EB9A800A5FE8E /* HPTextViewInternal.m in Sources */,
 				471984B0172EBA5200A5FE8E /* GrowingTextViewController.m in Sources */,
@@ -2139,7 +2161,7 @@
 				4C9A1575179D583C006736E7 /* Comment.m in Sources */,
 				4C9A1577179D5C25006736E7 /* CommentData.m in Sources */,
 				4C9D1B5817A7F271007B0FEA /* MeetupLoader.m in Sources */,
-				4C08526017ADD6AE00517D37 /* GeoObject.m in Sources */,
+				4CDDA4BE17F321B8000D2418 /* ULEvent+ThirdPartyLoaders.m in Sources */,
 				4CADB74617DD33D600C0E790 /* PeopleViewController.m in Sources */,
 				4C0D670317DE5A760076983E /* InAppPurchaseManager.m in Sources */,
 			);
@@ -2155,6 +2177,7 @@
 				4C444E5817A0045700288139 /* Person.m in Sources */,
 				4C444E5917A0045700288139 /* RootViewController.m in Sources */,
 				4C444E5A17A0045700288139 /* ProfileViewController.m in Sources */,
+				4CDDA4B217F3122E000D2418 /* ULEvent.m in Sources */,
 				4C444E5B17A0045700288139 /* UserProfileController.m in Sources */,
 				4C444E5C17A0045700288139 /* FilterViewController.m in Sources */,
 				4C444E5D17A0045700288139 /* GlobalVariables.m in Sources */,
@@ -2163,7 +2186,6 @@
 				4C444E6017A0045700288139 /* GlobalData.m in Sources */,
 				4C444E6117A0045700288139 /* NewMeetupViewController.m in Sources */,
 				4C444E6217A0045700288139 /* MeetupAnnotation.m in Sources */,
-				4C444E6317A0045700288139 /* Meetup.m in Sources */,
 				4C444E6417A0045700288139 /* MeetupViewController.m in Sources */,
 				4C444E6517A0045700288139 /* VenueSelectViewController.m in Sources */,
 				4C444E6617A0045700288139 /* AsyncImageView.m in Sources */,
@@ -2178,6 +2200,7 @@
 				4C444E6F17A0045700288139 /* PKRevealController.m in Sources */,
 				4C444E7017A0045700288139 /* PKRevealControllerContainerView.m in Sources */,
 				4C444E7117A0045700288139 /* UIViewController+PKRevealController.m in Sources */,
+				4CDDA4B617F318F4000D2418 /* ULGeoObject.m in Sources */,
 				4C444E7217A0045700288139 /* LeftMenuController.m in Sources */,
 				4C444E7417A0045700288139 /* MainViewController.m in Sources */,
 				4C444E7517A0045700288139 /* InboxViewController.m in Sources */,
@@ -2187,6 +2210,7 @@
 				4C444E7917A0045700288139 /* LocationManager.m in Sources */,
 				4C444E7A17A0045700288139 /* StatsViewController.m in Sources */,
 				4CDDA4AE17F31114000D2418 /* ULEventManager.m in Sources */,
+				4CDDA4C317F3235C000D2418 /* FUGEvent.m in Sources */,
 				4C444E7B17A0045700288139 /* CustomBadge.m in Sources */,
 				4C444E7C17A0045700288139 /* PersonAnnotationView.m in Sources */,
 				4C444E7D17A0045700288139 /* InboxData.m in Sources */,
@@ -2201,6 +2225,7 @@
 				4C444E8617A0045700288139 /* REVClusterManager.m in Sources */,
 				4C444E8717A0045700288139 /* REVClusterMapView.m in Sources */,
 				4C444E8817A0045700288139 /* REVClusterPin.m in Sources */,
+				4CDDA4BF17F321B8000D2418 /* ULEvent+ThirdPartyLoaders.m in Sources */,
 				4C444E8917A0045700288139 /* REVClusterAnnotationView.m in Sources */,
 				4C444E8A17A0045700288139 /* LoadingController.m in Sources */,
 				4C444E8B17A0045700288139 /* JMImageCache.m in Sources */,
@@ -2237,7 +2262,6 @@
 				4C444EA917A0045700288139 /* UIImageView+AFNetworking.m in Sources */,
 				4C444F4317A04F4400288139 /* LinkedinLoader.m in Sources */,
 				4C9D1B5917A7F271007B0FEA /* MeetupLoader.m in Sources */,
-				4C08526117ADD6AE00517D37 /* GeoObject.m in Sources */,
 				4CADB74717DD33D600C0E790 /* PeopleViewController.m in Sources */,
 				4C0D670417DE5A760076983E /* InAppPurchaseManager.m in Sources */,
 			);
@@ -2335,8 +2359,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Fuge;
-				PROVISIONING_PROFILE = "83E4F8FB-7B5C-4D65-AC0B-D1A4F85933AD";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "83E4F8FB-7B5C-4D65-AC0B-D1A4F85933AD";
+				PROVISIONING_PROFILE = "85E8334B-75A0-495F-94BC-6FA72AE8B324";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "85E8334B-75A0-495F-94BC-6FA72AE8B324";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";
 				WRAPPER_EXTENSION = app;
@@ -2369,8 +2393,8 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Fuge;
-				PROVISIONING_PROFILE = "83E4F8FB-7B5C-4D65-AC0B-D1A4F85933AD";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "83E4F8FB-7B5C-4D65-AC0B-D1A4F85933AD";
+				PROVISIONING_PROFILE = "85E8334B-75A0-495F-94BC-6FA72AE8B324";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "85E8334B-75A0-495F-94BC-6FA72AE8B324";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				WARNING_CFLAGS = "-Wno-arc-performSelector-leaks";

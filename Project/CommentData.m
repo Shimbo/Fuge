@@ -143,7 +143,7 @@
     }];
 }
 
-- (void)loadCommentThread:(Meetup*)meetup target:(id)target selector:(SEL)callback
+- (void)loadCommentThread:(FUGEvent*)meetup target:(id)target selector:(SEL)callback
 {
     PFQuery *commentsQuery = [PFQuery queryWithClassName:@"Comment"];
     commentsQuery.limit = 1000;
@@ -175,7 +175,7 @@
     }];
 }
 
--(void)createCommentForMeetup:(Meetup*)meetup commentType:(CommentType)type commentText:(NSString*)text target:(id)target selector:(SEL)callback
+-(void)createCommentForMeetup:(FUGEvent*)meetup commentType:(CommentType)type commentText:(NSString*)text target:(id)target selector:(SEL)callback
 {
     // Creating comment about meetup creation in db
     Comment* comment = [[Comment alloc] init];

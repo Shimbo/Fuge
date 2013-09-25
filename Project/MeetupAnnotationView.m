@@ -14,7 +14,7 @@
 #import "ImageLoader.h"
 #import "UIImage+Circled.h"
 #import "TimerView.h"
-
+#import "GlobalData.h"
 
 
 @implementation MeetupPin
@@ -119,12 +119,12 @@
     [self updateTimerForColor:color];
 }
 
--(void)setPinIcon:(Meetup*)meetup{
+-(void)setPinIcon:(FUGEvent*)meetup{
     if ( meetup.isCanceled )
         _icon.image = [UIImage imageNamed:@"iconCanceled.png"];
     else if ( meetup.privacy == MEETUP_PRIVATE )
         _icon.image = [UIImage imageNamed:@"iconPrivate.png"];
-    else if ( meetup.bImportedEvent )
+    else if ( meetup.importedEvent )
     {
         {
             switch ( meetup.importedType )
@@ -157,7 +157,7 @@
 }
 
 
--(void)setUnreaCount:(NSUInteger)count{
+-(void)setUnreadCount:(NSUInteger)count{
     [_badge setNumber:count];
 }
 
@@ -165,7 +165,7 @@
     [self setPinColor:ann.pinColor];
     [self setPinIcon:ann.meetup];
     [self setTime:ann.time];
-    [self setUnreaCount:ann.numUnreadCount];
+    [self setUnreadCount:[globalData unreadConversationCount:ann.meetup]];
     if (ann.attendedPersons.count) {
         Person *p = ann.attendedPersons[0];
         [self loadImageWithURL:p.smallAvatarUrl];

@@ -2,15 +2,14 @@
 #import "CoreLocation/CLLocationManager.h"
 #import <CoreLocation/CoreLocation.h>
 #import <Parse/Parse.h>
-#import "GeoObject.h"
+#import "ULGeoObject.h"
 
 //@class PersonView;
 
 #define currentPerson [[Person alloc] init:pCurrentUser circle:CIRCLE_NONE]
 
-@interface Person : GeoObject {
+@interface Person : ULGeoObject {
     
-    NSString *strId;
     NSString *strFirstName;
     NSString *strLastName;
     NSString *strAge;
@@ -33,7 +32,6 @@
     PFUser* personData;
 }
 
-@property (nonatomic, retain) NSString *strId;
 @property (nonatomic, retain) NSString *strFirstName;
 @property (nonatomic, retain) NSString *strLastName;
 @property (nonatomic, retain) NSString *strAge;

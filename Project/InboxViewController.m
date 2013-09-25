@@ -15,6 +15,9 @@
 #import "UserProfileController.h"
 #import "MeetupAnnotationView.h"
 
+#import "ULEventManager.h"
+#import "FUGEvent.h"
+
 @implementation InboxViewItem
 @end
 
@@ -198,7 +201,7 @@
     [self.navigationController pushViewController:userProfileController animated:YES];
 }
 
-- (void)openMeetupWindow:(Meetup*)meetup invite:(Boolean)bInvite
+- (void)openMeetupWindow:(FUGEvent*)meetup invite:(Boolean)bInvite
 {
     // Loading window
     if ( ! meetup )
@@ -230,7 +233,7 @@
     // Another switch depending on item type
     if ( item.type == INBOX_ITEM_INVITE || item.type == INBOX_ITEM_COMMENT )
     {
-        Meetup* meetup = item.meetup;
+        FUGEvent* meetup = item.meetup;
         Boolean bInvite = ( ! item.misc && item.type == INBOX_ITEM_INVITE );
         
         if ( meetup)
@@ -245,9 +248,8 @@
             [meetupData fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
                 if ( ! error )
                 {
-                    Meetup* newMeetup = [[Meetup alloc] init];
-                    [newMeetup unpack:meetupData];
-                    [globalData addMeetup:newMeetup];
+                    FUGEvent* newMeetup = [[FUGEvent alloc] initWithParseEvent:meetupData];
+                    [eventManager addEvent:newMeetup];
                     [self openMeetupWindow:newMeetup invite:bInvite];
                 }
                 else

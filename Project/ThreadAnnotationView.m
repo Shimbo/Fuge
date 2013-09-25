@@ -10,6 +10,7 @@
 #import "MeetupAnnotation.h"
 #import "MainStyle.h"
 #import "CustomBadge.h"
+#import "GlobalData.h"
 
 @implementation ThreadPin
 
@@ -90,21 +91,21 @@
     [self updateBackForColor:color];
 }
 
--(void)setPinIcon:(Meetup*)meetup{
+-(void)setPinIcon:(FUGEvent*)meetup{
     if ( meetup.privacy == MEETUP_PRIVATE )
         _icon.image = [UIImage imageNamed:@"iconPrivate.png"];
     else
         _icon.image = [UIImage imageNamed:@"iconThread.png"];
 }
 
--(void)setUnreaCount:(NSUInteger)count{
+-(void)setUnreadCount:(NSUInteger)count{
     [_badge setNumber:count];
 }
 
 -(void)prepareForAnnotation:(ThreadAnnotation*)ann{
     [self setPinColor:ann.pinColor];
     [self setPinIcon:ann.meetup];
-    [self setUnreaCount:ann.numUnreadCount];
+    [self setUnreadCount:[globalData unreadConversationCount:ann.meetup]];
 }
 @end
 

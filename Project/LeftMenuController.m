@@ -19,6 +19,9 @@
 #import "MeetupLoader.h"
 #import "LoadingController.h"
 
+#import "ULEventManager.h"
+#import "FUGEvent.h"
+
 #define ALERT_ENTER_STATUS      1
 #define ALERT_IMPORT_MEETUP     2
 
@@ -160,7 +163,7 @@
         }
         else
         {
-            Meetup* meetup = [[Meetup alloc] initWithMtEvent:meetupData];
+            FUGEvent* meetup = [[FUGEvent alloc] initWithMeetupEvent:meetupData];
             if ( ! meetup )
             {
                 UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Meetup initizalization failed" message:@"Check the data." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -171,7 +174,7 @@
                 Boolean bSaved = [meetup save:nil selector:nil];
                 if ( bSaved )
                 {
-                    [globalData addMeetup:meetup];
+                    [eventManager addEvent:meetup];
                     NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:meetup, @"meetup", nil];
                     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMeetupCreated object:nil userInfo:userInfo];
                 }

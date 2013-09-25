@@ -9,6 +9,7 @@
 #import "PushManager.h"
 #import <Parse/Parse.h>
 #import "GlobalData.h"
+#import "ULEventManager.h"
 
 @implementation PushManager
 
@@ -103,7 +104,7 @@ static PushManager *sharedInstance = nil;
 
 - (void)sendPushAttendingMeetup:(NSString*)meetupId
 {
-    Meetup* meetup = [globalData getMeetupById:meetupId];
+    ULEvent* meetup = [eventManager eventById:meetupId];
     if ( ! meetup )
         return;
     
@@ -135,7 +136,7 @@ static PushManager *sharedInstance = nil;
 
 - (void)sendPushLeftMeetup:(NSString*)meetupId
 {
-    Meetup* meetup = [globalData getMeetupById:meetupId];
+    ULEvent* meetup = [eventManager eventById:meetupId];
     if ( ! meetup )
         return;
     
@@ -163,7 +164,7 @@ static PushManager *sharedInstance = nil;
 
 - (void)sendPushCanceledMeetup:(NSString*)meetupId
 {
-    Meetup* meetup = [globalData getMeetupById:meetupId];
+    ULEvent* meetup = [eventManager eventById:meetupId];
     if ( ! meetup )
         return;
     
@@ -191,7 +192,7 @@ static PushManager *sharedInstance = nil;
 
 - (void)sendPushChangedMeetup:(NSString*)meetupId
 {
-    Meetup* meetup = [globalData getMeetupById:meetupId];
+    ULEvent* meetup = [eventManager eventById:meetupId];
     if ( ! meetup )
         return;
     
@@ -219,7 +220,7 @@ static PushManager *sharedInstance = nil;
 
 - (void)sendPushCommentedMeetup:(NSString*)meetupId
 {
-    Meetup* meetup = [globalData getMeetupById:meetupId];
+    ULEvent* meetup = [eventManager eventById:meetupId];
     if ( ! meetup )
         return;
     
@@ -245,7 +246,7 @@ static PushManager *sharedInstance = nil;
 
 - (void)sendPushInviteForMeetup:(NSString*)meetupId user:(NSString*)userId
 {
-    Meetup* meetup = [globalData getMeetupById:meetupId];
+    ULEvent* meetup = [eventManager eventById:meetupId];
     if ( ! meetup )
         return;
     
@@ -267,7 +268,7 @@ static PushManager *sharedInstance = nil;
 
 - (void)sendPushCreatedMeetup:(NSString*)meetupId ignore:(NSArray*)ignoreList
 {
-    Meetup* meetup = [globalData getMeetupById:meetupId];
+    ULEvent* meetup = [eventManager eventById:meetupId];
     if ( ! meetup )
         return;
     

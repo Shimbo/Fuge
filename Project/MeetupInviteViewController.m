@@ -285,7 +285,7 @@ static NSMutableArray* invitesLeft = nil;
     [super viewDidUnload];
 }
 
--(void)setMeetup:(Meetup*)m newMeetup:(Boolean)new;
+-(void)setMeetup:(FUGEvent*)m newMeetup:(Boolean)new;
 {
     meetup = m;
     bNewMeetup = new;
