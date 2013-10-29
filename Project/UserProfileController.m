@@ -15,6 +15,7 @@
 #import "MatchesViewController.h"
 #import "Message.h"
 #import "LinkedinLoader.h"
+#import "FUGOpportunitiesView.h"
 
 @implementation UserProfileController
 
@@ -29,6 +30,10 @@
         [[NSNotificationCenter defaultCenter]addObserver:self
                                                 selector:@selector(messageReceived:)
                                                 name:kPushReceivedNewMessage
+                                                object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(opsHidden)
+                                                name:kOpportunitiesHidden
                                                 object:nil];
     }
     return self;
@@ -49,7 +54,10 @@
 - (void)messageClicked{
     
     if ( profileMode == PROFILE_MODE_MESSAGES )
+    {
         profileMode = PROFILE_MODE_SUMMARY;
+        [textView resignFirstResponder];
+    }
     else
         profileMode = PROFILE_MODE_MESSAGES;
     [self updateUI];
@@ -60,19 +68,20 @@
     CGRect frame;
     
     // Resizing scroll view frame
-    frame = scrollView.frame;
     if ( profileMode == PROFILE_MODE_MESSAGES )
-        frame.size.height = self.view.size.height-42;
+        scrollView.height = self.view.height-containerView.height;
     else
-        frame.size.height = self.view.size.height;
-    scrollView.frame = frame;
+        scrollView.height = self.view.height;
     
 #ifdef TARGET_S2C
     // Resizing web view
-    NSUInteger newHeight = [[webView stringByEvaluatingJavaScriptFromString:@"document.body.scrollHeight"] floatValue];
-    frame = webView.frame;
-    frame.size.height = newHeight;
-    webView.frame = frame;
+    if ( profileMode == PROFILE_MODE_SUMMARY )
+    {
+        NSUInteger newHeight = [[webView stringByEvaluatingJavaScriptFromString:@"document.body.scrollHeight"] floatValue];
+        frame = webView.frame;
+        frame.size.height = newHeight;
+        webView.frame = frame;
+    }
 #endif
     
     // Resizing scroll view contents
@@ -96,6 +105,7 @@
         textView.hidden = FALSE;
         containerView.hidden = FALSE;
         webView.hidden = TRUE;
+        opportunities.hidden = TRUE;
 #ifdef TARGET_S2C
         [messageBtn setTitle:@"Full profile"];
 #endif
@@ -106,6 +116,7 @@
         textView.hidden = TRUE;
         containerView.hidden = TRUE;
         webView.hidden = FALSE;
+        opportunities.hidden = FALSE;
 #ifdef TARGET_S2C
         [messageBtn setTitle:@"Message"];
 #endif
@@ -118,6 +129,21 @@
 #ifdef TARGET_S2C
     profileMode = mode;
 #endif
+}
+
+-(void) setMessageText:(NSString*)text
+{
+    textView.text = text;
+    [textView becomeFirstResponder];
+}
+
+- (void) opsHidden
+{
+    if ( opportunities )
+        [UIView animateWithDuration:0.3 animations:^{
+            webView.originY -= opportunities.height;
+            opportunities.alpha = 0.0f;
+        }];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
@@ -171,12 +197,6 @@
     if ( ! bCurrentUser )
         [globalData loadMessageThread:personThis target:self selector:@selector(messagesLoaded:error:)];
     
-#ifdef TARGET_S2C
-    // Summary
-    NSString* strResult = [lnLoader getProfileInHtml:personThis.strStatus summary:personThis.profileSummary jobs:personThis.profilePositions];
-    [webView loadHTMLString:strResult baseURL:nil];
-#endif
-    
     // Avatar
     //profileImageView.profileID = personThis.strId;
     //profileImageView.pictureCropping = FBProfilePictureCroppingSquare;
@@ -207,6 +227,10 @@
     labelTimePassed.originY += 37;
     labelDistance.originY += 37;
     labelStatus.hidden = TRUE;
+    
+    // Summary
+    NSString* strResult = [lnLoader getProfileInHtml:nil summary:personThis.profileSummary jobs:personThis.profilePositions];
+    [webView loadHTMLString:strResult baseURL:nil];
 #endif
     
 #ifdef TARGET_FUGE
@@ -221,10 +245,52 @@
     [btnThingsInCommon setTitle:strTitle forState:UIControlStateNormal];
 #endif
     
+    personThis.numUnreadMessages = 0;
+    
+    keyboard = [[ULKeyboardHandler alloc] init];
+    keyboard.delegate = self;
+    
+#ifdef TARGET_S2C
+    // Opportunities
+    [self updateOpportunities];
+#endif
+    
     // UI stuff, scroll, texts
     [self updateUI];
+}
+
+- (void) updateOpportunities
+{
+    // Opportunities
+    if ( opportunities )
+    {
+        webView.originY = opportunities.originY;
+        [opportunities removeFromSuperview];
+    }
+    opportunities = [[FUGOpportunitiesView alloc] initWithFrame:CGRectMake(0, webView.originY, self.view.width, 0)];
     
-    personThis.numUnreadMessages = 0;
+    // Real opportunities
+    if ( personThis.isCurrentUser )
+        [opportunities addHideAllButtonFor:personThis];   // To add "add new opportunity" button
+    for ( FUGOpportunity* op in personThis.allOpportunities )
+        [opportunities addOpportunity:op by:personThis isRead:op.read];
+    
+    // Add only if we should
+    if ( ( personThis.allOpportunities && personThis.allOpportunities.count > 0 ) || personThis.isCurrentUser )
+    {
+        [scrollView addSubview:opportunities];
+        webView.originY = opportunities.originY + opportunities.height;
+    }
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+#ifdef TARGET_S2C
+    [self updateOpportunities];
+    
+    // UI stuff, scroll, texts
+    [self updateUI];
+#endif
 }
 
 - (void)didReceiveMemoryWarning
@@ -241,10 +307,10 @@
         return;
     }
     
-    NSMutableString* stringHistory = [[NSMutableString alloc] initWithFormat:@""];
+    //NSMutableString* stringHistory = [[NSMutableString alloc] initWithFormat:@""];
     
     // Feedback message (always at the top, first one)
-    if ( [globalVariables isFeedbackBot:personThis.strId] )
+    /*if ( [globalVariables isFeedbackBot:personThis.strId] )
     {
         [stringHistory appendString:@"    "];
         [stringHistory appendString:personThis.strFirstName];
@@ -252,18 +318,18 @@
         [stringHistory appendString:WELCOME_MESSAGE];
         if ( messages.count != 0 )
             [stringHistory appendString:@"\n"];
-    }
+    }*/
     
     // Date formatter
-    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateStyle:NSDateFormatterMediumStyle];
-    [formatter setTimeStyle:NSDateFormatterNoStyle];
-    [formatter setDoesRelativeDateFormatting:TRUE];
+    //NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+    //[formatter setDateStyle:NSDateFormatterMediumStyle];
+    //[formatter setTimeStyle:NSDateFormatterNoStyle];
+    //[formatter setDoesRelativeDateFormatting:TRUE];
     
     // Messages
-    NSDate* conversationDate = [personThis getConversationDate:strCurrentUserId meetup:FALSE];
+    //NSDate* conversationDate = [personThis getConversationDate:strCurrentUserId meetup:FALSE];
     //Boolean bReadMarkAdded = FALSE;
-    for ( int n = 0; n < messages.count; n++ )
+    /*for ( int n = 0; n < messages.count; n++ )
     {
         Message* message = messages[n];
         
@@ -293,23 +359,9 @@
         //[stringHistory appendString:@": "];
         [stringHistory appendString:message.strText];
         
-        // Append read mark
-/*        if ( conversationDate )
-        {
-            Boolean thisMessageBefore = [conversationDate compare:message.dateCreated] != NSOrderedAscending;
-            Boolean nextMessageAfter = ( ! nextMessage || [conversationDate compare:nextMessage.dateCreated] == NSOrderedAscending);
-            if ( myMessage && ! bReadMarkAdded && thisMessageBefore && nextMessageAfter )
-            {
-                [stringHistory appendString:@"\n"];
-                [stringHistory appendString:[NSString stringWithFormat:@"                                    * Read %@", [formatter stringFromDate:conversationDate]]];
-                
-                bReadMarkAdded = TRUE;
-            }
-        }*/
-        
         if ( n != messages.count - 1 )
             [stringHistory appendString:@"\n"];
-    }
+    }*/
     
     //[messageHistory setText:stringHistory];
     [messagesView setCommentsList:messages navigation:nil];
@@ -418,12 +470,9 @@ double animatedDistance;
 
 */
 
--(void) keyboardWillShow:(NSNotification *)note{
-    [super keyboardWillShow:note];
-}
-
--(void) keyboardWillHide:(NSNotification *)note{
-    [super keyboardWillHide:note];
+- (void)keyboardSizeChanged:(CGSize)delta
+{
+    scrollView.originY -= delta.height;
 }
 
 - (void) callbackMessageSaved:(Message*)message

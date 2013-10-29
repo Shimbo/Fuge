@@ -14,6 +14,8 @@
 #import "MeetupAnnotation.h"
 #import "PersonAnnotation.h"
 #import "CommentsView.h"
+#import <MessageUI/MFMailComposeViewController.h>
+#import "GrowingTextViewController.h"
 
 @interface CustomScroll : UIScrollView
 @end
@@ -29,13 +31,13 @@ enum EMeetupButtons
     MB_CANCEL       = 6,
     MB_EDIT         = 7,
     MB_FEATURE      = 8,
+    MB_MAIL         = 9,
     
-    MB_TOTAL_COUNT  = 9
+    MB_TOTAL_COUNT  = 10
 };
-#import "GrowingTextViewController.h"
 
 @interface MeetupViewController : GrowingTextViewController
-<UITextViewDelegate, MKMapViewDelegate, UIWebViewDelegate, UITextFieldDelegate>
+<UITextViewDelegate, MKMapViewDelegate, UIWebViewDelegate, UITextFieldDelegate, MFMailComposeViewControllerDelegate>
 {
     FUGEvent* meetup;
     IBOutlet CommentsView *commentsView;
@@ -71,7 +73,5 @@ enum EMeetupButtons
 - (IBAction)countersJoinedTapped:(id)sender;
 - (IBAction)countersDeclinedTapped:(id)sender;
 - (IBAction)countersInvitedTapped:(id)sender;
-
-
 
 @end

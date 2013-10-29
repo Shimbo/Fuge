@@ -220,8 +220,10 @@
 // Draws Method
 - (void)drawRect:(CGRect)rect {
     
+    if ( self.hidden )
+        return;
+    
 	CGContextRef context = UIGraphicsGetCurrentContext();
-
 
 	CGContextSetShouldAntialias(context, YES);
 	

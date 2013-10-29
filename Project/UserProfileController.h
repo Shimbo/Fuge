@@ -10,6 +10,7 @@
 #import "Person.h"
 #import "GrowingTextViewController.h"
 #import "CommentsView.h"
+#import "ULKeyboardHandler.h"
 
 enum EUserProfileMode
 {
@@ -19,7 +20,8 @@ enum EUserProfileMode
 
 @class AsyncImageView;
 @class Message;
-@interface UserProfileController : GrowingTextViewController <UIAlertViewDelegate, UIWebViewDelegate>
+@class FUGOpportunitiesView;
+@interface UserProfileController : GrowingTextViewController <UIAlertViewDelegate, UIWebViewDelegate, ULKeyboardHandlerDelegate>
 {
     Person* personThis;
     IBOutlet CommentsView *messagesView;
@@ -44,6 +46,10 @@ enum EUserProfileMode
     IBOutlet UILabel *strIndustry;
     
     Message*    currentMessage;
+    
+    FUGOpportunitiesView* opportunities;
+    
+    ULKeyboardHandler *keyboard;
 }
 
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
@@ -51,5 +57,7 @@ enum EUserProfileMode
 
 -(void) setPerson:(Person*)person;
 -(void) setProfileMode:(NSUInteger)mode;
+-(void) updateUI;
+-(void) setMessageText:(NSString*)text;
 
 @end

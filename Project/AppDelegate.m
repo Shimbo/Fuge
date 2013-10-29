@@ -9,6 +9,7 @@
 #import "TestFlightSDK/TestFlight.h"
 #import "JMImageCache.h"
 #import <Crashlytics/Crashlytics.h>
+#import "ULDeezerWrapper.h"
 
 @implementation FugeAppDelegate
 
@@ -34,7 +35,7 @@
     //[TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
 #endif
     @try {
-        [TestFlight takeOff:@"d42a1f02-bb75-4c1e-896e-e0e4f41daf17"];
+        [TestFlight takeOff:APP_TESTFLIGHT_TOKEN];
     }
     @catch (NSException *exception) {
         NSLog(@"TestFlight error: %@",exception);
@@ -55,14 +56,21 @@
     // Left menu
     LeftMenuController *leftMenu = [[LeftMenuController alloc]init];
     self.revealController = [PKRevealController revealControllerWithFrontViewController:nil leftViewController:leftMenu rightViewController:nil options:nil];
-    window.rootViewController = self.revealController;
-    [window makeKeyAndVisible];
+    //window.rootViewController = self.revealController;
+    //[window makeKeyAndVisible];
     
     // Loading screen
     LoadingController *loadingViewController = [[LoadingController alloc] initWithNibName:@"LoadingController" bundle:nil];
-    loadingViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [self.revealController presentViewController:loadingViewController
-                                        animated:NO completion:nil];
+    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:loadingViewController];
+    [nav setNavigationBarHidden:TRUE];
+    
+    window.rootViewController = nav;
+    [window makeKeyAndVisible];
+    
+    // Music player
+#ifdef TARGET_FUGE
+    _musicPanel = [ULMusicPlayerController createAndAttachToParent:self.revealController];
+#endif
     
     // Notifications
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|
@@ -221,6 +229,7 @@
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
+    [[NSNotificationCenter defaultCenter]postNotificationName:kMusicTrackStopped object:nil];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {

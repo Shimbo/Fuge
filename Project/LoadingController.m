@@ -15,6 +15,8 @@
 #import "ProfileViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import "TestFlightSDK/TestFlight.h"
+#import "ULDeezerWrapper.h"
+#import "TutorialViewController.h"
 
 #ifdef TARGET_S2C
 #import "LinkedinLoader.h"
@@ -46,8 +48,6 @@ static Boolean bRotating = true;
         _backgroundImage.alpha = 0.0f;
         bDemoMode = false;
         bElementsHidden = true;
-        
-        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:NO];
     }
     return self;
 }
@@ -190,6 +190,9 @@ static Boolean bRotating = true;
 - (void)loadSequencePart3
 {
     // Start loading data
+#ifdef TARGET_FUGE
+    [deezerWrapper initializeWithAPIKey:DEEZER_API_ID];
+#endif
     [globalData loadData];
     [locManager startUpdating];
 }
@@ -225,22 +228,6 @@ static Boolean bRotating = true;
     
     if ( ! bDemoMode )
         [self performSelector:@selector(loadSequencePart0) withObject:nil afterDelay:0.01f];
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-}
-
--(void) proceedToProfile
-{
-    ProfileViewController *profileViewController = [[ProfileViewController alloc] initWithNibName:@"ProfileView" bundle:nil];
-    [self presentViewController:profileViewController animated:TRUE completion:nil];
-}
-
-- (void) viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
     
 #ifdef TARGET_FUGE
     
@@ -259,7 +246,8 @@ static Boolean bRotating = true;
             ptSize = CGPointMake(306*2, 312*2);
         else
             ptSize = CGPointMake(306, 312);
-        CGRect frame = self.view.frame;
+        CGRect screenRect = [[UIScreen mainScreen] bounds];
+        CGRect frame = screenRect;
         frame.origin.x = ( frame.size.width - ptSize.x ) / 2;
         frame.size.width = ptSize.x;
         frame.origin.y = ( frame.size.height - ptSize.y ) / 2;
@@ -296,7 +284,7 @@ static Boolean bRotating = true;
                                        [UIImage imageNamed:@"pyramid_0088.png"],
                                        [UIImage imageNamed:@"pyramid_0099.png"],
                                        [UIImage imageNamed:@"pyramid_0110.png"], nil];
-
+            
         }
         
         // all frames will execute in 1.75 seconds
@@ -327,6 +315,24 @@ static Boolean bRotating = true;
     }
 }
 
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+}
+
+-(void) proceedToProfile
+{
+    ProfileViewController *profileViewController = [[ProfileViewController alloc] initWithNibName:@"ProfileView" bundle:nil];
+    [self presentViewController:profileViewController animated:TRUE completion:nil];
+}
+
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    bRotating = true;
+    _backgroundImage.hidden = FALSE;
+}
+
 - (void) viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
@@ -336,9 +342,6 @@ static Boolean bRotating = true;
 
 -(void) mainComplete
 {
-    // Turning on status bar
-    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
-    
     // Show profile window if it's new user
     //if ( [globalVariables isNewUser] )
     //    [self proceedToProfile];
@@ -351,11 +354,30 @@ static Boolean bRotating = true;
 
 -(void) proceedToMapWindow
 {
-    FugeAppDelegate *delegate = AppDelegate;
-    [delegate.revealController dismissViewControllerAnimated:TRUE completion:nil];
-    LeftMenuController *leftMenu = (LeftMenuController*)delegate.revealController.leftViewController;
+    LeftMenuController *leftMenu = (LeftMenuController*)AppDelegate.revealController.leftViewController;
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
+    
+    [UIView transitionWithView:AppDelegate.window duration:0.3 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{                        
+        AppDelegate.window.rootViewController = AppDelegate.revealController;
+    } completion:nil];
+    
 #ifdef TARGET_FUGE
-    [leftMenu showMap];
+    
+    if ( ! [globalVariables isTutorialShown] )
+    {
+        // Show tutorial
+        NSString* strNibName = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ? @"TutorialViewController-iPad" : @"TutorialViewController-iPhone";
+        TutorialViewController* tutorial = [[TutorialViewController alloc] initWithNibName:strNibName bundle:nil];
+        [AppDelegate.revealController presentViewController:tutorial animated:YES completion:^{
+            [leftMenu showMap];
+            [globalVariables tutorialWasShown];
+        }];
+    }
+    else
+    {
+        [leftMenu showMap];
+    }
+    
 #elif defined TARGET_S2C
     [leftMenu showCircles];
 #endif
@@ -631,7 +653,7 @@ static Boolean bRotating = true;
     
     [self hideAll];
 #ifdef TARGET_S2C
-    [lnLoader initialize:self selector:@selector(loadSequencePart3) failed:@selector(loginFailed)];
+    [lnLoader initialize:self selector:@selector(loadSequencePart3) failed:@selector(loginFailed:)];
 #endif
 }
 

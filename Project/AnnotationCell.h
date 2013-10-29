@@ -7,13 +7,9 @@
 //
 
 
-
-@class PersonAnnotation;
-@class PersonPin;
-@class MeetupAnnotation;
-@class MeetupPin;
-@class ThreadAnnotation;
-@class ThreadPin;
+#import "MeetupAnnotationView.h"
+#import "ThreadAnnotationView.h"
+#import "PersonAnnotationView.h"
 
 @protocol AnnotationCell <NSObject>
 
@@ -22,36 +18,44 @@
 @end
 
 @interface PersonAnnotationCell : UITableViewCell<AnnotationCell>
+{
+    IBOutlet PersonPin *_annotationPin;
+}
 @property (strong, nonatomic) IBOutlet UILabel *title;
 @property (strong, nonatomic) IBOutlet UILabel *subtitle;
-@property (strong, nonatomic) IBOutlet PersonPin *annotation;
 
 
 @end
 
 
 @class FUGEvent;
+@class ULMusicPlayButton;
 @interface MeetupAnnotationCell : UITableViewCell<AnnotationCell>
 {
-    NSMutableArray* avatarList;
+    FUGEvent                *_meetup;
+    NSMutableArray          *_avatarList;
+    IBOutlet MeetupPin      *_annotationPin;
 }
 @property (strong, nonatomic) IBOutlet UILabel *title;
 @property (strong, nonatomic) IBOutlet UILabel *subtitle;
 @property (strong, nonatomic) IBOutlet UILabel *date;
 @property (strong, nonatomic) IBOutlet UILabel *attending;
 @property (strong, nonatomic) IBOutlet UILabel *distance;
-@property (strong, nonatomic) IBOutlet MeetupPin *annotation;
 @property (strong, nonatomic) IBOutlet UILabel *featured;
 @property (strong, nonatomic) IBOutlet UIImageView *featuredImage;
+@property (strong, nonatomic) ULMusicPlayButton *musicButton;
 
--(void)initWithMeetup:(FUGEvent*)meetup continuous:(Boolean)continuous;
+- (void)initWithMeetup:(FUGEvent*)meetup continuous:(Boolean)continuous;
+- (void)previewTapped:(id)sender;
 
 @end
 
 
 @interface ThreadAnnotationCell : UITableViewCell<AnnotationCell>
+{
+    IBOutlet ThreadPin *_annotationPin;
+}
 @property (strong, nonatomic) IBOutlet UILabel *title;
 @property (strong, nonatomic) IBOutlet UILabel *subtitle;
-@property (strong, nonatomic) IBOutlet ThreadPin *annotation;
 
 @end

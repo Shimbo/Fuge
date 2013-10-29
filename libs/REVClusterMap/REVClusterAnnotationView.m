@@ -9,7 +9,6 @@
 //
 
 #import "REVClusterAnnotationView.h"
-#import "MainStyle.h"
 #import "REVClusterPin.h"
 #import "TimerView.h"
 
@@ -24,11 +23,11 @@
     self = [super initWithAnnotation:annotation reuseIdentifier:reuseIdentifier];
     if ( self )
     {
-        self.frame = CGRectMake(0, 0, 49, 49);
+        self.frame = CGRectMake(0, 0, 50, 60);
         _backgroundImageView = [[UIImageView alloc]initWithFrame:self.bounds];
         [self addSubview:_backgroundImageView];
         
-        _label = [[UILabel alloc]initWithFrame:self.bounds];
+        _label = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 50, 48)];
         _label.backgroundColor = [UIColor clearColor];
         _label.textColor = [UIColor whiteColor];
         _label.font = [UIFont fontWithName:@"Helvetica" size:18];
@@ -50,10 +49,10 @@
 -(void)updateTimerForColor:(PinColor)color{
     switch (color) {
         case PinBlue:
-            _timerView.timerColor = [MainStyle lightBlueColor];
+            _timerView.timerColor = [UIColor FUGlightBlueColor];
             break;
         case PinOrange:
-            _timerView.timerColor = [MainStyle yellowColor];
+            _timerView.timerColor = [UIColor FUGyellowColor];
             break;
         case PinGray:
             _timerView.timerColor = [UIColor clearColor];
@@ -67,13 +66,13 @@
 -(void)setColor:(PinColor)color{
     switch (color) {
         case PinBlue:
-            _backgroundImageView.image = [UIImage imageNamed:@"blue-comb.png"];
+            _backgroundImageView.image = [UIImage imageNamed:@"meetPinBlue.png"];
             break;
         case PinGray:
-            _backgroundImageView.image = [UIImage imageNamed:@"grey-comb.png"];
+            _backgroundImageView.image = [UIImage imageNamed:@"meetPinGray.png"];
             break;
         case PinOrange:
-            _backgroundImageView.image = [UIImage imageNamed:@"orange-comb.png"];
+            _backgroundImageView.image = [UIImage imageNamed:@"meetPinOrange.png"];
             break;
             
         default:

@@ -13,16 +13,16 @@
 @interface FUGEvent : ULEvent
 {
     PFObject *_meetupData;
-    NSString *_featureString;
 }
 
 @property (nonatomic, readonly) PFObject *meetupData;
-@property (nonatomic, readonly) NSString *featureString;
+
+// For custom event creation
+
 
 -(id) initWithParseEvent:(PFObject*)data;
 -(Boolean) save:(id)target selector:(SEL)selector;
 
--(Boolean) feature:(NSString*)feature;
 - (void) cancel:(id)target selector:(SEL)selector;
 
 -(void)populateWithVenue:(FSVenue*)venue;

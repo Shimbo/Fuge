@@ -27,6 +27,7 @@
     PersonAnnotation *_userLocation;
     
     NSMutableArray*      sortedMeetups;
+    NSMutableArray*      featuredMeetups;
     NSInteger            sortedMeetupsCount;
 
     //NSUInteger daySelector;
@@ -36,6 +37,10 @@
     UIPopoverController* popover;
     UIActionSheet*       actionSheet;
     
+    NSIndexPath*         clickedCellIndexPath;
+    
+    BOOL                    _loaded;
+    
     //NSMutableArray* dayButtonLabels;
     //NSMutableArray* selectionChoices;
 }
@@ -44,7 +49,6 @@
 @property (nonatomic,retain) IBOutlet UITableView *tableView;
 @property (nonatomic, retain) IBOutlet UIActivityIndicatorView *activityIndicator;
 
-- (void) reloadStatusChanged;
 - (IBAction)mapTouched:(id)sender;
 
 @end

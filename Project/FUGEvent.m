@@ -10,8 +10,6 @@
 
 @implementation FUGEvent
 
-@synthesize meetupData=_meetupData, featureString=_featureString;
-
 -(id) initWithParseEvent:(PFObject*)data;
 {
     self = [self init];
@@ -58,7 +56,9 @@
 
 - (Boolean) feature:(NSString*)feature
 {
-    _featureString = feature;
+    if ( ! [super feature:feature] )
+        return FALSE;
+    
     if ( feature && feature.length > 0 )
     {
         [_meetupData setObject:feature forKey:@"featured"];

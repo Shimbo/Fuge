@@ -9,7 +9,7 @@
 "LOADING_TITLE_NEWVERSION"      = "New version is out!";
 "LOADING_TEXT_NEWVERSION"       = "You're running an old version of the application. We recommend you updating the application.";
 "LOADING_TITLE_FIRSTPAGE"       = "Welcome!";
-"LOADING_TEXT_FIRSTPAGE"        = "Fuge is a social discovery service. Explore surroundings for people and activites. Or create your own and invite friends!";
+"LOADING_TEXT_FIRSTPAGE"        = "Fuge is your guide through the city concert life. Check events nearby, listen previews and book right from the app!";
 "LOADING_TITLE_NOINTERNET"      = "Ooups!";
 "LOADING_TEXT_NOINTERNET"       = "It seems like you don’t have internet connection at the moment. Try again when you will get some!";
 "LOADING_TITLE_NOPARSE"         = "Ah and oh!";
@@ -40,7 +40,7 @@
 
 "SETTINGS_LOGOUT_TEXT"          = "Logout from Facebook";
 
-"WELCOME_MESSAGE"               = "Greetings and welcome to Fuge. Why not to spend some time exploring the surroundings? Try to find interesting people or activities to join. And don't forget to invite your friends to accompany you. In case of any trouble please feel free to share with me. Any feedback would be much appreciated as well. Have a good day!";
+"WELCOME_MESSAGE"               = "Greetings and welcome to Fuge. Why not to spend some time exploring the city? You could find interesting activities to join and people to meet. In case of any trouble please feel free to share with me. Any feedback would be much appreciated as well. Have a good day!";
 
 "NEW_MEETUP_NOSUBJECT"          = "Please, enter the subject of the event in the text above!";
 "NEW_MEETUP_NOVENUE"            = "We were unable to retrieve your current location, please, select a venue for the event.";
@@ -58,3 +58,8 @@
 // Fuge only
 "FB_INVITE_MESSAGE_SIMPLE"      = "Join Fuge to discover new friends and local activities together!";
 "FB_INVITE_MESSAGE_MEETUP"      = "Come join me for %@! You could see who else is coming on Fuge!";
+
+// More bands you liked on facebook, more relevant concrerts you will find in featured section!
+// Play, rating
+// Grey, blue, orange
+// Slide left-right (grey now)

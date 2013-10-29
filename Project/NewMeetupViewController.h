@@ -20,6 +20,7 @@
     IBOutlet UIButton *durationBtn;
     IBOutlet UIButton *location;
     IBOutlet UISwitch *privacySwitch;
+    IBOutlet UILabel *privacyLabel;
     IBOutlet UIActivityIndicatorView *activityIndicator;
     UINavigationController *venueNavViewController;
     UIDatePicker *datePicker;

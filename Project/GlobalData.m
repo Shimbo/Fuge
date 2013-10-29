@@ -15,6 +15,8 @@
 #import "LocationManager.h"
 #import "FacebookLoader.h"
 #import "EventbriteLoader.h"
+#import "ULSongkickLoader.h"
+#import "ULDeezerWrapper.h"
 
 #import "ULEventManager.h"
 #import "FUGEvent.h"
@@ -315,6 +317,11 @@ NSInteger sortByName(id num1, id num2, void *context)
     
     // Meetups
     [self loadMeetupsInBackground:southWest toNorthEast:northEast];
+    
+#ifdef TARGET_FUGE
+    // Songkick concerts
+    [self loadSongkickEvents:southWest toNorthEast:northEast];
+#endif
 }
 
 
@@ -463,8 +470,9 @@ NSInteger sortByName(id num1, id num2, void *context)
             [self loadFbOthers:friends];
             
             // Notification
-            [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingFriendsComplete
-                                                               object:nil];
+            //[[NSNotificationCenter defaultCenter]postNotificationName:kLoadingFriendsComplete
+            //                                                   object:nil];
+            [self incrementCirclesLoadingStage];
             
             // Admin role creation, DEV CODE, don't uncomment!
 
@@ -621,7 +629,7 @@ static NSUInteger resultsTotal = 0;
         if ( error )
         {
             NSLog(@"Parse query for random people error: %@", error);
-            [self loadingFailed:LOADING_MAP status:LOAD_NOCONNECTION];
+            [self loadingFailed:LOADING_CIRCLES status:LOAD_NOCONNECTION];
         }
         else
         {
@@ -672,13 +680,6 @@ static NSUInteger resultsTotal = 0;
                             [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingEncountersComplete
                                                                            object:nil];
                         
-                        // Load direct connections
-#ifdef TARGET_FUGE
-                        [fbLoader loadFriends:self selectorSuccess:@selector(loadFbFriendsInBackground:) selectorFailure:@selector(loadFriendsInBackgroundFailed)];
-#elif defined TARGET_S2C
-                        [self loadFbFriendsInBackground:nil];
-#endif
-                        
                         // Third load
                         if ( resultsTotal < RANDOM_PERSON_MAX_COUNT )
                         {
@@ -709,17 +710,25 @@ static NSUInteger resultsTotal = 0;
                                         [circleRandom sort];
                                     
                                     // Show data
-                                    [self incrementCirclesLoadingStage];
+                                    //[self incrementCirclesLoadingStage];
+                                    
+                                    // Friends
+                                    // Load direct connections
+#ifdef TARGET_FUGE
+                                    [fbLoader loadFriends:self selectorSuccess:@selector(loadFbFriendsInBackground:) selectorFailure:@selector(loadFriendsInBackgroundFailed)];
+#elif defined TARGET_S2C
+                                    [self loadFbFriendsInBackground:nil];
+#endif
                                 }
                                 else
-                                    [self loadingFailed:LOADING_MAP status:LOAD_NOCONNECTION];
+                                    [self loadingFailed:LOADING_CIRCLES status:LOAD_NOCONNECTION];
                             }];
                         }
                         else
                             [self incrementCirclesLoadingStage];
                     }
                     else
-                        [self loadingFailed:LOADING_MAP status:LOAD_NOCONNECTION];
+                        [self loadingFailed:LOADING_CIRCLES status:LOAD_NOCONNECTION];
                 }];
             }
             else
@@ -1011,6 +1020,37 @@ static NSString* strGroupId;
     [self processNextGroup];
 }*/
 
+- (void)songkickEventsCallback:(NSArray*)events
+{
+    if ( events )
+    {
+        for ( NSDictionary* eventData in events )
+        {
+            ULEvent* event = [[ULEvent alloc] initWithSongkickEvent:eventData];
+            [self hightlightSongkickEvent:event];
+            [eventManager addEvent:event];
+        }
+        NSLog(@"Events count: loaded %d, total %d", events.count, eventManager.events.count);
+    }
+    
+    [self incrementMapLoadingStage];
+}
+
+- (void)loadSongkickEvents:(PFGeoPoint*)southWest toNorthEast:(PFGeoPoint*)northEast
+{
+    PFGeoPoint *geoPointUser = [globalVariables currentLocation];
+    
+    if ( southWest && northEast )
+    {
+        geoPointUser = [PFGeoPoint geoPointWithLatitude:(northEast.latitude+southWest.latitude)/2 longitude:(northEast.longitude+southWest.longitude)/2];
+    }
+    
+    CLLocationCoordinate2D locationUser = CLLocationCoordinate2DMake(geoPointUser.latitude,geoPointUser.longitude);
+    
+    ULSongkickLoader* loader = [[ULSongkickLoader alloc] init];
+    [loader loadData:locationUser forPeriod:MAX_DAYS_TILL_MEETUP_LOAD target:self selector:@selector(songkickEventsCallback:)];
+}
+
 
 #pragma mark -
 #pragma mark Meetups
@@ -1023,7 +1063,7 @@ static NSString* strGroupId;
     FUGEvent* meetup = (FUGEvent*)[eventManager eventById:[meetupData objectForKey:@"meetupId" ] ];
     if ( meetup )
     {
-        [meetup initWithParseEvent:meetupData];
+        meetup = [meetup initWithParseEvent:meetupData];
         return meetup;
     }
     
@@ -1079,7 +1119,7 @@ static NSString* strGroupId;
     
     // Meetups too far in the future
     NSDateComponents* deltaCompsMax = [[NSDateComponents alloc] init];
-    [deltaCompsMax setDay:MAX_DAYS_TILL_MEETUP];
+    [deltaCompsMax setDay:MAX_DAYS_TILL_MEETUP_LOAD];
     NSDate* dateEarly = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsMax toDate:[NSDate date] options:0];
     [meetupAnyQuery whereKey:@"meetupDate" lessThan:dateEarly];
     
@@ -1128,11 +1168,19 @@ static NSString* strGroupId;
         if ( strId )
             [subscriptions addObject:strId];
     }
-    if ( subscriptions.count > 0 )
+    if ( subscriptions.count > 0 && ! southWest )
     {
+        // Imported events  // TODO: don't call message send from created event each time, only for last!!!
+        for ( NSString* strId in subscriptions )
+        {
+            if ( [ULEvent eventImportedTypeById:strId] != IMPORTED_NOT )
+                [globalData loadImportedEvent:strId target:nil selector:nil];
+        }
+        
+        // Normal events
         meetupAnyQuery = [PFQuery queryWithClassName:@"Meetup"];
         meetupAnyQuery.limit = 100;
-        [meetupAnyQuery orderByAscending:@"meetupDate"];
+        [meetupAnyQuery orderByDescending:@"meetupDate"];
         //[meetupAnyQuery whereKey:@"meetupDateExp" greaterThan:dateLate];
         [meetupAnyQuery whereKey:@"meetupId" containedIn:subscriptions];
         
@@ -1170,7 +1218,40 @@ static NSString* strGroupId;
         [self incrementMapLoadingStage];
 }
 
+- (void) hightlightSongkickEvent:(ULEvent*)event
+{
+    if ( ! event )
+        return;
 
+    NSArray* likes = [pCurrentUser objectForKey:@"fbLikes"];
+    for ( NSDictionary* like in likes )
+    {
+        NSString* cat = [like objectForKey:@"cat"];
+        if ( ! [cat isEqualToString:@"Music"] )
+            continue;
+        
+        NSString* likeName = [like objectForKey:@"name"];
+        NSString* bandName = event.strOwnerName;
+        likeName = [likeName stringByReplacingOccurrencesOfString:@" " withString: @"-"];
+        likeName = [likeName stringByReplacingOccurrencesOfString:@"." withString: @"-"];
+        likeName = [likeName lowercaseString];
+        bandName = [bandName stringByReplacingOccurrencesOfString:@" " withString: @"-"];
+        bandName = [bandName stringByReplacingOccurrencesOfString:@"." withString: @"-"];
+        bandName = [bandName lowercaseString];
+        
+        if ( [likeName isEqualToString:bandName] )
+        {
+            [event feature:@"One of your favorite bands on Facebook!"];
+            break;
+        }
+        
+        if ( [likeName rangeOfString:bandName].location != NSNotFound )
+        {
+            [event feature:@"Could be one of your favorites on FB."];
+            break;
+        }
+    }
+}
 
 #pragma mark -
 #pragma mark Invites
@@ -1183,7 +1264,9 @@ static NSString* strGroupId;
     
     // Id, fromStr, fromId
     [invite setObject:meetup.strId forKey:@"meetupId"];
-    [invite setObject:meetup.meetupData forKey:@"meetupData"];
+    if ( [meetup respondsToSelector:@selector(meetupData)] )
+        if ( meetup.meetupData )
+            [invite setObject:meetup.meetupData forKey:@"meetupData"];
     [invite setObject:[meetup.dateTime dateByAddingTimeInterval:meetup.durationSeconds] forKey:@"expirationDate"];
     [invite setObject:[NSNumber numberWithInt:meetup.meetupType] forKey:@"type"];
     [invite setObject:meetup.strSubject forKey:@"meetupSubject"];
@@ -1245,7 +1328,9 @@ static NSString* strGroupId;
     [attendee setObject:pCurrentUser forKey:@"userData"];
     [attendee setObject:meetup.strId forKey:@"meetupId"];
     [attendee setObject:meetup.strSubject forKey:@"meetupSubject"];
-    [attendee setObject:meetup.meetupData forKey:@"meetupData"];
+    if ( [meetup respondsToSelector:@selector(meetupData)] )
+        if ( meetup.meetupData )
+            [attendee setObject:meetup.meetupData forKey:@"meetupData"];
     [attendee saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if ( error )
         {
@@ -1554,7 +1639,7 @@ static NSString* strGroupId;
     if ( nCirclesLoadingStage == CIRCLES_LOADED )
     {
         nLoadStatusCircles = LOAD_OK;
-        [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingEncountersComplete
+        [[NSNotificationCenter defaultCenter]postNotificationName:kLoadingCirclesComplete
                                                            object:nil];
 #ifdef TARGET_S2C
         if ( firstDataLoad )
@@ -1583,5 +1668,33 @@ static NSString* strGroupId;
     }
 }
 
+static id targetHolder = nil;
+static SEL selectorHolder = nil;
+
+- (void)songkickEventLoaded:(NSDictionary*)event
+{
+    ULEvent* newMeetup = [[ULEvent alloc] initWithSongkickEvent:event];
+    [self hightlightSongkickEvent:newMeetup];
+    [eventManager addEvent:newMeetup];
+    [targetHolder performSelector:selectorHolder withObject:newMeetup];
+    
+    // Notify map and others about pin change
+    NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:newMeetup, @"meetup", nil];
+    [[NSNotificationCenter defaultCenter]postNotificationName:kNewMeetupCreated
+                                                       object:nil userInfo:userInfo];
+}
+
+- (void)loadImportedEvent:(NSString*)eventId target:(id)target selector:(SEL)callback;
+{
+    targetHolder = target;
+    selectorHolder = callback;
+    
+    NSUInteger importedType = [ULEvent eventImportedTypeById:eventId];
+    if ( importedType == IMPORTED_SONGKICK )
+    {
+        ULSongkickLoader* loader = [[ULSongkickLoader alloc] init];
+        [loader loadEvent:[ULEvent eventPlatformIdFromId:eventId] target:self selector:@selector(songkickEventLoaded:)];
+    }
+}
 
 @end

@@ -30,6 +30,11 @@
 #import "TableAnnotationsViewController.h"
 #import "AnnotationCell.h"
 #import "ULEventManager.h"
+#ifdef TARGET_FUGE
+#import "ULDeezerWrapper.h"
+#import "ULMusicPlayerController.h"
+#endif
+#import "AppDelegate.h"
 
 @implementation MapViewController
 
@@ -42,25 +47,25 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         [[NSNotificationCenter defaultCenter]addObserver:self
-                                                selector:@selector(reloadStatusChanged)
+                                                selector:@selector(reloadEvents)
                                                 name:kLoadingMapComplete
                                                 object:nil];
+        //[[NSNotificationCenter defaultCenter]addObserver:self
+        //                                        selector:@selector(reloadStatusChanged)
+        //                                        name:kLoadingEncountersComplete
+        //                                        object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self
-                                                selector:@selector(reloadStatusChanged)
-                                                name:kLoadingEncountersComplete
+                                                selector:@selector(reloadPeople)
+                                                name:kLoadingCirclesComplete
                                                 object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self
-                                                selector:@selector(reloadStatusChanged)
-                                                name:kLoadingFriendsComplete
-                                                object:nil];
-        [[NSNotificationCenter defaultCenter]addObserver:self
-                                                selector:@selector(reloadStatusChanged)
+                                                selector:@selector(reloadEvents)
                                                 name:kLoadingMapFailed
                                                 object:nil];
-        [[NSNotificationCenter defaultCenter]addObserver:self
-                                                selector:@selector(reloadStatusChanged)
-                                                name:kLoadingCirclesFailed
-                                                object:nil];
+        //[[NSNotificationCenter defaultCenter]addObserver:self
+        //                                        selector:@selector(reloadStatusChanged)
+        //                                        name:kLoadingCirclesFailed
+        //                                        object:nil];
         /*[[NSNotificationCenter defaultCenter]addObserver:self
                                                 selector:@selector(reloadStatusChanged)
                                                 name:kAppRestored
@@ -71,13 +76,28 @@
                                                 name:kLocationEnabled
                                                 object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self
-                                                selector:@selector(reloadStatusChanged)
+                                                selector:@selector(reloadEvents)
                                                 name:kNewMeetupCreated
                                                 object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self
-                                                selector:@selector(reloadStatusChanged)
+                                                selector:@selector(reloadEvents)
                                                 name:kNewMeetupChanged
                                                 object:nil];
+        
+        // Misc
+        if ( IOS_NEWER_OR_EQUAL_TO_7 )
+        {
+            mapView.rotateEnabled = FALSE;
+            self.edgesForExtendedLayout = UIRectEdgeNone;
+        }
+        mapView.userInteractionEnabled = FALSE;
+        
+        _locationManager = [[CLLocationManager alloc]init];
+        _locationManager.delegate = self;
+        _locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
+        [_locationManager startUpdatingLocation];
+        
+        _loaded = FALSE;        
     }
     return self;
 }
@@ -130,6 +150,8 @@
     [globalData reloadFriendsInBackground];
 }
 
+static BOOL dontFocus = FALSE;
+
 -(void)refreshView:(UIRefreshControl *)refreshControl {
     
     tableView.userInteractionEnabled = FALSE;
@@ -146,16 +168,31 @@
     PFGeoPoint* southWest = [PFGeoPoint geoPointWithLatitude:swCoord.latitude longitude:swCoord.longitude];
     
     [globalData reloadMapInfoInBackground:southWest toNorthEast:northEast];
+    
+    dontFocus = TRUE;
 }
 
-- (void) reloadStatusChanged
+// Shorter version of reloadEvents
+- (void) reloadPeople
 {
+    // Refresh map
+    [self reloadMapAnnotations];
+    
+    // Refresh table
+    [tableView reloadData];
+}
+
+- (void) reloadEvents
+{
+    if ( ! _loaded )
+        return;
+    
     // Stop animating refresh control
     if ( refreshControl )
         [refreshControl endRefreshing];
     
     // UI
-    if ( [globalData getLoadingStatus:LOADING_CIRCLES] != LOAD_STARTED &&
+    if ( /*[globalData getLoadingStatus:LOADING_CIRCLES] != LOAD_STARTED &&*/
             [globalData getLoadingStatus:LOADING_MAP] != LOAD_STARTED )
     {
         tableView.userInteractionEnabled = TRUE;
@@ -179,7 +216,10 @@
     [self resizeScroll];
     
     // Focus map
-    [self focusMapOnUserAndMeetups];
+    if ( ! dontFocus )
+        [self focusMapOnUserAndMeetups];
+    else
+        dontFocus = FALSE;
 }
 
 #pragma mark -
@@ -194,7 +234,7 @@ static CGRect oldMapFrame;
     hiddenButton.hidden = TRUE;
     [UIView animateWithDuration:0.2 animations:^{
         oldMapFrame = mapView.frame;
-        mapView.frame = self.view.frame;
+        mapView.height = self.view.height;
     } completion:^(BOOL finished) {
         mapView.userInteractionEnabled = TRUE;
         scrollView.scrollEnabled = FALSE;
@@ -205,7 +245,10 @@ static CGRect oldMapFrame;
 
 -(void)closeMap {
     
-    self.navigationItem.rightBarButtonItems = @[ newMeetupButton ];
+    if ( newMeetupButton )
+        self.navigationItem.rightBarButtonItems = @[ newMeetupButton ];
+    else
+        self.navigationItem.rightBarButtonItems = nil;
     tableView.hidden = FALSE;
     [UIView animateWithDuration:0.2 animations:^{
         mapView.frame = oldMapFrame;
@@ -222,9 +265,7 @@ static CGRect oldMapFrame;
     if ( hiddenButton.hidden )
         return;
     
-    PFGeoPoint *geoPointUser = [pCurrentUser objectForKey:@"location"];
-    if ( ! geoPointUser )
-        geoPointUser = [locManager getDefaultPosition];
+    PFGeoPoint *geoPointUser = [globalVariables currentLocation];
     
     CLLocation* locationUser = [[CLLocation alloc] initWithLatitude:geoPointUser.latitude longitude:geoPointUser.longitude];
     _userLocation.coordinate = locationUser.coordinate;
@@ -257,9 +298,7 @@ static CGRect oldMapFrame;
     if ( hiddenButton.hidden )
         return;
     
-    PFGeoPoint *geoPointUser = [pCurrentUser objectForKey:@"location"];
-    if ( ! geoPointUser )
-        return;
+    PFGeoPoint *geoPointUser = [globalVariables currentLocation];
     
     MKCoordinateRegion region = mapView.region;
     Boolean bAttendingMeetup = FALSE;
@@ -270,7 +309,15 @@ static CGRect oldMapFrame;
     // Calculating zoom
     if ( ! sortedMeetups )
         [self getMeetupsByDate];
-    for ( NSMutableArray* meetupsByDay in sortedMeetups )
+    
+    NSUInteger daysToShowPins = sortedMeetups.count;
+#ifdef TARGET_FUGE
+    if ( daysToShowPins > 1 )
+        daysToShowPins = 1;
+#endif
+    for ( NSUInteger dayCounter = 0; dayCounter < daysToShowPins; dayCounter++ )
+    {
+        NSMutableArray* meetupsByDay = sortedMeetups[dayCounter];
         for (FUGEvent *meetup in meetupsByDay)
         {
             if (meetup.meetupType == TYPE_MEETUP) {
@@ -287,6 +334,7 @@ static CGRect oldMapFrame;
                 }
             }
         }
+    }
     
     // Focus on user
     if ( ! bAttendingMeetup )
@@ -304,8 +352,7 @@ static CGRect oldMapFrame;
     locationCenter.longitude = (upper.longitude + lower.longitude) / 2;
     
     region = MKCoordinateRegionMake(locationCenter, locationSpan);
-    region.span.latitudeDelta *= 1.1f;
-    region.span.longitudeDelta *= 1.1f;
+    region.span.latitudeDelta = region.span.longitudeDelta = fmax(region.span.latitudeDelta, region.span.longitudeDelta) * 1.1;
     if ( region.span.longitudeDelta < 0.05f || region.span.latitudeDelta < 0.05f )
     {
         region.span.longitudeDelta = 0.05f;
@@ -405,22 +452,14 @@ static CGRect oldMapFrame;
 {
     [super viewDidLoad];
     
-    // Misc
-    if ( IOS_NEWER_OR_EQUAL_TO_7 )
-        mapView.rotateEnabled = FALSE;
-    mapView.userInteractionEnabled = FALSE;
-    
-    _locationManager = [[CLLocationManager alloc]init];
-    _locationManager.delegate = self;
-    _locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
-    [_locationManager startUpdatingLocation];
-    
     if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized)
         [self addCurrentPerson];
     
     // Navigation bar: new meetup
+#ifdef TARGET_S2C
     newMeetupButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"MAP_BUTTON_NEWMEETUP",nil) style:UIBarButtonItemStyleBordered target:self action:@selector(newMeetupClicked)];
     self.navigationItem.rightBarButtonItems = @[ newMeetupButton ];
+#endif
     
     // Close button (for the map)
     closeButton = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStyleBordered target:self action:@selector(closeMap)];
@@ -444,12 +483,19 @@ static CGRect oldMapFrame;
     [self focusMapOnUser];
     
     // Data updating
-    [self reloadStatusChanged];
+    [self performSelector:@selector(reloadEvents) withObject:nil afterDelay:0.1];
+    _loaded = TRUE;
+    //[self reloadStatusChanged];
     
     // Refresh control
     refreshControl = [[UIRefreshControl alloc] init];
     [refreshControl addTarget:self action:@selector(refreshView:) forControlEvents:UIControlEventValueChanged];
     [scrollView addSubview:refreshControl];
+    
+    // Music player
+#ifdef TARGET_FUGE
+    [scrollView setContentInset:UIEdgeInsetsMake(0, 0, AppDelegate.musicPanel.view.height, 0)];
+#endif
     
     [TestFlight passCheckpoint:@"Map"];
 }
@@ -457,9 +503,13 @@ static CGRect oldMapFrame;
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    //[self recalcDateSelectionTexts];
-    [self reloadMapAnnotations];
-    [tableView reloadData];
+    
+    if ( clickedCellIndexPath )
+    {
+        NSArray* indexArray = [NSArray arrayWithObjects:clickedCellIndexPath, nil];
+        [tableView reloadRowsAtIndexPaths:indexArray withRowAnimation:UITableViewRowAnimationFade];
+        clickedCellIndexPath = nil;
+    }
 }
 
 - (void) getMeetupsByDate
@@ -467,15 +517,25 @@ static CGRect oldMapFrame;
     if ( [globalData getLoadingStatus:LOADING_MAP] == LOAD_STARTED )
         return;
     
-    sortedMeetupsCount = 0;
-    sortedMeetups = [NSMutableArray arrayWithCapacity:MAX_DAYS_TILL_MEETUP];
+    // Featured events section
+    featuredMeetups = [NSMutableArray arrayWithCapacity:10];
+    for (FUGEvent *meetup in eventManager.events)
+    {
+        if (meetup.featureString)
+            if ( ! meetup.hasPassed  )
+                [featuredMeetups addObject:meetup];
+    }
+    [featuredMeetups sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        return [((FUGEvent*)obj1).dateTime compare:((FUGEvent*)obj2).dateTime ];
+    }];
     
     // Day by day selection
-    for ( NSUInteger n = 0; n < MAX_DAYS_TILL_MEETUP; n++ )
+    sortedMeetupsCount = 0;
+    sortedMeetups = [NSMutableArray arrayWithCapacity:MAX_DAYS_TILL_MEETUP_SHOW];
+    for ( NSUInteger n = 0; n < MAX_DAYS_TILL_MEETUP_SHOW; n++ )
     {
         // Array
         NSMutableArray* arrayOfMeetups = [NSMutableArray arrayWithCapacity:10];
-        [sortedMeetups addObject:arrayOfMeetups];
         
         // Timeframe
         NSDate *windowStart, *windowEnd;
@@ -518,6 +578,8 @@ static CGRect oldMapFrame;
         }];
         
         sortedMeetupsCount += arrayOfMeetups.count;
+        
+        [sortedMeetups addObject:arrayOfMeetups];
     }
 }
 
@@ -578,7 +640,12 @@ static CGRect oldMapFrame;
     if ( ! sortedMeetups )
         [self getMeetupsByDate];
     
-    for ( NSUInteger dayCounter = 0; dayCounter < sortedMeetups.count; dayCounter++ )
+    NSUInteger daysToShowPins = sortedMeetups.count;
+#ifdef TARGET_FUGE
+    if ( daysToShowPins > 1 )
+        daysToShowPins = 1;
+#endif
+    for ( NSUInteger dayCounter = 0; dayCounter < daysToShowPins; dayCounter++ )
     {
         NSMutableArray* meetupsByDay = sortedMeetups[dayCounter];
         for ( NSUInteger meetupCounter = 0; meetupCounter < meetupsByDay.count; meetupCounter++ )
@@ -621,12 +688,13 @@ static CGRect oldMapFrame;
         if ( ! person.location || ! person.discoverable )
             continue;
         
-        // Date check; we should add active section for the people list as well
-        if ( person.isOutdated )
-            continue;
-        
-        if ( ! person.smallAvatarUrl )
-            continue;
+        if ( person.idCircle != CIRCLE_FB )
+        {
+            if ( person.isOutdated )
+                continue;
+            if ( ! person.smallAvatarUrl )
+                continue;
+        }
         
         PersonAnnotation *ann = [[PersonAnnotation alloc] initWithPerson:person];
         [_personsAnnotations addObject:ann];
@@ -663,7 +731,7 @@ static CGRect oldMapFrame;
     NSMutableArray *array = [_personsAnnotations mutableCopy];
     [array addObjectsFromArray:_meetupAnnotations];
     [array addObjectsFromArray:_threadAnnotations];
-
+    
     [mapView addAnnotations:array];
 
     if ( nLimit == 0 ){
@@ -755,6 +823,7 @@ static CGRect oldMapFrame;
 }
 
 - (void)viewDidUnload {
+    [_locationManager stopUpdatingLocation];
     [self setMapView:nil];
     tableView = nil;
     [self setTableView:nil];
@@ -852,9 +921,9 @@ static CGRect oldMapFrame;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSMutableArray* meetupsByDay = sortedMeetups[indexPath.section];
+    NSMutableArray* meetupsByDay = indexPath.section == 0 ? featuredMeetups : sortedMeetups[indexPath.section-1];
     FUGEvent* meetup = meetupsByDay[indexPath.row];
-    Boolean continuous = [self isMeetupContinuous:indexPath.section number:indexPath.row];
+    Boolean continuous = indexPath.section > 0 && [self isMeetupContinuous:indexPath.section-1 number:indexPath.row];
     if ( meetup.featureString && ! continuous )
         return 92;
     else
@@ -863,16 +932,20 @@ static CGRect oldMapFrame;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)aTableView {
     
-    if ( [globalData getLoadingStatus:LOADING_MAP] == LOAD_STARTED || sortedMeetupsCount == 0 )
-        return 1;
-    return MAX_DAYS_TILL_MEETUP;
+    //if ( [globalData getLoadingStatus:LOADING_MAP] == LOAD_STARTED )
+    //    return 1;
+    return MAX_DAYS_TILL_MEETUP_SHOW+1;
 }
 
 - (NSInteger)tableView:(UITableView *)aTableView numberOfRowsInSection:(NSInteger)section {
 	
-    if ( [globalData getLoadingStatus:LOADING_MAP] == LOAD_STARTED || sortedMeetupsCount == 0 )
+    //if ( [globalData getLoadingStatus:LOADING_MAP] == LOAD_STARTED )
+    //    return 0;
+    if ( section != 0 && sortedMeetups.count <= section-1 )
         return 0;
-    NSMutableArray* meetupsByDay = sortedMeetups[section];
+    NSMutableArray* meetupsByDay = section == 0 ? featuredMeetups : sortedMeetups[section-1];
+    if ( ! meetupsByDay )
+        return 0;
     return meetupsByDay.count;
 }
 
@@ -894,7 +967,17 @@ static CGRect oldMapFrame;
             return nil;
     }
     
-    NSMutableArray* meetupsByDay = sortedMeetups[section];
+    if ( section == 0 )
+    {
+        if ( featuredMeetups.count > 0 )
+            return @"Featured events";
+        else
+            return nil;
+    }
+    
+    if ( sortedMeetups.count <= section-1 )
+        return nil;
+    NSMutableArray* meetupsByDay = sortedMeetups[section-1];
     if ( meetupsByDay.count == 0 )
         return nil;
     
@@ -908,11 +991,11 @@ static CGRect oldMapFrame;
     //dayButtonLabels = [NSMutableArray arrayWithCapacity:9];
     //selectionChoices = [NSMutableArray arrayWithCapacity:9];
     
-    NSDate* day = [NSDate dateWithTimeIntervalSinceNow:86400*section];
+    NSDate* day = [NSDate dateWithTimeIntervalSinceNow:86400*(section-1)];
     NSString *weekDay = [theDateFormatter stringFromDate:day];
-    if ( section == 0 )
-        weekDay = @"Today";
     if ( section == 1 )
+        weekDay = @"Today";
+    if ( section == 2 )
         weekDay = @"Tomorrow";
     
     return [NSString stringWithFormat:@"%@, %@", weekDay, [theDateFormatter2 stringFromDate:day]];
@@ -936,13 +1019,44 @@ static CGRect oldMapFrame;
 - (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath  {
     
 	MeetupAnnotationCell *meetupCell = (MeetupAnnotationCell *)[table dequeueReusableCellWithIdentifier:@"MeetupCell"];
-	
-    NSMutableArray* meetupsByDay = sortedMeetups[indexPath.section];
+    
+    if ( meetupCell == nil )
+    {
+        meetupCell = [[MeetupAnnotationCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"MeetupCell"];
+    }
+    
+    // Meetup info
+    NSMutableArray* meetupsByDay = indexPath.section == 0 ? featuredMeetups : sortedMeetups[indexPath.section-1];
     FUGEvent* currentMeetup = meetupsByDay[indexPath.row];
-    Boolean continuous = [self isMeetupContinuous:indexPath.section number:indexPath.row];
+    Boolean continuous = indexPath.section > 0 && [self isMeetupContinuous:indexPath.section-1 number:indexPath.row];
     [meetupCell initWithMeetup:currentMeetup continuous:continuous];
     
+    if ( indexPath.section == 0 )
+        meetupCell.backgroundColor = [UIColor whiteColor];
+    
+    // Music button
+#ifdef TARGET_FUGE
+    if ( currentMeetup.importedType == IMPORTED_SONGKICK )
+    {
+        if ( ! meetupCell.musicButton )
+        {
+            ULMusicPlayButton* button = [ULMusicPlayButton buttonWithArtist:currentMeetup.strOwnerName];
+            meetupCell.musicButton = button;
+            button.origin = CGPointMake(10, 5);
+            [meetupCell addSubview:button];
+            [meetupCell.musicButton addTarget:meetupCell action:@selector(previewTapped:) forControlEvents:UIControlEventTouchUpInside];
+        }
+        else
+            [meetupCell.musicButton updateArtistInfo:currentMeetup.strOwnerName];
+    }
+#endif
+    
 	return meetupCell;
+}
+
+- (void)tableView:willDisplayCell
+{
+    
 }
 
 /*- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -954,12 +1068,14 @@ static CGRect oldMapFrame;
     
     MeetupViewController *meetupController = [[MeetupViewController alloc] initWithNibName:@"MeetupView" bundle:nil];
     
-    NSMutableArray* meetupsByDay = sortedMeetups[indexPath.section];
+    NSMutableArray* meetupsByDay = indexPath.section == 0 ? featuredMeetups : sortedMeetups[indexPath.section-1];
     [meetupController setMeetup:meetupsByDay[indexPath.row]];
     
     [self.navigationController pushViewController:meetupController animated:YES];
     
 	[table deselectRowAtIndexPath:indexPath animated:YES];
+    
+    clickedCellIndexPath = indexPath;
 }
 
 

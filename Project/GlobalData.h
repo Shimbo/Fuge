@@ -24,7 +24,8 @@ static NSString *const kInboxUnreadCountDidUpdate = @"kInboxUnreadCountDidChange
 static NSString *const kLoadingMainComplete = @"kLoadingMainComplete";
 static NSString *const kLoadingMapComplete = @"kLoadingMapComplete";
 static NSString *const kLoadingEncountersComplete = @"kLoadingEncountersComplete";
-static NSString *const kLoadingFriendsComplete = @"kLoadingFriendsComplete";
+static NSString *const kLoadingCirclesComplete = @"kLoadingCirclesComplete";
+//static NSString *const kLoadingFriendsComplete = @"kLoadingFriendsComplete";
 static NSString *const kLoadingInboxComplete = @"kLoadingInboxComplete";
 
 static NSString *const kLoadingMainFailed = @"kLoadingMainFailed";
@@ -37,6 +38,7 @@ static NSString *const kNewMeetupCreated = @"kNewMeetupCreated";
 static NSString *const kNewMeetupChanged = @"kNewMeetupChanged";
 static NSString *const kInboxUpdated = @"kInboxUpdated";
 static NSString *const kLocationEnabled = @"kLocationEnabled";
+static NSString *const kOpportunitiesHidden = @"kOpportunitiesHidden";
 
 static NSString *const kPushReceivedNewFriend = @"kPushReceivedNewFriend";
 static NSString *const kPushReceivedNewMessage = @"kPushReceivedNewMessage";
@@ -85,7 +87,13 @@ typedef enum EInviteStatus
 }InviteStatus;
 
 #define INBOX_LOADED    3   // Number of stages in loading
+
+#ifdef TARGET_S2C
 #define MAP_LOADED      2
+#elif defined TARGET_FUGE
+#define MAP_LOADED      3
+#endif
+
 #define CIRCLES_LOADED  1
 
 @interface GlobalData : NSObject
@@ -117,6 +125,8 @@ typedef enum EInviteStatus
     MeetupLoader*       MTloader;
     
     Boolean             firstDataLoad;
+    
+    NSDictionary*       readEventsDictionaryCachedPointer;
 }
 
 + (id)sharedInstance;
@@ -136,6 +146,7 @@ typedef enum EInviteStatus
 // Global data, loading in foreground
 - (void)loadData;
 - (NSUInteger)getLoadingStatus:(NSUInteger)nStage;
+- (void)loadImportedEvent:(NSString*)eventId target:(id)target selector:(SEL)callback;
 
 // Global data callers to load in background
 - (void)reloadFriendsInBackground;//:(Boolean)loadRandom;
@@ -185,6 +196,13 @@ typedef enum EInviteStatus
 - (NSUInteger) unreadConversationCount:(FUGEvent*)event;
 - (PFObject*)getInviteForMeetup:(NSString*)strId;
 - (void) updateInvite:(NSString*)strId attending:(NSUInteger)status;
+
+- (void) setEventRead:(NSString*)eventId withExpirationDate:(NSDate*)expirationDate;
+- (BOOL) isEventRead:(NSString*)eventId;
+
+- (void) setPersonOpportunityHidden:(NSString*)personId tillDate:(NSDate*)date;
+- (NSDate*) getPersonOpportunityHideDate:(NSString*)personId;
+
 @end
 
 @interface GlobalData (Messages)

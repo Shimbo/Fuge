@@ -6,30 +6,44 @@
 
 //@class PersonView;
 
-#define currentPerson [[Person alloc] init:pCurrentUser circle:CIRCLE_NONE]
+#define currentPerson [Person currentInstance]
+
+@interface FUGOpportunity : NSObject
+@property (nonatomic, retain) NSString* opId;
+@property (nonatomic, retain) NSString* text;
+@property (nonatomic, retain) NSDate*   dateCreated;
+@property (nonatomic, retain) NSDate*   dateUpdated;
+@property (nonatomic) BOOL read;
+-(NSDictionary*)serialized;
+-(BOOL)isOutdated;
+@end
 
 @interface Person : ULGeoObject {
     
-    NSString *strFirstName;
-    NSString *strLastName;
-    NSString *strAge;
-    NSString *strGender;
-    NSNumber *role;
-    NSString* strEmployer;
-    NSString* strPosition;
+    NSString    *_strFirstName;
+    NSString    *_strLastName;
+    NSString    *_strAge;
+    NSString    *_strGender;
+    NSNumber    *_role;
+    NSString    *_strEmployer;
+    NSString    *_strPosition;
     
-    NSArray* friendsFb;
-    NSArray* friends2O;
-    NSArray* likes;
+    NSArray     *_friendsFb;
+    NSArray     *_friends2O;
+    NSArray     *_likes;
     
-    NSUInteger  numUnreadMessages;
-    Boolean     discoverable;
+    NSUInteger  _numUnreadMessages;
+    Boolean     _discoverable;
     
-    NSUInteger idCircle;
-    Boolean isCurrentUser;
+    NSUInteger  _idCircle;
+    Boolean     _isCurrentUser;
     
     // Read-only of course
-    PFUser* personData;
+    PFUser*     _personData;
+    
+    NSMutableArray  *_visibleOpportunities;
+    NSMutableArray  *_allOpportunities;
+    NSUInteger      _visibleOpportunitiesHeight;
 }
 
 @property (nonatomic, retain) NSString *strFirstName;
@@ -50,6 +64,12 @@
 @property (nonatomic, retain) NSArray *friendsFb;
 @property (nonatomic, retain) NSArray *friends2O;
 @property (nonatomic, retain) NSArray *likes;
+
+@property (nonatomic, retain) NSMutableArray *visibleOpportunities;
+@property (nonatomic, retain) NSMutableArray *allOpportunities;
+@property (nonatomic, readonly) NSUInteger  visibleOpportunitiesHeight;
+
++ (Person*)currentInstance;
 
 // User could be nil (!) for fb friends who are not in the app yet for example
 - (id)init:(PFUser*)user circle:(NSUInteger)nCircle;
@@ -100,5 +120,9 @@
 
 // Search
 - (NSUInteger) searchRating:(NSString*)searchString;
+
+- (FUGOpportunity*) addOpportunity:(NSString*)text;
+- (void) saveOpportunity:(FUGOpportunity*)op;
+- (void) deleteOpportunity:(FUGOpportunity*)op;
 
 @end

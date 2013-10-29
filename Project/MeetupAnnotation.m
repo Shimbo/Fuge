@@ -37,11 +37,16 @@
         // Don't trim name for imported events as organizers are not people
         NSString* strName = ( meetup.importedType != IMPORTED_NOT ) ? meetup.strOwnerName : [globalVariables trimName:meetup.strOwnerName];
         
-        if ( self.attendedPersons.count )
-            self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Attending: %d", strName, self.attendedPersons.count ];
+        if ( meetup.importedType == IMPORTED_SONGKICK )
+            self.subtitle = [[NSString alloc] initWithFormat:@"At: %@", meetup.venueString];
         else
-            self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Joined: %d", strName, nAttendeesCount ];
-        //self.subtitle = [[NSString alloc] initWithFormat:@"Cass Business School, July 15, 10:30 PM", strName, nAttendeesCount ];
+        {
+            if ( self.attendedPersons.count )
+                self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Attending: %d", strName, self.attendedPersons.count ];
+            else
+                self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Joined: %d", strName, nAttendeesCount ];
+            //self.subtitle = [[NSString alloc] initWithFormat:@"Cass Business School, July 15, 10:30 PM", strName, nAttendeesCount ];
+        }
     }
     else
         self.subtitle = [[NSString alloc] initWithFormat:@"By: %@ Comments: %d", [globalVariables trimName:meetup.strOwnerName], meetup.commentsCount ];
@@ -64,13 +69,16 @@
             orange = [globalData isSubscribedToThread:self.meetup.strId];
         
         // Exported
-        if ( self.meetup.importedEvent )
-            orange = TRUE;
+        //if ( self.meetup.importedEvent )
+        //    orange = TRUE;
         
         // all read threads are passed as well
         if ( ! orange )
-            if ( [currentPerson getConversationPresence:self.meetup.strId meetup:TRUE] )
+        {
+            if ( [globalData isEventRead:self.meetup.strId] ||
+                    [currentPerson getConversationPresence:self.meetup.strId meetup:TRUE] )
                 read = true;
+        }
     }
     
     if (passed || read || canceled)

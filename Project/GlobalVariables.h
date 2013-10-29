@@ -61,7 +61,12 @@
 #define DISTANCE_FOR_GROUPING_PINS  [globalVariables globalParam:@"DistanceForGroupingPins" default:500000]
 
 // Loading limitations
-#define MAX_DAYS_TILL_MEETUP        [globalVariables globalParam:@"MaxDaysTillMeetup" default:14]
+#define MAX_DAYS_TILL_MEETUP_LOAD   [globalVariables globalParam:@"MaxDaysTillMeetup" default:14]
+#ifdef TARGET_FUGE
+#define MAX_DAYS_TILL_MEETUP_SHOW   365
+#elif defined TARGET_S2C
+#define MAX_DAYS_TILL_MEETUP_SHOW   365
+#endif
 #define MAX_SECONDS_FROM_PERSON_LOGIN [globalVariables globalParam:@"MaxSecondsFromPersonLogin" default:86400*100]
 
 #define WELCOME_MESSAGE             NSLocalizedString(@"WELCOME_MESSAGE",nil)
@@ -72,14 +77,22 @@
 #define MEETUP_TEMPLATE_IMAGE       (NSString*)[globalVariables getGlobalParam:@"MeetupTemplateImage"]
 #define MEETUP_TEMPLATE_URL         (NSString*)[globalVariables getGlobalParam:@"MeetupTemplateURL"]
 
+// Keys
+#define SONGKICK_API_KEY            (NSString*)[globalVariables getGlobalParam:@"APIKeySongkick"]
+                        //@"D7XQBrzFd8K6bv9Z" // oCagN3pRCIRnl4EF
+#define DEEZER_API_ID               (NSString*)[globalVariables getGlobalParam:@"APIKeyDeezer"]
+                        //@"125071"
+
 // Zoom parameters
 #define MAX_ZOOM_LEVEL              19
 
 // App store path
 #ifdef TARGET_FUGE
 #define APP_STORE_PATH              @"http://itunes.apple.com/app/id662139655"
+#define APP_TESTFLIGHT_TOKEN        @"034ec970-dbca-482a-a32b-e0b1450521e6"
 #elif defined TARGET_S2C
 #define APP_STORE_PATH              @"http://itunes.apple.com/app/id685496110"
+#define APP_TESTFLIGHT_TOKEN        @"52abdd74-c360-4376-9bc6-456c0dacad98"
 #endif
 
 // Feedback bot ID
@@ -124,8 +137,10 @@
 - (Boolean)shouldSendPushToFriends;
 - (void)pushToFriendsSent;
 
-- (Boolean)shouldAlwaysAddToCalendar;
+- (BOOL)shouldAlwaysAddToCalendar;
 - (void)setToAlwaysAddToCalendar;
+- (BOOL)isTutorialShown;
+- (void)tutorialWasShown;
 
 - (NSNumber*)currentVersion;
 - (PFGeoPoint*) currentLocation;

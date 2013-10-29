@@ -20,12 +20,13 @@
 #import "AsyncImageView.h"
 #import "InAppPurchaseManager.h"
 #import "LeftMenuController.h"
+#import "NewOpportunityViewController.h"
+#import "CreateOpportunityCell.h"
 
 #import "TestFlightSDK/TestFlight.h"
 
 @implementation RootViewController
 
-#define ROW_HEIGHT  60
 #define MAX_INDUSTRIES_TO_FILTER    20
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -33,16 +34,20 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         [[NSNotificationCenter defaultCenter]addObserver:self
-                                                selector:@selector(reloadFinished)
-                                                name:kLoadingFriendsComplete
+                                                selector:@selector(reloadAllFinished)
+                                                name:kLoadingCirclesComplete
                                                 object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self
-                                                selector:@selector(reloadFinished)
+                                                selector:@selector(reloadEncountersFinished)
                                                 name:kLoadingEncountersComplete
                                                 object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self
                                                 selector:@selector(loadingFailed)
                                                 name:kLoadingCirclesFailed
+                                                object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(opsHidden:)
+                                                name:kOpportunitiesHidden
                                                 object:nil];
     }
     return self;
@@ -99,7 +104,9 @@
     if ( sortingMode == SORTING_ENGAGEMENT )
     {
         [sortedUsers sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-            if ( [((Person*)obj1) getConversationCountStats:TRUE onlyMessages:FALSE] > [((Person*)obj2) getConversationCountStats:TRUE onlyMessages:FALSE] )
+            Person* p1 = obj1;
+            Person* p2 = obj2;
+            if ( [p1 getConversationCountStats:TRUE onlyMessages:FALSE] > [p2 getConversationCountStats:TRUE onlyMessages:FALSE] )
                 return NSOrderedAscending;
             else
                 return NSOrderedDescending;
@@ -183,36 +190,55 @@
         }
         
         [usersHereNow sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-            if ( ! ((Person*)obj1).distance )
-                return NSOrderedDescending;
-            if ( ! ((Person*)obj2).distance )
+            Person* p1 = obj1;
+            Person* p2 = obj2;
+            if ( p1.visibleOpportunities.count > 0 )
                 return NSOrderedAscending;
-            if ( ((Person*)obj1).distance.doubleValue < ((Person*)obj2).distance.doubleValue )
+            if ( p2.visibleOpportunities.count > 0 )
+                return NSOrderedDescending;
+            if ( ! p1.distance )
+                return NSOrderedDescending;
+            if ( ! p2.distance )
+                return NSOrderedAscending;
+            if ( p1.distance.doubleValue < p2.distance.doubleValue )
                 return NSOrderedAscending;
             else
                 return NSOrderedDescending;
         }];
         [usersNearbyToday sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-            if ( ! ((Person*)obj1).distance )
-                return NSOrderedDescending;
-            if ( ! ((Person*)obj2).distance )
+            Person* p1 = obj1;
+            Person* p2 = obj2;
+            if ( p1.visibleOpportunities.count > 0 )
                 return NSOrderedAscending;
-            if ( ((Person*)obj1).distance.doubleValue < ((Person*)obj2).distance.doubleValue )
+            if ( p2.visibleOpportunities.count > 0 )
+                return NSOrderedDescending;
+            if ( ! p1.distance )
+                return NSOrderedDescending;
+            if ( ! p2.distance )
+                return NSOrderedAscending;
+            if ( p1.distance.doubleValue < p2.distance.doubleValue )
                 return NSOrderedAscending;
             else
                 return NSOrderedDescending;
         }];
         [usersRecent sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-            if ( ! ((Person*)obj1).distance )
-                return NSOrderedDescending;
-            if ( ! ((Person*)obj2).distance )
+            Person* p1 = obj1;
+            Person* p2 = obj2;
+            if ( p1.visibleOpportunities.count > 0 )
                 return NSOrderedAscending;
-            if ( ((Person*)obj1).distance.doubleValue < ((Person*)obj2).distance.doubleValue )
+            if ( p2.visibleOpportunities.count > 0 )
+                return NSOrderedDescending;
+            if ( ! p1.distance )
+                return NSOrderedDescending;
+            if ( ! p2.distance )
+                return NSOrderedAscending;
+            if ( p1.distance.doubleValue < p2.distance.doubleValue )
                 return NSOrderedAscending;
             else
                 return NSOrderedDescending;
         }];
     }
+    _currentPerson = currentPerson;
 }
 
 - (void) reloadTableAndScroll:(Boolean)hideSearch;
@@ -242,9 +268,11 @@
     // Table view
     UINib *nib = [UINib nibWithNibName:@"PersonCell" bundle:nil];
     [tableView registerNib:nib forCellReuseIdentifier:@"PersonCell"];
+    nib = [UINib nibWithNibName:@"CreateOpportunityCell" bundle:nil];
+    [tableView registerNib:nib forCellReuseIdentifier:@"CreateOpportunityCell"];
     tableView.tableFooterView = [[UIView alloc]init];
     tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-    tableView.rowHeight = ROW_HEIGHT;
+    //tableView.rowHeight = ROW_HEIGHT;
     
     // Table search
     tableView.tableHeaderView = searchView;
@@ -261,32 +289,18 @@
     [self.navigationItem setRightBarButtonItems:@[filterButton/*, shoutoutBtn*/]];
 #endif
     
-    // Users sorting
-    [self recalcAndSortUsers];
+    // Users sorting (if loaded)
+    if ( [globalData getLoadingStatus:LOADING_CIRCLES] == LOAD_OK )
+        [self recalcAndSortUsers];
     
     // Refresh control
     refreshControl = [[UIRefreshControl alloc] init];
     [refreshControl addTarget:self action:@selector(refreshView:) forControlEvents:UIControlEventValueChanged];
     [tableView addSubview:refreshControl];
-}
-
-- (void) viewDidAppear:(BOOL)animated {
-    
-    [super viewDidAppear:animated];
-    
-    if ( [globalData getLoadingStatus:LOADING_CIRCLES] == LOAD_STARTED )
-    {
-        [activityIndicator startAnimating];
-        tableView.userInteractionEnabled = FALSE;
-    }
-    else
-        tableView.userInteractionEnabled = TRUE;
-    
-    [self reloadTableAndScroll:FALSE];
     
     // Status
 #ifdef TARGET_S2C
-    NSDate* latestStatus = [pCurrentUser objectForKey:@"profileStatusDate"];
+    /*NSDate* latestStatus = [pCurrentUser objectForKey:@"profileStatusDate"];
     NSString* strStatus = [pCurrentUser objectForKey:@"profileStatus"];
     if ( ! strStatus )
         strStatus = @"";
@@ -299,11 +313,22 @@
         showStatus = true;
     
     if ( showStatus )
-        [(LeftMenuController*)AppDelegate.revealController.leftViewController askStatus];
+        [(LeftMenuController*)AppDelegate.revealController.leftViewController askStatus];*/
 #endif
 }
 
-- (void) reloadFinished
+- (void) viewDidAppear:(BOOL)animated {
+    
+    [super viewDidAppear:animated];
+    
+    //if ( [globalData getLoadingStatus:LOADING_CIRCLES] == LOAD_STARTED )
+    if ( ! _currentPerson )
+        [activityIndicator startAnimating];
+    
+    [self reloadTableAndScroll:FALSE];
+}
+
+- (void) reloadEncountersFinished
 {
     // Create labels
     [self recalcFilterTexts];
@@ -311,19 +336,77 @@
     // Sort users
     [self recalcAndSortUsers];
     
-    // Data refresh
+    // Hide animations
+    [activityIndicator stopAnimating];
+    tableView.userInteractionEnabled = TRUE;
+    
+    // Show data and scroll
+    [self reloadTableAndScroll:TRUE];
+}
+
+- (void) reloadAllFinished
+{
+    // Update labels
+    [self recalcFilterTexts];
+    
+    // Sort users
+    [self recalcAndSortUsers];
+    
+    // Hide animations
     [activityIndicator stopAnimating];
     tableView.userInteractionEnabled = TRUE;
     [refreshControl endRefreshing];
     
     // Show data
-    [self reloadTableAndScroll:TRUE];
+    [tableView reloadData];
 }
 
 - (void) loadingFailed
 {
     [activityIndicator stopAnimating];
     tableView.userInteractionEnabled = TRUE;
+}
+
+- (void) opsHidden:(NSNotification *)notification
+{
+    Person* person = [notification object];
+        
+    NSUInteger section = 0;
+    NSUInteger row = 0;
+    
+    for ( NSUInteger n = 0; n < usersHereNow.count; n++ )
+    {
+        Person* testPerson = usersHereNow[n];
+        if ( [testPerson.strId isEqualToString:person.strId] )
+        {
+            section = 1;
+            row = n;
+        }
+    }
+    for ( NSUInteger n = 0; n < usersNearbyToday.count; n++ )
+    {
+        Person* testPerson = usersNearbyToday[n];
+        if ( [testPerson.strId isEqualToString:person.strId] )
+        {
+            section = 2;
+            row = n;
+        }
+    }
+    for ( NSUInteger n = 0; n < usersRecent.count; n++ )
+    {
+        Person* testPerson = usersRecent[n];
+        if ( [testPerson.strId isEqualToString:person.strId] )
+        {
+            section = 3;
+            row = n;
+        }
+    }
+    
+    if ( section != 0 )
+    {
+        NSIndexPath* personPath = [NSIndexPath indexPathForRow:row inSection:section];
+        [tableView reloadRowsAtIndexPaths:@[personPath] withRowAnimation:UITableViewRowAnimationFade];
+    }
 }
 
 
@@ -340,12 +423,12 @@
     
     if ( sortingMode == SORTING_DISTANCE )
 #ifdef TARGET_FUGE
-        return 4;
+        return 5;
 #elif defined TARGET_S2C
-        return 3;
+        return 4;
 #endif
     else if ( sortingMode == SORTING_RANK )
-        return 3;
+        return 4;
     else // SORTING_ENGAGEMENT
         return 1;
 }
@@ -358,10 +441,15 @@
         case SORTING_RANK:
             switch (section)
             {
-                case 0: return usersHereNow.count;
-                case 1: return usersNearbyToday.count;
-                case 2: return usersRecent.count;
-                case 3: return [globalData getCircle:CIRCLE_FBOTHERS].getPersons.count;
+#ifdef TARGET_FUGE
+                case 0: return 0;
+#elif defined TARGET_S2C
+                case 0: if ( _currentPerson ) return 1; return 0;
+#endif
+                case 1: return usersHereNow.count;
+                case 2: return usersNearbyToday.count;
+                case 3: return usersRecent.count;
+                case 4: return [globalData getCircle:CIRCLE_FBOTHERS].getPersons.count;
             }
         default:    // ENGAGEMENT
             return sortedUsers.count;
@@ -376,23 +464,39 @@
         case SORTING_RANK:
             if ( section == 0 )
             {
+#ifdef TARGET_FUGE
+                return nil;
+#elif defined TARGET_S2C
+                if ( _currentPerson )
+                {
+                    if ( currentPerson.visibleOpportunities && currentPerson.visibleOpportunities.count > 0 )
+                        return @"This is you";
+                    else
+                        return @"You could be here";
+                }
+                else
+                    return nil;
+#endif
+            }
+            if ( section == 1 )
+            {
                 if ( usersHereNow.count > 0 )
                     return @"Here and now";
                 return @"";
             }
-            if ( section == 1 )
+            if ( section == 2 )
             {
                 if ( usersNearbyToday.count > 0 )
                     return @"Nearby today";
                 return @"";
             }
-            if ( section == 2 )
+            if ( section == 3 )
             {
                 if ( usersRecent.count > 0 )
                     return @"Recent";
                 return @"";
             }
-            if ( section == 3 )
+            if ( section == 4 )
             {
                 if ( [globalData getCircle:CIRCLE_FBOTHERS].getPersons.count > 0 )
                     return [Circle getCircleName:[globalData getCircle:CIRCLE_FBOTHERS].idCircle];
@@ -404,13 +508,52 @@
     return nil;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath  {
-		
-	static NSString *CellIdentifier = @"PersonCell";
+- (CGFloat)tableView:(UITableView *)table heightForRowAtIndexPath:(NSIndexPath*)indexPath
+{
+    Circle *circle;
+    Person* person = nil;
     
-	PersonCell *personCell = (PersonCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    [personCell setNeedsDisplay];
-	
+    switch ( sortingMode )
+    {
+        case SORTING_DISTANCE:
+        case SORTING_RANK:
+            
+            switch (indexPath.section )
+            {
+            case 0: person = currentPerson; break;
+            case 1: if ( indexPath.row < usersHereNow.count) person = usersHereNow[indexPath.row]; break;
+            case 2: if ( indexPath.row < usersNearbyToday.count) person = usersNearbyToday[indexPath.row]; break;
+            case 3: if ( indexPath.row < usersRecent.count) person = usersRecent[indexPath.row]; break;
+            case 4:
+                circle = [globalData getCircle:CIRCLE_FBOTHERS];
+                person = [circle getPersons][indexPath.row];
+                break;
+            }
+            break;
+        default:    // ENGAGEMENT
+            person = sortedUsers[indexPath.row];
+            break;
+    }
+    
+    return 60 + person.visibleOpportunitiesHeight;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath  {
+    
+    // Opportunities
+    if ( indexPath.section == 0 )
+    {
+        if ( ! currentPerson.visibleOpportunities || currentPerson.visibleOpportunities.count == 0 )
+        {
+            CreateOpportunityCell *createOpportunityCell = (CreateOpportunityCell *)[tableView dequeueReusableCellWithIdentifier:@"CreateOpportunityCell"];
+            [createOpportunityCell.avatarImage loadImageFromURL:currentPerson.smallAvatarUrl];
+            return createOpportunityCell;
+        }
+    }
+    
+    // Persons
+	PersonCell *personCell = (PersonCell *)[tableView dequeueReusableCellWithIdentifier:@"PersonCell"];
+    //[personCell setNeedsDisplay];
     Circle *circle;
 	Person *person;
     
@@ -420,10 +563,11 @@
         case SORTING_RANK:
             switch (indexPath.section )
             {
-                case 0: person = usersHereNow[indexPath.row]; break;
-                case 1: person = usersNearbyToday[indexPath.row]; break;
-                case 2: person = usersRecent[indexPath.row]; break;
-                case 3:
+                case 0: person = currentPerson; break;
+                case 1: person = usersHereNow[indexPath.row]; break;
+                case 2: person = usersNearbyToday[indexPath.row]; break;
+                case 3: person = usersRecent[indexPath.row]; break;
+                case 4:
                     circle = [globalData getCircle:CIRCLE_FBOTHERS];
                     person = [circle getPersons][indexPath.row];
                     break;
@@ -448,6 +592,18 @@
     
     [self.view endEditing:YES];
     
+    // Opportunities
+    if ( indexPath.section == 0 )
+    {
+        if ( ! currentPerson.visibleOpportunities || currentPerson.visibleOpportunities.count == 0 )
+        {
+            NewOpportunityViewController *opController = [[NewOpportunityViewController alloc]init];
+            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:opController];
+            [self presentViewController:nav animated:YES completion:nil];
+            return;
+        }
+    }
+    
     Circle *circle;
     Person* person = nil;
     
@@ -458,10 +614,11 @@
             
             switch (indexPath.section )
             {
-                case 0: if ( indexPath.row < usersHereNow.count) person = usersHereNow[indexPath.row]; break;
-                case 1: if ( indexPath.row < usersNearbyToday.count) person = usersNearbyToday[indexPath.row]; break;
-                case 2: if ( indexPath.row < usersRecent.count) person = usersRecent[indexPath.row]; break;
-                case 3:
+                case 0: person = currentPerson; break;
+                case 1: if ( indexPath.row < usersHereNow.count) person = usersHereNow[indexPath.row]; break;
+                case 2: if ( indexPath.row < usersNearbyToday.count) person = usersNearbyToday[indexPath.row]; break;
+                case 3: if ( indexPath.row < usersRecent.count) person = usersRecent[indexPath.row]; break;
+                case 4:
                     circle = [globalData getCircle:CIRCLE_FBOTHERS];
                     person = [circle getPersons][indexPath.row];
                     break;

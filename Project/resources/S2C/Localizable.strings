@@ -9,12 +9,12 @@
 "LOADING_TITLE_NEWVERSION"      = "New version is available!";
 "LOADING_TEXT_NEWVERSION"       = "You're running an old version of the application. Updating the application will only take a few moments!";
 "LOADING_TITLE_FIRSTPAGE"       = "Welcome!";
-"LOADING_TEXT_FIRSTPAGE"        = "Simple2Connect is a location-based professional networking service. Explore profiles of people around you and make your networking more targeted!";
-"LOADING_TITLE_NOINTERNET"      = "No internet connection.";
+"LOADING_TEXT_FIRSTPAGE"        = "Simple2Connect is a professional network which helps you discover and create new opportunities, find clients and business partners";
+"LOADING_TITLE_NOINTERNET"      = "No internet connection";
 "LOADING_TEXT_NOINTERNET"       = "It seems like you don’t have internet connection at the moment.";
 "LOADING_TITLE_NOPARSE"         = "Ah and oh!";
 "LOADING_TEXT_NOPARSE"          = "Our backend software, Parse, is temporarily down. Please try again later.";
-"LOADING_TITLE_LOGINFAILED"     = "Login failure.";
+"LOADING_TITLE_LOGINFAILED"     = "Login failure";
 "LOADING_TEXT_LOGINFAILED"      = "It looks like the login was unsuccessful. We apologise for inconvenience. Please try again.";
 "LOADING_TITLE_OLDVERSION"      = "Update needed";
 "LOADING_TEXT_OLDVERSION"       = "We have released a new version to better accommodate customer feedback. Give it a try and let us know if you have any issue or need help.";
@@ -23,15 +23,15 @@
 
 "MAP_BUTTON_NEWMEETUP"          = "New event";
 
-"STATUS_WINDOW_TITLE"           = "Tell us";
-"STATUS_WINDOW_TEXT"            = "What are you struggling with?";
+"STATUS_WINDOW_TITLE"           = "Who are you looking for?";
+"STATUS_WINDOW_TEXT"            = "I'm looking for...";
 "STATUS_WINDOW_BTN_SKIP"        = "Later";
 "STATUS_WINDOW_BTN_ENTER"       = "Enter";
-"STATUS_WINDOW_PLACEHOLDER"     = "e.g. looking for a tax advice";
+"STATUS_WINDOW_PLACEHOLDER"     = "e.g. mobile developer";
 
 "MENU_ITEM_INBOX"               = "Activity";
 "MENU_ITEM_PEOPLE"              = "People";
-"MENU_ITEM_EXPLORE"             = "Explore";
+"MENU_ITEM_EXPLORE"             = "Events";
 "MENU_ITEM_STATUS"              = "Status";
 "MENU_ITEM_SETTINGS"            = "Settings";
 

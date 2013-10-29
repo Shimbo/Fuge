@@ -28,8 +28,14 @@
 
 + (UIColor *)colorWithHexString:(NSString *)hexString;
 
-@end
++(UIColor*)FUGorangeColor;
++(UIColor*)FUGblueColor;
++(UIColor*)FUGgrayColor;
++(UIColor*)FUGyellowColor;
++(UIColor*)FUGlightBlueColor;
++(UIColor*)FUGlightGrayColor;
 
+@end
 
 @interface UIView (Coordinates)
 
@@ -47,4 +53,8 @@
 
 @interface UILabel (Copy) <NSCopying>
 
+@end
+
+@interface NSString (StringSizeWithFont)
+- (CGSize) sizeWithMyFont:(UIFont *)fontToUse;
 @end

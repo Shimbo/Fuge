@@ -222,7 +222,8 @@
     comment.objUserFrom = pCurrentUser;
     comment.strMeetupSubject = meetup.strSubject;
     comment.strMeetupId = meetup.strId;
-    comment.meetupData = meetup.meetupData;
+    if ( [meetup respondsToSelector:@selector(meetupData)] )
+        comment.meetupData = meetup.meetupData;
     comment.strComment = strComment;
     comment.typeNum = typeNum;
     [comment save:target selector:callback];

@@ -48,8 +48,8 @@
     _items = [NSMutableArray arrayWithObjects:NSLocalizedString(@"MENU_ITEM_EXPLORE",nil), NSLocalizedString(@"MENU_ITEM_INBOX",nil), NSLocalizedString(@"MENU_ITEM_PEOPLE",nil), NSLocalizedString(@"MENU_ITEM_STATUS",nil), NSLocalizedString(@"MENU_ITEM_SETTINGS",nil),  nil];
     _selectors = [NSMutableArray arrayWithObjects:@"showMap", @"showInbox", @"showCircles", @"askStatus", @"showUser", nil];
 #elif defined TARGET_S2C
-    _items = [NSMutableArray arrayWithObjects:NSLocalizedString(@"MENU_ITEM_PEOPLE",nil), NSLocalizedString(@"MENU_ITEM_INBOX",nil), NSLocalizedString(@"MENU_ITEM_EXPLORE",nil), NSLocalizedString(@"MENU_ITEM_STATUS",nil), NSLocalizedString(@"MENU_ITEM_SETTINGS",nil),  nil];
-    _selectors = [NSMutableArray arrayWithObjects:@"showCircles", @"showInbox", @"showMap", @"askStatus", @"showUser", nil];
+    _items = [NSMutableArray arrayWithObjects:NSLocalizedString(@"MENU_ITEM_PEOPLE",nil), NSLocalizedString(@"MENU_ITEM_INBOX",nil), NSLocalizedString(@"MENU_ITEM_EXPLORE",nil), NSLocalizedString(@"MENU_ITEM_SETTINGS",nil),  nil];
+    _selectors = [NSMutableArray arrayWithObjects:@"showCircles", @"showInbox", @"showMap", @"showUser", nil];
 #endif
     
     if ( [globalVariables isUserAdmin])

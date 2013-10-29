@@ -12,6 +12,7 @@ typedef enum ESortingRank
     SORTING_MODES_COUNT = 3
 }SortingRank;
 
+@class Person;
 @interface RootViewController : MainViewController <UIPickerViewDelegate, UIPickerViewDataSource, UIActionSheetDelegate, UISearchBarDelegate>
 {
     NSUInteger      sortingMode;
@@ -20,6 +21,7 @@ typedef enum ESortingRank
     NSMutableArray  *usersHereNow;
     NSMutableArray  *usersNearbyToday;
     NSMutableArray  *usersRecent;
+    Person          *_currentPerson;
     UIRefreshControl *refreshControl;
     
     UIBarButtonItem*        filterButton;

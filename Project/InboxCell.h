@@ -10,6 +10,8 @@
 
 @class AsyncImageView;
 @class MeetupPin;
+@class FUGEvent;
+@class ULMusicPlayButton;
 
 @interface InboxCell : UITableViewCell
 
@@ -19,5 +21,10 @@
 @property (strong, nonatomic) IBOutlet UILabel *message;
 @property (strong, nonatomic) IBOutlet UILabel *misc;
 @property (strong, nonatomic) UIColor *color;
+@property (strong, nonatomic) FUGEvent *event;
+@property (strong, nonatomic) ULMusicPlayButton *musicButton;
+
+
+- (void)previewTapped:(id)sender;
 
 @end

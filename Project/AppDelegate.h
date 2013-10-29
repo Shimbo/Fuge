@@ -1,6 +1,7 @@
 @class RootViewController;
 @class JMImageCache;
 #import "PKRevealController.h"
+#import "ULMusicPlayerController.h"
 
 #define AppDelegate ((FugeAppDelegate*)[[UIApplication sharedApplication]delegate])
 
@@ -16,7 +17,9 @@
 
 @property (nonatomic, retain) JMImageCache *imageCache;
 
-@property (nonatomic, retain, readonly) RootViewController *rootViewController;
+//@property (nonatomic, retain, readonly) RootViewController *rootViewController;
+
+@property (nonatomic, retain, readonly) ULMusicPlayerController *musicPanel;
 
 -(void)userDidLogout;
 

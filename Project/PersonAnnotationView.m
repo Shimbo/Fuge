@@ -10,7 +10,6 @@
 #import "ImageLoader.h"
 #import "CustomBadge.h"
 #import <QuartzCore/QuartzCore.h>
-#import "MainStyle.h"
 #import "PersonAnnotation.h"
 
 @implementation PersonPin
@@ -24,7 +23,7 @@
     _personImage = [[UIImageView alloc]initWithFrame:CGRectMake(6.5, 6.5, 35, 35)];
     [self addSubview:_personImage];
     
-    _badge = [CustomBadge badgeWithWhiteTextAndBackground:[MainStyle orangeColor]];
+    _badge = [CustomBadge badgeWithWhiteTextAndBackground:[UIColor FUGorangeColor]];
     _badge.center = CGPointMake(6, 6);
     [self addSubview:_badge];
 }

@@ -335,6 +335,11 @@ NSInteger sort2(id item1, id item2, void *context)
 
 - (void) updateConversation:(NSDate*)date count:(NSNumber*)msgCount thread:(NSString*)strThread meetup:(Boolean)bMeetup
 {
+    // Don't keep empty conversations, we have read list for it now
+    //if ( msgCount )
+    //    if ( [msgCount integerValue] == 0 )
+    //        return;
+    
     NSMutableDictionary* conversations;
     
     NSString* strKeyDates = bMeetup ? @"threadDates" : @"messageDates";
@@ -402,5 +407,76 @@ NSInteger sort2(id item1, id item2, void *context)
         [invites removeObject:invite];
 }
 
+- (void) setEventRead:(NSString*)eventId withExpirationDate:(NSDate*)expirationDate
+{
+    if ( ! eventId || ! expirationDate )
+        return;
+    
+    if ( [self isEventRead:eventId] )
+        return;
+    
+    readEventsDictionaryCachedPointer = nil;
+    
+    NSMutableDictionary* readEventsDictionary = [pCurrentUser objectForKey:@"readEventsList"];
+    if ( ! readEventsDictionary )
+        readEventsDictionary = [[NSMutableDictionary alloc] init];
+    
+    // Remove all expired records
+    BOOL bFound;
+    do {
+        bFound = FALSE;
+        for ( NSString* event in readEventsDictionary.allKeys )
+        {
+            NSDate* recordedDate = [readEventsDictionary objectForKey:event];
+            if ( [recordedDate compare:[NSDate date]] == NSOrderedAscending )
+            {
+                [readEventsDictionary removeObjectForKey:event];
+                bFound = TRUE;
+                break;
+            }
+        }
+    } while ( bFound );
+    
+    // Save this one
+    [readEventsDictionary setValue:expirationDate forKey:eventId];
+    [pCurrentUser setObject:readEventsDictionary forKey:@"readEventsList"];
+    [pCurrentUser saveEventually];
+}
+
+- (BOOL) isEventRead:(NSString*)eventId
+{
+    if ( ! eventId )
+        return FALSE;
+    if ( ! readEventsDictionaryCachedPointer )
+        readEventsDictionaryCachedPointer = [pCurrentUser objectForKey:@"readEventsList"];
+    if ( ! readEventsDictionaryCachedPointer )
+        return FALSE;
+    
+    BOOL bRead = [readEventsDictionaryCachedPointer valueForKey:eventId] ? TRUE : FALSE;
+    return bRead;
+}
+
+- (void) setPersonOpportunityHidden:(NSString*)personId tillDate:(NSDate*)date
+{
+    if ( ! personId || ! date )
+        return;
+    
+    NSMutableDictionary* hiddenOpportunities = [pCurrentUser objectForKey:@"hiddenOpportunities"];
+    if ( ! hiddenOpportunities )
+        hiddenOpportunities = [[NSMutableDictionary alloc] init];
+    
+    [hiddenOpportunities setObject:date forKey:personId];
+    
+    [pCurrentUser setObject:hiddenOpportunities forKey:@"hiddenOpportunities"];
+    [pCurrentUser saveEventually];
+}
+
+- (NSDate*) getPersonOpportunityHideDate:(NSString*)personId
+{
+    NSMutableDictionary* hiddenOpportunities = [pCurrentUser objectForKey:@"hiddenOpportunities"];
+    if ( ! hiddenOpportunities )
+        return nil;
+    return [hiddenOpportunities objectForKey:personId];
+}
 
 @end

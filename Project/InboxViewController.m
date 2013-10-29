@@ -14,9 +14,12 @@
 #import "MeetupViewController.h"
 #import "UserProfileController.h"
 #import "MeetupAnnotationView.h"
-
 #import "ULEventManager.h"
 #import "FUGEvent.h"
+
+#ifdef TARGET_FUGE
+#import "ULMusicPlayerController.h"
+#endif
 
 @implementation InboxViewItem
 @end
@@ -143,9 +146,16 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath  {
     
-	static NSString *CellIdentifier = @"InboxCellIdent";
+	InboxCell *inboxCell = (InboxCell *)[tableView dequeueReusableCellWithIdentifier:@"InboxCellIdent"];
+#ifdef TARGET_FUGE
+    if ( inboxCell.musicButton )
+    {
+        [inboxCell.musicButton removeFromSuperview];
+        inboxCell.musicButton = nil;
+    }
+    inboxCell.pinImage.originY = 0; // for rating bar
+#endif
     
-	InboxCell *inboxCell = (InboxCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     NSArray *keys = [inbox allKeys];
     NSString* strKey = [keys objectAtIndex:indexPath.section];
     
@@ -164,8 +174,23 @@
     {
         inboxCell.pinImage.hidden = FALSE;
         MeetupAnnotation* temp = [[MeetupAnnotation alloc] initWithMeetup:item.meetup];
-        [inboxCell.pinImage prepareForAnnotation:temp];
+        [inboxCell.pinImage prepareForAnnotation:temp withPin:FALSE];
         inboxCell.pinImage.backgroundColor = inboxCell.color;
+        
+        // Load artist info
+#ifdef TARGET_FUGE
+        if ( item.meetup.importedType == IMPORTED_SONGKICK )
+        {
+            inboxCell.pinImage.icon.hidden = TRUE;
+            ULMusicPlayButton* button = [ULMusicPlayButton buttonWithArtist:item.meetup.strOwnerName];
+            inboxCell.musicButton = button;
+            button.origin = CGPointMake(inboxCell.pinImage.originX, inboxCell.pinImage.originY);
+            [inboxCell addSubview:button];
+            [button addTarget:inboxCell action:@selector(previewTapped:) forControlEvents:UIControlEventTouchUpInside];
+        }
+        else
+            inboxCell.pinImage.icon.hidden = FALSE;
+#endif
     }
     else
         inboxCell.pinImage.hidden = TRUE;
@@ -219,6 +244,15 @@
     cell.backgroundColor = ((InboxCell*)cell).color;
 }
 
+static Boolean bInviteFlag;
+
+- (void)loadedSongkickEvent:(FUGEvent*)event
+{
+    [self openMeetupWindow:event invite:bInviteFlag];
+    [self.activityIndicator stopAnimating];
+    self.navigationController.view.userInteractionEnabled = TRUE;
+}
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     NSInteger nRow = indexPath.row;
@@ -242,7 +276,17 @@
         {
             PFObject *meetupData = (item.type == INBOX_ITEM_COMMENT) ? ((Comment*)item.data).meetupData : [item.data objectForKey:@"meetupData"];
             if ( ! meetupData )
+            {
+                NSString* strId = [item.data objectForKey:@"meetupId"];
+                if ( [ULEvent eventImportedTypeById:strId] != IMPORTED_NOT )
+                {
+                    bInviteFlag = bInvite;
+                    [self.activityIndicator startAnimating];
+                    self.navigationController.view.userInteractionEnabled = FALSE;
+                    [globalData loadImportedEvent:strId target:self selector:@selector(loadedSongkickEvent:)];
+                }
                 return;
+            }
             [self.activityIndicator startAnimating];
             self.navigationController.view.userInteractionEnabled = FALSE;
             [meetupData fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
@@ -251,6 +295,10 @@
                     FUGEvent* newMeetup = [[FUGEvent alloc] initWithParseEvent:meetupData];
                     [eventManager addEvent:newMeetup];
                     [self openMeetupWindow:newMeetup invite:bInvite];
+                    
+                    // Notify map and others about pin change
+                    NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:newMeetup, @"meetup", nil];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kNewMeetupChanged object:nil userInfo:userInfo];
                 }
                 else
                 {

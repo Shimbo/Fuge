@@ -13,13 +13,14 @@
 #import "PersonAnnotation.h"
 #import "AsyncImageView.h"
 #import "GlobalData.h"
+#import "ULDeezerWrapper.h"
 
 @implementation PersonAnnotationCell
 
 -(void)prepareForAnnotation:(PersonAnnotation*)annotation{
     self.title.text = annotation.title;
     self.subtitle.text = annotation.subtitle;
-    [self.annotation prepareForAnnotation:annotation];
+    [_annotationPin prepareForAnnotation:annotation];
 }
 
 
@@ -33,35 +34,57 @@
     
     [self initWithMeetup:annotation.meetup continuous:false];
     
-    [self.annotation prepareForAnnotation:annotation];
+    [_annotationPin prepareForAnnotation:annotation withPin:FALSE];
 }
 
 -(void)initWithMeetup:(FUGEvent*)meetup continuous:(Boolean)continuous
 {
+    _meetup = meetup;
+    
+    // Main stuff
     self.title.text = meetup.strSubject;
-    self.subtitle.text = [NSString stringWithFormat:@"By: %@", meetup.strOwnerName];
+    if ( meetup.importedType == IMPORTED_SONGKICK )
+        self.subtitle.text = [NSString stringWithFormat:@"At: %@", meetup.venueString];
+    else
+        self.subtitle.text = [NSString stringWithFormat:@"By: %@", meetup.strOwnerName];
     
-    self.featured.text = continuous ? @"" : meetup.featureString;
-    self.featuredImage.hidden = ( meetup.featureString && ! continuous ) ? FALSE : TRUE;
+    // Featuring
+    NSString* featureString = meetup.featureString;
+    self.featured.text = continuous ? @"" : featureString;
+    self.featuredImage.hidden = ( featureString && ! continuous ) ? FALSE : TRUE;
+    if ( featureString )
+        self.backgroundColor = [UIColor colorWithHexString:INBOX_UNREAD_CELL_BG_COLOR];
+    else
+        self.backgroundColor = [UIColor whiteColor];
     
-    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateStyle:NSDateFormatterMediumStyle];
-    [formatter setTimeStyle:NSDateFormatterShortStyle];
-    [formatter setDoesRelativeDateFormatting:TRUE];
-    
+    // Date and distance
+    static NSDateFormatter* formatter;
+    if ( ! formatter )
+    {
+        formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateStyle:NSDateFormatterMediumStyle];
+        [formatter setTimeStyle:NSDateFormatterShortStyle];
+        [formatter setDoesRelativeDateFormatting:TRUE];
+    }
     self.date.text = [formatter stringFromDate:meetup.dateTime];
+    if ( meetup.strNotes )
+        self.date.text = meetup.strNotes;
     self.distance.text = [meetup distanceString:TRUE];
     
-    MeetupAnnotation* tempAnnotation = [[MeetupAnnotation alloc] initWithMeetup:meetup];
-    [self.annotation prepareForAnnotation:tempAnnotation];
+    // Annotation
+    static MeetupAnnotation* tempAnnotation;
+    if ( ! tempAnnotation )
+        tempAnnotation = [MeetupAnnotation alloc];
+    tempAnnotation = [tempAnnotation initWithMeetup:meetup];
+    [_annotationPin prepareForAnnotation:tempAnnotation withPin:FALSE];
     
     // Remove old persons (if cell was used before)
-    if ( avatarList )
-        for ( AsyncImageView* person in avatarList )
+    if ( _avatarList )
+        for ( AsyncImageView* person in _avatarList )
             [person removeFromSuperview];
     
     // Creating attending friends list
-    avatarList = [NSMutableArray arrayWithCapacity:10];
+    _avatarList = [NSMutableArray arrayWithCapacity:10];
     NSMutableArray* personList = [NSMutableArray arrayWithCapacity:10];
     for ( NSString* strAttendee in meetup.attendees )
     {
@@ -91,9 +114,9 @@
     NSUInteger offset = self.attending.text.length > 0 ? self.attending.originX + self.attending.width - [self.attending.text sizeWithFont:self.attending.font].width - MINI_AVATAR_SIZE - 3 : self.attending.originX + self.attending.width - MINI_AVATAR_SIZE;
     for ( Person* person in personList )
     {
-        AsyncImageView* image = [[AsyncImageView alloc] initWithFrame:CGRectMake(offset-avatarList.count*(MINI_AVATAR_SIZE+1), 46, MINI_AVATAR_SIZE, MINI_AVATAR_SIZE)];
+        AsyncImageView* image = [[AsyncImageView alloc] initWithFrame:CGRectMake(offset-_avatarList.count*(MINI_AVATAR_SIZE+1), 46, MINI_AVATAR_SIZE, MINI_AVATAR_SIZE)];
         [image loadImageFromURL:person.smallAvatarUrl];
-        [avatarList addObject:image];
+        [_avatarList addObject:image];
         if ( continuous )
             image.alpha = 0.5f;
         [self addSubview:image];
@@ -102,7 +125,7 @@
     // Continuous
     if ( continuous )
     {
-        self.annotation.alpha = 0.5f;
+        _annotationPin.alpha = 0.5f;
         self.title.alpha = 0.5f;
         self.subtitle.alpha = 0.5f;
         self.date.alpha = 0.5f;
@@ -110,6 +133,28 @@
         self.attending.alpha = 0.5f;
         self.date.text = @"Event continues";
     }
+    
+    // Removing pin icon for musical events
+    if ( meetup.importedType == IMPORTED_SONGKICK )
+        _annotationPin.icon.hidden = TRUE;
+    else
+        _annotationPin.icon.hidden = FALSE;
+}
+
+- (void)previewTapped:(id)sender {
+    if ( _meetup )
+        if ( _meetup.strOwnerName )
+        {
+            // Mark grey if blue
+            MeetupAnnotation* tempAnnotation = [[MeetupAnnotation alloc] initWithMeetup:_meetup];
+            if (tempAnnotation.pinColor == PinBlue )
+            {
+                [_annotationPin setPinColor:PinGray withPin:FALSE];
+                
+                // Mark as read
+                [globalData setEventRead:_meetup.strId withExpirationDate:_meetup.dateTimeExp];
+            }
+        }
 }
 
 @end
@@ -121,7 +166,7 @@
 -(void)prepareForAnnotation:(ThreadAnnotation*)annotation{
     self.title.text = annotation.title;
     self.subtitle.text = annotation.subtitle;
-    [self.annotation prepareForAnnotation:annotation];
+    [_annotationPin prepareForAnnotation:annotation];
 }
 
 

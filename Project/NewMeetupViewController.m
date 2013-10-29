@@ -116,6 +116,17 @@
         else if ( bIsAdmin ) // Always public for admins by default
             [privacySwitch setOn:TRUE];
         
+#ifdef TARGET_FUGE
+        //if ( ! bIsAdmin )
+        {
+            privacySwitch.hidden = TRUE;
+            privacyLabel.hidden = TRUE;
+            dateBtn.originY -= 35;
+            location.originY -= 40;
+            durationBtn.originY -= 45;
+        }
+#endif
+        
         // Default time
         NSDateComponents* deltaCompsDefault = [[NSDateComponents alloc] init];
         if (meetupType == TYPE_MEETUP)
@@ -248,7 +259,7 @@
     NSDateComponents* deltaCompsMax = [[NSDateComponents alloc] init];
     
     if ( [globalVariables isUserAdmin] )
-        [deltaCompsMax setDay:60];
+        [deltaCompsMax setDay:365];
     else
         [deltaCompsMax setDay:7];
     NSDate* dateMax = [[NSCalendar currentCalendar] dateByAddingComponents:deltaCompsMax toDate:[NSDate date] options:0];

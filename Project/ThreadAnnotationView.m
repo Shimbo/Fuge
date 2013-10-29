@@ -8,7 +8,6 @@
 
 #import "ThreadAnnotationView.h"
 #import "MeetupAnnotation.h"
-#import "MainStyle.h"
 #import "CustomBadge.h"
 #import "GlobalData.h"
 
@@ -50,13 +49,13 @@
     UIColor *badgeColor = nil;
     switch (color) {
         case PinBlue:
-            badgeColor = [MainStyle blueColor];
+            badgeColor = [UIColor FUGblueColor];
             break;
         case PinOrange:
-            badgeColor = [MainStyle orangeColor];
+            badgeColor = [UIColor FUGorangeColor];
             break;
         case PinGray:
-            badgeColor = [MainStyle grayColor];
+            badgeColor = [UIColor FUGgrayColor];
             break;
     }
     [_badge removeFromSuperview];

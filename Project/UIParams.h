@@ -12,6 +12,9 @@
 // Meetup subject
 #define TEXT_MAX_MEETUP_SUBJECT_LENGTH  40
 
+// Opportunity length
+#define TEXT_MAX_OPPORTUNITY_LENGTH     140
+
 // Max status length
 #define TEXT_MAX_STATUS_LENGTH          40
 
@@ -28,21 +31,23 @@
 #ifdef TARGET_FUGE
 
 #define INBOX_UNREAD_CELL_BG_COLOR  @"d7dfeb"
-#define ACTIVITY_INDICATOR_COLOR    @"ff9416"
-#define NAVBAR_BACKGROUND_COLOR     @"ffc100"
-#define TABLE_FOOTER_COLOR          @"fcf3d8"
-#define TABLE_SEPARATOR_COLOR       @"ff9416"
-#define TABLE_SEARCH_COLOR          @"ff9416"
-#define TABLE_SELECTION_COLOR       @"ff9416"
+#define OP_UNREAD_CELL_BG_COLOR     @"ffffff"
+#define ACTIVITY_INDICATOR_COLOR    @"0033ff"
+#define NAVBAR_BACKGROUND_COLOR     @"0033ff"
+#define TABLE_FOOTER_COLOR          @"ccccff"
+#define TABLE_SEPARATOR_COLOR       @"0033ff"
+#define TABLE_SEARCH_COLOR          @"0033ff"
+#define TABLE_SELECTION_COLOR       @"0033ff"
 
 #elif defined TARGET_S2C
 
 #define INBOX_UNREAD_CELL_BG_COLOR  @"ffefd0"
+#define OP_UNREAD_CELL_BG_COLOR     @"ffffff"
 #define ACTIVITY_INDICATOR_COLOR    @"ff9416"
 #define NAVBAR_BACKGROUND_COLOR     @"ffc100"
-#define TABLE_FOOTER_COLOR          @"fcf3d8"
+#define TABLE_FOOTER_COLOR          @"ff9416"
 #define TABLE_SEPARATOR_COLOR       @"ff9416"
-#define TABLE_SEARCH_COLOR          @"ff9416"
+#define TABLE_SEARCH_COLOR          @"fcf3d8"
 #define TABLE_SELECTION_COLOR       @"ff9416"
 
 #endif
@@ -61,3 +66,6 @@ typedef enum kPinColor{
 #define MINI_AVATAR_SIZE            20
 #define MINI_AVATAR_COUNT_CELL      4
 #define MINI_AVATAR_COUNT_MEETUP    7
+
+#define OPPORTUNITY_HIDEALL_HEIGHT  30  // Hide all button height
+#define OPPORTUNITY_BREAKOUT        2   // Distance between opportunities

@@ -19,6 +19,7 @@
                 <outlet property="originalURLField" destination="257" id="266"/>
                 <outlet property="priceField" destination="255" id="264"/>
                 <outlet property="priceText" destination="256" id="270"/>
+                <outlet property="privacyLabel" destination="231" id="Ydu-tt-oh0"/>
                 <outlet property="privacySwitch" destination="90" id="275"/>
                 <outlet property="scrollView" destination="259" id="260"/>
                 <outlet property="subject" destination="32" id="102"/>

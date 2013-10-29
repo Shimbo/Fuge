@@ -22,7 +22,10 @@
     TimerView *_timerView;
     ImageLoader *_imageLoader;
 }
--(void)prepareForAnnotation:(MeetupAnnotation*)ann;
+-(void)prepareForAnnotation:(MeetupAnnotation*)ann withPin:(BOOL)pinned;
+-(void)setPinColor:(PinColor)color withPin:(BOOL)pinned;
+
+@property UIImageView* icon;
 
 @end
 

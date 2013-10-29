@@ -52,7 +52,8 @@ static NSUInteger fireLocationEnabledNotification = 0;
     if (newLocation.horizontalAccuracy < 0) return;
     
     if ( ! pCurrentUser ) return;
-    if ( ! [pCurrentUser isAuthenticated] ) return;
+    //if ( ! [pCurrentUser isAuthenticated] ) return;
+    
     
     /*NSTimeInterval locationAge = -[newLocation.timestamp timeIntervalSinceNow];
     if (locationAge > 5.0)

@@ -101,30 +101,47 @@ static GlobalVariables *sharedInstance = nil;
 {
     if ( ! personalSettings )
     {
-        personalSettings = [[PFUser currentUser] objectForKey:@"settings"];
+        personalSettings = [pCurrentUser objectForKey:@"settings"];
         if ( ! personalSettings )
         {
             personalSettings = [[NSMutableDictionary alloc] init];
-            NSNumber* falseNum = [[NSNumber alloc] initWithBool:false];
-            [personalSettings setValue:[falseNum stringValue] forKey:@"addToCalendar"];
-            [[PFUser currentUser] setObject:personalSettings forKey:@"settings"];
+            [pCurrentUser setObject:personalSettings forKey:@"settings"];
         }
     }
 }
 
-- (Boolean)shouldAlwaysAddToCalendar
+- (BOOL)shouldAlwaysAddToCalendar
 {
     [self checkSettings];
+    if ( ! [personalSettings objectForKey:@"addToCalendar"] )
+        return FALSE;
     return [[personalSettings objectForKey:@"addToCalendar"] boolValue];
 }
 
 - (void)setToAlwaysAddToCalendar
 {
     [self checkSettings];
-    NSNumber* trueNum = [[NSNumber alloc] initWithBool:true];
-    [personalSettings setValue:[trueNum stringValue] forKey:@"addToCalendar"];
-    [[PFUser currentUser] setObject:personalSettings forKey:@"settings"];
-    [[PFUser currentUser] saveInBackground];
+    NSNumber* trueNum = [[NSNumber alloc] initWithBool:TRUE];
+    [personalSettings setValue:trueNum forKey:@"addToCalendar"];
+    [pCurrentUser setObject:personalSettings forKey:@"settings"];
+    [pCurrentUser saveInBackground];
+}
+
+- (BOOL)isTutorialShown
+{
+    [self checkSettings];
+    if ( ! [personalSettings objectForKey:@"tutorialShown"] )
+        return FALSE;
+    return [[personalSettings objectForKey:@"tutorialShown"] boolValue];
+}
+
+- (void)tutorialWasShown
+{
+    [self checkSettings];
+    NSNumber* trueNum = [[NSNumber alloc] initWithBool:TRUE];
+    [personalSettings setValue:trueNum forKey:@"tutorialShown"];
+    [pCurrentUser setObject:personalSettings forKey:@"settings"];
+    [pCurrentUser saveInBackground];
 }
 
 - (NSString*)trimName:(NSString*)name
@@ -191,9 +208,17 @@ static GlobalVariables *sharedInstance = nil;
 
 - (PFGeoPoint*) currentLocation
 {
+    // Get current position
     PFGeoPoint* ptUser = [locManager getPosition];
+    
+    // Get last saved position
+    if ( ! ptUser && pCurrentUser )
+        ptUser = [pCurrentUser objectForKey:@"location"];
+    
+    // Get default position
     if ( ! ptUser )
         ptUser = [locManager getDefaultPosition];
+    
     return ptUser;
 }
 

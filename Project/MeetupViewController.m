@@ -15,6 +15,9 @@
 #import "PeopleViewController.h"
 #import "AsyncImageView.h"
 #import "ULEventManager.h"
+#import "ULMusicPlayerController.h"
+#import "ULDeezerWrapper.h"
+#import "ULWebViewController.h"
 
 @implementation CustomScroll
 
@@ -87,9 +90,11 @@
         subscribeBtn = [[UIBarButtonItem alloc] initWithTitle:@"Subscribe" style:UIBarButtonItemStylePlain target:self action:@selector(subscribeClicked)];
     UIBarButtonItem *inviteBtn = [[UIBarButtonItem alloc] initWithTitle:@"Invite" style:UIBarButtonItemStylePlain target:self action:@selector(inviteClicked)];
     
-    UIBarButtonItem *cancelBtn = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleBordered target:self action:@selector(cancelClicked)];
-    UIBarButtonItem *editBtn = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(editClicked)];
-    UIBarButtonItem *calendarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Calendar-Day"] style:UIBarButtonItemStyleBordered  target:self action:@selector(calendarClicked)];
+    UIBarButtonItem *mailBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(mailClicked)];
+    
+    UIBarButtonItem *cancelBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelClicked)];
+    UIBarButtonItem *editBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editClicked)];
+    UIBarButtonItem *calendarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Calendar-Day"] style:UIBarButtonItemStyleBordered target:self action:@selector(calendarClicked)];
     
     UIBarButtonItem *featureBtn = [[UIBarButtonItem alloc] initWithTitle:@"Feature" style:UIBarButtonItemStyleBordered target:self action:@selector(featureClicked)];
     
@@ -102,10 +107,12 @@
         [actualButtons addObject:declineBtn];
     if ( [buttons[MB_LEAVE] boolValue] )
         [actualButtons addObject:leaveBtn];
-    if ( [buttons[MB_CALENDAR] boolValue] && ! [meetup addedToCalendar] && ! [buttons[MB_FEATURE] boolValue] ) // to open some space
-        [actualButtons addObject:calendarBtn];
     if ( [buttons[MB_INVITE] boolValue] )
         [actualButtons addObject:inviteBtn];
+    if ( [buttons[MB_CALENDAR] boolValue] && ! [meetup addedToCalendar] && ! [buttons[MB_FEATURE] boolValue] ) // to open some space
+        [actualButtons addObject:calendarBtn];
+    if ( [buttons[MB_MAIL] boolValue] )
+        [actualButtons addObject:mailBtn];
     if ( [buttons[MB_CANCEL] boolValue] )
         [actualButtons addObject:cancelBtn];
     if ( [buttons[MB_EDIT] boolValue] )
@@ -218,6 +225,55 @@
     message.tag = 7; // Lucky one
     [message show];
     return;
+}
+
+// TODO: duplicate code, from ULWebViewController
+- (void)mailClicked
+{
+    NSString* preview;
+#ifdef TARGET_FUGE
+    if ( meetup.importedType == IMPORTED_SONGKICK )
+    {
+        NSDictionary* artist = [deezerWrapper artistInformation:meetup.strOwnerName];
+        if ( artist )
+            preview = [artist objectForKey:@"artistLink"];
+    }
+#endif
+    
+    MFMailComposeViewController* controller = [[MFMailComposeViewController alloc] init];
+    controller.mailComposeDelegate = self;
+    NSString* subject = [NSString stringWithFormat:@"Check this event: %@", meetup.strSubject];
+    [controller setSubject:subject];
+    
+    NSString* body;
+    if ( preview )
+        body = [NSString stringWithFormat:@"Hey there!<BR><BR>Here's the link to the event \"%@\". Visit Songkick for tickets and venue details:<P><A HREF=%@>%@</A><BR><BR>Also, check artist preview on Deezer:<P><A HREF=%@>%@</A><BR><BR>--<BR>Regards,<BR>Sent from <A HREF=%@>Fuge</A>", meetup.strSubject, meetup.strOriginalURL, meetup.strOriginalURL, preview, preview, APP_STORE_PATH];
+    else
+    {
+#ifdef TARGET_FUGE
+        NSString* sentFrom = @"Fuge";
+#elif defined TARGET_S2C
+        NSString* sentFrom = @"Simple2Connect";
+#endif
+        body = [NSString stringWithFormat:@"Hey there!<BR><BR>Here's the link to the event \"%@\".<P><A HREF=%@>%@</A><BR><BR>--<BR>Regards,<BR>Sent from <A HREF=%@>%@</A>", meetup.strSubject, meetup.strOriginalURL, meetup.strOriginalURL, APP_STORE_PATH, sentFrom];
+    }
+    [controller setMessageBody:body isHTML:YES];
+    
+    NSString* email = [pCurrentUser objectForKey:@"email"];
+    if ( email )
+        [controller setCcRecipients:@[email]];
+    if (controller)
+        [self presentModalViewController:controller animated:YES];
+}
+
+- (void)mailComposeController:(MFMailComposeViewController*)controller
+          didFinishWithResult:(MFMailComposeResult)result
+                        error:(NSError*)error;
+{
+    if (result == MFMailComposeResultSent) {
+        NSLog(@"It's away!");
+    }
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{
@@ -350,7 +406,6 @@
 #pragma mark -
 #pragma mark UI stuff
 
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -370,6 +425,13 @@
     
     // Resize and rearrange
     [self resizeComments:FALSE];
+    
+    // Music resize
+    //if ( meetup.importedType == IMPORTED_SONGKICK && AppDelegate.musicPanel )
+    //    [scrollView setContentInset:UIEdgeInsetsMake(0, 0, AppDelegate.musicPanel.view.height, 0)];
+    
+    // Mark this event as read
+    [globalData setEventRead:meetup.strId withExpirationDate:meetup.dateTimeExp];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -393,6 +455,12 @@
     [self resizeComments:FALSE];
 }
 
+-(void)viewDidDisappear:(BOOL)animated
+{
+    //if ( meetup.importedType == IMPORTED_SONGKICK )
+    //    [deezerWrapper stopPlaying];
+}
+
 - (void)initButtons
 {
     NSNumber* buttonOn = [NSNumber numberWithBool:TRUE];
@@ -400,18 +468,31 @@
     // Time check
     Boolean bPassed = meetup.hasPassed;
     
-    // Featuring
-    if ( bIsAdmin )
-        buttons[MB_FEATURE] = buttonOn;
+    // Mail
+    if ( ! bPassed && meetup.strOriginalURL )
+        buttons[MB_MAIL] = buttonOn;
     
     // Facebook/EB/etc or not
     if ( meetup.importedEvent )
     {
         if ( ! bPassed )
+        {
             buttons[MB_CALENDAR] = buttonOn;
+            buttons[MB_INVITE] = buttonOn;
+            
+            Boolean bJoined = [globalData isAttendingMeetup:meetup.strId];
+            if ( ! bJoined )    // Or thread as thread can't be joined
+                buttons[MB_JOIN] = buttonOn;
+            else
+                buttons[MB_LEAVE] = buttonOn;
+        }
     }
     else
     {
+        // Featuring
+        if ( bIsAdmin )
+            buttons[MB_FEATURE] = buttonOn;
+        
         if ( meetup.isCanceled || [globalData hasLeftMeetup:meetup.strId] )
             buttons[MB_SUBSCRIBE] = buttonOn;
         else
@@ -504,7 +585,7 @@
     [globalData postInboxUnreadCountDidUpdate];
     
     // Make new comment editable now
-    if ( ! meetup.importedEvent )
+    //if ( ! meetup.importedEvent )
         containerView.userInteractionEnabled = TRUE;
     
     // Buttons setup
@@ -606,6 +687,12 @@
     else
         alertTicketsOnline.hidden = TRUE;
     
+    // Image for the artist
+#ifdef TARGET_FUGE
+    if ( meetup.importedType == IMPORTED_SONGKICK )
+        meetup.strImageURL = [deezerWrapper artistCover:meetup.strOwnerName];
+#endif
+    
     // Description
     if ( meetup.strDescription || meetup.strImageURL )
     {
@@ -615,11 +702,19 @@
         // Setting text
         NSMutableString *html = [NSMutableString stringWithString: @"<html><head><title></title></head><body>"];
         Boolean bWasSomethingBefore = false;
+        BOOL bDeezer = FALSE;
         if ( meetup.strImageURL && meetup.strImageURL.length > 0 )
         {
+            if ( meetup.importedType == IMPORTED_SONGKICK && meetup.strImageURL )
+                bDeezer = TRUE;
+            
             NSUInteger maxWidth = self.view.width - 20;
             NSString* strHtml = [NSString stringWithFormat:MEETUP_TEMPLATE_IMAGE, maxWidth, meetup.strImageURL];
+            if ( bDeezer )
+                [html appendString:@"<table><tr><td valign='top'>"];
             [html appendString:strHtml];
+            if ( bDeezer )
+                [html appendString:@"</td>"];
             bWasSomethingBefore = true;
         }
         /*if ( meetup.strPrice && meetup.strPrice.length > 0 )
@@ -630,14 +725,19 @@
             [html appendString:strHtml];
             bWasSomethingBefore = true;
         }*/
+        if ( bDeezer )
+            [html appendString:@"<td valign='top'>"];
         if ( meetup.strDescription && meetup.strDescription.length > 0 )
         {
-            if ( bWasSomethingBefore )
-                [html appendString:@"<BR>"];
+            //if ( bWasSomethingBefore && meetup.importedType != IMPORTED_SONGKICK )
+            //    [html appendString:@"<BR>"];
             NSString* strHtml = [NSString stringWithFormat:MEETUP_TEMPLATE_DESCRIPTION, meetup.strDescription];
             [html appendString:strHtml];
             bWasSomethingBefore = true;
         }
+        if ( bDeezer )
+            [html appendString:@"</td></th></table>"];
+
         //if ( meetup.strOriginalURL )
         //{
         //    if ( bWasSomethingBefore )
@@ -743,8 +843,23 @@
 
 -(BOOL) webView:(UIWebView *)inWeb shouldStartLoadWithRequest:(NSURLRequest *)inRequest navigationType:(UIWebViewNavigationType)inType {
     if ( inType == UIWebViewNavigationTypeLinkClicked ) {
-        [[UIApplication sharedApplication] openURL:[inRequest URL]];
-        return NO;
+        
+        NSURL *url = inRequest.URL;
+        if ( [url.scheme isEqual:@"http"] || [url.scheme isEqual:@"https"])
+        {
+            ULWebViewController* webView = [[ULWebViewController alloc] init];
+            [webView setUrl:url.absoluteString andEvent:meetup.strSubject withPreview:nil];
+            UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:webView];
+            [self.navigationController presentViewController:navigation animated:TRUE completion:nil];
+            return NO;
+        }
+        else
+        {
+            if ([[UIApplication sharedApplication]canOpenURL:url]) {
+                [[UIApplication sharedApplication]openURL:url];
+                return NO;
+            }
+        }
     }
     
     return YES;
@@ -804,7 +919,22 @@
     [textView resignFirstResponder];
 }
 - (IBAction)alertTapped:(id)sender {
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:meetup.strOriginalURL]];
+    
+    // Preview
+    NSString* preview;
+#ifdef TARGET_FUGE
+    if ( meetup.importedType == IMPORTED_SONGKICK )
+    {
+        NSDictionary* artist = [deezerWrapper artistInformation:meetup.strOwnerName];
+        if ( artist )
+            preview = [artist objectForKey:@"artistLink"];
+    }
+#endif
+
+    ULWebViewController* webView = [[ULWebViewController alloc] init];
+    [webView setUrl:meetup.strOriginalURL andEvent:meetup.strSubject withPreview:preview];
+    UINavigationController *navigation = [[UINavigationController alloc]initWithRootViewController:webView];
+    [self.navigationController presentViewController:navigation animated:TRUE completion:nil];
 }
 
 - (void) openPeopleList:(NSArray*)idsList
@@ -825,4 +955,5 @@
 
 - (IBAction)countersInvitedTapped:(id)sender {
 }
+
 @end

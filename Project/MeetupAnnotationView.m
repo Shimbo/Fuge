@@ -9,7 +9,6 @@
 #import "MeetupAnnotationView.h"
 #import "CustomBadge.h"
 #import <QuartzCore/QuartzCore.h>
-#import "MainStyle.h"
 #import "Person.h"
 #import "ImageLoader.h"
 #import "UIImage+Circled.h"
@@ -62,49 +61,67 @@
     UIColor *badgeColor = nil;
     switch (color) {
         case PinBlue:
-            badgeColor = [MainStyle blueColor];
+            badgeColor = [UIColor FUGblueColor];
             break;
         case PinOrange:
-            badgeColor = [MainStyle orangeColor];
+            badgeColor = [UIColor FUGorangeColor];
             break;
         case PinGray:
-            badgeColor = [MainStyle grayColor];
+            badgeColor = [UIColor FUGgrayColor];
             break;
     }
-    [_badge removeFromSuperview];
-    _badge = [CustomBadge badgeWithWhiteBackgroundAndTextColor:badgeColor];
-    _badge.center = CGPointMake(8, 8);
-    [self addSubview:_badge];
+    if ( ! _badge )
+    {
+        _badge = [CustomBadge badgeWithWhiteBackgroundAndTextColor:badgeColor];
+        _badge.center = CGPointMake(8, 8);
+        [self addSubview:_badge];
+    }
+    else
+    {
+        _badge.badgeTextColor = badgeColor;
+        _badge.badgeFrameColor = badgeColor;
+    }
+    //[_badge removeFromSuperview];
 }
 
 
 -(void)updateTimerForColor:(PinColor)color{
     switch (color) {
         case PinBlue:
-            _timerView.timerColor = [MainStyle lightBlueColor];
+            _timerView.timerColor = [UIColor FUGlightBlueColor];
             break;
         case PinOrange:
-            _timerView.timerColor = [MainStyle yellowColor];
+            _timerView.timerColor = [UIColor FUGyellowColor];
             break;
         case PinGray:
-            _timerView.timerColor = [MainStyle lightGrayColor];
+            _timerView.timerColor = [UIColor FUGlightGrayColor];
             break;
         default:
             _timerView.timerColor = nil;
             break;
     }
+    [_timerView setNeedsDisplay];
 }
 
--(void)updateBackForColor:(PinColor)color{
+-(void)updateBackForColor:(PinColor)color withPin:(BOOL)pinned{
     switch (color) {
         case PinBlue:
-            _back.image = [UIImage imageNamed:@"meetPinBlue.png"];
+            if ( pinned )
+                _back.image = [UIImage imageNamed:@"meetPinBlue.png"];
+            else
+                _back.image = [UIImage imageNamed:@"blue-comb.png"];
             break;
         case PinOrange:
-            _back.image = [UIImage imageNamed:@"meetPinOrange.png"];
+            if ( pinned )
+                _back.image = [UIImage imageNamed:@"meetPinOrange.png"];
+            else
+                _back.image = [UIImage imageNamed:@"orange-comb.png"];
             break;
         case PinGray:
-            _back.image = [UIImage imageNamed:@"meetPinGray.png"];
+            if ( pinned )
+                _back.image = [UIImage imageNamed:@"meetPinGray.png"];
+            else
+                _back.image = [UIImage imageNamed:@"grey-comb.png"];
             break;
         default:
             _back.image = nil;
@@ -113,9 +130,9 @@
     [_back sizeToFit];
 }
 
--(void)setPinColor:(PinColor)color{
+-(void)setPinColor:(PinColor)color withPin:(BOOL)pinned{
     [self updateBadgeForColor:color];
-    [self updateBackForColor:color];
+    [self updateBackForColor:color withPin:pinned];
     [self updateTimerForColor:color];
 }
 
@@ -124,7 +141,7 @@
         _icon.image = [UIImage imageNamed:@"iconCanceled.png"];
     else if ( meetup.privacy == MEETUP_PRIVATE )
         _icon.image = [UIImage imageNamed:@"iconPrivate.png"];
-    else if ( meetup.importedEvent )
+    else /*if ( meetup.importedEvent )
     {
         {
             switch ( meetup.importedType )
@@ -135,7 +152,7 @@
             }
         }
     }
-    else
+    else*/
     {
         NSUInteger icon = meetup.iconNumber;
         if ( icon >= meetupIcons.count )
@@ -161,8 +178,8 @@
     [_badge setNumber:count];
 }
 
--(void)prepareForAnnotation:(MeetupAnnotation*)ann{
-    [self setPinColor:ann.pinColor];
+-(void)prepareForAnnotation:(MeetupAnnotation*)ann withPin:(BOOL)pinned{
+    [self setPinColor:ann.pinColor withPin:pinned];
     [self setPinIcon:ann.meetup];
     [self setTime:ann.time];
     [self setUnreadCount:[globalData unreadConversationCount:ann.meetup]];
@@ -231,7 +248,7 @@
 
 - (void)setAnnotation:(id<MKAnnotation>)annotation {
     [super setAnnotation:annotation];
-    [_contentView prepareForAnnotation:annotation];
+    [_contentView prepareForAnnotation:annotation withPin:TRUE];
 }
 
 

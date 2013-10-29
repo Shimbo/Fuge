@@ -48,6 +48,48 @@
     return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
++(UIColor*)FUGyellowColor{
+    return [UIColor colorWithRed:252/255.0
+                           green:210/255.0
+                            blue:84/255.0
+                           alpha:1];
+}
+
++(UIColor*)FUGlightBlueColor{
+    return [UIColor colorWithRed:85/255.0
+                           green:204/255.0
+                            blue:244/255.0
+                           alpha:1];
+}
+
++(UIColor*)FUGorangeColor{
+    return [UIColor colorWithRed:239/255.0
+                           green:137/255.0
+                            blue:88/255.0
+                           alpha:1];
+}
+
++(UIColor*)FUGblueColor{
+    return [UIColor colorWithRed:62/255.0
+                           green:143/255.0
+                            blue:190/255.0
+                           alpha:1];
+}
+
++(UIColor*)FUGgrayColor{
+    return [UIColor colorWithRed:143/255.0
+                           green:143/255.0
+                            blue:143/255.0
+                           alpha:1];
+}
+
++(UIColor*)FUGlightGrayColor{
+    return [UIColor colorWithRed:190/255.0
+                           green:190/255.0
+                            blue:190/255.0
+                           alpha:1];
+}
+
 @end
 
 @implementation UIView (Coordinates)
@@ -130,6 +172,20 @@
 - (CGSize)size
 {
     return self.frame.size;
+}
+
+@end
+
+@implementation NSString (StringSizeWithFont)
+
+- (CGSize) sizeWithMyFont:(UIFont *)fontToUse
+{
+    if ([self respondsToSelector:@selector(sizeWithAttributes:)])
+    {
+        NSDictionary* attribs = @{NSFontAttributeName:fontToUse};
+        return ([self sizeWithAttributes:attribs]);
+    }
+    return ([self sizeWithFont:fontToUse]);
 }
 
 @end
